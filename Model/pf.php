@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.3 2016/07/29 04:17:48 soner Exp $ */
+/* $pfre: pf.php,v 1.4 2016/07/29 05:41:03 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -201,14 +201,14 @@ class Pf extends Model
 				
 				// Rule numbers are 0 based, hence decrement once
 				$line--;
-				$rule= $rulesArray[$line];
 				
 				if ($src == 'stdin') {
-					ViewError("$line: $err:");
-					ViewError("<code>	$rule</code>");
+					$rule= $rulesArray[$line];
+					ViewError("$line: $err:\n<code>	$rule</code>");
 				} else {
-					ViewError("Error in include file: $src");
-					ViewError("$line: $err");
+					// Rule numbers in include files need an extra decrement
+					$line--;
+					ViewError("Error in include file: $src\n$line: $err");
 				}
 			} else {
 				ViewError($o);
