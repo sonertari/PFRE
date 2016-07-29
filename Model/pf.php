@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.2 2016/07/29 04:15:24 soner Exp $ */
+/* $pfre: pf.php,v 1.3 2016/07/29 04:17:48 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -192,17 +192,26 @@ class Pf extends Model
 		}
 		
 		$rulesArray= explode("\n", $rules);
-		
+
 		foreach ($output as $o) {
-			if (preg_match('/stdin:(\d+):\s*(.*)/', $o, $match)) {
-				$line= $match[1];
-				$err= $match[2];
+			if (preg_match('/^([^:]+):(\d+):\s*(.*)$/', $o, $match)) {
+				$src= $match[1];
+				$line= $match[2];
+				$err= $match[3];
 				
 				// Rule numbers are 0 based, hence decrement once
 				$line--;
 				$rule= $rulesArray[$line];
 				
-				ViewError($line . ': ' . $err . ":\n<code>	" . $rule . '</code>');
+				if ($src == 'stdin') {
+					ViewError("$line: $err:");
+					ViewError("<code>	$rule</code>");
+				} else {
+					ViewError("Error in include file: $src");
+					ViewError("$line: $err");
+				}
+			} else {
+				ViewError($o);
 			}
 		}
 		return FALSE;
