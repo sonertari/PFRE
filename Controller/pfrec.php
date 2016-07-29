@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.19 2016/07/27 04:16:03 soner Exp $ */
+/* $pfre: pfrec.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,7 +36,7 @@
 
 /** @file
  * Proxy to run all shell commands.
- * This way we have only one entry in doas.conf file.
+ * This way we have only one entry in doas.conf.
  * @todo Continually check for security issues.
  */
 

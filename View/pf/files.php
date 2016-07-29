@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.11 2016/07/27 15:08:56 soner Exp $ */
+/* $pfre: files.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -122,12 +122,12 @@ if (filter_has_var(INPUT_POST, 'save')) {
 
 if (filter_has_var(INPUT_POST, 'upload')) {
 	if ($_FILES['file']['error'] == 0) {
-		$ruleSet= new RuleSet($View, $_FILES['file']['tmp_name'], file_get_contents($_FILES['file']['tmp_name']));
+		$View->Controller($Output, 'GetTmpFile', $_FILES['file']['tmp_name']);
+		$ruleSet= new RuleSet($View, $_FILES['file']['tmp_name'], implode("\n", $Output));
 		if ($ruleSet) {
 			$View->RuleSet= $ruleSet;
-			PrintHelpWindow('File uploaded successfully');
+			PrintHelpWindow('File uploaded successfully: ' . $_FILES['file']['name']);
 		}
-		unlink($_FILES['file']['tmp_name']);
 	} else {
 		PrintHelpWindow('File upload failed: ' . $_FILES['file']['tmp_name'], NULL, 'ERROR');
 	}
@@ -206,7 +206,7 @@ require_once($VIEW_PATH.'/header.php');
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" enctype="multipart/form-data" method="post">
     <input type="submit" id="upload" name="upload" value="Upload" />
-    <input type="hidden" name="max_file_size" value="30000" />
+    <input type="hidden" name="max_file_size" value="300000" />
     Upload file: <input name="file" type="file" />
 </form>
 

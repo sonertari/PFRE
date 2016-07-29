@@ -128,7 +128,9 @@ function IsFilePath($filepath)
 		// For CVS Tag displayed in the footer
 		preg_match('|^/var/www/htdocs/pfre/View/\w[\w./\-_]*$|', $filepath)
 		// pf configuration files
-		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $filepath);
+		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $filepath)
+		// Uploaded tmp files
+		|| preg_match("|^/tmp/\w[\w.\-_]*$|", $filepath);
 }
 
 function IsNumber($num)

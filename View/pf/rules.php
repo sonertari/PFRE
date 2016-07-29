@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.11 2016/07/27 15:08:56 soner Exp $ */
+/* $pfre: rules.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -102,7 +102,7 @@ if (filter_has_var(INPUT_POST, 'delete')) {
 }
 
 /// @attention Reduce multiline comments to single line, so that reported and actual rule numbers match
-$rulesStr.= $View->RuleSet->generate(FALSE, NULL, TRUE, TRUE);
+$rulesStr= $View->RuleSet->generate(FALSE, NULL, TRUE, TRUE);
 $View->Controller($Output, 'TestPfRules', serialize(explode('\n', $rulesStr)));
 
 require_once($VIEW_PATH.'/header.php');

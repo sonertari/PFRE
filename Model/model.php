@@ -93,6 +93,11 @@ class Model
 					'argv'	=>	array(NAME),
 					'desc'	=>	_('Set force HTTPs'),
 					),
+				
+				'GetTmpFile'=>	array(
+					'argv'	=>	array(FILEPATH),
+					'desc'	=>	_('Get tmp file contents'),
+					),
 				)
 			);
 	}
@@ -178,6 +183,14 @@ class Model
 			}
 		}
 		return FALSE;
+	}
+
+	function GetTmpFile($file)
+	{
+		$contents= $this->GetFile($file);
+		/// @todo Check if we really need to unlink
+		unlink($file);
+		return $contents;
 	}
 
 	/** Reads file contents.
