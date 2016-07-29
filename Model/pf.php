@@ -169,12 +169,13 @@ class Pf extends Model
 		return TRUE;
 	}
 
-	function TestPfRules($rules, $offset= 0, $ruleNumber= -1)
+	function TestPfRules($rules)
 	{
 		$rules= unserialize($rules)[0];
 		$cmd= "/bin/echo '$rules' | /sbin/pfctl -nf - 2>&1";
 		
-		/// @todo pfctl gets stuck and takes a long time to return on some errors
+		/// @bug pfctl gets stuck
+		/// @todo pfctl takes a long time to return on some errors
 		// Example 1: A macro using an unknown interface: int_if = "a1",
 		// pfctl tries to look up for its IP address, which takes a long time before failing with:
 		// > no IP address found for a1
@@ -186,14 +187,12 @@ class Pf extends Model
 		// Therefore, need to use an exec function which returns with timeout
 		exec($cmd, $output, $retval);
 
-		$rv= TRUE;
 		if ($retval === 0) {
-			return $rv;
+			return TRUE;
 		}
 		
 		$rulesArray= explode("\n", $rules);
 		
-		$lastLine= 0;
 		foreach ($output as $o) {
 			if (preg_match('/stdin:(\d+):\s*(.*)/', $o, $match)) {
 				$line= $match[1];
@@ -203,33 +202,10 @@ class Pf extends Model
 				$line--;
 				$rule= $rulesArray[$line];
 				
-				$line-= $offset;
-				
-				if ($lastLine < 0 && $line >= 0) {
-					// Insert a newline between context and current rules
-					ViewError('');
-				}
-		
-				$n= $line;
-				if ($ruleNumber >= 0) {
-					// Edit pages provide the rule number separately
-					$n= $ruleNumber;
-				}
-				
-				if ($line >= 0) {
-					ViewError($n . ': ' . $err . ":\n<code>	" . $rule . '</code>');
-					$rv= FALSE;
-				} else {
-					// Negative rule number means that the error is in the other types of rules, i.e. in the context
-					// Hence, do not display the rule number
-					ViewError($err);
-					/// @attention Do not set $rv to FALSE here, we are not interested in errors in context rules
-				}
-								
-				$lastLine= $line;
+				ViewError($line . ': ' . $err . ":\n<code>	" . $rule . '</code>');
 			}
 		}
-		return $rv;
+		return FALSE;
 	}
 }
 ?>

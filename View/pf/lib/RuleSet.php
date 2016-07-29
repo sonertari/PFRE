@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.7 2016/07/27 15:08:56 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -106,14 +106,13 @@ class RuleSet
 	function up($rulenumber)
 	{
 		$rules= array();
-		for ($i= '0'; $i < count($this->rules); $i++) {
-			if ($i == ($rulenumber - '1')) {
-				$rules[]= $this->rules[$i + '1'];
+		for ($i= 0; $i < count($this->rules); $i++) {
+			if ($i == ($rulenumber - 1)) {
+				$rules[]= $this->rules[$i + 1];
 				$rules[]= $this->rules[$i];
-			} else
-				if ($i != $rulenumber) {
-					$rules[]= $this->rules[$i];
-				}
+			} elseif ($i != $rulenumber) {
+				$rules[]= $this->rules[$i];
+			}
 		}
 		$this->rules= $rules;
 	}
@@ -127,14 +126,13 @@ class RuleSet
 	function down($rulenumber)
 	{
 		$rules= array();
-		for ($i= '0'; $i < count($this->rules); $i++) {
+		for ($i= 0; $i < count($this->rules); $i++) {
 			if ($i == $rulenumber) {
-				$rules[]= $this->rules[$i + '1'];
+				$rules[]= $this->rules[$i + 1];
 				$rules[]= $this->rules[$i];
-			} else
-				if ($i != ($rulenumber + '1')) {
-					$rules[]= $this->rules[$i];
-				}
+			} elseif ($i != ($rulenumber + 1)) {
+				$rules[]= $this->rules[$i];
+			}
 		}
 		$this->rules= $rules;
 	}
@@ -166,10 +164,11 @@ class RuleSet
 			array_push($this->rules, array());
 			return $this->nextRuleNumber();
 		} else {
-			// Insert a new rule in the middle
 			// Preserve the keys for diff
-			$tail= array_slice($this->rules, $rulenumber, null, TRUE);
+			$tail= array_slice($this->rules, $rulenumber, NULL, TRUE);
 			$head= array_diff_key($this->rules, $tail);
+
+			// Insert a new rule in the middle
 			array_push($head, array());
 			$this->rules= array_merge($head, $tail);
 			return $rulenumber;
@@ -336,7 +335,7 @@ class RuleSet
 			$_SESSION['edit']['rulenumber']= $rulenumber;
 			$_SESSION['edit']['object']= new $cat('');
 		} elseif (!isset($_SESSION['edit']['type']) || $_SESSION['edit']['type'] != $cat || $_SESSION['edit']['rulenumber'] != $rulenumber) {
-			// Rule has changed, setup a new edit session
+			// Rule changed, setup a new edit session
 			unset($_SESSION['edit']);
 			$_SESSION['edit']['type']= $cat;
 			$_SESSION['edit']['rulenumber']= $rulenumber;
