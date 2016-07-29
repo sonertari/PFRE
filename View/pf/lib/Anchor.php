@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.7 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Anchor.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -163,31 +163,31 @@ class Anchor extends Filter
 			$this->delEntity("proto", filter_input(INPUT_GET, 'dropproto'));
 		}
 
-		if (filter_has_var(INPUT_POST, 'addfrom') != '') {
-			$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
-		}
-
-		if (filter_has_var(INPUT_POST, 'addfromport') != '') {
-			$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
-		}
-
-		if (filter_has_var(INPUT_POST, 'addto') != '') {
-			$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
-		}
-
-		if (filter_has_var(INPUT_POST, 'addport') != '') {
-			$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
-		}
-
-		if (filter_has_var(INPUT_POST, 'addinterface') != '') {
-			$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
-		}
-
-		if (filter_has_var(INPUT_POST, 'addproto') != '') {
-			$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
-		}
-
 		if (count($_POST)) {
+			if (filter_has_var(INPUT_POST, 'addfrom') != '') {
+				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
+			}
+
+			if (filter_has_var(INPUT_POST, 'addfromport') != '') {
+				$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
+			}
+
+			if (filter_has_var(INPUT_POST, 'addto') != '') {
+				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
+			}
+
+			if (filter_has_var(INPUT_POST, 'addport') != '') {
+				$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
+			}
+
+			if (filter_has_var(INPUT_POST, 'addinterface') != '') {
+				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
+			}
+
+			if (filter_has_var(INPUT_POST, 'addproto') != '') {
+				$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
+			}
+
 			$this->rule['type']= "anchor";
 			$this->rule['identifier']= preg_replace("/\"/", "", filter_input(INPUT_POST, 'identifier'));
 			$this->rule['direction']= filter_input(INPUT_POST, 'direction');

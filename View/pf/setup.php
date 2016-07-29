@@ -1,5 +1,5 @@
 <?php
-/* $pfre: conf.wui.php,v 1.12 2016/07/26 07:00:36 soner Exp $ */
+/* $pfre: setup.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,7 +42,7 @@ if ($ForceHTTPs) {
 
 require_once('include.php');
 
-if ($_POST) {
+if (count($_POST)) {
 	// Allow posting empty strings to display an error message
 	if (filter_has_var(INPUT_POST, 'User') && filter_has_var(INPUT_POST, 'NewPassword') && filter_has_var(INPUT_POST, 'ReNewPassword')) {
 		if (in_array(filter_input(INPUT_POST, 'User'), $ALL_USERS)) {
