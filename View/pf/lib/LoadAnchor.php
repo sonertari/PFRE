@@ -127,9 +127,9 @@ class LoadAnchor extends Rule
 	function processInput()
 	{
 		if (count($_POST)) {
-			$this->rule['anchor']= $_POST['anchor'];
-			$this->rule['file']= $_POST['file'];
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['anchor']= filter_input(INPUT_POST, 'anchor');
+			$this->rule['file']= filter_input(INPUT_POST, 'file');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

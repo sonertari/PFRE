@@ -154,17 +154,17 @@ class Macro extends Rule
 	
 	function processInput()
 	{
-		if (isset($_GET['dropvalue'])) {
-			$this->delEntity("value", $_GET['dropvalue']);
+		if (filter_has_var(INPUT_GET, 'dropvalue')) {
+			$this->delEntity("value", filter_input(INPUT_GET, 'dropvalue'));
 		}
 
 		if (count($_POST)) {
 			if (filter_input(INPUT_POST, 'addvalue') != '') {
-				$this->addEntity("value", $_POST['addvalue']);
+				$this->addEntity("value", filter_input(INPUT_POST, 'addvalue'));
 			}
 
-			$this->rule['identifier']= $_POST['identifier'];
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['identifier']= filter_input(INPUT_POST, 'identifier');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 	
 		$this->deleteEmptyEntries();

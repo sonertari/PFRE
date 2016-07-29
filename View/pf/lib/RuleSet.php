@@ -354,13 +354,13 @@ class RuleSet
 			$testResult= $View->Controller($Output, 'TestPfRules', serialize(explode('\n', $rulesStr)));
 		}
 
-		if (isset($_POST['cancel']) && ($_POST['cancel'] == 'Cancel')) {
+		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == 'Cancel')) {
 			unset($_SESSION['edit']);
 			header('Location: conf.php');
 		}
 
-		if (isset($_POST['save']) && $_POST['save'] == 'Save') {
-			if ($testResult || $_POST['forcesave']) {
+		if (filter_has_var(INPUT_POST, 'save') && filter_input(INPUT_POST, 'save') == 'Save') {
+			if ($testResult || filter_input(INPUT_POST, 'forcesave')) {
 				if ($action == 'create') {
 					$this->addRule($rulenumber);
 				}

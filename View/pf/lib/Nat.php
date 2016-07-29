@@ -338,41 +338,41 @@ class Nat extends Rule
 	
 	function processInput()
 	{
-		if (isset($_GET['dropfrom'])) {
-			$this->delEntity("from", $_GET['dropfrom']);
+		if (filter_has_var(INPUT_GET, 'dropfrom')) {
+			$this->delEntity("from", filter_input(INPUT_GET, 'dropfrom'));
 		}
 
-		if (isset($_GET['dropfromport'])) {
-			$this->delEntity("fromport", $_GET['dropfromport']);
+		if (filter_has_var(INPUT_GET, 'dropfromport')) {
+			$this->delEntity("fromport", filter_input(INPUT_GET, 'dropfromport'));
 		}
 
-		if (isset($_GET['dropto'])) {
-			$this->delEntity("to", $_GET['dropto']);
+		if (filter_has_var(INPUT_GET, 'dropto')) {
+			$this->delEntity("to", filter_input(INPUT_GET, 'dropto'));
 		}
 
-		if (isset($_GET['dropport'])) {
-			$this->delEntity("port", $_GET['dropport']);
+		if (filter_has_var(INPUT_GET, 'dropport')) {
+			$this->delEntity("port", filter_input(INPUT_GET, 'dropport'));
 		}
 
-		if (isset($_GET['dropinterface'])) {
-			$this->delEntity("interface", $_GET['dropinterface']);
+		if (filter_has_var(INPUT_GET, 'dropinterface')) {
+			$this->delEntity("interface", filter_input(INPUT_GET, 'dropinterface'));
 		}
 
-		if (isset($_GET['dropproto'])) {
-			$this->delEntity("proto", $_GET['dropproto']);
+		if (filter_has_var(INPUT_GET, 'dropproto')) {
+			$this->delEntity("proto", filter_input(INPUT_GET, 'dropproto'));
 		}
 
 		if (count($_POST)) {
 			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity("interface", $_POST['addinterface']);
+				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
 			}
 
 			if (filter_input(INPUT_POST, 'addproto') != '') {
-				$this->addEntity("proto", $_POST['addproto']);
+				$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
 			}
 
-			if ($this->rule['type'] != $_POST['type']) {
-				$this->rule['type']= $_POST['type'];
+			if ($this->rule['type'] != filter_input(INPUT_POST, 'type')) {
+				$this->rule['type']= filter_input(INPUT_POST, 'type');
 				if ($this->rule['type'] == 'af-to') {
 					unset($this->rule['quick']);
 					unset($this->rule['proto']);
@@ -381,56 +381,56 @@ class Nat extends Rule
 				}
 			}
 
-			$this->rule['action']= $_POST['action'];
-			$this->rule['direction']= $_POST['direction'];
-			$this->rule['log']= $_POST['log'];
-			$this->rule['quick']= ($_POST['quick'] ? TRUE : "");
+			$this->rule['action']= filter_input(INPUT_POST, 'action');
+			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
+			$this->rule['log']= filter_input(INPUT_POST, 'log');
+			$this->rule['quick']= (filter_has_var(INPUT_POST, 'quick') ? TRUE : "");
 
-			if (!isset($_POST['addproto'])) {
-				if ($_POST['proto'] == 'tcpudp') {
+			if (!filter_has_var(INPUT_POST, 'addproto')) {
+				if (filter_input(INPUT_POST, 'proto') == 'tcpudp') {
 					$this->addEntity("proto", 'tcp');
 					$this->addEntity("proto", 'udp');
 				} else {
-					$this->rule['proto']= $_POST['proto'];
+					$this->rule['proto']= filter_input(INPUT_POST, 'proto');
 				}
 			}
 
 			if (filter_input(INPUT_POST, 'addfrom') != '') {
-				$this->addEntity("from", $_POST['addfrom']);
+				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
 			}
 
 			if (filter_input(INPUT_POST, 'addfromport') != '') {
-				$this->addEntity("fromport", $_POST['addfromport']);
+				$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
 			}
 
 			if (filter_input(INPUT_POST, 'addto') != '') {
-				$this->addEntity("to", $_POST['addto']);
+				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
 			}
 
 			if (filter_input(INPUT_POST, 'addport') != '') {
-				$this->addEntity("port", $_POST['addport']);
+				$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
 			}
 
-			$this->rule['natdest']= $_POST['natdest'];
-			$this->rule['natdestport']= $_POST['natdestport'];
+			$this->rule['natdest']= filter_input(INPUT_POST, 'natdest');
+			$this->rule['natdestport']= filter_input(INPUT_POST, 'natdestport');
 
-			$this->rule['family']= $_POST['family'];
-			$this->rule['to-family']= $_POST['to-family'];
+			$this->rule['family']= filter_input(INPUT_POST, 'family');
+			$this->rule['to-family']= filter_input(INPUT_POST, 'to-family');
 
-			$this->rule['bitmask']= ($_POST['bitmask'] ? TRUE : "");
-			$this->rule['least-states']= ($_POST['least-states'] ? TRUE : "");
-			$this->rule['random']= ($_POST['random'] ? TRUE : "");
-			$this->rule['round-robin']= ($_POST['round-robin'] ? TRUE : "");
-			$this->rule['source-hash']= ($_POST['source-hash'] ? TRUE : "");
-			$this->rule['source-hash-key']= $_POST['source-hash-key'];
+			$this->rule['bitmask']= (filter_has_var(INPUT_POST, 'bitmask') ? TRUE : "");
+			$this->rule['least-states']= (filter_has_var(INPUT_POST, 'least-states') ? TRUE : "");
+			$this->rule['random']= (filter_has_var(INPUT_POST, 'random') ? TRUE : "");
+			$this->rule['round-robin']= (filter_has_var(INPUT_POST, 'round-robin') ? TRUE : "");
+			$this->rule['source-hash']= (filter_has_var(INPUT_POST, 'source-hash') ? TRUE : "");
+			$this->rule['source-hash-key']= filter_input(INPUT_POST, 'source-hash-key');
 
-			$this->rule['sticky-address']= ($_POST['sticky-address'] ? TRUE : "");
+			$this->rule['sticky-address']= (filter_has_var(INPUT_POST, 'sticky-address') ? TRUE : "");
 
-			$this->rule['static-port']= ($_POST['static-port'] ? TRUE : "");
+			$this->rule['static-port']= (filter_has_var(INPUT_POST, 'static-port') ? TRUE : "");
 
 			$this->rule['flags']= filter_input(INPUT_POST, 'flags');
 
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

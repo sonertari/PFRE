@@ -44,15 +44,15 @@ require_once($ROOT.'/lib/setup.php');
 
 /// Force https
 if ($ForceHTTPs) {
-	if (!isset($_SERVER['HTTPS'])) {
-		header('Location: https://'.$_SERVER['SERVER_ADDR'].'/index.php');
+	if (!filter_has_var(INPUT_SERVER, 'HTTPS')) {
+		header('Location: https://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').'/index.php');
 	}
 }
 
 require_once($ROOT.'/lib/defs.php');
 require_once($ROOT.'/lib/lib.php');
 
-$VIEW_PATH= $_SERVER['DOCUMENT_ROOT'];
+$VIEW_PATH= filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
 
 // Session is started in libauth.php
 // Need a session everywhere below, after successful Authentication() too
@@ -66,9 +66,9 @@ require_once('lib/libwui.php');
 require_once('lib/view.php');
 $View= new View();
 
-if ($_POST['Login']) {
-	$_SESSION['USER']= $_POST['UserName'];
-	Authentication($_POST['Password']);
+if (filter_has_var(INPUT_POST, 'Login')) {
+	$_SESSION['USER']= filter_input(INPUT_POST, 'UserName');
+	Authentication(filter_input(INPUT_POST, 'Password'));
 }
 else {
 	if ($_SESSION['Timeout']) {
@@ -92,7 +92,7 @@ HTMLHeader('gray');
 			<tr>
 				<td>
 					<div align="center">
-					<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+					<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 						<table id="window">
 							<tr>
 								<td class="titlebar">

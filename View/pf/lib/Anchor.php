@@ -139,61 +139,61 @@ class Anchor extends Filter
 	
 	function processInput()
 	{
-		if (isset($_GET['dropfrom'])) {
-			$this->delEntity("from", $_GET['dropfrom']);
+		if (filter_has_var(INPUT_GET, 'dropfrom')) {
+			$this->delEntity("from", filter_input(INPUT_GET, 'dropfrom'));
 		}
 
-		if (isset($_GET['dropfromport'])) {
-			$this->delEntity("fromport", $_GET['dropfromport']);
+		if (filter_has_var(INPUT_GET, 'dropfromport')) {
+			$this->delEntity("fromport", filter_input(INPUT_GET, 'dropfromport'));
 		}
 
-		if (isset($_GET['dropto'])) {
-			$this->delEntity("to", $_GET['dropto']);
+		if (filter_has_var(INPUT_GET, 'dropto')) {
+			$this->delEntity("to", filter_input(INPUT_GET, 'dropto'));
 		}
 
-		if (isset($_GET['dropport'])) {
-			$this->delEntity("port", $_GET['dropport']);
+		if (filter_has_var(INPUT_GET, 'dropport')) {
+			$this->delEntity("port", filter_input(INPUT_GET, 'dropport'));
 		}
 
-		if (isset($_GET['dropinterface'])) {
-			$this->delEntity("interface", $_GET['dropinterface']);
+		if (filter_has_var(INPUT_GET, 'dropinterface')) {
+			$this->delEntity("interface", filter_input(INPUT_GET, 'dropinterface'));
 		}
 
-		if (isset($_GET['dropproto'])) {
-			$this->delEntity("proto", $_GET['dropproto']);
+		if (filter_has_var(INPUT_GET, 'dropproto')) {
+			$this->delEntity("proto", filter_input(INPUT_GET, 'dropproto'));
 		}
 
-		if (filter_input(INPUT_POST, 'addfrom') != '') {
-			$this->addEntity("from", $_POST['addfrom']);
+		if (filter_has_var(INPUT_POST, 'addfrom') != '') {
+			$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
 		}
 
-		if (filter_input(INPUT_POST, 'addfromport') != '') {
-			$this->addEntity("fromport", $_POST['addfromport']);
+		if (filter_has_var(INPUT_POST, 'addfromport') != '') {
+			$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
 		}
 
-		if (filter_input(INPUT_POST, 'addto') != '') {
-			$this->addEntity("to", $_POST['addto']);
+		if (filter_has_var(INPUT_POST, 'addto') != '') {
+			$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
 		}
 
-		if (filter_input(INPUT_POST, 'addport') != '') {
-			$this->addEntity("port", $_POST['addport']);
+		if (filter_has_var(INPUT_POST, 'addport') != '') {
+			$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
 		}
 
-		if (filter_input(INPUT_POST, 'addinterface') != '') {
-			$this->addEntity("interface", $_POST['addinterface']);
+		if (filter_has_var(INPUT_POST, 'addinterface') != '') {
+			$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
 		}
 
-		if (filter_input(INPUT_POST, 'addproto') != '') {
-			$this->addEntity("proto", $_POST['addproto']);
+		if (filter_has_var(INPUT_POST, 'addproto') != '') {
+			$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
 		}
 
 		if (count($_POST)) {
 			$this->rule['type']= "anchor";
-			$this->rule['identifier']= preg_replace("/\"/", "", $_POST['identifier']);
-			$this->rule['direction']= $_POST['direction'];
-			$this->rule['family']= $_POST['family'];
+			$this->rule['identifier']= preg_replace("/\"/", "", filter_input(INPUT_POST, 'identifier'));
+			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
+			$this->rule['family']= filter_input(INPUT_POST, 'family');
 
-			if (isset($_POST['all'])) {
+			if (filter_has_var(INPUT_POST, 'all')) {
 				$this->rule['all']= TRUE;
 				unset($this->rule['from']);
 				unset($this->rule['fromport']);
@@ -203,7 +203,7 @@ class Anchor extends Filter
 				unset($this->rule['all']);
 			}
 
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

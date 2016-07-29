@@ -199,30 +199,30 @@ class Table extends Rule
 	
 	function processInput()
 	{
-		if (isset($_GET['dropvalue'])) {
-			$this->delEntity("data", $_GET['dropvalue']);
+		if (filter_has_var(INPUT_GET, 'dropvalue')) {
+			$this->delEntity("data", filter_input(INPUT_GET, 'dropvalue'));
 		}
 
-		if (isset($_GET['dropfile'])) {
-			$this->delEntity("file", $_GET['dropfile']);
+		if (filter_has_var(INPUT_GET, 'dropfile')) {
+			$this->delEntity("file", filter_input(INPUT_GET, 'dropfile'));
 		}
 
 		if (count($_POST)) {
 			if (filter_input(INPUT_POST, 'addvalue') != '') {
-				foreach (preg_split("/[\s,]+/", $_POST['addvalue']) as $value) {
+				foreach (preg_split("/[\s,]+/", filter_input(INPUT_POST, 'addvalue')) as $value) {
 					$this->addEntity("data", trim($value));
 				}
 			}
 
 			if (filter_input(INPUT_POST, 'addfile') != '') {
-				$this->addEntity("file", preg_replace("/\"/", "", $_POST['addfile']));
+				$this->addEntity("file", preg_replace("/\"/", "", filter_input(INPUT_POST, 'addfile')));
 			}
 
-			$this->rule['identifier']= "<" . preg_replace("/[<>]/", "", $_POST['identifier']) . ">";
-			$this->rule['const']= ($_POST['const'] ? TRUE : '');
-			$this->rule['persist']= ($_POST['persist'] ? TRUE : '');
-			$this->rule['counters']= ($_POST['counters'] ? TRUE : '');
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['identifier']= "<" . preg_replace("/[<>]/", "", filter_input(INPUT_POST, 'identifier')) . ">";
+			$this->rule['const']= (filter_has_var(INPUT_POST, 'const') ? TRUE : '');
+			$this->rule['persist']= (filter_has_var(INPUT_POST, 'persist') ? TRUE : '');
+			$this->rule['counters']= (filter_has_var(INPUT_POST, 'counters') ? TRUE : '');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

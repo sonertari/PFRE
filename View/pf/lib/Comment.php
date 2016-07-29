@@ -84,7 +84,7 @@ class Comment extends Rule
 	function processInput()
 	{
 		if (count($_POST)) {
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

@@ -36,7 +36,7 @@
 require_once ('include.php');
 
 $lines= TRUE;
-if (count($_POST) && !isset($_POST['lines'])) {
+if (count($_POST) && !filter_has_var(INPUT_POST, 'lines')) {
 	$lines= FALSE;
 }
 
@@ -45,7 +45,7 @@ $serialRulesArray= serialize(explode('\n', $rulesStr));
 $testResult= $View->Controller($Output, 'TestPfRules', $serialRulesArray);
 
 if ($testResult) {
-	if (isset($_POST['install']) && $_POST['install'] == "Install") {
+	if (filter_has_var(INPUT_POST, 'install') && filter_input(INPUT_POST, 'install') == "Install") {
 		if ($View->Controller($Output, 'InstallPfRules', $serialRulesArray)) {
 			PrintHelpWindow("Installed successfully");
 		} else {
@@ -59,7 +59,7 @@ if ($testResult) {
 require_once($VIEW_PATH.'/header.php');
 ?>
 <fieldset>
-	<form id="installform" name="installform" action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+	<form id="installform" name="installform" action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 		<label for="lines">Display line numbers</label>
 		<input type="checkbox" id="lines" name="lines" <?php echo $lines ? 'checked' : '' ?> onclick="document.installform.apply.click()" />
 		<input type="submit" id="apply" name="apply" value="Apply" />

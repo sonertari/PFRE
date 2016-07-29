@@ -88,8 +88,8 @@ class _Include extends Rule
 	function processInput()
 	{
 		if (count($_POST)) {
-			$this->rule['file']= $_POST['file'];
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['file']= filter_input(INPUT_POST, 'file');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

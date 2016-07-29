@@ -66,7 +66,7 @@
  */
 require_once ('include.php');
 
-if ($_POST['reload']) {
+if (filter_has_var(INPUT_POST, 'reload')) {
 	$ruleSet= new RuleSet($View);
 	if ($ruleSet) {
 		$View->RuleSet= $ruleSet;
@@ -75,9 +75,9 @@ if ($_POST['reload']) {
 }
 
 $loadfile= '';
-if (isset($_POST['load'])) {
+if (filter_has_var(INPUT_POST, 'load')) {
 	// Accept only file names, no paths
-	$loadfile= basename($_POST['filename']);
+	$loadfile= basename(filter_input(INPUT_POST, 'filename'));
 	$filepath= "$PF_CONFIG_PATH/$loadfile";
 	
 	$ruleSet= new RuleSet($View, $filepath);
@@ -88,9 +88,9 @@ if (isset($_POST['load'])) {
 }
 
 $deletefile= '';
-if (isset($_POST['remove'])) {
+if (filter_has_var(INPUT_POST, 'remove')) {
 	// Accept only file names, no paths
-	$deletefile= basename($_POST['deletefilename']);
+	$deletefile= basename(filter_input(INPUT_POST, 'deletefilename'));
 	$filepath= "$PF_CONFIG_PATH/$deletefile";
 	
 	if ($View->Controller($Output, 'DeletePfRuleFile', $filepath)) {
@@ -99,14 +99,14 @@ if (isset($_POST['remove'])) {
 }
 
 $savefile= '';
-if (isset($_POST['save'])) {
+if (filter_has_var(INPUT_POST, 'save')) {
 	$rulesStr= $View->RuleSet->generate();
 	$serialRulesArray= serialize(explode('\n', $rulesStr));
 	$testResult= $View->Controller($Output, 'TestPfRules', $serialRulesArray);
 	
 	if ($testResult) {
 		// Accept only file names, no paths
-		$savefile= basename($_POST['filename']);
+		$savefile= basename(filter_input(INPUT_POST, 'filename'));
 		$filepath= "$PF_CONFIG_PATH/$savefile";
 
 		/// @attention Use 1, not FALSE for boolean here, otherwise arg type check fails
@@ -120,7 +120,7 @@ if (isset($_POST['save'])) {
 	}
 }
 
-if ($_POST['upload']) {
+if (filter_has_var(INPUT_POST, 'upload')) {
 	if ($_FILES['file']['error'] == 0) {
 		$ruleSet= new RuleSet($View, $_FILES['file']['tmp_name'], file_get_contents($_FILES['file']['tmp_name']));
 		if ($ruleSet) {
@@ -133,8 +133,8 @@ if ($_POST['upload']) {
 	}
 }
 
-if ($_POST['download']) {
-	if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match("/MSIE/", $_SERVER['HTTP_USER_AGENT'])) {
+if (filter_has_var(INPUT_POST, 'download')) {
+	if (filter_has_var(INPUT_SERVER, 'HTTP_USER_AGENT') && preg_match("/MSIE/", filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'))) {
 		// IE Bug in download name workaround
 		ini_set('zlib.output_compression', 'Off');
 	}
@@ -151,12 +151,12 @@ require_once($VIEW_PATH.'/header.php');
 ?>
 <h2>Load rulebase</h2>
 <br />
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="submit" id="reload" name="reload" value="Reload" />
 	<label for="reload">Reload main rulebase</label>
 </form>
 <br />
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<select id="filename" name="filename">
 		<option value="" label=""></option>
 		<?php
@@ -175,7 +175,7 @@ require_once($VIEW_PATH.'/header.php');
 
 <h2>Save rulebase</h2>
 <br />
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="text" name="filename" id="filename" value="<?php echo $savefile; ?>" />
 	<input type="submit" id="save" name="save" value="Save" />
 	<label for="save">Save current working rules to file</label>
@@ -185,7 +185,7 @@ require_once($VIEW_PATH.'/header.php');
 
 <h2>Delete rulebase</h2>
 <br />
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<select id="deletefilename" name="deletefilename">
 		<option value="" label=""></option>
 		<?php
@@ -204,7 +204,7 @@ require_once($VIEW_PATH.'/header.php');
 
 <h2>Upload rulebase</h2>
 <br />
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" enctype="multipart/form-data" method="post">
+<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" enctype="multipart/form-data" method="post">
     <input type="submit" id="upload" name="upload" value="Upload" />
     <input type="hidden" name="max_file_size" value="30000" />
     Upload file: <input name="file" type="file" />
@@ -214,7 +214,7 @@ require_once($VIEW_PATH.'/header.php');
 
 <h2>Download rulebase</h2>
 <br />
-<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="submit" id="download" name="download" value="Download" />
 	<label for="download">Download current working rulebase</label>
 </form>

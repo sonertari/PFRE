@@ -63,7 +63,7 @@ function pfrewui_syslog($prio, $file, $func, $line, $msg)
 		openlog('pfrewui', LOG_PID, LOG_LOCAL0);
 		
 		if ($prio <= $LOG_LEVEL) {
-			$useratip= $_SESSION['USER'].'@'.$_SERVER['REMOTE_ADDR'];
+			$useratip= $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR');
 			$func= $func == '' ? 'NA' : $func;
 			$log= "$LOG_PRIOS[$prio] $useratip $file: $func ($line): $msg\n";
 			if (!syslog($prio, $log)) {
@@ -179,8 +179,8 @@ function SetSubmenu($default)
 {
 	global $View, $SubMenus;
 
-	if ($_GET['submenu'] && array_key_exists($_GET['submenu'], $SubMenus)) {
-		$submenu= $_GET['submenu'];
+	if (filter_has_var(INPUT_GET, 'submenu') && array_key_exists(filter_input(INPUT_GET, 'submenu'), $SubMenus)) {
+		$submenu= filter_input(INPUT_GET, 'submenu');
 	} elseif ($_SESSION['submenu']) {
 		$submenu= $_SESSION['submenu'];
 	} else {

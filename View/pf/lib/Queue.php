@@ -238,21 +238,21 @@ class Queue extends Rule
 	function processInput()
 	{
 		if (count($_POST)) {
-			$this->rule['name']= $_POST['name'];
-			$this->rule['interface']= $_POST['interface'];
-			$this->rule['parent']= $_POST['parent'];
-			$this->rule['bandwidth']= $_POST['bandwidth'];
-			$this->rule['bw-burst']= $_POST['bw-burst'];
-			$this->rule['bw-time']= $_POST['bw-time'];
-			$this->rule['min']= $_POST['min'];
-			$this->rule['min-burst']= $_POST['min-burst'];
-			$this->rule['min-time']= $_POST['min-time'];
-			$this->rule['max']= $_POST['max'];
-			$this->rule['max-burst']= $_POST['max-burst'];
-			$this->rule['max-time']= $_POST['max-time'];
-			$this->rule['qlimit']= $_POST['qlimit'];
-			$this->rule['default']= ($_POST['default'] ? TRUE : '');
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['name']= filter_input(INPUT_POST, 'name');
+			$this->rule['interface']= filter_input(INPUT_POST, 'interface');
+			$this->rule['parent']= filter_input(INPUT_POST, 'parent');
+			$this->rule['bandwidth']= filter_input(INPUT_POST, 'bandwidth');
+			$this->rule['bw-burst']= filter_input(INPUT_POST, 'bw-burst');
+			$this->rule['bw-time']= filter_input(INPUT_POST, 'bw-time');
+			$this->rule['min']= filter_input(INPUT_POST, 'min');
+			$this->rule['min-burst']= filter_input(INPUT_POST, 'min-burst');
+			$this->rule['min-time']= filter_input(INPUT_POST, 'min-time');
+			$this->rule['max']= filter_input(INPUT_POST, 'max');
+			$this->rule['max-burst']= filter_input(INPUT_POST, 'max-burst');
+			$this->rule['max-time']= filter_input(INPUT_POST, 'max-time');
+			$this->rule['qlimit']= filter_input(INPUT_POST, 'qlimit');
+			$this->rule['default']= (filter_has_var(INPUT_POST, 'default') ? TRUE : '');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
 		$this->deleteEmptyEntries();

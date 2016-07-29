@@ -485,146 +485,146 @@ class Filter extends Rule
 	
 	function processInput()
 	{
-		if (isset($_GET['dropfrom'])) {
-			$this->delEntity("from", $_GET['dropfrom']);
+		if (filter_has_var(INPUT_GET, 'dropfrom')) {
+			$this->delEntity("from", filter_input(INPUT_GET, 'dropfrom'));
 		}
 
-		if (isset($_GET['dropfromport'])) {
-			$this->delEntity("fromport", $_GET['dropfromport']);
+		if (filter_has_var(INPUT_GET, 'dropfromport')) {
+			$this->delEntity("fromport", filter_input(INPUT_GET, 'dropfromport'));
 		}
 
-		if (isset($_GET['dropto'])) {
-			$this->delEntity("to", $_GET['dropto']);
+		if (filter_has_var(INPUT_GET, 'dropto')) {
+			$this->delEntity("to", filter_input(INPUT_GET, 'dropto'));
 		}
 
-		if (isset($_GET['dropport'])) {
-			$this->delEntity("port", $_GET['dropport']);
+		if (filter_has_var(INPUT_GET, 'dropport')) {
+			$this->delEntity("port", filter_input(INPUT_GET, 'dropport'));
 		}
 
-		if (isset($_GET['dropinterface'])) {
-			$this->delEntity("interface", $_GET['dropinterface']);
+		if (filter_has_var(INPUT_GET, 'dropinterface')) {
+			$this->delEntity("interface", filter_input(INPUT_GET, 'dropinterface'));
 		}
 
-		if (isset($_GET['dropproto'])) {
-			$this->delEntity("proto", $_GET['dropproto']);
+		if (filter_has_var(INPUT_GET, 'dropproto')) {
+			$this->delEntity("proto", filter_input(INPUT_GET, 'dropproto'));
 		}
 
-		if (isset($_GET['dropuser'])) {
-			$this->delEntity("user", $_GET['dropuser']);
+		if (filter_has_var(INPUT_GET, 'dropuser')) {
+			$this->delEntity("user", filter_input(INPUT_GET, 'dropuser'));
 		}
 
-		if (isset($_GET['dropgroup'])) {
-			$this->delEntity("group", $_GET['dropgroup']);
+		if (filter_has_var(INPUT_GET, 'dropgroup')) {
+			$this->delEntity("group", filter_input(INPUT_GET, 'dropgroup'));
 		}
 
-		if (isset($_GET['dropicmptype'])) {
-			$this->delEntity("icmp-type", $_GET['dropicmptype']);
+		if (filter_has_var(INPUT_GET, 'dropicmptype')) {
+			$this->delEntity("icmp-type", filter_input(INPUT_GET, 'dropicmptype'));
 		}
 
-		if (isset($_GET['dropicmp6type'])) {
-			$this->delEntity("icmp6-type", $_GET['dropicmp6type']);
+		if (filter_has_var(INPUT_GET, 'dropicmp6type')) {
+			$this->delEntity("icmp6-type", filter_input(INPUT_GET, 'dropicmp6type'));
 		}
 
-		if (isset($_GET['dropos'])) {
-			$this->delEntity("os", $_GET['dropos']);
+		if (filter_has_var(INPUT_GET, 'dropos')) {
+			$this->delEntity("os", filter_input(INPUT_GET, 'dropos'));
 		}
 
-		if (isset($_GET['droprouteto'])) {
-			$this->delEntity("route-to", $_GET['droprouteto']);
+		if (filter_has_var(INPUT_GET, 'droprouteto')) {
+			$this->delEntity("route-to", filter_input(INPUT_GET, 'droprouteto'));
 		}
 
-		if (isset($_GET['dropreplyto'])) {
-			$this->delEntity("reply-to", $_GET['dropreplyto']);
+		if (filter_has_var(INPUT_GET, 'dropreplyto')) {
+			$this->delEntity("reply-to", filter_input(INPUT_GET, 'dropreplyto'));
 		}
 
-		if (isset($_GET['dropdupto'])) {
-			$this->delEntity("dup-to", $_GET['dropdupto']);
+		if (filter_has_var(INPUT_GET, 'dropdupto')) {
+			$this->delEntity("dup-to", filter_input(INPUT_GET, 'dropdupto'));
 		}
 
 		if (count($_POST)) {
 			if (filter_input(INPUT_POST, 'addfrom') != '') {
-				$this->addEntity("from", $_POST['addfrom']);
+				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
 			}
 
 			if (filter_input(INPUT_POST, 'addfromport') != '') {
-				$this->addEntity("fromport", $_POST['addfromport']);
+				$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
 			}
 
 			if (filter_input(INPUT_POST, 'addto') != '') {
-				$this->addEntity("to", $_POST['addto']);
+				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
 			}
 
 			if (filter_input(INPUT_POST, 'addport') != '') {
-				$this->addEntity("port", $_POST['addport']);
+				$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
 			}
 
 			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity("interface", $_POST['addinterface']);
+				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
 			}
 
 			if (filter_input(INPUT_POST, 'addproto') != '') {
-				$this->addEntity("proto", $_POST['addproto']);
+				$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
 			}
 
 			if (filter_input(INPUT_POST, 'adduser') != '') {
-				$this->addEntity("user", $_POST['adduser']);
+				$this->addEntity("user", filter_input(INPUT_POST, 'adduser'));
 			}
 
 			if (filter_input(INPUT_POST, 'addgroup') != '') {
-				$this->addEntity("group", $_POST['addgroup']);
+				$this->addEntity("group", filter_input(INPUT_POST, 'addgroup'));
 			}
 
 			if (filter_input(INPUT_POST, 'addicmptype') != '') {
-				$this->addEntity("icmp-type", $_POST['addicmptype']);
+				$this->addEntity("icmp-type", filter_input(INPUT_POST, 'addicmptype'));
 			}
 
 			if (filter_input(INPUT_POST, 'addicmp6type') != '') {
-				$this->addEntity("icmp6-type", $_POST['addicmp6type']);
+				$this->addEntity("icmp6-type", filter_input(INPUT_POST, 'addicmp6type'));
 			}
 
 			if (filter_input(INPUT_POST, 'addos') != '') {
-				$this->addEntity("os", preg_replace('/"/', '', $_POST['addos']));
+				$this->addEntity("os", preg_replace('/"/', '', filter_input(INPUT_POST, 'addos')));
 			}
 
 			if (filter_input(INPUT_POST, 'addrouteto') != '') {
-				$this->addEntity("route-to", preg_replace('/"/', '', $_POST['addrouteto']));
+				$this->addEntity("route-to", preg_replace('/"/', '', filter_input(INPUT_POST, 'addrouteto')));
 			}
 
 			if (filter_input(INPUT_POST, 'addreplyto') != '') {
-				$this->addEntity("reply-to", preg_replace('/"/', '', $_POST['addreplyto']));
+				$this->addEntity("reply-to", preg_replace('/"/', '', filter_input(INPUT_POST, 'addreplyto')));
 			}
 
 			if (filter_input(INPUT_POST, 'adddupto') != '') {
-				$this->addEntity("dup-to", preg_replace('/"/', '', $_POST['adddupto']));
+				$this->addEntity("dup-to", preg_replace('/"/', '', filter_input(INPUT_POST, 'adddupto')));
 			}
 
-			$this->rule['type']= $_POST['type'];
-			$this->rule['direction']= $_POST['direction'];
-			$this->rule['log']= $_POST['log'];
-			$this->rule['quick']= ($_POST['quick'] ? TRUE : '');
-			$this->rule['comment']= $_POST['comment'];
-			$this->rule['label']= preg_replace('/"/', '', $_POST['label']);
-			$this->rule['tag']= preg_replace('/"/', '', $_POST['tag']);
-			$this->rule['tagged']= preg_replace('/"/', '', $_POST['tagged']);
+			$this->rule['type']= filter_input(INPUT_POST, 'type');
+			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
+			$this->rule['log']= filter_input(INPUT_POST, 'log');
+			$this->rule['quick']= (filter_has_var(INPUT_POST, 'quick') ? TRUE : '');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
+			$this->rule['label']= preg_replace('/"/', '', filter_input(INPUT_POST, 'label'));
+			$this->rule['tag']= preg_replace('/"/', '', filter_input(INPUT_POST, 'tag'));
+			$this->rule['tagged']= preg_replace('/"/', '', filter_input(INPUT_POST, 'tagged'));
 
-			if (isset($_POST['icmp-code'])) {
-				$this->rule['icmp-code']= $_POST['icmp-code'];
+			if (filter_has_var(INPUT_POST, 'icmp-code')) {
+				$this->rule['icmp-code']= filter_input(INPUT_POST, 'icmp-code');
 			}
 
-			if (isset($_POST['icmp6-code'])) {
-				$this->rule['icmp6-code']= $_POST['icmp6-code'];
+			if (filter_has_var(INPUT_POST, 'icmp6-code')) {
+				$this->rule['icmp6-code']= filter_input(INPUT_POST, 'icmp6-code');
 			}
 
-			$this->rule['family']= $_POST['family'];
-			$this->rule['divert-reply']= ($_POST['divert-reply'] ? TRUE : '');
-			$this->rule['allow-opts']= ($_POST['allow-opts'] ? TRUE : '');
+			$this->rule['family']= filter_input(INPUT_POST, 'family');
+			$this->rule['divert-reply']= (filter_has_var(INPUT_POST, 'divert-reply') ? TRUE : '');
+			$this->rule['allow-opts']= (filter_has_var(INPUT_POST, 'allow-opts') ? TRUE : '');
 
-			if (isset($_POST['stateful'])) {
-				$this->rule['state']= $_POST['stateful'];
+			if (filter_has_var(INPUT_POST, 'stateful')) {
+				$this->rule['state']= filter_input(INPUT_POST, 'stateful');
 			}
 
-			if ($_POST['type'] == "block") {
-				$this->rule['blockoption']= $_POST['blockoption'];
+			if (filter_input(INPUT_POST, 'type') == "block") {
+				$this->rule['blockoption']= filter_input(INPUT_POST, 'blockoption');
 			} else {
 				unset($this->rule['blockoption']);
 			}
@@ -633,17 +633,17 @@ class Filter extends Rule
 
 			$this->rule['probability']= filter_input(INPUT_POST, 'probability');
 
-			if (($_POST['queue-pri'] != '') && ($_POST['queue-sec'] != '')) {
+			if ((filter_input(INPUT_POST, 'queue-pri') != '') && (filter_input(INPUT_POST, 'queue-sec') != '')) {
 				$this->rule['queue']= array();
-				$this->rule['queue']['0']= $_POST['queue-pri'];
-				$this->rule['queue']['1']= $_POST['queue-sec'];
-			} elseif ($_POST['queue-pri'] != '') {
-				$this->rule['queue']= $_POST['queue-pri'];
+				$this->rule['queue']['0']= filter_input(INPUT_POST, 'queue-pri');
+				$this->rule['queue']['1']= filter_input(INPUT_POST, 'queue-sec');
+			} elseif (filter_input(INPUT_POST, 'queue-pri') != '') {
+				$this->rule['queue']= filter_input(INPUT_POST, 'queue-pri');
 			} else {
 				unset($this->rule['queue']);
 			}
 
-			if (isset($_POST['all'])) {
+			if (filter_has_var(INPUT_POST, 'all')) {
 				$this->rule['all']= TRUE;
 				unset($this->rule['from']);
 				unset($this->rule['fromport']);

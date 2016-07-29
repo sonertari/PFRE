@@ -52,7 +52,7 @@ require_once($ROOT.'/lib/setup.php');
 chdir(dirname(__FILE__));
 
 /// This is a command line tool, should never be requested on the web interface.
-if (isset($_SERVER['SERVER_ADDR'])) {
+if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {
 	pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Requested on the wui, exiting...');
 	header('Location: /index.php');
 }

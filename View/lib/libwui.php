@@ -45,7 +45,7 @@
  */
 function AuthHTMLHeader()
 {
-	if (isset($_GET['logout'])) {
+	if (filter_has_var(INPUT_GET, 'logout')) {
 		LogUserOut();
 	}
 
@@ -66,7 +66,7 @@ function AuthHTMLFooter()
 	<table>
 		<tr id="footer">
 			<td class="user">
-				<a href="<?php echo $_SERVER['PHP_SELF'] ?>?logout"><?php echo _TITLE('Logout') ?></a>
+				<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?logout"><?php echo _TITLE('Logout') ?></a>
 
 				(<label id="timeout"></label>)
 				<script language="javascript" type="text/javascript">
@@ -97,11 +97,11 @@ function AuthHTMLFooter()
 					// -->
 				</script>
 
-				<?php echo $_SESSION['USER'].'@'.$_SERVER['REMOTE_ADDR'] ?>
+				<?php echo $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR') ?>
 			</td>
 			<?php
 			if (in_array($_SESSION['USER'], $ADMIN)) {
-				$file= $_SERVER['DOCUMENT_ROOT'].$_SERVER['PHP_SELF'];
+				$file= filter_input(INPUT_SERVER, 'DOCUMENT_ROOT').filter_input(INPUT_SERVER, 'PHP_SELF');
 				if ($View->Controller($output, 'GetFileCvsTag', $file)) {
 					$cvstag= $output[0];
 				}

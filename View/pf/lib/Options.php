@@ -223,58 +223,58 @@ class Options extends Rule
 	function processInput()
 	{
 		if (count($_POST)) {
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 
-			if (isset($_POST['block-policy'])) {
-				$this->rule['option']['block-policy']= $_POST['block-policy'];
+			if (filter_has_var(INPUT_POST, 'block-policy')) {
+				$this->rule['option']['block-policy']= filter_input(INPUT_POST, 'block-policy');
 			}
-			if (isset($_POST['optimization'])) {
-				$this->rule['option']['optimization']= $_POST['optimization'];
+			if (filter_has_var(INPUT_POST, 'optimization')) {
+				$this->rule['option']['optimization']= filter_input(INPUT_POST, 'optimization');
 			}
-			if (isset($_POST['ruleset-optimization'])) {
-				$this->rule['option']['ruleset-optimization']= $_POST['ruleset-optimization'];
+			if (filter_has_var(INPUT_POST, 'ruleset-optimization')) {
+				$this->rule['option']['ruleset-optimization']= filter_input(INPUT_POST, 'ruleset-optimization');
 			}
-			if (isset($_POST['state-policy'])) {
-				$this->rule['option']['state-policy']= $_POST['state-policy'];
+			if (filter_has_var(INPUT_POST, 'state-policy')) {
+				$this->rule['option']['state-policy']= filter_input(INPUT_POST, 'state-policy');
 			}
-			if (isset($_POST['debug'])) {
-				$this->rule['option']['debug']= $_POST['debug'];
+			if (filter_has_var(INPUT_POST, 'debug')) {
+				$this->rule['option']['debug']= filter_input(INPUT_POST, 'debug');
 			}
-			if (isset($_POST['fingerprints'])) {
-				$this->rule['option']['fingerprints']= trim(preg_replace("/\"/", "", $_POST['fingerprints']));
+			if (filter_has_var(INPUT_POST, 'fingerprints')) {
+				$this->rule['option']['fingerprints']= trim(preg_replace("/\"/", "", filter_input(INPUT_POST, 'fingerprints')));
 			}
-			if (isset($_POST['states'])) {
-				$this->rule['option']['states']= trim($_POST['states']);
+			if (filter_has_var(INPUT_POST, 'states')) {
+				$this->rule['option']['states']= trim(filter_input(INPUT_POST, 'states'));
 			}
-			if (isset($_POST['frags'])) {
-				$this->rule['option']['frags']= trim($_POST['frags']);
+			if (filter_has_var(INPUT_POST, 'frags')) {
+				$this->rule['option']['frags']= trim(filter_input(INPUT_POST, 'frags'));
 			}
-			if (isset($_POST['src-nodes'])) {
-				$this->rule['option']['src-nodes']= trim($_POST['srcnodes']);
+			if (filter_has_var(INPUT_POST, 'src-nodes')) {
+				$this->rule['option']['src-nodes']= trim(filter_input(INPUT_POST, 'srcnodes'));
 			}
-			if (isset($_POST['tables'])) {
-				$this->rule['option']['tables']= trim($_POST['tables']);
+			if (filter_has_var(INPUT_POST, 'tables')) {
+				$this->rule['option']['tables']= trim(filter_input(INPUT_POST, 'tables'));
 			}
-			if (isset($_POST['table-entries'])) {
-				$this->rule['option']['table-entries']= trim($_POST['table-entries']);
+			if (filter_has_var(INPUT_POST, 'table-entries')) {
+				$this->rule['option']['table-entries']= trim(filter_input(INPUT_POST, 'table-entries'));
 			}
 
-			if (isset($_POST['loginterface'])) {
-				if (strlen(trim($_POST['loginterface']))) {
-					$this->rule['option']['loginterface']= trim($_POST['loginterface']);
+			if (filter_has_var(INPUT_POST, 'loginterface')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'loginterface')))) {
+					$this->rule['option']['loginterface']= trim(filter_input(INPUT_POST, 'loginterface'));
 				} else {
 					$this->rule['option']['loginterface']= '';
 				}
 			}
-			if (isset($_POST['skip'])) {
-				if (strlen(trim($_POST['skip']))) {
-					if (count(preg_split("/[\s,\t]+/", trim($_POST['skip']))) > 1) {
+			if (filter_has_var(INPUT_POST, 'skip')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'skip')))) {
+					if (count(preg_split("/[\s,\t]+/", trim(filter_input(INPUT_POST, 'skip')))) > 1) {
 						unset($this->rule['option']['skip']);
-						foreach (preg_split("/[\s,\t]+/", trim($_POST['skip'])) as $skip) {
+						foreach (preg_split("/[\s,\t]+/", trim(filter_input(INPUT_POST, 'skip'))) as $skip) {
 							$this->rule['option']['skip'][]= $skip;
 						}
 					} else {
-						$this->rule['option']['skip']= trim($_POST['skip']);
+						$this->rule['option']['skip']= trim(filter_input(INPUT_POST, 'skip'));
 					}
 				} else {
 					$this->rule['option']['skip']= '';
@@ -289,7 +289,7 @@ class Options extends Rule
 	{
 		// XXX: Fix this
 		if (count($_POST)) {
-			$type= $_POST['type'];
+			$type= filter_input(INPUT_POST, 'type');
 		}
 		if (isset($this->rule['option']) && count($this->rule['option'])) {
 			$type= key($this->rule['option']);

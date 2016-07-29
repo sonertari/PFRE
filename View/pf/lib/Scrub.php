@@ -278,40 +278,40 @@ class Scrub extends Rule
 	
 	function processInput()
 	{
-		if (isset($_GET['dropinterface'])) {
-			$this->delEntity("interface", $_GET['dropinterface']);
+		if (filter_has_var(INPUT_GET, 'dropinterface')) {
+			$this->delEntity("interface", filter_input(INPUT_GET, 'dropinterface'));
 		}
 
-		if (isset($_GET['dropto'])) {
-			$this->delEntity("to", $_GET['dropto']);
+		if (filter_has_var(INPUT_GET, 'dropto')) {
+			$this->delEntity("to", filter_input(INPUT_GET, 'dropto'));
 		}
 
-		if (isset($_GET['dropfrom'])) {
-			$this->delEntity("from", $_GET['dropfrom']);
+		if (filter_has_var(INPUT_GET, 'dropfrom')) {
+			$this->delEntity("from", filter_input(INPUT_GET, 'dropfrom'));
 		}
 
 		if (count($_POST)) {
 			if (filter_input(INPUT_POST, 'addfrom') != '') {
-				$this->addEntity("from", $_POST['addfrom']);
+				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
 			}
 
 			if (filter_input(INPUT_POST, 'addto') != '') {
-				$this->addEntity("to", $_POST['addto']);
+				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
 			}
 
 			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity("interface", $_POST['addinterface']);
+				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
 			}
 
-			$this->rule['direction']= $_POST['direction'];
-			$this->rule['no-df']= ($_POST['no-df'] ? TRUE : '');
-			$this->rule['random-id']= ($_POST['random-id'] ? TRUE : '');
-			$this->rule['min-ttl']= $_POST['min-ttl'];
-			$this->rule['max-mss']= $_POST['max-mss'];
-			$this->rule['reassemble']= $_POST['reassemble'];
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
+			$this->rule['no-df']= (filter_has_var(INPUT_POST, 'no-df') ? TRUE : '');
+			$this->rule['random-id']= (filter_has_var(INPUT_POST, 'random-id') ? TRUE : '');
+			$this->rule['min-ttl']= filter_input(INPUT_POST, 'min-ttl');
+			$this->rule['max-mss']= filter_input(INPUT_POST, 'max-mss');
+			$this->rule['reassemble']= filter_input(INPUT_POST, 'reassemble');
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 
-			if ($_POST['all']) {
+			if (filter_has_var(INPUT_POST, 'all')) {
 				$this->rule['all']= TRUE;
 				unset($this->rule['from']);
 				unset($this->rule['to']);

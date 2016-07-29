@@ -50,15 +50,15 @@ $ruleCategoryNames = array(
     'blank' => 'Blank Line',
 );
 
-if (isset($_GET['sender']) && array_key_exists($_GET['sender'], $ruleCategoryNames)) {
-    $edit= $_GET['sender'];
-	$rulenumber= $_GET['rulenumber'];
+if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_GET, 'sender'), $ruleCategoryNames)) {
+    $edit= filter_input(INPUT_GET, 'sender');
+	$rulenumber= filter_input(INPUT_GET, 'rulenumber');
 	
-	if (isset($_GET['action']) && $_GET['action'] == 'add') {
+	if (filter_has_var(INPUT_GET, 'action') && filter_input(INPUT_GET, 'action') == 'add') {
 		// Get action has precedence
 		// Accept only add action here
 		$action= 'add';
-	} elseif (isset($_POST['state']) && $_POST['state'] == 'create') {
+	} elseif (filter_has_var(INPUT_POST, 'state') && filter_input(INPUT_POST, 'state') == 'create') {
 		// Post action is used while saving new rules, create is the next state after add
 		// Accept only create action here
 		$action= 'create';
@@ -68,9 +68,9 @@ if (isset($_GET['sender']) && array_key_exists($_GET['sender'], $ruleCategoryNam
 	}
 }
 
-if (isset($_POST['add']) && $_POST['rulenumber'] != "") {
-    $edit= $_POST['category'];
-	$rulenumber= $_POST['rulenumber'];
+if (filter_has_var(INPUT_POST, 'add') && filter_input(INPUT_POST, 'rulenumber') != "") {
+    $edit= filter_input(INPUT_POST, 'category');
+	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
 	$action= 'add';
 }
 
@@ -84,19 +84,19 @@ if (isset($edit)) {
     exit();
 }
 
-if (isset($_GET['up'])) {
-    $View->RuleSet->up($_GET['up']);
+if (filter_has_var(INPUT_GET, 'up')) {
+    $View->RuleSet->up(filter_input(INPUT_GET, 'up'));
 }
 
-if (isset($_GET['down'])) {
-    $View->RuleSet->down($_GET['down']);
+if (filter_has_var(INPUT_GET, 'down')) {
+    $View->RuleSet->down(filter_input(INPUT_GET, 'down'));
 }
 
-if (isset($_GET['del'])) {
-    $View->RuleSet->del($_GET['del']);
+if (filter_has_var(INPUT_GET, 'del')) {
+    $View->RuleSet->del(filter_input(INPUT_GET, 'del'));
 }
 
-if ($_POST['delete']) {
+if (filter_has_var(INPUT_POST, 'delete')) {
 	$View->RuleSet->deleteRules();
 	PrintHelpWindow('Rulebase deleted');
 }
@@ -109,13 +109,13 @@ require_once($VIEW_PATH.'/header.php');
 ?>
 <div id="main">
     <fieldset>
-        <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+        <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
             <label for="category">Add new</label>
             <select id="category" name="category">
                 <?php
                 foreach ($ruleCategoryNames as $category => $name) {
                     ?>
-                    <option value="<?php echo $category; ?>" label="<?php echo $category; ?>" <?php echo ($_POST['category'] == $category ? 'selected' : ''); ?>><?php echo $name; ?></option>
+                    <option value="<?php echo $category; ?>" label="<?php echo $category; ?>" <?php echo (filter_input(INPUT_POST, 'category') == $category ? 'selected' : ''); ?>><?php echo $name; ?></option>
                     <?php
                 }
                 ?>

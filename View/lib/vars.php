@@ -41,7 +41,7 @@
  */
 
 /// Root directory of the project tree obtained from Apache.
-$VIEW_PATH= $_SERVER['DOCUMENT_ROOT'];
+$VIEW_PATH= filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
 
 require_once($VIEW_PATH.'/lib/setup.php');
 
@@ -77,7 +77,7 @@ if ($_SESSION['Timeout']) {
 }
 
 if (!isset($_SESSION['USER']) || $_SESSION['USER'] == 'loggedout') {
-	header('Location: http://'.$_SERVER['SERVER_ADDR'].'/index.php');
+	header('Location: http://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').'/index.php');
 }
 
 $ROOT= dirname(dirname(dirname(__FILE__)));

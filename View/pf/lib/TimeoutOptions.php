@@ -171,116 +171,116 @@ class TimeoutOptions extends Rule
 	function processInput()
 	{
 		if (count($_POST)) {
-			$this->rule['comment']= $_POST['comment'];
+			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 
-			if (isset($_POST['tcp_first'])) {
-				if (strlen(trim($_POST['tcp_first']))) {
-					$this->rule['proto']['tcp']['first']= trim($_POST['tcp_first']);
+			if (filter_has_var(INPUT_POST, 'tcp_first')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'tcp_first')))) {
+					$this->rule['proto']['tcp']['first']= trim(filter_input(INPUT_POST, 'tcp_first'));
 				} else {
 					unset($this->rule['proto']['tcp']['first']);
 				}
 			}
-			if (isset($_POST['tcp_opening'])) {
-				if (strlen(trim($_POST['tcp_opening']))) {
-					$this->rule['proto']['tcp']['opening']= trim($_POST['tcp_opening']);
+			if (filter_has_var(INPUT_POST, 'tcp_opening')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'tcp_opening')))) {
+					$this->rule['proto']['tcp']['opening']= trim(filter_input(INPUT_POST, 'tcp_opening'));
 				} else {
 					unset($this->rule['proto']['tcp']['opening']);
 				}
 			}
-			if (isset($_POST['tcp_established'])) {
-				if (strlen(trim($_POST['tcp_established']))) {
-					$this->rule['proto']['tcp']['established']= trim($_POST['tcp_established']);
+			if (filter_has_var(INPUT_POST, 'tcp_established')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'tcp_established')))) {
+					$this->rule['proto']['tcp']['established']= trim(filter_input(INPUT_POST, 'tcp_established'));
 				} else {
 					unset($this->rule['proto']['tcp']['established']);
 				}
 			}
-			if (isset($_POST['tcp_closing'])) {
-				if (strlen(trim($_POST['tcp_closing']))) {
-					$this->rule['proto']['tcp']['closing']= trim($_POST['tcp_closing']);
+			if (filter_has_var(INPUT_POST, 'tcp_closing')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'tcp_closing')))) {
+					$this->rule['proto']['tcp']['closing']= trim(filter_input(INPUT_POST, 'tcp_closing'));
 				} else {
 					unset($this->rule['proto']['tcp']['closing']);
 				}
 			}
-			if (isset($_POST['tcp_finwait'])) {
-				if (strlen(trim($_POST['tcp_finwait']))) {
-					$this->rule['proto']['tcp']['finwait']= trim($_POST['tcp_finwait']);
+			if (filter_has_var(INPUT_POST, 'tcp_finwait')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'tcp_finwait')))) {
+					$this->rule['proto']['tcp']['finwait']= trim(filter_input(INPUT_POST, 'tcp_finwait'));
 				} else {
 					unset($this->rule['proto']['tcp']['finwait']);
 				}
 			}
-			if (isset($_POST['tcp_closed'])) {
-				if (strlen(trim($_POST['tcp_closed']))) {
-					$this->rule['proto']['tcp']['closed']= trim($_POST['tcp_closed']);
+			if (filter_has_var(INPUT_POST, 'tcp_closed')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'tcp_closed')))) {
+					$this->rule['proto']['tcp']['closed']= trim(filter_input(INPUT_POST, 'tcp_closed'));
 				} else {
 					unset($this->rule['proto']['tcp']['closed']);
 				}
 			}
-			if (isset($_POST['udp_first'])) {
-				if (strlen(trim($_POST['udp_first']))) {
-					$this->rule['proto']['udp']['first']= trim($_POST['udp_first']);
+			if (filter_has_var(INPUT_POST, 'udp_first')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'udp_first')))) {
+					$this->rule['proto']['udp']['first']= trim(filter_input(INPUT_POST, 'udp_first'));
 				} else {
 					unset($this->rule['proto']['udp']['first']);
 				}
 			}
-			if (isset($_POST['udp_single'])) {
-				if (strlen(trim($_POST['udp_single']))) {
-					$this->rule['proto']['udp']['single']= trim($_POST['udp_single']);
+			if (filter_has_var(INPUT_POST, 'udp_single')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'udp_single')))) {
+					$this->rule['proto']['udp']['single']= trim(filter_input(INPUT_POST, 'udp_single'));
 				} else {
 					unset($this->rule['proto']['udp']['single']);
 				}
 			}
-			if (isset($_POST['udp_multiple'])) {
-				if (strlen(trim($_POST['udp_multiple']))) {
-					$this->rule['proto']['udp']['multiple']= trim($_POST['udp_multiple']);
+			if (filter_has_var(INPUT_POST, 'udp_multiple')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'udp_multiple')))) {
+					$this->rule['proto']['udp']['multiple']= trim(filter_input(INPUT_POST, 'udp_multiple'));
 				} else {
 					unset($this->rule['proto']['udp']['multiple']);
 				}
 			}
-			if (isset($_POST['icmp_first'])) {
-				if (strlen(trim($_POST['icmp_first']))) {
-					$this->rule['proto']['icmp']['first']= trim($_POST['icmp_first']);
+			if (filter_has_var(INPUT_POST, 'icmp_first')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'icmp_first')))) {
+					$this->rule['proto']['icmp']['first']= trim(filter_input(INPUT_POST, 'icmp_first'));
 				} else {
 					unset($this->rule['proto']['icmp']['first']);
 				}
 			}
-			if (isset($_POST['icmp_error'])) {
-				if (strlen(trim($_POST['icmp_error']))) {
-					$this->rule['proto']['icmp']['error']= trim($_POST['icmp_error']);
+			if (filter_has_var(INPUT_POST, 'icmp_error')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'icmp_error')))) {
+					$this->rule['proto']['icmp']['error']= trim(filter_input(INPUT_POST, 'icmp_error'));
 				} else {
 					unset($this->rule['proto']['icmp']['error']);
 				}
 			}
-			if (isset($_POST['other_first'])) {
-				if (strlen(trim($_POST['other_first']))) {
-					$this->rule['proto']['other']['first']= trim($_POST['other_first']);
+			if (filter_has_var(INPUT_POST, 'other_first')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'other_first')))) {
+					$this->rule['proto']['other']['first']= trim(filter_input(INPUT_POST, 'other_first'));
 				} else {
 					unset($this->rule['proto']['other']['first']);
 				}
 			}
-			if (isset($_POST['other_single'])) {
-				if (strlen(trim($_POST['other_single']))) {
-					$this->rule['proto']['other']['single']= trim($_POST['other_single']);
+			if (filter_has_var(INPUT_POST, 'other_single')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'other_single')))) {
+					$this->rule['proto']['other']['single']= trim(filter_input(INPUT_POST, 'other_single'));
 				} else {
 					unset($this->rule['proto']['other']['single']);
 				}
 			}
-			if (isset($_POST['other_multiple'])) {
-				if (strlen(trim($_POST['other_multiple']))) {
-					$this->rule['proto']['other']['multiple']= trim($_POST['other_multiple']);
+			if (filter_has_var(INPUT_POST, 'other_multiple')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'other_multiple')))) {
+					$this->rule['proto']['other']['multiple']= trim(filter_input(INPUT_POST, 'other_multiple'));
 				} else {
 					unset($this->rule['proto']['other']['multiple']);
 				}
 			}
-			if (isset($_POST['adaptive_start'])) {
-				if (strlen(trim($_POST['adaptive_start']))) {
-					$this->rule['proto']['adaptive']['start']= trim($_POST['adaptive_start']);
+			if (filter_has_var(INPUT_POST, 'adaptive_start')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'adaptive_start')))) {
+					$this->rule['proto']['adaptive']['start']= trim(filter_input(INPUT_POST, 'adaptive_start'));
 				} else {
 					unset($this->rule['proto']['adaptive']['start']);
 				}
 			}
-			if (isset($_POST['adaptive_end'])) {
-				if (strlen(trim($_POST['adaptive_end']))) {
-					$this->rule['proto']['adaptive']['end']= trim($_POST['adaptive_end']);
+			if (filter_has_var(INPUT_POST, 'adaptive_end')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'adaptive_end')))) {
+					$this->rule['proto']['adaptive']['end']= trim(filter_input(INPUT_POST, 'adaptive_end'));
 				} else {
 					unset($this->rule['proto']['adaptive']['end']);
 				}

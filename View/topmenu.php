@@ -47,7 +47,7 @@ AuthHTMLHeader();
 			<tr>
 				<td>
 					<?php
-					$FileName= basename($_SERVER['PHP_SELF']);					
+					$FileName= basename(filter_input(INPUT_SERVER, 'PHP_SELF'));					
 					$PageActivated= FALSE;
 					if (in_array($_SESSION['USER'], $SubMenus[$Submenu]['Perms'])) {
 						$_SESSION['submenu']= $Submenu;

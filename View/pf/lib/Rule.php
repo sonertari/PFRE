@@ -360,20 +360,20 @@ class Rule
 		<?php
 		if ($rulenumber > 0) {
 			?>
-			<a href="<?php echo $_SERVER['PHP_SELF']; ?>?<?php echo $up; ?>=<?php echo $rulenumber; ?>" title="Move up">u</a>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $up; ?>=<?php echo $rulenumber; ?>" title="Move up">u</a>
 			<?php
 		} else {
 			echo ' u ';
 		}
 		if ($rulenumber < $count) {
 			?>
-			<a href="<?php echo $_SERVER['PHP_SELF']; ?>?<?php echo $down; ?>=<?php echo $rulenumber; ?>" title="Move down">d</a>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $down; ?>=<?php echo $rulenumber; ?>" title="Move down">d</a>
 			<?php
 		} else {
 			echo ' d ';
 		}
 		?>
-		<a href="<?php echo $_SERVER['PHP_SELF']; ?>?<?php echo $del; ?>=<?php echo $rulenumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $rulenumber; ?>?')">x</a>
+		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $rulenumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $rulenumber; ?>?')">x</a>
 		<?php
 	}
 	

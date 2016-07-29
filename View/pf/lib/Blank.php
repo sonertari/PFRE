@@ -72,7 +72,7 @@ class Blank extends Rule
 		if (count($_POST)) {
 			// Untaint: convert all into blank lines
 			$blank= '';
-			foreach (explode("\n", $_POST['blank']) as $line) {
+			foreach (explode("\n", filter_input(INPUT_POST, 'blank')) as $line) {
 				$blank.= "\n";
 			}
 			$this->rule['blank']= $blank;

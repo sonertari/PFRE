@@ -35,29 +35,29 @@
 
 /// Force https
 if ($ForceHTTPs) {
-	if (!isset($_SERVER['HTTPS'])) {
-		header('Location: https://'.$_SERVER['SERVER_ADDR'].$_SERVER['REQUEST_URI']);
+	if (!filter_has_var(INPUT_SERVER, 'HTTPS')) {
+		header('Location: https://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').filter_input(INPUT_SERVER, 'REQUEST_URI'));
 	}
 }
 
 require_once('include.php');
 
 if ($_POST) {
-	// User isset() here and allow posting empty strings to display error message
-	if (isset($_POST['User'], $_POST['NewPassword'], $_POST['ReNewPassword'])) {
-		if (in_array($_POST['User'], $ALL_USERS)) {
-			if ($_POST['NewPassword'] === $_POST['ReNewPassword']) {
-				if (preg_match('/^\w{8,}$/', $_POST['NewPassword'])) {
-					if ($View->Controller($Output, 'CheckAuthentication', $_POST['User'], sha1($_POST['CurrentPassword']))) {
-						if ($View->Controller($Output, 'SetPassword', $_POST['User'], sha1($_POST['NewPassword']))) {
-							pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'User password changed: '.$_POST['User']);
-							if ($_SESSION['USER'] == $_POST['User']) {
+	// Allow posting empty strings to display an error message
+	if (filter_has_var(INPUT_POST, 'User') && filter_has_var(INPUT_POST, 'NewPassword') && filter_has_var(INPUT_POST, 'ReNewPassword')) {
+		if (in_array(filter_input(INPUT_POST, 'User'), $ALL_USERS)) {
+			if (filter_input(INPUT_POST, 'NewPassword') === filter_input(INPUT_POST, 'ReNewPassword')) {
+				if (preg_match('/^\w{8,}$/', filter_input(INPUT_POST, 'NewPassword'))) {
+					if ($View->Controller($Output, 'CheckAuthentication', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'CurrentPassword')))) {
+						if ($View->Controller($Output, 'SetPassword', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'NewPassword')))) {
+							pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'User password changed: '.filter_input(INPUT_POST, 'User'));
+							if ($_SESSION['USER'] == filter_input(INPUT_POST, 'User')) {
 								// Log user out if she changes her own password, currently only admin can do that
 								LogUserOut('User password changed');
 							}
 						}
 						else {
-							pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Password change failed: '.$_POST['User']);
+							pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Password change failed: '.filter_input(INPUT_POST, 'User'));
 						}
 					}
 					else {
@@ -68,45 +68,45 @@ if ($_POST) {
 				}
 				else {
 					PrintHelpWindow(_NOTICE('FAILED').': '._NOTICE('Not a valid password'), 'auto', 'ERROR');
-					pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Password change failed: '.$_POST['User']);
+					pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Password change failed: '.filter_input(INPUT_POST, 'User'));
 				}
 			}
 			else {
 				PrintHelpWindow(_NOTICE('FAILED').': '._NOTICE('Passwords do not match'), 'auto', 'ERROR');
-				pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Passwords do not match: '.$_POST['User']);
+				pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Passwords do not match: '.filter_input(INPUT_POST, 'User'));
 			}
 		}
 		else {
 			PrintHelpWindow(_NOTICE('FAILED').': '._NOTICE('pfre currently supports only admin and user usernames'), 'auto', 'ERROR');
-			pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Invalid user: '.$_POST['User']);
+			pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Invalid user: '.filter_input(INPUT_POST, 'User'));
 		}
 	}
-	else if ($_POST['LogLevel']) {
-		if ($View->Controller($Output, 'SetLogLevel', $_POST['LogLevel'])) {
-			pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'LogLevel set: '.$_POST['LogLevel']);
+	else if (filter_has_var(INPUT_POST, 'LogLevel')) {
+		if ($View->Controller($Output, 'SetLogLevel', filter_input(INPUT_POST, 'LogLevel'))) {
+			pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'LogLevel set: '.filter_input(INPUT_POST, 'LogLevel'));
 			// Reset $LOG_LEVEL to its new value
 			require($ROOT.'/lib/setup.php');
 		}
 	}
 	else {
-		if ($_POST['DisableHelpBoxes']) {
+		if (filter_has_var(INPUT_POST, 'DisableHelpBoxes')) {
 			$View->Controller($Output, 'SetHelpBoxes', 'FALSE');
 		}
-		else if ($_POST['EnableHelpBoxes']) {
+		else if (filter_has_var(INPUT_POST, 'EnableHelpBoxes')) {
 			$View->Controller($Output, 'SetHelpBoxes', 'TRUE');
 		}
-		else if ($_POST['SessionTimeout']) {
-			$View->Controller($Output, 'SetSessionTimeout', $_POST['SessionTimeout']);
+		else if (filter_has_var(INPUT_POST, 'SessionTimeout')) {
+			$View->Controller($Output, 'SetSessionTimeout', filter_input(INPUT_POST, 'SessionTimeout'));
 		}
-		else if ($_POST['DisableForceHTTPs'] || $_POST['EnableForceHTTPs']) {
-			if ($_POST['DisableForceHTTPs']) {
+		else if (filter_input(INPUT_POST, 'DisableForceHTTPs') || filter_input(INPUT_POST, 'EnableForceHTTPs')) {
+			if (filter_has_var(INPUT_POST, 'DisableForceHTTPs')) {
 				$View->Controller($Output, 'SetForceHTTPs', 'FALSE');
 			}
-			else if ($_POST['EnableForceHTTPs']) {
+			else if (filter_has_var(INPUT_POST, 'EnableForceHTTPs')) {
 				$View->Controller($Output, 'SetForceHTTPs', 'TRUE');
 			}
 			// Reload the page using plain HTTP to activate the change
-			header('Location: http://'.$_SERVER['SERVER_ADDR'].$_SERVER['REQUEST_URI']);
+			header('Location: http://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').filter_input(INPUT_SERVER, 'REQUEST_URI'));
 		}
 		// Reset defaults to their new values
 		require($VIEW_PATH.'/lib/setup.php');
@@ -116,7 +116,7 @@ if ($_POST) {
 require_once($VIEW_PATH.'/header.php');
 ?>
 <table id="nvp">
-	<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+	<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 		<tr class="oddline">
 			<td class="titlegrouptop">
 				<?php echo _TITLE('User').':' ?>
@@ -161,7 +161,7 @@ require_once($VIEW_PATH.'/header.php');
 			<?php echo _TITLE('Log level').':' ?>
 		</td>
 		<td>
-			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<select name="LogLevel">
 					<?php
 					foreach ($LOG_PRIOS as $Prio) {
@@ -186,7 +186,7 @@ require_once($VIEW_PATH.'/header.php');
 			<?php echo _TITLE('Help boxes').':' ?>
 		</td>
 		<td>
-			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<?php
 				$Button= $ShowHelpBox ? 'Disable' : 'Enable';
 				?>
@@ -204,7 +204,7 @@ require_once($VIEW_PATH.'/header.php');
 			<?php echo _TITLE('Session timeout').':' ?>
 		</td>
 		<td>
-			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<input type="text" name="SessionTimeout" style="width: 50px;" maxlength="4" value="<?php echo $SessionTimeout ?>" />
 				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
 			</form>
@@ -220,7 +220,7 @@ require_once($VIEW_PATH.'/header.php');
 			<?php echo _TITLE('Force HTTPs').':' ?>
 		</td>
 		<td>
-			<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<?php
 				$Button= $ForceHTTPs ? 'Disable' : 'Enable';
 				?>
