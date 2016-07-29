@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.45 2016/07/25 10:18:38 soner Exp $ */
+/* $pfre: pf.php,v 1.2 2016/07/29 04:15:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,7 +65,7 @@ class Pf extends Model
 					),
 				
 				'TestPfRules'=>	array(
-					'argv'	=>	array(SERIALARRAY, NUM|NONE, NUM|NONE),
+					'argv'	=>	array(SERIALARRAY),
 					'desc'	=>	_('Test pf rules'),
 					),
 				)
