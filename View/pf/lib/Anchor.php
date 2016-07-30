@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.3 2016/07/29 03:12:02 soner Exp $ */
+/* $pfre: Anchor.php,v 1.4 2016/07/30 00:23:56 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,6 +67,31 @@
 
 class Anchor extends Filter
 {	
+	function __construct($str)
+	{
+		$this->keywords = array(
+			'anchor' => array(
+				'method' => 'setAnchor',
+				'params' => array(),
+				),
+			);
+
+		parent::__construct($str);
+	}
+
+	function setAnchor()
+	{
+		$this->rule['type']= $this->words[$this->index++];
+		if ($this->words[$this->index] == '"') {
+			$this->rule['identifier']= $this->words[++$this->index];
+			if ($this->words[$this->index + 1] == '"') {
+				$this->index++;
+			}
+		} else {
+			$this->rule['identifier']= $this->words[$this->index];
+		}
+	}
+
 	function display($rulenumber, $count, $class)
 	{
 		?>
@@ -123,7 +148,7 @@ class Anchor extends Filter
 				<?php echo $this->rule['state']; ?>
 			</td>
 			<td title="Queue">
-				<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue']['0'] . '<br>' . $this->rule['queue']['1']) : ''; ?>
+				<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue'][0] . '<br>' . $this->rule['queue'][1]) : ''; ?>
 			</td>
 			<td class="comment">
 				<?php echo stripslashes($this->rule['comment']); ?>

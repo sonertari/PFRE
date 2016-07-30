@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Queue.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -66,86 +66,69 @@
  */
 class Queue extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, "#"));
+		$this->keywords = array(
+			'queue' => array(
+				'method' => 'setNextNVP',
+				'params' => array('name'),
+				),
+			/// @todo interface is a repetition, exists in Rule base class
+			'on' => array(
+				'method' => 'setItems',
+				'params' => array('interface'),
+				),
+			'parent' => array(
+				'method' => 'setNextValue',
+				'params' => array(),
+				),
+			'bandwidth' => array(
+				'method' => 'setBandwidth',
+				'params' => array('bw-burst', 'bw-time'),
+				),
+			'min' => array(
+				'method' => 'setBandwidth',
+				'params' => array('min-burst', 'min-time'),
+				),
+			'max' => array(
+				'method' => 'setBandwidth',
+				'params' => array('max-burst', 'max-time'),
+				),
+			'qlimit' => array(
+				'method' => 'setNextValue',
+				'params' => array(),
+				),
+			'default' => array(
+				'method' => 'setBool',
+				'params' => array(),
+				),
+			);
+
+		// Base should not merge keywords
+		parent::__construct($str, FALSE);
+	}
+
+	function sanitize()
+	{
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' ( ', $this->str);
+		$this->str= preg_replace('/\)/', ' ) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+	}
+
+	function setBandwidth($burst, $time)
+	{
+		$this->setNextValue();
+
+		/// @todo Fix this possible off-by-N errors
+		if ($this->words[$this->index + 1] == 'burst') {
+			$this->index+= 2;
+			$this->rule[$burst]= $this->words[$this->index];
 		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\(/", " ( ", $str);
-		$str= preg_replace("/\)/", " ) ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		$this->rule['name']= $words['1'];
-		for ($i= '2'; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case "on":
-					$i++;
-					if ($words[$i] != "{") {
-						$this->rule['interface']= $words[$i];
-					} else {
-						while (preg_replace("/[\s,]+/", "", $words[++$i]) != "}") {
-							$this->rule['interface'][]= $words[$i];
-						}
-					}
-					break;
-				case "parent":
-					$i++;
-					$this->rule['parent']= $words[$i];
-					break;
-				case "bandwidth":
-					$this->rule['bandwidth']= $words[++$i];
-					/// @todo Fix this possible off-by-N error
-					if ($words[$i + 1] == 'burst') {
-						$i+= 2;
-						$this->rule['bw-burst']= $words[$i];
-					}
-					if ($words[$i + 1] == 'for') {
-						$i+= 2;
-						$this->rule['bw-time']= $words[$i];
-					}
-					break;
-				case "min":
-					$this->rule['min']= $words[++$i];
-					/// @todo Fix this possible off-by-N error
-					if ($words[$i + 1] == 'burst') {
-						$i+= 2;
-						$this->rule['min-burst']= $words[$i];
-					}
-					if ($words[$i + 1] == 'for') {
-						$i+= 2;
-						$this->rule['min-time']= $words[$i];
-					}
-					break;
-				case "max":
-					$this->rule['max']= $words[++$i];
-					/// @todo Fix this possible off-by-N error
-					if ($words[$i + 1] == 'burst') {
-						$i+= 2;
-						$this->rule['max-burst']= $words[$i];
-					}
-					if ($words[$i + 1] == 'for') {
-						$i+= 2;
-						$this->rule['max-time']= $words[$i];
-					}
-					break;
-				case "qlimit":
-					$this->rule['qlimit']= $words[++$i];
-					break;
-				case "default":
-					$this->rule['default']= TRUE;
-					break;
-			}
+		if ($this->words[$this->index + 1] == 'for') {
+			$this->index+= 2;
+			$this->rule[$time]= $this->words[$this->index];
 		}
 	}
 

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.1 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Timeout.php,v 1.2 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,52 +67,69 @@
  
 class Timeout extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, '#'));
+		$this->keywords = array(
+			'frag' => array(
+				'method' => 'setAll',
+				'params' => array(),
+				),
+			'interval' => array(
+				'method' => 'setAll',
+				'params' => array(),
+				),
+			'src' => array(
+				'method' => 'setSrcTrack',
+				'params' => array(),
+				),
+			'tcp' => array(
+				'method' => 'setTimeout',
+				'params' => array(),
+				),
+			'udp' => array(
+				'method' => 'setTimeout',
+				'params' => array(),
+				),
+			'icmp' => array(
+				'method' => 'setTimeout',
+				'params' => array(),
+				),
+			'other' => array(
+				'method' => 'setTimeout',
+				'params' => array(),
+				),
+			'adaptive' => array(
+				'method' => 'setTimeout',
+				'params' => array(),
+				),
+			);
+
+		// Base should not merge keywords
+		parent::__construct($str, FALSE);
+	}
+
+	function split()
+	{
+		$this->words= preg_split('/[\s,\t\.]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
+	function setAll()
+	{
+		$this->rule['proto']['all'][$this->words[$this->index]]= $this->words[++$this->index];
+	}
+
+	function setSrcTrack()
+	{
+		if ($this->words[$this->index + 1] == 'track') {
+			$this->rule['proto']['all']['src.track']= $this->words[$this->index + 2];
+			$this->index+= 2;
 		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\(/", " \( ", $str);
-		$str= preg_replace("/\)/", " \) ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		$str= preg_replace("/\"/", " \" ", $str);
-		
-		$words= preg_split("/[\s,\t\.]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		for ($i= 0; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case 'timeout':
-					break;
-				case 'frag':
-				case 'interval':
-					$this->rule['proto']['all'][$words[$i]]= $words[$i + 1];
-					$i++;
-					break;
-				case 'src':
-					if ($words[$i + 1] == 'track') {
-						$this->rule['proto']['all']['src.track']= $words[$i + 2];
-						$i+= 2;
-					}
-					break;
-				case 'tcp':
-				case 'udp':
-				case 'icmp':
-				case 'other':
-				case 'adaptive':
-					$this->rule['proto'][$words[$i]][$words[$i + 1]]= $words[$i + 2];
-					$i+= 2;
-					break;
-			}
-		}
+	}
+
+	function setTimeout()
+	{
+		$this->rule['proto'][$this->words[$this->index]][$this->words[$this->index + 1]]= $this->words[$this->index + 2];
+		$this->index+= 2;
 	}
 
 	function generate()

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.3 2016/07/27 03:59:04 soner Exp $ */
+/* $pfre: Blank.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,7 +36,7 @@ class Blank extends Rule
 {
 	function parse($str)
 	{
-		$this->rule= array();
+		$this->deleteRules();
 		$this->rule['blank']= $str;
 	}
 

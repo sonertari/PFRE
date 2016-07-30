@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Macro.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -72,38 +72,34 @@ class Macro extends Rule
 {
 	function parse($str)
 	{
-		$this->rule= array();
+		$this->str= $str;
+		$this->deleteRules();
+		$this->parseComment();
+		$this->sanitize();
+		$this->split();
 
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, '#'));
-		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\(/", " \( ", $str);
-		$str= preg_replace("/\)/", " \) ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		$str= preg_replace("/\"/", " \" ", $str);
-		
-		$str= preg_replace("/=/", " = ", $str);
-		$str= preg_replace("/\"/", "", $str);
-
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		$i= '0';
-		$this->rule['identifier']= $words[$i++];
-		if ($words[++$i] != "{") {
-			$this->rule['value']= $words[$i];
+		$this->index= 0;
+		$this->rule['identifier']= $this->words[$this->index++];
+		if ($this->words[++$this->index] != '{') {
+			$this->rule['value']= $this->words[$this->index];
 		} else {
-			while (preg_replace("/,/", "", $words[++$i]) != "}") {
-				$this->rule['value'][]= $words[$i];
+			while (preg_replace('/,/', '', $this->words[++$this->index]) != '}') {
+				$this->rule['value'][]= $this->words[$this->index];
 			}
 		}
+	}
+
+	function sanitize()
+	{
+		$this->str= preg_replace("/{/", " { ", $this->str);
+		$this->str= preg_replace("/}/", " } ", $this->str);
+		$this->str= preg_replace("/\(/", " \( ", $this->str);
+		$this->str= preg_replace("/\)/", " \) ", $this->str);
+		$this->str= preg_replace("/,/", " , ", $this->str);
+		$this->str= preg_replace("/\"/", " \" ", $this->str);
+		
+		$this->str= preg_replace("/=/", " = ", $this->str);
+		$this->str= preg_replace("/\"/", "", $this->str);
 	}
 
 	function generate()
@@ -113,7 +109,7 @@ class Macro extends Rule
 		if (!is_array($this->rule['value'])) {
 			$str.= $this->rule['value'];
 		} else {
-			$str.= '{ ' . implode(' ', $this->rule['value']) . ' }';
+			$str.= '{ ' . implode(', ', $this->rule['value']) . ' }';
 		}
 		$str.= '"';
 		

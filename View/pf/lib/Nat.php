@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Nat.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -66,124 +66,127 @@
  */
 class Nat extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, "#"));
+		$this->keywords = array_merge(
+			$this->keywords,
+			array(
+				'pass' => array(
+					'method' => 'setNVP',
+					'params' => array('action'),
+					),
+				'block' => array(
+					'method' => 'setNVP',
+					'params' => array('action'),
+					),
+				'match' => array(
+					'method' => 'setNVP',
+					'params' => array('action'),
+					),
+				'inet' => array(
+					'method' => 'setFamily',
+					'params' => array(),
+					),
+				'inet6' => array(
+					'method' => 'setFamily',
+					'params' => array(),
+					),
+				'bitmask' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'least-states' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'round-robin' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'random' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'source-hash' => array(
+					'method' => 'setSourceHash',
+					'params' => array(),
+					),
+				'sticky-address' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'static-port' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				/// @todo af-to should have its own class
+				'af-to' => array(
+					'method' => 'setNVP',
+					'params' => array('type'),
+					),
+				'nat-to' => array(
+					'method' => 'setNatDivert',
+					'params' => array(),
+					),
+				'binat-to' => array(
+					'method' => 'setNatDivert',
+					'params' => array(),
+					),
+				/// @todo divert-to should have its own class
+				'divert-to' => array(
+					'method' => 'setNatDivert',
+					'params' => array(),
+					),
+				/// @todo rdr-to should have its own class
+				'rdr-to' => array(
+					'method' => 'setNatDivert',
+					'params' => array(),
+					),
+				)
+			);
+
+		parent::__construct($str);
+	}
+
+	function sanitize()
+	{
+		$this->str= preg_replace("/! +/", "!", $this->str);
+		$this->str= preg_replace("/{/", " { ", $this->str);
+		$this->str= preg_replace("/}/", " } ", $this->str);
+		$this->str= preg_replace("/\"/", " \" ", $this->str);
+	}
+
+	function setFamily()
+	{
+		if (!isset($this->rule['family'])) {
+			$this->rule['family']= $this->words[$this->index];
+		} else {
+			$this->rule['to-family']= $this->words[$this->index];
 		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/! +/", "!", $str);
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\"/", " \" ", $str);
-		
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		for ($i= '0'; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case 'pass':
-				case 'match':
-				case 'block':
-					$this->rule['action']= $words[$i];
-					break;
-				case 'quick':
-					$this->rule['quick']= true;
-					break;
-				case 'inet':
-				case 'inet6':
-					if (!isset($this->rule['family'])) {
-						$this->rule['family']= $words[$i];
-					} else {
-						$this->rule['to-family']= $words[$i];
-					}
-					break;
-				case 'in':
-				case 'out':
-					$this->rule['direction']= $words[$i];
-					break;
-				case 'log':
-					if ($words[$i + 1] == '\(') {
-						list($lo, $i)= $this->parseItem($words, $i, '\(', '\)');
-						$this->rule['log']= array();
-						for ($j= 0; $j < count($lo); $j++) {
-							if ($lo[$j] == 'to') {
-								$this->rule['log']['to']= $lo[++$j];
-							} else {
-								$this->rule['log'][$lo[$j]]= TRUE;
-							}
-						}
-					} else {
-						$this->rule['log']= TRUE;
-					}
-					break;
-				case 'bitmask':
-				case 'least-states':
-				case 'round-robin':
-				case 'random':
-					$this->rule[$words[$i]]= true;
-					break;
-				case 'source-hash':
-					$this->rule[$words[$i]]= true;
-					// XXX: What is a possible pattern for key?
-					if (preg_match('/\d+/', $words[$i + 1])) {
-						$this->rule['source-hash-key']= $words[++$i];
-					}
-					break;
-				case 'sticky-address':
-					$this->rule['sticky-address']= true;
-					break;
-				case 'static-port':
-					$this->rule['static-port']= true;
-					break;
-				case 'on':
-					list($this->rule['interface'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'proto':
-					list($this->rule['proto'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'from':
-					if ($words[$i + 1] != "port") {
-						list($this->rule['from'], $i)= $this->parseItem($words, $i);
-					}
-					if ($words[$i + 1] == "port") {
-						list($this->rule['fromport'], $i)= $this->parsePortItem($words, ++$i);
-					}
-					break;
-				case 'to':
-					if ($words[$i + 1] != "port") {
-						list($this->rule['to'], $i)= $this->parseItem($words, $i);
-					}
-					if ($words[$i + 1] == "port") {
-						list($this->rule['port'], $i)= $this->parsePortItem($words, ++$i);
-					}
-					break;
-				case 'flags':
-					$i++;
-					$this->rule['flags']= $words[$i];
-					break;
-				case 'af-to':
-					$this->rule['type']= $words[$i];
-					break;
-				case 'nat-to':
-				case 'binat-to':
-				case 'divert-to':
-					$this->rule['type']= $words[$i];
-					/// @todo Fix these off-by-N errors
-					if ($words[$i + 1] != 'port') {
-						$this->rule['natdest']= $words[++$i];
-					}
-					// @attention Do not use else here
-					if ($words[$i + 1] == 'port') {
-						$i+= 2;
-						$this->rule['natdestport']= $words[$i];
-					}
-			}
+	}
+
+	function setSourceHash()
+	{
+		$this->setBool();
+
+		// XXX: What is a possible pattern for key?
+		if (preg_match('/[a-f\d]{16,}/', $this->words[$this->index + 1])) {
+			$this->rule['source-hash-key']= $this->words[++$this->index];
+		}
+	}
+
+	function setNatDivert()
+	{
+		$this->setNVP('type');
+
+		/// @todo Fix these off-by-N errors
+		if ($this->words[$this->index + 1] != 'port') {
+			$this->rule['natdest']= $this->words[++$this->index];
+		}
+		// @attention Do not use else here
+		if ($this->words[$this->index + 1] == 'port') {
+			$this->index+= 2;
+			$this->rule['natdestport']= $this->words[$this->index];
 		}
 	}
 

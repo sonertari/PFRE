@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.5 2016/07/30 02:34:35 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.6 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -317,7 +317,7 @@ class RuleSet
 		}
         
 		if ($lines) {
-			$linenumber= '0';
+			$linenumber= 0;
 			foreach (explode("\n", $str) as $line) {
 				$s.= sprintf('% 4d', $linenumber++) . ": $line\n";
 			}

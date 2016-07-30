@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LoadAnchor.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: LoadAnchor.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -69,17 +69,14 @@ class LoadAnchor extends Rule
 {
 	function parse($str)
 	{
-		$this->rule= array();
+		$this->str= $str;
+		$this->deleteRules();
+		$this->parseComment();
 		
 		// load anchor spam from "/etc/pf-spam.conf" # Comment
 		// load anchor spam from /etc/pf-spam.conf # Comment
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, "#"));
-		}
-		
-		if ((preg_match('/^\s*load\s+anchor\s+(\S+)\s+from\s+"([^"]+)"\s*$/', $str, $match)) ||
-			(preg_match('/^\s*load\s+anchor\s+(\S+)\s+from\s+(\S+)\s*$/', $str, $match))) {
+		if ((preg_match('/^\s*load\s+anchor\s+(\S+)\s+from\s+"([^"]+)"\s*$/', $this->str, $match)) ||
+			(preg_match('/^\s*load\s+anchor\s+(\S+)\s+from\s+(\S+)\s*$/', $this->str, $match))) {
 			$this->rule['anchor']= $match[1];
 			$this->rule['file']= $match[2];
 		}

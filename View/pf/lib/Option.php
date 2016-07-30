@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.2 2016/07/30 02:34:35 soner Exp $ */
+/* $pfre: Option.php,v 1.3 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,59 +67,66 @@
  
 class Option extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, '#'));
-		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\(/", " \( ", $str);
-		$str= preg_replace("/\)/", " \) ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		$str= preg_replace("/\"/", " \" ", $str);
-		
-		/*
-		 * Need to handle fingerprints differently since we're
-		 * expecting a dot (.) in the filename
-		 */
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		for ($i= 0; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case 'loginterface':
-					$this->rule['option']['loginterface']= $words[++$i];
-					break;
-				case 'block-policy':
-					$this->rule['option']['block-policy']= $words[++$i];
-					break;
-				case 'state-policy':
-					$this->rule['option']['state-policy']= $words[++$i];
-					break;
-				case 'fingerprints':
-					$this->rule['option']['fingerprints']= $words['3'];
-					break;
-				case 'optimization':
-					$this->rule['option']['optimization']= $words[++$i];
-					break;
-				case 'ruleset-optimization':
-					$this->rule['option']['ruleset-optimization']= $words[++$i];
-					break;
-				case 'debug':
-					$this->rule['option']['debug']= $words[++$i];
-					break;
-				case 'skip':
-					list($this->rule['option']['skip'], $i)= $this->parseItem($words, ++$i);
-					break;
-			}
-		}
+		$this->keywords = array(
+			'loginterface' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'block-policy' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'state-policy' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'optimization' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'ruleset-optimization' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'debug' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'hostid' => array(
+				'method' => 'setOption',
+				'params' => array(),
+				),
+			'skip' => array(
+				'method' => 'setSkip',
+				'params' => array(),
+				),
+			'fingerprints' => array(
+				'method' => 'setFingerprints',
+				'params' => array(),
+				),
+			);
+
+		// Base should not merge keywords
+		parent::__construct($str, FALSE);
+	}
+
+	function setOption()
+	{
+		$this->rule['option'][$this->words[$this->index]]= $this->words[++$this->index];
+	}
+
+	function setSkip()
+	{
+		list($this->rule['option']['skip'], $this->index)= $this->parseItem($this->words, ++$this->index);
+	}
+
+	function setFingerprints()
+	{
+		// File name is in quotes, skip the quote
+		$this->index+= 2;
+		$this->rule['option']['fingerprints']= $this->words[$this->index];
 	}
 
 	function generate()

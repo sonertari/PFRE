@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Filter.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,228 +67,149 @@
 
 class Filter extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, 0, strpos($str, "#"));
-		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/! +/", "!", $str);
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\(/", " \( ", $str);
-		$str= preg_replace("/\)/", " \) ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		$str= preg_replace("/\"/", " \" ", $str);
-		
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
+		$this->keywords= array_merge(
+			$this->keywords,
+			array(
+				'pass' => array(
+					'method' => 'setNVP',
+					'params' => array('type'),
+					),
+				'block' => array(
+					'method' => 'setNVP',
+					'params' => array('type'),
+					),
+				'match' => array(
+					'method' => 'setNVP',
+					'params' => array('type'),
+					),
+				'antispoof' => array(
+					'method' => 'setNVP',
+					'params' => array('type'),
+					),
+				'inet' => array(
+					'method' => 'setNVP',
+					'params' => array('family'),
+					),
+				'inet6' => array(
+					'method' => 'setNVP',
+					'params' => array('family'),
+					),
+				'allow-opts' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'drop' => array(
+					'method' => 'setNVP',
+					'params' => array('blockoption'),
+					),
+				'return' => array(
+					'method' => 'setNVP',
+					'params' => array('blockoption'),
+					),
+				'return-rst' => array(
+					'method' => 'setNVP',
+					'params' => array('blockoption'),
+					),
+				'return-icmp' => array(
+					'method' => 'setNVP',
+					'params' => array('blockoption'),
+					),
+				'return-icmp6' => array(
+					'method' => 'setNVP',
+					'params' => array('blockoption'),
+					),
+				'route-to' => array(
+					'method' => 'setItems',
+					'params' => array('route-to'),
+					),
+				'reply-to' => array(
+					'method' => 'setItems',
+					'params' => array('reply-to'),
+					),
+				'dup-to' => array(
+					'method' => 'setItems',
+					'params' => array('dup-to'),
+					),
+				'divert-reply' => array(
+					'method' => 'setBool',
+					'params' => array(),
+					),
+				'icmp-type' => array(
+					'method' => 'setICMPType',
+					'params' => array('icmp-code'),
+					),
+				'icmp6-type' => array(
+					'method' => 'setICMPType',
+					'params' => array('icmp6-code'),
+					),
+				'for' => array(
+					'method' => 'setItems',
+					'params' => array('interface'),
+					),
+				'keep' => array(
+					'method' => 'setNVPInc',
+					'params' => array('state'),
+					),
+				'keep' => array(
+					'method' => 'setNVPInc',
+					'params' => array('state'),
+					),
+				'keep' => array(
+					'method' => 'setNVPInc',
+					'params' => array('state'),
+					),
+				'user' => array(
+					'method' => 'setItems',
+					'params' => array('user'),
+					),
+				'group' => array(
+					'method' => 'setItems',
+					'params' => array('group'),
+					),
+				'label' => array(
+					'method' => 'setItems',
+					'params' => array('label'),
+					),
+				'tag' => array(
+					'method' => 'setItems',
+					'params' => array('tag'),
+					),
+				'tagged' => array(
+					'method' => 'setItems',
+					'params' => array('tagged'),
+					),
+				'queue' => array(
+					'method' => 'setItems',
+					'params' => array('queue', '\(', '\)'),
+					),
+				'os' => array(
+					'method' => 'setOS',
+					'params' => array(),
+					),
+				'probability' => array(
+					'method' => 'setNextValue',
+					'params' => array(),
+					),
+				)
+			);
 
-		for ($i= 0; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case 'anchor':
-					$this->rule['type']= $words[$i++];
-					if ($words[$i] == '"') {
-						$this->rule['identifier']= $words[++$i];
-						if ($words[$i + 1] == '"') {
-							$i++;
-						}
-					} else {
-						$this->rule['identifier']= $words[$i];
-					}
-					break;
-				case 'antispoof':
-				case 'pass':
-				case 'block':
-				case 'match':
-					$this->rule['type']= $words[$i];
-					break;
-				case 'quick':
-					$this->rule['quick']= TRUE;
-					break;
-				case 'inet':
-				case 'inet6':
-					$this->rule['family']= $words[$i];
-					break;
-				case 'in':
-					$this->rule['direction']= 'in';
-					break;
-				case 'out':
-					$this->rule['direction']= 'out';
-					break;
-				case 'log':
-					if ($words[$i + 1] == '\(') {
-						list($lo, $i)= $this->parseItem($words, $i, '\(', '\)');
-						$this->rule['log']= array();
-						for ($j= 0; $j < count($lo); $j++) {
-							if ($lo[$j] == 'to') {
-								$this->rule['log']['to']= $lo[++$j];
-							} else {
-								$this->rule['log'][$lo[$j]]= TRUE;
-							}
-						}
-					} else {
-						$this->rule['log']= TRUE;
-					}
-					break;
-				case 'all':
-					$this->rule['all']= TRUE;
-					break;
-				case 'allow-opts':
-					$this->rule['allow-opts']= TRUE;
-					break;
-				case 'drop':
-					$this->rule['blockoption']= 'drop';
-					break;
-				case 'return':
-					$this->rule['blockoption']= 'return';
-					break;
-				case 'return-rst':
-					$this->rule['blockoption']= 'return-rst';
-					break;
-				case 'return-icmp':
-					$this->rule['blockoption']= 'return-icmp';
-					break;
-				case 'return-icmp6':
-					$this->rule['blockoption']= 'return-icmp6';
-					break;
-				case 'route-to':
-					list($this->rule['route-to'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'reply-to':
-					list($this->rule['reply-to'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'dup-to':
-					list($this->rule['dup-to'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'divert-reply':
-					$this->rule['divert-reply']= TRUE;
-					break;
-				case 'icmp-type':
-					list($this->rule['icmp-type'], $i)= $this->parseItem($words, $i);
-					if ($words[$i + 1] == 'code') {
-						list($this->rule['icmp-code'], $i)= $this->parseItem($words, ++$i);
-					}
-					break;
-				case 'icmp6-type':
-					list($this->rule['icmp6-type'], $i)= $this->parseItem($words, $i);
-					if ($words[$i + 1] == 'code') {
-						list($this->rule['icmp6-code'], $i)= $this->parseItem($words, ++$i);
-					}
-					break;
-				case 'for':
-				case 'on':
-					list($this->rule['interface'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'proto':
-					list($this->rule['proto'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'any':
-					if (!isset($this->rule['from'])) {
-						$this->rule['from']= 'any';
-					} else {
-						$this->rule['to']= 'any';
-					}
-					break;
-				case 'from':
-					if ($words[$i + 1] != 'port') {
-						list($this->rule['from'], $i)= $this->parseItem($words, $i);
-					}
-					if ($words[$i + 1] == 'port') {
-						list($this->rule['fromport'], $i)= $this->parsePortItem($words, ++$i);
-					}
-					break;
-				case 'to':
-					if ($words[$i + 1] != 'port') {
-						list($this->rule['to'], $i)= $this->parseItem($words, $i);
-					}
-					if ($words[$i + 1] == 'port') {
-						list($this->rule['port'], $i)= $this->parsePortItem($words, ++$i);
-					}
-					break;
-				case 'flags':
-					$i++;
-					$this->rule['flags']= $words[$i];
-					break;
-				case 'keep':
-					$i++;
-					$this->rule['state']= 'keep';
-					break;
-				case 'modulate':
-					$i++;
-					$this->rule['state']= 'modulate';
-					break;
-				case 'synproxy':
-					$i++;
-					$this->rule['state']= 'synproxy';
-					break;
-				case 'user':
-					list($this->rule['user'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'group':
-					list($this->rule['group'], $i)= $this->parseItem($words, $i);
-					break;
-				case 'label':
-					list($this->rule['label'], $i)= $this->parseString($words, $i);
-					break;
-				case 'queue':
-					list($this->rule['queue'], $i)= $this->parseItem($words, $i, '\(', '\)');
-					break;
-				case 'tag':
-					list($this->rule['tag'], $i)= $this->parseString($words, $i);
-					break;
-				case 'tagged':
-					list($this->rule['tagged'], $i)= $this->parseString($words, $i);
-					break;
-				case 'os':
-					$i++;
-					unset($_data);
-					if ($words[$i] != "{") {
-						if ($words[$i] != "\"") {
-							$_data.= $words[$i++];
-						} else {
-							while ($words[++$i] != "\"") {
-								$_data.= " " . $words[$i];
-							}
-						}
-						$this->rule['os']= trim($_data);
-					} else {
-						while (preg_replace("/[\s,]+/", "", $words[++$i]) != "}") {
-							$_data= "";
-							while ($words[++$i] != "\"") {
-								$_data.= " " . $words[$i];
-							}
-							$this->rule['os'][]= trim($_data);
-						}
-					}
-					break;
-				case 'probability':
-					$this->rule['probability']= preg_replace("/\"/", "", $words[++$i]);
-					break;
-				default:
-					$this->rule[]= $words[$i];
-			}
-		}
+		parent::__construct($str);
 	}
 
 	function generate()
 	{
 		$str= $this->rule['type'];
 
-		if ($this->rule['type'] == "anchor") {
-			$str.= " \"" . $this->rule['identifier'] . "\"";
+		if ($this->rule['type'] === 'anchor') {
+			$str.= ' "' . $this->rule['identifier'] . '"';
 		}
 		if ($this->rule['blockoption']) {
-			$str.= " " . $this->rule['blockoption'];
+			$str.= ' ' . $this->rule['blockoption'];
 		}
 		if ($this->rule['direction']) {
-			$str.= " " . $this->rule['direction'];
+			$str.= ' ' . $this->rule['direction'];
 		}
 		if ($this->rule['log']) {
 			if (is_array($this->rule['log'])) {
@@ -302,32 +223,32 @@ class Filter extends Rule
 			}
 		}
 		if ($this->rule['quick']) {
-			$str.= " quick";
+			$str.= ' quick';
 		}
 		if ($this->rule['interface']) {
-			if ($this->rule['type'] == "antispoof") {
-				$str.= $this->generateItem($this->rule['interface'], "for");
+			if ($this->rule['type'] == 'antispoof') {
+				$str.= $this->generateItem($this->rule['interface'], 'for');
 			} else {
-				$str.= $this->generateItem($this->rule['interface'], "on");
+				$str.= $this->generateItem($this->rule['interface'], 'on');
 			}
 		}
 		if ($this->rule['route-to']) {
-			$str.= $this->generateItem($this->rule['route-to'], "route-to");
+			$str.= $this->generateItem($this->rule['route-to'], 'route-to');
 		}
 		if ($this->rule['reply-to']) {
-			$str.= $this->generateItem($this->rule['reply-to'], "reply-to");
+			$str.= $this->generateItem($this->rule['reply-to'], 'reply-to');
 		}
 		if ($this->rule['dup-to']) {
-			$str.= $this->generateItem($this->rule['dup-to'], "dup-to");
+			$str.= $this->generateItem($this->rule['dup-to'], 'dup-to');
 		}
 		if ($this->rule['family']) {
-			$str.= " " . $this->rule['family'];
+			$str.= ' ' . $this->rule['family'];
 		}
 		if ($this->rule['proto']) {
-			$str.= $this->generateItem($this->rule['proto'], "proto");
+			$str.= $this->generateItem($this->rule['proto'], 'proto');
 		}
 		if ($this->rule['all']) {
-			$str.= " all";
+			$str.= ' all';
 		} else {
 			if ($this->rule['from'] || $this->rule['fromport']) {
 				$str.= ' from';
@@ -359,74 +280,74 @@ class Filter extends Rule
 				}
 			}
 		}
-		if (($this->rule['family'] == "inet") &&
-			((isset($this->rule['proto']) && $this->rule['proto'] == "icmp") ||
-			 (is_array($this->rule['proto']) && in_array("icmp", $this->rule['proto'])))) {
+		if (($this->rule['family'] == 'inet') &&
+			((isset($this->rule['proto']) && $this->rule['proto'] == 'icmp') ||
+			 (is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto'])))) {
 			if ($this->rule['icmp-type']) {
-				$str.= $this->generateItem($this->rule['icmp-type'], "icmp-type");
+				$str.= $this->generateItem($this->rule['icmp-type'], 'icmp-type');
 				if (isset($this->rule['icmp-code'])) {
-					$str.= $this->generateItem($this->rule['icmp-code'], "code");
+					$str.= $this->generateItem($this->rule['icmp-code'], 'code');
 				}
 			}
 		}
-		if (($this->rule['family'] == "inet6") &&
-			((isset($this->rule['proto']) && $this->rule['proto'] == "icmp6") ||
-			 (is_array($this->rule['proto']) && in_array("icmp6", $this->rule['proto'])))) {
+		if (($this->rule['family'] == 'inet6') &&
+			((isset($this->rule['proto']) && $this->rule['proto'] == 'icmp6') ||
+			 (is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto'])))) {
 			if ($this->rule['icmp6-type']) {
-				$str.= $this->generateItem($this->rule['icmp6-type'], "icmp6-type");
+				$str.= $this->generateItem($this->rule['icmp6-type'], 'icmp6-type');
 				if (isset($this->rule['icmp6-code'])) {
-					$str.= $this->generateItem($this->rule['icmp6-code'], "code");
+					$str.= $this->generateItem($this->rule['icmp6-code'], 'code');
 				}
 			}
 		}
 		if ($this->rule['allow-opts']) {
-			$str.= " allow-opts";
+			$str.= ' allow-opts';
 		}
 		if ($this->rule['flags']) {
-			$str.= " flags " . $this->rule['flags'];
+			$str.= ' flags ' . $this->rule['flags'];
 		}
 		if ($this->rule['state']) {
-			$str.= " " . $this->rule['state'] . " state";
+			$str.= ' ' . $this->rule['state'] . ' state';
 		}
 		
 		if ($this->rule['divert-reply']) {
-			$str.= " divert-reply";
+			$str.= ' divert-reply';
 		}
 
         if ($this->rule['user']) {
-			$str.= $this->generateItem($this->rule['user'], "user");
+			$str.= $this->generateItem($this->rule['user'], 'user');
 		}
 		
 		if ($this->rule['group']) {
-			$str.= $this->generateItem($this->rule['group'], "group");
+			$str.= $this->generateItem($this->rule['group'], 'group');
 		}
 		
 		if ($this->rule['label']) {
-			$str.= " label \"" . $this->rule['label'] . "\"";
+			$str.= ' label "' . $this->rule['label'] . '"';
 		}
 		
 		if ($this->rule['tag']) {
-			$str.= " tag \"" . $this->rule['tag'] . "\"";
+			$str.= ' tag "' . $this->rule['tag'] . '"';
 		}
 		
 		if ($this->rule['tagged']) {
-			$str.= " tagged \"" . $this->rule['tagged'] . "\"";
+			$str.= ' tagged "' . $this->rule['tagged'] . '"';
 		}
 		
 		if ($this->rule['queue']) {
 			if (!is_array($this->rule['queue'])) {
-				$str.= " set queue " . $this->rule['queue'];
+				$str.= ' set queue ' . $this->rule['queue'];
 			} else {
-				$str.= " set queue (" . $this->rule['queue']['0'] . ", " . $this->rule['queue']['1'] . ")";
+				$str.= ' set queue (' . $this->rule['queue'][0] . ', ' . $this->rule['queue'][1] . ')';
 			}
 		}
 		
 		if ($this->rule['probability']) {
-			$str.= " probability " . $this->rule['probability'];
+			$str.= ' probability ' . $this->rule['probability'];
 		}
 		
 		if ($this->rule['comment']) {
-			$str.= " # " . trim(stripslashes($this->rule['comment']));
+			$str.= ' # ' . trim(stripslashes($this->rule['comment']));
 		}
 		$str.= "\n";
 		return $str;
@@ -500,7 +421,7 @@ class Filter extends Rule
 				<?php echo $this->rule['state']; ?>
 			</td>
 			<td title="Queue">
-				<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue']['0'] . '<br>' . $this->rule['queue']['1']) : ''; ?>
+				<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue'][0] . '<br>' . $this->rule['queue'][1]) : ''; ?>
 			</td>
 			<td class="comment">
 				<?php echo stripslashes($this->rule['comment']); ?>
@@ -517,116 +438,116 @@ class Filter extends Rule
 	function processInput()
 	{
 		if (filter_has_var(INPUT_GET, 'dropfrom')) {
-			$this->delEntity("from", filter_input(INPUT_GET, 'dropfrom'));
+			$this->delEntity('from', filter_input(INPUT_GET, 'dropfrom'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropfromport')) {
-			$this->delEntity("fromport", filter_input(INPUT_GET, 'dropfromport'));
+			$this->delEntity('fromport', filter_input(INPUT_GET, 'dropfromport'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropto')) {
-			$this->delEntity("to", filter_input(INPUT_GET, 'dropto'));
+			$this->delEntity('to', filter_input(INPUT_GET, 'dropto'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropport')) {
-			$this->delEntity("port", filter_input(INPUT_GET, 'dropport'));
+			$this->delEntity('port', filter_input(INPUT_GET, 'dropport'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropinterface')) {
-			$this->delEntity("interface", filter_input(INPUT_GET, 'dropinterface'));
+			$this->delEntity('interface', filter_input(INPUT_GET, 'dropinterface'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropproto')) {
-			$this->delEntity("proto", filter_input(INPUT_GET, 'dropproto'));
+			$this->delEntity('proto', filter_input(INPUT_GET, 'dropproto'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropuser')) {
-			$this->delEntity("user", filter_input(INPUT_GET, 'dropuser'));
+			$this->delEntity('user', filter_input(INPUT_GET, 'dropuser'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropgroup')) {
-			$this->delEntity("group", filter_input(INPUT_GET, 'dropgroup'));
+			$this->delEntity('group', filter_input(INPUT_GET, 'dropgroup'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropicmptype')) {
-			$this->delEntity("icmp-type", filter_input(INPUT_GET, 'dropicmptype'));
+			$this->delEntity('icmp-type', filter_input(INPUT_GET, 'dropicmptype'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropicmp6type')) {
-			$this->delEntity("icmp6-type", filter_input(INPUT_GET, 'dropicmp6type'));
+			$this->delEntity('icmp6-type', filter_input(INPUT_GET, 'dropicmp6type'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropos')) {
-			$this->delEntity("os", filter_input(INPUT_GET, 'dropos'));
+			$this->delEntity('os', filter_input(INPUT_GET, 'dropos'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'droprouteto')) {
-			$this->delEntity("route-to", filter_input(INPUT_GET, 'droprouteto'));
+			$this->delEntity('route-to', filter_input(INPUT_GET, 'droprouteto'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropreplyto')) {
-			$this->delEntity("reply-to", filter_input(INPUT_GET, 'dropreplyto'));
+			$this->delEntity('reply-to', filter_input(INPUT_GET, 'dropreplyto'));
 		}
 
 		if (filter_has_var(INPUT_GET, 'dropdupto')) {
-			$this->delEntity("dup-to", filter_input(INPUT_GET, 'dropdupto'));
+			$this->delEntity('dup-to', filter_input(INPUT_GET, 'dropdupto'));
 		}
 
 		if (count($_POST)) {
 			if (filter_input(INPUT_POST, 'addfrom') != '') {
-				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
+				$this->addEntity('from', filter_input(INPUT_POST, 'addfrom'));
 			}
 
 			if (filter_input(INPUT_POST, 'addfromport') != '') {
-				$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
+				$this->addEntity('fromport', filter_input(INPUT_POST, 'addfromport'));
 			}
 
 			if (filter_input(INPUT_POST, 'addto') != '') {
-				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
+				$this->addEntity('to', filter_input(INPUT_POST, 'addto'));
 			}
 
 			if (filter_input(INPUT_POST, 'addport') != '') {
-				$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
+				$this->addEntity('port', filter_input(INPUT_POST, 'addport'));
 			}
 
 			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
+				$this->addEntity('interface', filter_input(INPUT_POST, 'addinterface'));
 			}
 
 			if (filter_input(INPUT_POST, 'addproto') != '') {
-				$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
+				$this->addEntity('proto', filter_input(INPUT_POST, 'addproto'));
 			}
 
 			if (filter_input(INPUT_POST, 'adduser') != '') {
-				$this->addEntity("user", filter_input(INPUT_POST, 'adduser'));
+				$this->addEntity('user', filter_input(INPUT_POST, 'adduser'));
 			}
 
 			if (filter_input(INPUT_POST, 'addgroup') != '') {
-				$this->addEntity("group", filter_input(INPUT_POST, 'addgroup'));
+				$this->addEntity('group', filter_input(INPUT_POST, 'addgroup'));
 			}
 
 			if (filter_input(INPUT_POST, 'addicmptype') != '') {
-				$this->addEntity("icmp-type", filter_input(INPUT_POST, 'addicmptype'));
+				$this->addEntity('icmp-type', filter_input(INPUT_POST, 'addicmptype'));
 			}
 
 			if (filter_input(INPUT_POST, 'addicmp6type') != '') {
-				$this->addEntity("icmp6-type", filter_input(INPUT_POST, 'addicmp6type'));
+				$this->addEntity('icmp6-type', filter_input(INPUT_POST, 'addicmp6type'));
 			}
 
 			if (filter_input(INPUT_POST, 'addos') != '') {
-				$this->addEntity("os", preg_replace('/"/', '', filter_input(INPUT_POST, 'addos')));
+				$this->addEntity('os', preg_replace('/"/', '', filter_input(INPUT_POST, 'addos')));
 			}
 
 			if (filter_input(INPUT_POST, 'addrouteto') != '') {
-				$this->addEntity("route-to", preg_replace('/"/', '', filter_input(INPUT_POST, 'addrouteto')));
+				$this->addEntity('route-to', preg_replace('/"/', '', filter_input(INPUT_POST, 'addrouteto')));
 			}
 
 			if (filter_input(INPUT_POST, 'addreplyto') != '') {
-				$this->addEntity("reply-to", preg_replace('/"/', '', filter_input(INPUT_POST, 'addreplyto')));
+				$this->addEntity('reply-to', preg_replace('/"/', '', filter_input(INPUT_POST, 'addreplyto')));
 			}
 
 			if (filter_input(INPUT_POST, 'adddupto') != '') {
-				$this->addEntity("dup-to", preg_replace('/"/', '', filter_input(INPUT_POST, 'adddupto')));
+				$this->addEntity('dup-to', preg_replace('/"/', '', filter_input(INPUT_POST, 'adddupto')));
 			}
 
 			$this->rule['type']= filter_input(INPUT_POST, 'type');
@@ -675,7 +596,7 @@ class Filter extends Rule
 				$this->rule['state']= filter_input(INPUT_POST, 'stateful');
 			}
 
-			if (filter_input(INPUT_POST, 'type') == "block") {
+			if (filter_input(INPUT_POST, 'type') === 'block') {
 				$this->rule['blockoption']= filter_input(INPUT_POST, 'blockoption');
 			} else {
 				unset($this->rule['blockoption']);
@@ -687,8 +608,8 @@ class Filter extends Rule
 
 			if ((filter_input(INPUT_POST, 'queue-pri') != '') && (filter_input(INPUT_POST, 'queue-sec') != '')) {
 				$this->rule['queue']= array();
-				$this->rule['queue']['0']= filter_input(INPUT_POST, 'queue-pri');
-				$this->rule['queue']['1']= filter_input(INPUT_POST, 'queue-sec');
+				$this->rule['queue'][0]= filter_input(INPUT_POST, 'queue-pri');
+				$this->rule['queue'][1]= filter_input(INPUT_POST, 'queue-sec');
 			} elseif (filter_input(INPUT_POST, 'queue-pri') != '') {
 				$this->rule['queue']= filter_input(INPUT_POST, 'queue-pri');
 			} else {
@@ -1025,7 +946,7 @@ class Filter extends Rule
 							if (!is_array($this->rule['queue'])) {
 								$queuepri= $this->rule['queue'];
 							} else {
-								$queuepri= $this->rule['queue']['0'];
+								$queuepri= $this->rule['queue'][0];
 							}
 							foreach ($queueNames as $queue) {
 								?>
@@ -1056,7 +977,7 @@ class Filter extends Rule
 							if (isset($this->rule['queue'])) {
 								foreach ($queueNames as $queue) {
 									?>
-									<option value="<?php echo $queue; ?>" <?php echo $this->rule['queue']['1'] == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
+									<option value="<?php echo $queue; ?>" <?php echo $this->rule['queue'][1] == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
 									<?php
 								}
 							}

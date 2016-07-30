@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Table.php,v 1.3 2016/07/30 00:23:56 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -66,58 +66,65 @@
  */
 class Table extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, "#"));
-		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		$this->rule['identifier']= $words['1'];
-		for ($i= '0'; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case "":
-					break;
-				case "persist":
-					$this->rule['persist']= TRUE;
-					break;
-				case "const":
-					$this->rule['const']= TRUE;
-					break;
-				case "counters":
-					$this->rule['counters']= TRUE;
-					break;
-				case "file":
-					$i++;
-					$filename= preg_replace("/\"/", "", $words[$i]);
-					if (!$this->rule['file']) {
-						$this->rule['file']= $filename;
-					} else {
-						if (!is_array($this->rule['file'])) {
-							$_temp= $this->rule['file'];
-							unset($this->rule['file']);
-							$this->rule['file'][]= $_temp;
-						}
-						$this->rule['file'][]= $filename;
-					}
-					break;
-				case "{":
-					while (preg_replace("/[\s,]+/", "", $words[++$i]) != "}") {
-						$this->rule['data'][]= $words[$i];
-					}
-					break;
+		$this->keywords = array(
+			'table' => array(
+				'method' => 'setNextNVP',
+				'params' => array('identifier'),
+				),
+			'persist' => array(
+				'method' => 'setBool',
+				'params' => array(),
+				),
+			'const' => array(
+				'method' => 'setBool',
+				'params' => array(),
+				),
+			'counters' => array(
+				'method' => 'setBool',
+				'params' => array(),
+				),
+			'file' => array(
+				'method' => 'setFile',
+				'params' => array(),
+				),
+			'{' => array(
+				'method' => 'setData',
+				'params' => array(),
+				),
+			);
+
+		// Base should not merge keywords
+		parent::__construct($str, FALSE);
+	}
+
+	function sanitize()
+	{
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+	}
+
+	function setFile()
+	{
+		$filename= preg_replace('/"/', '', $this->words[++$this->index]);
+		if (!$this->rule['file']) {
+			$this->rule['file']= $filename;
+		} else {
+			if (!is_array($this->rule['file'])) {
+				$_temp= $this->rule['file'];
+				unset($this->rule['file']);
+				$this->rule['file'][]= $_temp;
 			}
+			$this->rule['file'][]= $filename;
+		}
+	}
+
+	function setData()
+	{
+		while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
+			$this->rule['data'][]= $this->words[$this->index];
 		}
 	}
 
@@ -147,7 +154,7 @@ class Table extends Rule
 			if (!is_array($this->rule['data'])) {
 				$str.= $this->rule['data'];
 			} else {
-				$str.= implode(' ', $this->rule['data']);
+				$str.= implode(', ', $this->rule['data']);
 			}
 			$str.= ' }';
 		}

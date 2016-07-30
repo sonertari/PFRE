@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.1 2016/07/30 02:34:35 soner Exp $ */
+/* $pfre: Limit.php,v 1.2 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,50 +67,48 @@
  
 class Limit extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, '#'));
-		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/\(/", " \( ", $str);
-		$str= preg_replace("/\)/", " \) ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		$str= preg_replace("/\"/", " \" ", $str);
-		
-		/*
-		 * Need to handle fingerprints differently since we're
-		 * expecting a dot (.) in the filename
-		 */
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		for ($i= 0; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case 'states':
-					$this->rule['limit']['states']= $words[++$i];
-					break;
-				case 'frags':
-					$this->rule['limit']['frags']= $words[++$i];
-					break;
-				case 'src-nodes':
-					$this->rule['limit']['src-nodes']= $words[++$i];
-					break;
-				case 'tables':
-					$this->rule['limit']['tables']= $words[++$i];
-					break;
-				case 'table-entries':
-					$this->rule['limit']['table-entries']= $words[++$i];
-					break;
-			}
-		}
+		$this->keywords = array(
+			'states' => array(
+				'method' => 'setLimit',
+				'params' => array(),
+				),
+			'frags' => array(
+				'method' => 'setLimit',
+				'params' => array(),
+				),
+			'src-nodes' => array(
+				'method' => 'setLimit',
+				'params' => array(),
+				),
+			'tables' => array(
+				'method' => 'setLimit',
+				'params' => array(),
+				),
+			'table-entries' => array(
+				'method' => 'setLimit',
+				'params' => array(),
+				),
+			);
+
+		// Base should not merge keywords
+		parent::__construct($str, FALSE);
+	}
+
+	function sanitize()
+	{
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' \( ', $this->str);
+		$this->str= preg_replace('/\)/', ' \) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+		$this->str= preg_replace('/"/', ' " ', $this->str);
+	}
+
+	function setLimit()
+	{
+		$this->rule['limit'][$this->words[$this->index]]= $this->words[++$this->index];
 	}
 
 	function generate()

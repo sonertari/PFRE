@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Rule.php,v 1.3 2016/07/30 00:23:56 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -73,10 +73,223 @@ class Rule
 	public $rule= array();
 	public $cat= '';
 	
-	function __construct($str)
+	protected $str= '';
+	protected $index= 0;
+	protected $words= array();
+
+	protected $keywords = array();
+
+	function __construct($str, $merge= TRUE)
 	{
+		/// @todo We should not merge anything here, keywords in the base class should be empty
+		if ($merge) {
+			$this->keywords = array_merge(
+				$this->keywords,
+				array(
+					'quick' => array(
+						'method' => 'setBool',
+						'params' => array(),
+						),
+					'in' => array(
+						'method' => 'setNVP',
+						'params' => array('direction'),
+						),
+					'out' => array(
+						'method' => 'setNVP',
+						'params' => array('direction'),
+						),
+					'log' => array(
+						'method' => 'setLog',
+						'params' => array(),
+						),
+					'on' => array(
+						'method' => 'setItems',
+						'params' => array('interface'),
+						),
+					'proto' => array(
+						'method' => 'setItems',
+						'params' => array('proto'),
+						),
+					'any' => array(
+						'method' => 'setAny',
+						'params' => array(),
+						),
+					'all' => array(
+						'method' => 'setBool',
+						'params' => array(),
+						),
+					'from' => array(
+						'method' => 'setSrcDest',
+						'params' => array('fromport'),
+						),
+					'to' => array(
+						'method' => 'setSrcDest',
+						'params' => array('port'),
+						),
+					'flags' => array(
+						'method' => 'setNextValue',
+						'params' => array(),
+						),
+					)
+				);
+		}
+
 		$this->cat= get_called_class();
 		$this->parse($str);
+	}
+
+	function parse($str)
+	{
+		$this->str= $str;
+		$this->deleteRules();
+		$this->parseComment();
+		$this->sanitize();
+		$this->split();
+
+		for ($this->index= 0; $this->index < count($this->words); $this->index++) {
+			$key= $this->words[$this->index];
+			if (array_key_exists($key, $this->keywords)) {
+				$method= $this->keywords[$key]['method'];				
+				if (is_callable($method, TRUE)) {
+					call_user_method_array($method, $this, $this->keywords[$key]['params']);
+				} else {
+					$this->rule[]= $method;
+				}
+			} else {
+				$this->rule[]= $key;
+			}
+		}
+	}
+
+	function deleteRules()
+	{
+		$this->rule= array();
+	}
+
+	function parseComment()
+	{
+		if (strpos($this->str, '#')) {
+			$this->rule['comment']= substr($this->str, strpos($this->str, '#') + 1);
+			$this->str= substr($this->str, 0, strpos($this->str, '#'));
+		}
+	}
+
+	function sanitize()
+	{
+		/*
+		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in
+		 * the code further down without any special treatment
+		 */
+		$this->str= preg_replace('/! +/', '!', $this->str);
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' \( ', $this->str);
+		$this->str= preg_replace('/\)/', ' \) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+		$this->str= preg_replace('/"/', ' " ', $this->str);
+	}
+
+	function split()
+	{
+		$this->words= preg_split('/[\s,\t]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
+	function setNVP($key)
+	{
+		$this->rule[$key]= $this->words[$this->index];
+	}
+
+	function setNVPInc($key)
+	{
+		$this->rule[$key]= $this->words[$this->index++];
+	}
+
+	function setNextValue()
+	{
+		$this->rule[$this->words[$this->index]]= preg_replace('/"/', '', $this->words[++$this->index]);
+	}
+
+	function setNextNVP($key)
+	{
+		$this->rule[$key]= $this->words[++$this->index];
+	}
+
+	function setBool()
+	{
+		$this->rule[$this->words[$this->index]]= TRUE;
+	}
+	
+	function setItems($key, $pre= '{', $post= '}')
+	{
+		list($this->rule[$key], $this->index)= $this->parseItem($this->words, $this->index, $pre, $post);		
+	}
+	
+	function setAny()
+	{
+		if (!isset($this->rule['from'])) {
+			$this->rule['from']= 'any';
+		} else {
+			$this->rule['to']= 'any';
+		}
+	}
+
+	function setSrcDest($port)
+	{
+		if ($this->words[$this->index + 1] != 'port') {
+			list($this->rule[$this->words[$this->index]], $this->index)= $this->parseItem($this->words, $this->index);
+		}
+		if ($this->words[$this->index + 1] == 'port') {
+			list($this->rule[$port], $this->index)= $this->parsePortItem($this->words, ++$this->index);
+		}
+	}
+
+	function setOS()
+	{
+		$this->index++;
+		unset($_data);
+		if ($this->words[$this->index] != '{') {
+			if ($this->words[$this->index] != '"') {
+				$_data.= $this->words[$this->index++];
+			} else {
+				while ($this->words[++$this->index] != '"') {
+					$_data.= ' ' . $this->words[$this->index];
+				}
+			}
+			$this->rule['os']= trim($_data);
+		} else {
+			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
+				$_data= '';
+				while ($this->words[++$this->index] != '"') {
+					$_data.= ' ' . $this->words[$this->index];
+				}
+				$this->rule['os'][]= trim($_data);
+			}
+		}
+	}
+
+	function setLog()
+	{
+		if ($this->words[$this->index + 1] == '\(') {
+			list($lo, $this->index)= $this->parseItem($this->words, $this->index, '\(', '\)');
+			$this->rule['log']= array();
+			for ($i= 0; $i < count($lo); $i++) {
+				if ($lo[$i] == 'to') {
+					$this->rule['log']['to']= $lo[++$i];
+				} else {
+					$this->rule['log'][$lo[$i]]= TRUE;
+				}
+			}
+		} else {
+			$this->rule['log']= TRUE;
+		}
+	}
+	
+	function setICMPType($code)
+	{
+		list($this->rule[$this->words[$this->index]], $this->index)= $this->parseItem($this->words, $this->index);
+		if ($this->words[$this->index + 1] == 'code') {
+			list($this->rule[$code], $this->index)= $this->parseItem($this->words, ++$this->index);
+		}
 	}
 
 	function deleteEmptyEntries()
@@ -130,8 +343,8 @@ class Rule
 					$_new_data[]= $entity;
 				}
 			}
-			if (count($_new_data) == '1') {
-				$this->rule[$type]= $_new_data['0'];
+			if (count($_new_data) == 1) {
+				$this->rule[$type]= $_new_data[0];
 			} else {
 				$this->rule[$type]= $_new_data;
 			}
@@ -313,7 +526,7 @@ class Rule
 	{
 		$heading= $heading == '' ? '' : ' ' . trim($heading);
 		if (is_array($items)) {
-			return $heading . ' { ' . implode(' ', $items) . ' }';
+			return $heading . ' { ' . implode(', ', $items) . ' }';
 		} else {
 			return $heading . ' ' . $items;
 		}

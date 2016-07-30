@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Scrub.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -66,90 +66,46 @@
  */
 class Scrub extends Rule
 {
-	function parse($str)
+	function __construct($str)
 	{
-		$this->rule= array();
-		if (strpos($str, "#")) {
-			$this->rule['comment']= substr($str, strpos($str, "#") + '1');
-			$str= substr($str, '0', strpos($str, "#"));
-		}
-		
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in 
-		 * the code further down without any special treatment
-		 */
-		$str= preg_replace("/{/", " { ", $str);
-		$str= preg_replace("/}/", " } ", $str);
-		$str= preg_replace("/,/", " , ", $str);
-		$str= preg_replace("/\(/", " ", $str);
-		$str= preg_replace("/\)/", " ", $str);
-		
-		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
-		
-		for ($i= '0'; $i < count($words); $i++) {
-			switch ($words[$i]) {
-				case "in":
-				case "out":
-					$this->rule['direction']= $words[$i];
-					break;
-				case "all":
-					$this->rule['all']= TRUE;
-					break;
-				case "on":
-					$i++;
-					if ($words[$i] != "{") {
-						$this->rule['interface']= $words[$i];
-					} else {
-						while (preg_replace("/[\s,]+/", "", $words[++$i]) != "}") {
-							$this->rule['interface'][]= $words[$i];
-						}
-					}
-					break;
-				case "from":
-					$i++;
-					if ($words[$i] != "{") {
-						$this->rule['from']= $words[$i];
-					} else {
-						while (preg_replace("/[\s,]+/", "", $words[++$i]) != "}") {
-							$this->rule['from'][]= $words[$i];
-						}
-					}
-					break;
-				case "to":
-					$i++;
-					if ($words[$i] != "{") {
-						$this->rule['to']= $words[$i];
-					} else {
-						while (preg_replace("/[\s,]+/", "", $words[++$i]) != "}") {
-							$this->rule['to'][]= $words[$i];
-						}
-					}
-					break;
-				case "no-df":
-					$this->rule['no-df']= TRUE;
-					break;
-				case "min-ttl":
-					$i++;
-					$this->rule['min-ttl']= $words[$i];
-					break;
-				case "max-mss":
-					$i++;
-					$this->rule['max-mss']= $words[$i];
-					break;
-				case "random-id":
-					$this->rule['random-id']= TRUE;
-					break;
-				case "reassemble":
-					$i++;
-					$this->rule['reassemble']= $words[$i];
-					break;
-			}
-		}
+		$this->keywords = array(
+			'no-df' => array(
+				'method' => 'setBool',
+				'params' => array(),
+				),
+			'min-ttl' => array(
+				'method' => 'setNextValue',
+				'params' => array(),
+				),
+			'max-mss' => array(
+				'method' => 'setNextValue',
+				'params' => array(),
+				),
+			'random-id' => array(
+				'method' => 'setBool',
+				'params' => array(),
+				),
+			'reassemble' => array(
+				'method' => 'setNextValue',
+				'params' => array(),
+				),
+			);
+
+		parent::__construct($str);
+	}
+
+	function sanitize()
+	{
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' ( ', $this->str);
+		$this->str= preg_replace('/\)/', ' ) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
 	function generate()
 	{
-		$str= "match";
+		$str= 'match';
 		if ($this->rule['direction']) {
 			$str.= " " . $this->rule['direction'];
 		}
