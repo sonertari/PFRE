@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.3 2016/07/29 06:42:08 soner Exp $ */
+/* $pfre: rules.php,v 1.4 2016/07/30 00:23:56 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -44,6 +44,7 @@ $ruleCategoryNames = array(
     'scrub' => 'Scrub',
     'option' => 'Option',
     'timeout' => 'Timeout',
+    'limit' => 'Limit',
     'loadanchor' => 'Load Anchor',
     'include' => 'Include',
     'comment' => 'Comment',

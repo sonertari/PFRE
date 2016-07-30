@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.6 2016/07/27 01:09:28 soner Exp $ */
+/* $pfre: edit.php,v 1.2 2016/07/30 00:23:56 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -44,6 +44,7 @@ $ruleType2Class= array(
     'scrub' => 'Scrub',
     'option' => 'Option',
     'timeout' => 'Timeout',
+    'limit' => 'Limit',
     'loadanchor' => 'LoadAnchor',
     'include' => '_Include',
     'comment' => 'Comment',

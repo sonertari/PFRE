@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: vars.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,6 +61,7 @@ require_once($PF_PATH.'/lib/Queue.php');
 require_once($PF_PATH.'/lib/Scrub.php');
 require_once($PF_PATH.'/lib/Option.php');
 require_once($PF_PATH.'/lib/Timeout.php');
+require_once($PF_PATH.'/lib/Limit.php');
 require_once($PF_PATH.'/lib/LoadAnchor.php');
 require_once($PF_PATH.'/lib/Include.php');
 require_once($PF_PATH.'/lib/Comment.php');

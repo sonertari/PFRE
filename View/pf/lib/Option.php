@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Option.php,v 1.1 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -92,7 +92,7 @@ class Option extends Rule
 		 */
 		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
 		
-		for ($i= '0'; $i < count($words); $i++) {
+		for ($i= 0; $i < count($words); $i++) {
 			switch ($words[$i]) {
 				case "loginterface":
 					$this->rule['option']['loginterface']= $words[++$i];
@@ -114,21 +114,6 @@ class Option extends Rule
 					break;
 				case "debug":
 					$this->rule['option']['debug']= $words[++$i];
-					break;
-				case "states":
-					$this->rule['option']['states']= $words[++$i];
-					break;
-				case "frags":
-					$this->rule['option']['frags']= $words[++$i];
-					break;
-				case "src-nodes":
-					$this->rule['option']['src-nodes']= $words[++$i];
-					break;
-				case "tables":
-					$this->rule['option']['tables']= $words[++$i];
-					break;
-				case "table-entries":
-					$this->rule['option']['table-entries']= $words[++$i];
 					break;
 				case "skip":
 					list($this->rule['option']['skip'], $i)= $this->parseItem($words, ++$i);
@@ -154,16 +139,6 @@ class Option extends Rule
 			$str.= "set debug " . $this->rule['option']['debug'];
 		} elseif (isset($this->rule['option']['fingerprints'])) {
 			$str.= "set fingerprints \"" . preg_replace("/\"/", "", $this->rule['option']['fingerprints']) . "\"";
-		} elseif (isset($this->rule['option']['states'])) {
-			$str.= "set limit states " . $this->rule['option']['states'];
-		} elseif (isset($this->rule['option']['frags'])) {
-			$str.= "set limit frags " . $this->rule['option']['frags'];
-		} elseif (isset($this->rule['option']['src-nodes'])) {
-			$str.= "set limit src-nodes " . $this->rule['option']['src-nodes'];
-		} elseif (isset($this->rule['option']['tables'])) {
-			$str.= "set limit tables " . $this->rule['option']['tables'];
-		} elseif (isset($this->rule['option']['table-entries'])) {
-			$str.= "set limit table-entries " . $this->rule['option']['table-entries'];
 		} elseif (isset($this->rule['option']['skip'])) {
 			if (!is_array($this->rule['option']['skip'])) {
 				$str.= "set skip on " . $this->rule['option']['skip'];
@@ -195,8 +170,6 @@ class Option extends Rule
 				$value= $this->rule['option'][$option];
 				if (in_array($option, array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints'))) {
 					echo "$option: $value";
-				} elseif (in_array($option, array('states', 'frags', 'src-nodes', 'tables', 'table-entries'))) {
-					echo "$option limit: $value";
 				} elseif ($option == 'skip') {
 					if (!is_array($value)) {
 						echo "skip on $value";
@@ -242,21 +215,6 @@ class Option extends Rule
 			}
 			if (filter_has_var(INPUT_POST, 'fingerprints')) {
 				$this->rule['option']['fingerprints']= trim(preg_replace("/\"/", "", filter_input(INPUT_POST, 'fingerprints')));
-			}
-			if (filter_has_var(INPUT_POST, 'states')) {
-				$this->rule['option']['states']= trim(filter_input(INPUT_POST, 'states'));
-			}
-			if (filter_has_var(INPUT_POST, 'frags')) {
-				$this->rule['option']['frags']= trim(filter_input(INPUT_POST, 'frags'));
-			}
-			if (filter_has_var(INPUT_POST, 'src-nodes')) {
-				$this->rule['option']['src-nodes']= trim(filter_input(INPUT_POST, 'srcnodes'));
-			}
-			if (filter_has_var(INPUT_POST, 'tables')) {
-				$this->rule['option']['tables']= trim(filter_input(INPUT_POST, 'tables'));
-			}
-			if (filter_has_var(INPUT_POST, 'table-entries')) {
-				$this->rule['option']['table-entries']= trim(filter_input(INPUT_POST, 'table-entries'));
 			}
 
 			if (filter_has_var(INPUT_POST, 'loginterface')) {
@@ -318,11 +276,6 @@ class Option extends Rule
 								<option value="loginterface" <?php echo ($type == 'loginterface' ? 'selected' : ''); ?>>loginterface</option>
 								<option value="debug" <?php echo ($type == 'debug' ? 'selected' : ''); ?>>debug</option>
 								<option value="skip" <?php echo ($type == 'skip' ? 'selected' : ''); ?>>skip</option>
-								<option value="states" <?php echo ($type == 'states' ? 'selected' : ''); ?>>states</option>
-								<option value="frags" <?php echo ($type == 'frags' ? 'selected' : ''); ?>>frags</option>
-								<option value="srcnodes" <?php echo ($type == 'srcnodes' ? 'selected' : ''); ?>>srcnodes</option>
-								<option value="tables" <?php echo ($type == 'tables' ? 'selected' : ''); ?>>tables</option>
-								<option value="table-entries" <?php echo ($type == 'table-entries' ? 'selected' : ''); ?>>table-entries</option>
 							</select>
 						</td>
 					</tr>
@@ -442,61 +395,6 @@ class Option extends Rule
 							<input type="text" size="40" id="skip" name="skip" value="<?php echo (is_array($this->rule['option']['skip']) ? implode(' ', $this->rule['option']['skip']) : $this->rule['option']['skip']); ?>"
 								placeholder="comma or space separated list of interfaces"/>
 							<?php $this->PrintHelp('skip') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['states']) || $type == 'states') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Limit States').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="states" name="states" value="<?php echo $this->rule['option']['states']; ?>" placeholder="number" />
-							<?php $this->PrintHelp('states') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['frags']) || $type == 'frags') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Limit Frags').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="frags" name="frags" value="<?php echo $this->rule['option']['frags']; ?>" placeholder="number" />
-							<?php $this->PrintHelp('frags') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['srcnodes']) || $type == 'srcnodes') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Limit Src-Nodes').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="srcnodes" name="srcnodes" value="<?php echo $this->rule['option']['src-nodes']; ?>" placeholder="number" />
-							<?php $this->PrintHelp('src-nodes') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['tables']) || $type == 'tables') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Limit Tables').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="tables" name="tables" value="<?php echo $this->rule['option']['tables']; ?>" placeholder="number" />
-							<?php $this->PrintHelp('tables') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['table-entries']) || $type == 'table-entries') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Limit Table-Entries').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="table-entries" name="table-entries" value="<?php echo $this->rule['option']['table-entries']; ?>" placeholder="number" />
-							<?php $this->PrintHelp('table-entries') ?>
 						</td>
 						<?php
 					}

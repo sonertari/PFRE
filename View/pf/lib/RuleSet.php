@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.3 2016/07/29 04:15:24 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.4 2016/07/30 00:23:56 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -207,7 +207,7 @@ class RuleSet
 			
 			$type= $words[0];
             // Do not search in comment lines
-			if ($type != '' && $type != '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout)\b/', $str, $match)) {
+			if ($type != '' && $type != '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout|limit)\b/', $str, $match)) {
 				$type= $match[1];
 			}
 
@@ -266,6 +266,9 @@ class RuleSet
 					break;
 				case 'set':
 					$this->rules[]= new Option($str);
+					break;
+				case 'limit':
+					$this->rules[]= new Limit($str);
 					break;
 				case 'scrub':
 					$this->rules[]= new Scrub($str);
