@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.6 2016/07/26 23:08:20 soner Exp $ */
+/* $pfre: Include.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -104,7 +104,7 @@ class _Include extends Rule
 
 		$href= "conf.php?sender=include&amp;rulenumber=$rulenumber";
 		?>
-		<h2>Edit Include Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Include Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Include') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">

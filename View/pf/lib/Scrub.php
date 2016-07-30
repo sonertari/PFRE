@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.7 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Scrub.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -327,7 +327,7 @@ class Scrub extends Rule
 	{
 		$href= "conf.php?sender=scrub&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Scrub Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Scrub Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Scrub') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" name="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -341,6 +341,7 @@ class Scrub extends Rule
 							<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : '')?>>in</option>
 							<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : '')?>>out</option>					
 						</select>
+						<?php $this->PrintHelp('direction') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -350,7 +351,8 @@ class Scrub extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
-						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10, NULL, isset($this->rule['interface']));
+						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
+						$this->PrintHelp('interface');
 						?>
 					</td>
 				</tr>
@@ -360,6 +362,7 @@ class Scrub extends Rule
 					</td>
 					<td>
 						<input type="checkbox" id="all" name="all" value="all" <?php echo ($this->rule['all'] ? 'checked' : ''); ?> onclick="document.theform.submit()" />
+						<?php $this->PrintHelp('match-all') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -369,7 +372,8 @@ class Scrub extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
-						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all'], isset($this->rule['from']));
+						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
+						$this->PrintHelp('src-dst');
 						?>
 					</td>
 				</tr>
@@ -380,7 +384,7 @@ class Scrub extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
-						$this->PrintAddControls('addto', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all'], isset($this->rule['to']));
+						$this->PrintAddControls('addto', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
@@ -391,12 +395,15 @@ class Scrub extends Rule
 					<td>
 						<input type="checkbox" id="no-df" name="no-df" value="no-df" <?php echo ($this->rule['no-df'] ? 'checked' : '')?> />
 						<label for="no-df">no-df</label>
+						<?php $this->PrintHelp('no-df') ?>
 						<br>
 						<input type="checkbox" id="random-id" name="random-id" value="random-id" <?php echo ($this->rule['random-id'] ? 'checked' : '')?> />
 						<label for="random-id">random-id</label>
+						<?php $this->PrintHelp('random-id') ?>
 						<br>
 						<input type="checkbox" id="reassemble" name="reassemble" value="tcp" <?php echo ($this->rule['reassemble'] == 'tcp' ? 'checked' : '')?> />
 						<label for="reassemble">reassemble tcp</label>
+						<?php $this->PrintHelp('reassemble-tcp') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -405,6 +412,7 @@ class Scrub extends Rule
 					</td>
 					<td>
 						<input type="text" id="min-ttl" name="min-ttl" size="4" value="<?php echo $this->rule['min-ttl']; ?>" />
+						<?php $this->PrintHelp('min-ttl') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -413,6 +421,7 @@ class Scrub extends Rule
 					</td>
 					<td>
 						<input type="text" id="max-mss" name="max-mss" size="4" value="<?php echo $this->rule['max-mss']; ?>" />
+						<?php $this->PrintHelp('max-mss') ?>
 					</td>
 				</tr>
 				<tr class="oddline">

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.6 2016/07/27 15:08:56 soner Exp $ */
+/* $pfre: Rule.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -395,6 +395,9 @@ class Rule
 				<a href="<?php echo $href; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
 				<?php
 			}
+			?>
+			<hr style="border: 0; border-bottom: 1px solid #CCC;" />
+			<?php
 		}
 	}
 	
@@ -406,27 +409,24 @@ class Rule
 	 * @param[in]	$value	string	Value instead of hint
 	 * @param[in]	$size	int		Size of the input
 	 * @param[in]	$disabled	bool	Condition to disable the input
-	 * @param[in]	$div	bool	Whether to surround with a div
 	 */
-	function PrintAddControls($id, $label, $hint, $value= NULL, $size= 0, $disabled= FALSE, $div= FALSE)
+	function PrintAddControls($id, $label, $hint, $value= NULL, $size= 0, $disabled= FALSE)
 	{
 		$value= ($value == NULL) ? '' : $value;
-
-		if ($div) {
-			?>
-			<div class="add">
-			<?php
-		}
 		?>
 		<input type="text" id="<?php echo $id; ?>" name="<?php echo $id; ?>" size="<?php echo $size; ?>" value="<?php echo $value; ?>"
 			placeholder="<?php echo $hint; ?>" <?php echo $disabled ? 'disabled' : ''; ?> />
 		<label for="<?php echo $id; ?>"><?php echo $label; ?></label>
 		<?php
-		if ($div) {
-			?>
-			</div>
-			<?php
-		}
+	}
+	
+	function PrintHelp($label) {
+		global $IMG_PATH;
+		?>
+		<a target="<?php echo $label ?>" href="/pf.conf.html#<?php echo $label ?>">
+			<img src="<?php echo "$IMG_PATH/help.png" ?>" name="<?php $label ?>" alt="(?)" border="0" width="12" height="12">
+		</a>
+		<?php
 	}
 }
 ?>

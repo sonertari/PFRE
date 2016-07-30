@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.7 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Table.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -232,7 +232,7 @@ class Table extends Rule
 	{
 		$href= "conf.php?sender=table&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Table Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Table Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Table') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -251,12 +251,15 @@ class Table extends Rule
 					<td>
 						<input type="checkbox" id="const" name="const" value="const" <?php echo $this->rule['const'] ? 'checked' : ''; ?> />
 						<label for="const">const</label>
+						<?php $this->PrintHelp('const') ?>
 						<br>
 						<input type="checkbox" id="persist" name="persist" value="persist" <?php echo $this->rule['persist'] ? 'checked' : ''; ?> />
 						<label for="persist">persist</label>
+						<?php $this->PrintHelp('persist') ?>
 						<br>
 						<input type="checkbox" id="counters" name="counters" value="counters" <?php echo $this->rule['counters'] ? 'checked' : ''; ?> />
 						<label for="counters">counters</label>
+						<?php $this->PrintHelp('counters') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -267,25 +270,11 @@ class Table extends Rule
 						<?php
 						$this->PrintDeleteLinks($this->rule['data'], $href, 'dropvalue');
 						$this->PrintDeleteLinks($this->rule['file'], $href, 'dropfile', 'file "', '"');
-
-						$printDiv= isset($this->rule['data']) || isset($this->rule['file']);
-						if ($printDiv) {
-							?>
-							<div class="add">
-							<?php
-						}
 						$this->PrintAddControls('addfile', 'add file', 'filename', NULL, 30);
 						?>
 						<br />
 						<textarea id="addvalue" name="addvalue" cols="30" rows="5" placeholder="hosts or networks separated by comma, space or newline"></textarea>
 						<label for="addvalue">add hosts or networks</label>
-						<?php
-						if ($printDiv) {
-							?>
-							</div>
-							<?php
-						}
-						?>
 					</td>
 				</tr>
 				<tr class="evenline">

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LoadAnchor.php,v 1.6 2016/07/26 23:08:20 soner Exp $ */
+/* $pfre: LoadAnchor.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -139,7 +139,7 @@ class LoadAnchor extends Rule
 	{
 		$href= "conf.php?sender=loadanchor&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Load Anchor Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Load Anchor Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('LoadAnchor') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -149,6 +149,7 @@ class LoadAnchor extends Rule
 					</td>
 					<td>
 						<input type="text" id="anchor" name="anchor" size="20" value="<?php echo $this->rule['anchor']; ?>" />
+						<?php $this->PrintHelp('anchor-id') ?>
 					</td>
 				</tr>
 				<tr class="evenline">

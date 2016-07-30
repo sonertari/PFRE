@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libwui.php,v 1.84 2016/07/11 17:31:39 soner Exp $ */
+/* $pfre: libwui.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -194,10 +194,7 @@ function PrintHelpBox($msg= '', $width= 300)
  */
 function PrintHelpWindow($msg, $width= 'auto', $type= 'INFO')
 {
-	global $InHelpRegion, $ErrorMsg, $WarnMsg, $InfoMsg, $ShowHelpBox;
-
-	/// Path to image files used in help boxes.
-	$IMG_PATH= '/images/';
+	global $IMG_PATH, $InHelpRegion, $ErrorMsg, $WarnMsg, $InfoMsg, $ShowHelpBox;
 
 	/** Types of help boxes.
 	 *

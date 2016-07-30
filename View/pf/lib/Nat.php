@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.7 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Nat.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -87,56 +87,67 @@ class Nat extends Rule
 		
 		for ($i= '0'; $i < count($words); $i++) {
 			switch ($words[$i]) {
-				case "pass":
-				case "match":
-				case "block":
+				case 'pass':
+				case 'match':
+				case 'block':
 					$this->rule['action']= $words[$i];
 					break;
-				case "quick":
+				case 'quick':
 					$this->rule['quick']= true;
 					break;
-				case "inet":
-				case "inet6":
+				case 'inet':
+				case 'inet6':
 					if (!isset($this->rule['family'])) {
 						$this->rule['family']= $words[$i];
 					} else {
 						$this->rule['to-family']= $words[$i];
 					}
 					break;
-				case "in":
-				case "out":
+				case 'in':
+				case 'out':
 					$this->rule['direction']= $words[$i];
 					break;
-				case "log":
-				case "log-all":
-					$this->rule['log']= $words[$i];
+				case 'log':
+					if ($words[$i + 1] == '\(') {
+						list($lo, $i)= $this->parseItem($words, $i, '\(', '\)');
+						$this->rule['log']= array();
+						for ($j= 0; $j < count($lo); $j++) {
+							if ($lo[$j] == 'to') {
+								$this->rule['log']['to']= $lo[++$j];
+							} else {
+								$this->rule['log'][$lo[$j]]= TRUE;
+							}
+						}
+					} else {
+						$this->rule['log']= TRUE;
+					}
 					break;
-				case "bitmask":
-				case "least-states":
-				case "round-robin":
-				case "random":
+				case 'bitmask':
+				case 'least-states':
+				case 'round-robin':
+				case 'random':
 					$this->rule[$words[$i]]= true;
 					break;
-				case "source-hash":
+				case 'source-hash':
 					$this->rule[$words[$i]]= true;
 					// XXX: What is a possible pattern for key?
 					if (preg_match('/\d+/', $words[$i + 1])) {
 						$this->rule['source-hash-key']= $words[++$i];
 					}
 					break;
-				case "sticky-address":
+				case 'sticky-address':
 					$this->rule['sticky-address']= true;
 					break;
-				case "static-port":
+				case 'static-port':
 					$this->rule['static-port']= true;
 					break;
-				case "on":
+				case 'on':
 					list($this->rule['interface'], $i)= $this->parseItem($words, $i);
 					break;
-				case "proto":
+				case 'proto':
 					list($this->rule['proto'], $i)= $this->parseItem($words, $i);
 					break;
-				case "from":
+				case 'from':
 					if ($words[$i + 1] != "port") {
 						list($this->rule['from'], $i)= $this->parseItem($words, $i);
 					}
@@ -144,7 +155,7 @@ class Nat extends Rule
 						list($this->rule['fromport'], $i)= $this->parsePortItem($words, ++$i);
 					}
 					break;
-				case "to":
+				case 'to':
 					if ($words[$i + 1] != "port") {
 						list($this->rule['to'], $i)= $this->parseItem($words, $i);
 					}
@@ -152,16 +163,16 @@ class Nat extends Rule
 						list($this->rule['port'], $i)= $this->parsePortItem($words, ++$i);
 					}
 					break;
-				case "flags":
+				case 'flags':
 					$i++;
 					$this->rule['flags']= $words[$i];
 					break;
-				case "af-to":
+				case 'af-to':
 					$this->rule['type']= $words[$i];
 					break;
-				case "nat-to":
-				case "binat-to":
-				case "divert-to":
+				case 'nat-to':
+				case 'binat-to':
+				case 'divert-to':
 					$this->rule['type']= $words[$i];
 					/// @todo Fix these off-by-N errors
 					if ($words[$i + 1] != 'port') {
@@ -188,7 +199,15 @@ class Nat extends Rule
 			}
 		}
 		if ($this->rule['log']) {
-			$str.= " " . $this->rule['log'];
+			if (is_array($this->rule['log'])) {
+				$s= ' log ( ';
+				foreach ($this->rule['log'] as $k => $v) {
+					$s.= (is_bool($v) ? "$k" : "$k $v") . ', ';
+				}
+				$str.= rtrim($s, ', ') . ' )';
+			} else {
+				$str.= ' log';
+			}
 		}
 		if ($this->rule['quick']) {
 			$str.= " quick";
@@ -298,7 +317,19 @@ class Nat extends Rule
 				<?php $this->PrintValue($this->rule['interface']); ?>
 			</td>
 			<td title="Log">
-				<?php echo $this->rule['log'] ? 'log' : ''; ?>
+				<?php
+				if ($this->rule['log']) {
+					if (is_array($this->rule['log'])) {
+						$s= 'log ';
+						foreach ($this->rule['log'] as $k => $v) {
+							$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
+						}
+						echo trim($s, ', ');
+					} else {
+						echo 'log';
+					}
+				}
+				?>
 			</td>
 			<td title="Quick">
 				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
@@ -383,7 +414,28 @@ class Nat extends Rule
 
 			$this->rule['action']= filter_input(INPUT_POST, 'action');
 			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
-			$this->rule['log']= filter_input(INPUT_POST, 'log');
+
+			$this->rule['log']= (filter_has_var(INPUT_POST, 'log') ? TRUE : '');
+			
+			if ($this->rule['log'] == TRUE) {
+				if (filter_has_var(INPUT_POST, 'log-all') || filter_has_var(INPUT_POST, 'log-matches') ||
+					filter_has_var(INPUT_POST, 'log-user') || filter_input(INPUT_POST, 'log-to') != '') {
+					$this->rule['log']= array();
+					if (filter_has_var(INPUT_POST, 'log-all')) {
+						$this->rule['log']['all']= TRUE;
+					}
+					if (filter_has_var(INPUT_POST, 'log-matches')) {
+						$this->rule['log']['matches']= TRUE;
+					}
+					if (filter_has_var(INPUT_POST, 'log-user')) {
+						$this->rule['log']['user']= TRUE;
+					}
+					if (filter_input(INPUT_POST, 'log-to') != '') {
+						$this->rule['log']['to']= filter_input(INPUT_POST, 'log-to');
+					}
+				}
+			}
+
 			$this->rule['quick']= (filter_has_var(INPUT_POST, 'quick') ? TRUE : "");
 
 			if (!filter_has_var(INPUT_POST, 'addproto')) {
@@ -440,7 +492,7 @@ class Nat extends Rule
 	{
 		$href= "conf.php?sender=nat&rulenumber=$rulenumber";
 		?>
-		<h2>Edit NAT Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit NAT Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Nat') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" name="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -456,6 +508,7 @@ class Nat extends Rule
 							<option label="divert-to" <?php echo $this->rule['type'] == 'divert-to' ? 'selected' : ''; ?>>divert-to</option>
 							<option label="rdr-to" <?php echo $this->rule['type'] == 'rdr-to' ? 'selected' : ''; ?>>rdr-to</option>
 						</select>
+						<?php $this->PrintHelp($this->rule['type']) ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -469,11 +522,14 @@ class Nat extends Rule
 							<option label="block" <?php echo $this->rule['action'] == 'block' ? 'selected' : ''; ?>>block</option>
 						</select>
 						<?php
+						$this->PrintHelp($this->rule['action']);
+						
 						if ($this->rule['type'] == "divert-to") {
 							?>
 							<input type="checkbox" id="quick" name="quick" value="quick" <?php echo ($this->rule['quick'] ? 'checked' : ''); ?> />
 							<label for="quick">quick</label>
 							<?php
+							$this->PrintHelp('quick');
 						}
 						?>
 					</td>
@@ -491,6 +547,7 @@ class Nat extends Rule
 								<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : ''); ?>>in</option>
 								<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
 							</select>
+							<?php $this->PrintHelp('direction') ?>
 						</td>
 					</tr>
 					<?php
@@ -503,7 +560,8 @@ class Nat extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
-						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10, NULL, isset($this->rule['interface']));
+						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
+						$this->PrintHelp('interface');
 						?>
 					</td>
 				</tr>
@@ -519,6 +577,7 @@ class Nat extends Rule
 							if ($this->rule['type'] == "divert-to") {
 								?>
 								<select id="proto" name="proto">
+									<option value="" label=""></option>
 									<option value="tcp" label="tcp" <?php echo $this->rule['proto'] == 'tcp' ? 'selected' : ''; ?>>tcp</option>
 									<option value="udp" label="udp" <?php echo $this->rule['proto'] == 'udp' ? 'selected' : ''; ?>>udp</option>
 									<option value="tcpudp" label="tcp / udp" <?php echo is_array($this->rule['proto']) ? 'selected' : ''; ?>>tcp/udp</option>
@@ -526,8 +585,9 @@ class Nat extends Rule
 								<?php
 							} else {
 								$this->PrintDeleteLinks($this->rule['proto'], $href, 'dropproto');
-								$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10, NULL, isset($this->rule['proto']));
+								$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
 							}
+							$this->PrintHelp('proto');
 							?>
 						</td>
 					</tr>
@@ -536,12 +596,34 @@ class Nat extends Rule
 				?>
 				<tr class="evenline">
 					<td class="title">
+						<?php echo _TITLE('Logging').':' ?>
+					</td>
+					<td>
+						<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : ''); ?> />
+						<label for="log">Log</label>
+						<?php
+						$disabled= isset($this->rule['log']) ? '' : 'disabled';
+						?>
+						<label for="log">to:</label>
+						<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" <?php echo $disabled; ?> />
+						<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+						<label for="log">all</label>
+						<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+						<label for="log">matches</label>
+						<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+						<label for="log">user</label>
+						<?php $this->PrintHelp('log') ?>
+					</td>
+				</tr>
+				<tr class="oddline">
+					<td class="title">
 						<?php echo _TITLE('Source').':' ?>
 					</td>
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
-						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all'], isset($this->rule['from']));
+						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
+						$this->PrintHelp('src-dst');
 						?>
 						<select id="family" name="family">
 							<option value="" label=""></option>
@@ -549,33 +631,34 @@ class Nat extends Rule
 							<option value="inet6" label="inet6" <?php echo ($this->rule['family'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
 						</select>
 						<label for="family">address family</label>
+						<?php $this->PrintHelp('address-family') ?>
 					</td>
 				</tr>
 				<?php
 				if ($this->rule['type'] != "af-to") {
 					?>
-					<tr class="oddline">
+					<tr class="evenline">
 						<td class="title">
 							<?php echo _TITLE('Source Port').':' ?>
 						</td>
 						<td>
 							<?php
 							$this->PrintDeleteLinks($this->rule['fromport'], $href, 'dropfromport');
-							$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all'], isset($this->rule['fromport']));
+							$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
 							?>
 						</td>
 					</tr>
 					<?php
 				}
 				?>
-				<tr class="evenline">
+				<tr class="oddline">
 					<td class="title">
 						<?php echo _TITLE('Destination').':' ?>
 					</td>
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
-						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all'], isset($this->rule['to']));
+						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
 
 						if ($this->rule['type'] == "af-to") {
 							?>
@@ -586,45 +669,48 @@ class Nat extends Rule
 							</select>			
 							<label for="to-family">address family</label>
 							<?php
+							$this->PrintHelp('address-family');
 						}
 						?>
 					</td>
 				</tr>
-				<tr class="oddline">
+				<tr class="evenline">
 					<td class="title">
 						<?php echo _TITLE('Destination Port').':' ?>
 					</td>
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['port'], $href, 'dropport');
-						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all'], isset($this->rule['port']));
+						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
 				<?php
 				if ($this->rule['type'] != "af-to") {
 					?>
-					<tr class="evenline">
+					<tr class="oddline">
 						<td class="title">
 							<?php echo _TITLE('NAT Destination').':' ?>
 						</td>
 						<td>
 							<input type="text" id="natdest" name="natdest" size="20" value="<?php echo $this->rule['natdest']; ?>" />
+							<?php $this->PrintHelp('divert-to') ?>
 						</td>
 					</tr>
-					<tr class="oddline">
+					<tr class="evenline">
 						<td class="title">
 							<?php echo _TITLE('NAT Destination Port').':' ?>
 						</td>
 						<td>
 							<input type="text" id="natdestport" name="natdestport" size="20" value="<?php echo $this->rule['natdestport']; ?>" />
+							<?php $this->PrintHelp('divert-to') ?>
 						</td>
 					</tr>
 					<?php
 				}
 				if ($this->rule['type'] != "divert-to") {
 					?>
-					<tr class="evenline">
+					<tr class="oddline">
 						<td class="title">
 							<?php echo _TITLE('Options').':' ?>
 						</td>
@@ -648,35 +734,25 @@ class Nat extends Rule
 							<br>
 							<input type="checkbox" id="sticky-address" name="sticky-address" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? '' : 'disabled'); ?> value="sticky-address" <?php echo ($this->rule['sticky-address'] ? 'checked' : ''); ?> />
 							<label for="sticky-address">sticky-address</label>
+							<?php $this->PrintHelp('rdr-method') ?>
 						</td>
 					</tr>
 					<?php
 					if ($this->rule['type'] != "rdr-to") {
 						?>
-						<tr class="oddline">
+						<tr class="evenline">
 							<td class="title">
 								<?php echo _TITLE('Static Port').':' ?>
 							</td>
 							<td>
 								<input type="checkbox" id="static-port" name="static-port" value="static-port" <?php echo ($this->rule['static-port'] ? 'checked' : ''); ?> />
+								<?php $this->PrintHelp('static-port') ?>
 							</td>
 						</tr>
 						<?php
 					}
 				}
 				?>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Logging').':' ?>
-					</td>
-					<td>
-						<select id="log" name="log">
-							<option value="" label=""></option>
-							<option value="log" label="log" <?php echo ($this->rule['log'] == 'log' ? 'selected' : ''); ?>>log</option>
-							<option value="log-all" label="log-all" <?php echo ($this->rule['log'] == 'log-all' ? 'selected' : ''); ?>>log-all</option>
-						</select>			
-					</td>
-				</tr>
 				<tr class="oddline">
 					<td class="title">
 						<?php echo _TITLE('TCP Flags').':' ?>
@@ -684,6 +760,7 @@ class Nat extends Rule
 					<td>
 						<?php
 						$this->PrintAddControls('flags', NULL, 'flags or macro', $this->rule['flags'], 12);
+						$this->PrintHelp('flags');
 						?>
 					</td>
 				</tr>

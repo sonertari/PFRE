@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.66 2016/07/27 01:09:28 soner Exp $ */
+/* $pfre: vars.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -59,8 +59,8 @@ require_once($PF_PATH.'/lib/Table.php');
 require_once($PF_PATH.'/lib/Nat.php');
 require_once($PF_PATH.'/lib/Queue.php');
 require_once($PF_PATH.'/lib/Scrub.php');
-require_once($PF_PATH.'/lib/Options.php');
-require_once($PF_PATH.'/lib/TimeoutOptions.php');
+require_once($PF_PATH.'/lib/Option.php');
+require_once($PF_PATH.'/lib/Timeout.php');
 require_once($PF_PATH.'/lib/LoadAnchor.php');
 require_once($PF_PATH.'/lib/Include.php');
 require_once($PF_PATH.'/lib/Comment.php');
@@ -106,6 +106,9 @@ $SubMenus = array(
 		'Perms' => $ADMIN,
 		),
 );
+
+/// Path to image files used in help boxes and links.
+$IMG_PATH= '/images/';
 
 require_once($VIEW_PATH.'/lib/libwui.php');
 require_once($VIEW_PATH.'/lib/view.php');

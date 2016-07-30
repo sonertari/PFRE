@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TimeoutOptions.php,v 1.6 2016/07/26 23:08:20 soner Exp $ */
+/* $pfre: Timeout.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,7 +65,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-class TimeoutOptions extends Rule
+class Timeout extends Rule
 {
 	function parse($str)
 	{
@@ -92,6 +92,17 @@ class TimeoutOptions extends Rule
 			switch ($words[$i]) {
 				case "timeout":
 					break;
+				case "frag":
+				case "interval":
+					$this->rule['proto']['all'][$words[$i]]= $words[$i + 1];
+					$i++;
+					break;
+				case "src":
+					if ($words[$i + 1] == 'track') {
+						$this->rule['proto']['all']['src.track']= $words[$i + 2];
+						$i+= 2;
+					}
+					break;
 				case "tcp":
 				case "udp":
 				case "icmp":
@@ -106,22 +117,26 @@ class TimeoutOptions extends Rule
 
 	function generate()
 	{
-		/// @attention This reset is critical if a page calls this function twice
+		/// @attention This reset is critical if a page calls this function twice, and it does in this case
 		reset($this->rule['proto']);
 		
 		if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
 			list($proto, $kvps)= each($this->rule['proto']);
+			$proto= $proto == 'all' ? '' : "$proto.";
+
 			list($key, $val)= each($kvps);
-			$str= "set timeout $proto.$key $val";
+			$str= "set timeout $proto$key $val";
 		} else {
 			$str= 'set timeout {';
 			while (list($proto, $kvps)= each($this->rule['proto'])) {
+				$proto= $proto == 'all' ? '' : "$proto.";
+
 				if (count($kvps) == 1) {
 					list($key, $val)= each($kvps);
-					$str.= " $proto.$key $val,";
+					$str.= " $proto$key $val,";
 				} else {
 					while (list($key, $val)= each($kvps)) {
-						$str.= " $proto.$key $val,";
+						$str.= " $proto$key $val,";
 					}
 				}
 			}
@@ -149,9 +164,10 @@ class TimeoutOptions extends Rule
 			<td title="Timeout" colspan="12">
 				<?php
 				reset($this->rule['proto']);
-				while (list($proto, $kvps)= each($this->rule['proto'])) {							
+				while (list($proto, $kvps)= each($this->rule['proto'])) {	
+					$proto= $proto == 'all' ? '' : "$proto.";
 					while (list($key, $val)= each($kvps)) {
-						echo "$proto.$key: $val<br>";
+						echo "$proto$key: $val<br>";
 					}
 				}
 				?>
@@ -161,7 +177,7 @@ class TimeoutOptions extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=timeoutoptions&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, "conf.php?sender=timeout&amp;rulenumber=$rulenumber", $count);
 				?>
 			</td>
 		</tr>
@@ -173,6 +189,28 @@ class TimeoutOptions extends Rule
 		if (count($_POST)) {
 			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 
+			if (filter_has_var(INPUT_POST, 'frag')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'frag')))) {
+					$this->rule['proto']['all']['frag']= trim(filter_input(INPUT_POST, 'frag'));
+				} else {
+					unset($this->rule['proto']['all']['frag']);
+				}
+			}
+			if (filter_has_var(INPUT_POST, 'interval')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'interval')))) {
+					$this->rule['proto']['all']['interval']= trim(filter_input(INPUT_POST, 'interval'));
+				} else {
+					unset($this->rule['proto']['all']['interval']);
+				}
+			}
+			/// @attention POST cannot handle dots in keys: src.track, use src_track instead
+			if (filter_has_var(INPUT_POST, 'src_track')) {
+				if (strlen(trim(filter_input(INPUT_POST, 'src_track')))) {
+					$this->rule['proto']['all']['src.track']= trim(filter_input(INPUT_POST, 'src_track'));
+				} else {
+					unset($this->rule['proto']['all']['src.track']);
+				}
+			}
 			if (filter_has_var(INPUT_POST, 'tcp_first')) {
 				if (strlen(trim(filter_input(INPUT_POST, 'tcp_first')))) {
 					$this->rule['proto']['tcp']['first']= trim(filter_input(INPUT_POST, 'tcp_first'));
@@ -292,13 +330,40 @@ class TimeoutOptions extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=timeoutoptions&rulenumber=$rulenumber";
+		$href= "conf.php?sender=timeout&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Timeout Options Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Timeout Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Timeout') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
+					<td class="title">
+						<?php echo _TITLE('Fragment').':' ?>
+					</td>
+					<td>
+						<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['proto']['all']['frag']; ?>" />
+						<?php $this->PrintHelp('frag') ?>
+					</td>
+				</tr>
+				<tr class="evenline">
+					<td class="title">
+						<?php echo _TITLE('Interval').':' ?>
+					</td>
+					<td>
+						<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['proto']['all']['interval']; ?>" />
+						<?php $this->PrintHelp('interval') ?>
+					</td>
+				</tr>
+				<tr class="oddline">
+					<td class="title">
+						<?php echo _TITLE('Src track').':' ?>
+					</td>
+					<td>
+						<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['proto']['all']['src.track']; ?>" />
+						<?php $this->PrintHelp('src.track') ?>
+					</td>
+				</tr>
+				<tr class="evenline">
 					<td class="title">
 						<?php echo _TITLE('TCP').':' ?>
 					</td>
@@ -311,7 +376,7 @@ class TimeoutOptions extends Rule
 											<td class="ifs">
 												<input type="text" size="10" id="tcp_first" name="tcp_first" value="<?php echo $this->rule['proto']['tcp']['first']; ?>" />
 											</td>
-											<td class="optitle">first</td>
+											<td class="optitle">first<?php $this->PrintHelp('tcp_timeout') ?></td>
 										</tr>
 										<tr>
 											<td class="ifs">
@@ -349,7 +414,7 @@ class TimeoutOptions extends Rule
 						</table>
 					</td>
 				</tr>
-				<tr class="evenline">
+				<tr class="oddline">
 					<td class="title">
 						<?php echo _TITLE('UDP').':' ?>
 					</td>
@@ -362,7 +427,7 @@ class TimeoutOptions extends Rule
 											<td class="ifs">
 												<input type="text" size="10" id="udp_first" name="udp_first" value="<?php echo $this->rule['proto']['udp']['first']; ?>" />
 											</td>
-											<td class="optitle">first</td>
+											<td class="optitle">first<?php $this->PrintHelp('udp_timeout') ?></td>
 										</tr>
 										<tr>
 											<td class="ifs">
@@ -382,7 +447,7 @@ class TimeoutOptions extends Rule
 						</table>
 					</td>
 				</tr>
-				<tr class="oddline">
+				<tr class="evenline">
 					<td class="title">
 						<?php echo _TITLE('ICMP').':' ?>
 					</td>
@@ -395,7 +460,7 @@ class TimeoutOptions extends Rule
 											<td class="ifs">
 												<input type="text" size="10" id="icmp_first" name="icmp_first" value="<?php echo $this->rule['proto']['icmp']['first']; ?>" />
 											</td>
-											<td class="optitle">first</td>
+											<td class="optitle">first<?php $this->PrintHelp('icmp_timeout') ?></td>
 										</tr>
 										<tr>
 											<td class="ifs">
@@ -409,7 +474,7 @@ class TimeoutOptions extends Rule
 						</table>
 					</td>
 				</tr>
-				<tr class="evenline">
+				<tr class="oddline">
 					<td class="title">
 						<?php echo _TITLE('Other').':' ?>
 					</td>
@@ -422,7 +487,7 @@ class TimeoutOptions extends Rule
 											<td class="ifs">
 												<input type="text" size="10" id="other_first" name="other_first" value="<?php echo $this->rule['proto']['other']['first']; ?>" />
 											</td>
-											<td class="optitle">first</td>
+											<td class="optitle">first<?php $this->PrintHelp('other_timeout') ?></td>
 										</tr>
 										<tr>
 											<td class="ifs">
@@ -442,7 +507,7 @@ class TimeoutOptions extends Rule
 						</table>
 					</td>
 				</tr>
-				<tr class="oddline">
+				<tr class="evenline">
 					<td class="title">
 						<?php echo _TITLE('Adaptive').':' ?>
 					</td>
@@ -455,7 +520,7 @@ class TimeoutOptions extends Rule
 											<td class="ifs">
 												<input type="text" size="10" id="adaptive_start" name="adaptive_start" value="<?php echo $this->rule['proto']['adaptive']['start']; ?>" />
 											</td>
-											<td class="optitle">start</td>
+											<td class="optitle">start<?php $this->PrintHelp('adaptive_timeout') ?></td>
 										</tr>
 										<tr>
 											<td class="ifs">
@@ -469,7 +534,7 @@ class TimeoutOptions extends Rule
 						</table>
 					</td>
 				</tr>
-				<tr class="evenline">
+				<tr class="oddline">
 					<td class="title">
 						<?php echo _TITLE('Comment').':' ?>
 					</td>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.4 2016/07/29 05:41:03 soner Exp $ */
+/* $pfre: pf.php,v 1.5 2016/07/29 07:07:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -204,7 +204,7 @@ class Pf extends Model
 				
 				if ($src == 'stdin') {
 					$rule= $rulesArray[$line];
-					ViewError("$line: $err:\n<code>	$rule</code>");
+					ViewError("$line: $err:\n<code>	" . htmlentities($rule) . '</code>');
 				} else {
 					// Rule numbers in include files need an extra decrement
 					$line--;

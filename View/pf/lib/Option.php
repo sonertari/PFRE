@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Options.php,v 1.8 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Option.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,7 +65,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
  
-class Options extends Rule
+class Option extends Rule
 {
 	function parse($str)
 	{
@@ -213,7 +213,7 @@ class Options extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=options&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, "conf.php?sender=option&amp;rulenumber=$rulenumber", $count);
 				?>
 			</td>
 		</tr>
@@ -295,9 +295,9 @@ class Options extends Rule
 			$type= key($this->rule['option']);
 		}
 
-		$href= "conf.php?sender=options&rulenumber=$rulenumber";
+		$href= "conf.php?sender=option&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Options Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Option Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Option') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -341,6 +341,7 @@ class Options extends Rule
 								<option value="drop" label="drop" <?php echo ($this->rule['option']['block-policy'] == 'drop' ? 'selected' : ''); ?>>drop</option>
 								<option value="return" label="return" <?php echo ($this->rule['option']['block-policy'] == 'return' ? 'selected' : ''); ?>>return</option>
 							</select>
+							<?php $this->PrintHelp('block-policy') ?>
 						</td>
 						<?php
 					}
@@ -357,6 +358,7 @@ class Options extends Rule
 								<option value="aggressive" <?php echo ($this->rule['option']['optimization'] == 'aggressive' ? 'selected' : ''); ?>>aggressive</option>
 								<option value="conservative" <?php echo ($this->rule['option']['optimization'] == 'conservative' ? 'selected' : ''); ?>>conservative</option>
 							</select>
+							<?php $this->PrintHelp('optimization') ?>
 						</td>
 						<?php
 					}
@@ -371,6 +373,7 @@ class Options extends Rule
 								<option value="basic" <?php echo ($this->rule['option']['ruleset-optimization'] == 'basic' ? 'selected' : ''); ?>>basic</option>
 								<option value="profile" <?php echo ($this->rule['option']['ruleset-optimization'] == 'profile' ? 'selected' : ''); ?>>profile</option>
 							</select>
+							<?php $this->PrintHelp('ruleset-optimization') ?>
 						</td>
 						<?php
 					}
@@ -384,6 +387,7 @@ class Options extends Rule
 								<option value="if-bound" <?php echo ($this->rule['option']['state-policy'] == 'if-bound' ? 'selected' : ''); ?>>if-bound</option>
 								<option value="floating" <?php echo ($this->rule['option']['state-policy'] == 'floating' ? 'selected' : ''); ?>>floating</option>
 							</select>
+							<?php $this->PrintHelp('state-policy') ?>
 						</td>
 						<?php
 					}
@@ -394,6 +398,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="fingerprints" name="fingerprints" value="<?php echo $this->rule['option']['fingerprints']; ?>" placeholder="filename"/>
+							<?php $this->PrintHelp('fingerprints') ?>
 						</td>
 						<?php
 					}
@@ -404,6 +409,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="loginterface" name="loginterface" value="<?php echo $this->rule['option']['loginterface']; ?>"  placeholder="interface"/>
+							<?php $this->PrintHelp('loginterface') ?>
 						</td>
 						<?php
 					}
@@ -423,6 +429,7 @@ class Options extends Rule
 								<option value="info" <?php echo ($this->rule['option']['debug'] == 'info' ? 'selected' : ''); ?>>info</option>
 								<option value="debug" <?php echo ($this->rule['option']['debug'] == 'debug' ? 'selected' : ''); ?>>debug</option>
 							</select>
+							<?php $this->PrintHelp('debug') ?>
 						</td>
 						<?php
 					}
@@ -434,6 +441,7 @@ class Options extends Rule
 						<td>
 							<input type="text" size="40" id="skip" name="skip" value="<?php echo (is_array($this->rule['option']['skip']) ? implode(' ', $this->rule['option']['skip']) : $this->rule['option']['skip']); ?>"
 								placeholder="comma or space separated list of interfaces"/>
+							<?php $this->PrintHelp('skip') ?>
 						</td>
 						<?php
 					}
@@ -444,6 +452,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="states" name="states" value="<?php echo $this->rule['option']['states']; ?>" placeholder="number" />
+							<?php $this->PrintHelp('states') ?>
 						</td>
 						<?php
 					}
@@ -454,6 +463,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="frags" name="frags" value="<?php echo $this->rule['option']['frags']; ?>" placeholder="number" />
+							<?php $this->PrintHelp('frags') ?>
 						</td>
 						<?php
 					}
@@ -464,6 +474,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="srcnodes" name="srcnodes" value="<?php echo $this->rule['option']['src-nodes']; ?>" placeholder="number" />
+							<?php $this->PrintHelp('src-nodes') ?>
 						</td>
 						<?php
 					}
@@ -474,6 +485,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="tables" name="tables" value="<?php echo $this->rule['option']['tables']; ?>" placeholder="number" />
+							<?php $this->PrintHelp('tables') ?>
 						</td>
 						<?php
 					}
@@ -484,6 +496,7 @@ class Options extends Rule
 						</td>
 						<td>
 							<input type="text" size="10" id="table-entries" name="table-entries" value="<?php echo $this->rule['option']['table-entries']; ?>" placeholder="number" />
+							<?php $this->PrintHelp('table-entries') ?>
 						</td>
 						<?php
 					}

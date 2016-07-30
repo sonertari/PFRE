@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.9 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Filter.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -90,152 +90,163 @@ class Filter extends Rule
 		
 		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
 
-		for ($i= '0'; $i < count($words); $i++) {
+		for ($i= 0; $i < count($words); $i++) {
 			switch ($words[$i]) {
-				case "anchor":
+				case 'anchor':
 					$this->rule['type']= $words[$i++];
-					if ($words[$i] == "\"") {
+					if ($words[$i] == '"') {
 						$this->rule['identifier']= $words[++$i];
-						if ($words[$i + 1] == "\"") {
+						if ($words[$i + 1] == '"') {
 							$i++;
 						}
 					} else {
 						$this->rule['identifier']= $words[$i];
 					}
 					break;
-				case "antispoof":
-				case "pass":
-				case "block":
-				case "match":
+				case 'antispoof':
+				case 'pass':
+				case 'block':
+				case 'match':
 					$this->rule['type']= $words[$i];
 					break;
-				case "quick":
+				case 'quick':
 					$this->rule['quick']= TRUE;
 					break;
-				case "inet":
-				case "inet6":
+				case 'inet':
+				case 'inet6':
 					$this->rule['family']= $words[$i];
 					break;
-				case "in":
-					$this->rule['direction']= "in";
+				case 'in':
+					$this->rule['direction']= 'in';
 					break;
-				case "out":
-					$this->rule['direction']= "out";
+				case 'out':
+					$this->rule['direction']= 'out';
 					break;
-				case "log":
-				case "log-all":
-					$this->rule['log']= $words[$i];
+				case 'log':
+					if ($words[$i + 1] == '\(') {
+						list($lo, $i)= $this->parseItem($words, $i, '\(', '\)');
+						$this->rule['log']= array();
+						for ($j= 0; $j < count($lo); $j++) {
+							if ($lo[$j] == 'to') {
+								$this->rule['log']['to']= $lo[++$j];
+							} else {
+								$this->rule['log'][$lo[$j]]= TRUE;
+							}
+						}
+					} else {
+						$this->rule['log']= TRUE;
+					}
 					break;
-				case "all":
+				case 'all':
 					$this->rule['all']= TRUE;
 					break;
-				case "allow-opts":
+				case 'allow-opts':
 					$this->rule['allow-opts']= TRUE;
 					break;
-				case "drop":
-					$this->rule['blockoption']= "drop";
+				case 'drop':
+					$this->rule['blockoption']= 'drop';
 					break;
-				case "return":
-					$this->rule['blockoption']= "return";
+				case 'return':
+					$this->rule['blockoption']= 'return';
 					break;
-				case "return-rst":
-					$this->rule['blockoption']= "return-rst";
+				case 'return-rst':
+					$this->rule['blockoption']= 'return-rst';
 					break;
-				case "return-icmp":
-					$this->rule['blockoption']= "return-icmp";
+				case 'return-icmp':
+					$this->rule['blockoption']= 'return-icmp';
 					break;
-				case "return-icmp6":
-					$this->rule['blockoption']= "return-icmp6";
+				case 'return-icmp6':
+					$this->rule['blockoption']= 'return-icmp6';
 					break;
-				case "route-to":
+				case 'route-to':
 					list($this->rule['route-to'], $i)= $this->parseItem($words, $i);
 					break;
-				case "reply-to":
+				case 'reply-to':
 					list($this->rule['reply-to'], $i)= $this->parseItem($words, $i);
 					break;
-				case "dup-to":
+				case 'dup-to':
 					list($this->rule['dup-to'], $i)= $this->parseItem($words, $i);
 					break;
-				case "divert-reply":
+				case 'divert-reply':
 					$this->rule['divert-reply']= TRUE;
 					break;
-				case "icmp-type":
+				case 'icmp-type':
 					list($this->rule['icmp-type'], $i)= $this->parseItem($words, $i);
-					if ($words[$i + '1'] == "code") {
+					if ($words[$i + 1] == 'code') {
 						list($this->rule['icmp-code'], $i)= $this->parseItem($words, ++$i);
 					}
 					break;
-				case "icmp6-type":
+				case 'icmp6-type':
 					list($this->rule['icmp6-type'], $i)= $this->parseItem($words, $i);
-					if ($words[$i + '1'] == "code") {
+					if ($words[$i + 1] == 'code') {
 						list($this->rule['icmp6-code'], $i)= $this->parseItem($words, ++$i);
 					}
 					break;
-				case "for":
-				case "on":
+				case 'for':
+				case 'on':
 					list($this->rule['interface'], $i)= $this->parseItem($words, $i);
 					break;
-				case "proto":
+				case 'proto':
 					list($this->rule['proto'], $i)= $this->parseItem($words, $i);
 					break;
-				case "any":
+				case 'any':
 					if (!isset($this->rule['from'])) {
-						$this->rule['from']= "any";
+						$this->rule['from']= 'any';
 					} else {
-						$this->rule['to']= "any";
+						$this->rule['to']= 'any';
 					}
 					break;
-				case "from":
-					if ($words[$i + 1] != "port") {
+				case 'from':
+					if ($words[$i + 1] != 'port') {
 						list($this->rule['from'], $i)= $this->parseItem($words, $i);
 					}
-					if ($words[$i + 1] == "port") {
+					if ($words[$i + 1] == 'port') {
 						list($this->rule['fromport'], $i)= $this->parsePortItem($words, ++$i);
 					}
 					break;
-				case "to":
-					if ($words[$i + 1] != "port") {
+				case 'to':
+					if ($words[$i + 1] != 'port') {
 						list($this->rule['to'], $i)= $this->parseItem($words, $i);
 					}
-					if ($words[$i + 1] == "port") {
+					if ($words[$i + 1] == 'port') {
 						list($this->rule['port'], $i)= $this->parsePortItem($words, ++$i);
 					}
 					break;
-				case "flags":
+				case 'flags':
 					$i++;
 					$this->rule['flags']= $words[$i];
 					break;
-				case "keep":
+				case 'keep':
 					$i++;
-					$this->rule['state']= "keep";
+					$this->rule['state']= 'keep';
 					break;
-				case "modulate":
+				case 'modulate':
 					$i++;
-					$this->rule['state']= "modulate";
+					$this->rule['state']= 'modulate';
 					break;
-				case "synproxy":
+				case 'synproxy':
 					$i++;
-					$this->rule['state']= "synproxy";
+					$this->rule['state']= 'synproxy';
 					break;
-				case "user":
+				case 'user':
 					list($this->rule['user'], $i)= $this->parseItem($words, $i);
 					break;
-				case "group":
+				case 'group':
 					list($this->rule['group'], $i)= $this->parseItem($words, $i);
 					break;
-				case "label":
+				case 'label':
 					list($this->rule['label'], $i)= $this->parseString($words, $i);
 					break;
-				case "queue":
-					list($this->rule['queue'], $i)= $this->parseItem($words, $i, "\(", "\)");
+				case 'queue':
+					list($this->rule['queue'], $i)= $this->parseItem($words, $i, '\(', '\)');
 					break;
-				case "tag":
+				case 'tag':
 					list($this->rule['tag'], $i)= $this->parseString($words, $i);
 					break;
-				case "tagged":
+				case 'tagged':
 					list($this->rule['tagged'], $i)= $this->parseString($words, $i);
 					break;
-				case "os":
+				case 'os':
 					$i++;
 					unset($_data);
 					if ($words[$i] != "{") {
@@ -257,7 +268,7 @@ class Filter extends Rule
 						}
 					}
 					break;
-				case "probability":
+				case 'probability':
 					$this->rule['probability']= preg_replace("/\"/", "", $words[++$i]);
 					break;
 				default:
@@ -280,7 +291,15 @@ class Filter extends Rule
 			$str.= " " . $this->rule['direction'];
 		}
 		if ($this->rule['log']) {
-			$str.= " " . $this->rule['log'];
+			if (is_array($this->rule['log'])) {
+				$s= ' log ( ';
+				foreach ($this->rule['log'] as $k => $v) {
+					$s.= (is_bool($v) ? "$k" : "$k $v") . ', ';
+				}
+				$str.= rtrim($s, ', ') . ' )';
+			} else {
+				$str.= ' log';
+			}
 		}
 		if ($this->rule['quick']) {
 			$str.= " quick";
@@ -433,7 +452,19 @@ class Filter extends Rule
 				<?php $this->PrintValue($this->rule['interface']); ?>
 			</td>
 			<td title="Log">
-				<?php echo $this->rule['log'] ? 'log' : ''; ?>
+				<?php
+				if ($this->rule['log']) {
+					if (is_array($this->rule['log'])) {
+						$s= 'log ';
+						foreach ($this->rule['log'] as $k => $v) {
+							$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
+						}
+						echo trim($s, ', ');
+					} else {
+						echo 'log';
+					}
+				}
+				?>
 			</td>
 			<td title="Quick">
 				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
@@ -600,7 +631,28 @@ class Filter extends Rule
 
 			$this->rule['type']= filter_input(INPUT_POST, 'type');
 			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
-			$this->rule['log']= filter_input(INPUT_POST, 'log');
+
+			$this->rule['log']= (filter_has_var(INPUT_POST, 'log') ? TRUE : '');
+			
+			if ($this->rule['log'] == TRUE) {
+				if (filter_has_var(INPUT_POST, 'log-all') || filter_has_var(INPUT_POST, 'log-matches') ||
+					filter_has_var(INPUT_POST, 'log-user') || filter_input(INPUT_POST, 'log-to') != '') {
+					$this->rule['log']= array();
+					if (filter_has_var(INPUT_POST, 'log-all')) {
+						$this->rule['log']['all']= TRUE;
+					}
+					if (filter_has_var(INPUT_POST, 'log-matches')) {
+						$this->rule['log']['matches']= TRUE;
+					}
+					if (filter_has_var(INPUT_POST, 'log-user')) {
+						$this->rule['log']['user']= TRUE;
+					}
+					if (filter_input(INPUT_POST, 'log-to') != '') {
+						$this->rule['log']['to']= filter_input(INPUT_POST, 'log-to');
+					}
+				}
+			}
+
 			$this->rule['quick']= (filter_has_var(INPUT_POST, 'quick') ? TRUE : '');
 			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 			$this->rule['label']= preg_replace('/"/', '', filter_input(INPUT_POST, 'label'));
@@ -666,7 +718,7 @@ class Filter extends Rule
 		
 		$href= "conf.php?sender=filter&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Filter Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Filter Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Filter') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form method="post" id="theform" name="theform" action="<?php echo $href; ?>">
 			<table id="nvp">
@@ -681,6 +733,7 @@ class Filter extends Rule
 							<option value="match" label="match" <?php echo ($this->rule['type'] == 'match' ? 'selected' : ''); ?>>match</option>
 							<option value="antispoof" label="antispoof" <?php echo ($this->rule['type'] == 'antispoof' ? 'selected' : ''); ?>>antispoof</option>
 						</select>
+						<?php $this->PrintHelp($this->rule['type']) ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -693,6 +746,7 @@ class Filter extends Rule
 							<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : ''); ?>>in</option>
 							<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
 						</select>
+						<?php $this->PrintHelp('direction') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -702,7 +756,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
-						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10, NULL, isset($this->rule['interface']));
+						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
+						$this->PrintHelp('interface');
 						?>
 					</td>
 				</tr>
@@ -716,6 +771,7 @@ class Filter extends Rule
 							<option value="inet" label="inet" <?php echo ($this->rule['family'] == 'inet' ? 'selected' : ''); ?>>inet</option>
 							<option value="inet6" label="inet6" <?php echo ($this->rule['family'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
 						</select>			
+						<?php $this->PrintHelp('address-family') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -725,7 +781,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['proto'], $href, 'dropproto');
-						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10, NULL, isset($this->rule['proto']));
+						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
+						$this->PrintHelp('proto');
 						?>
 					</td>
 				</tr>
@@ -734,11 +791,20 @@ class Filter extends Rule
 						<?php echo _TITLE('Logging').':' ?>
 					</td>
 					<td>
-						<select id="log" name="log">
-							<option value="" label=""></option>
-							<option value="log" label="log" <?php echo ($this->rule['log'] == 'log' ? 'selected' : ''); ?>>log</option>
-							<option value="log-all" label="log-all" <?php echo ($this->rule['log'] == 'log-all' ? 'selected' : ''); ?>>log-all</option>
-						</select>			
+						<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : ''); ?> />
+						<label for="log">Log</label>
+						<?php
+						$disabled= isset($this->rule['log']) ? '' : 'disabled';
+						?>
+						<label for="log">to:</label>
+						<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" <?php echo $disabled; ?> />
+						<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+						<label for="log">all</label>
+						<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+						<label for="log">matches</label>
+						<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+						<label for="log">user</label>
+						<?php $this->PrintHelp('log') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -757,6 +823,7 @@ class Filter extends Rule
 								<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
 								<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
 							</select>
+							<?php $this->PrintHelp('block') ?>
 						</td>
 						<?php
 					} else {
@@ -771,6 +838,7 @@ class Filter extends Rule
 								<option value="modulate" <?php echo ($this->rule['state'] == 'modulate' ? 'selected' : ''); ?>>Modulate State</option>
 								<option value="synproxy" <?php echo ($this->rule['state'] == 'synproxy' ? 'selected' : ''); ?>>Synproxy</option>
 							</select>
+							<?php $this->PrintHelp('stateful') ?>
 						</td>
 						<?php
 					}
@@ -782,6 +850,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="checkbox" id="quick" name="quick" value="quick" <?php echo ($this->rule['quick'] ? 'checked' : ''); ?> />
+						<?php $this->PrintHelp('quick') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -791,6 +860,7 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintAddControls('flags', NULL, 'flags or macro', $this->rule['flags'], 12);
+						$this->PrintHelp('flags');
 						?>
 					</td>
 				</tr>
@@ -800,6 +870,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="checkbox" id="all" name="all" value="all" <?php echo ($this->rule['all'] ? 'checked' : ''); ?> onclick="document.theform.submit()" />
+						<?php $this->PrintHelp('match-all') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -809,7 +880,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
-						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all'], isset($this->rule['from']));
+						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
+						$this->PrintHelp('src-dst');
 						?>
 					</td>
 				</tr>
@@ -820,7 +892,7 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['fromport'], $href, 'dropfromport');
-						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all'], isset($this->rule['fromport']));
+						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
@@ -831,7 +903,7 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
-						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all'], isset($this->rule['to']));
+						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
@@ -842,7 +914,7 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['port'], $href, 'dropport');
-						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all'], isset($this->rule['port']));
+						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
@@ -856,7 +928,8 @@ class Filter extends Rule
 						<td>
 							<?php
 							$this->PrintDeleteLinks($this->rule['icmp-type'], $href, 'dropicmptype');
-							$this->PrintAddControls('addicmptype', NULL, 'number, name or macro', NULL, NULL, NULL, isset($this->rule['icmp-type']));
+							$this->PrintAddControls('addicmptype', NULL, 'number, name or macro');
+							$this->PrintHelp('icmp-type');
 							?>
 						</td>
 					</tr>
@@ -879,7 +952,8 @@ class Filter extends Rule
 						<td>
 							<?php
 							$this->PrintDeleteLinks($this->rule['icmp6-type'], $href, 'dropicmp6type');
-							$this->PrintAddControls('addicmp6type', NULL, 'number, name or macro', NULL, NULL, NULL, isset($this->rule['icmp6-type']));
+							$this->PrintAddControls('addicmp6type', NULL, 'number, name or macro');
+							$this->PrintHelp('icmp6-type');
 							?>
 						</td>
 					</tr>
@@ -900,6 +974,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="text" id="label" name="label" value="<?php echo $this->rule['label']; ?>" />
+						<?php $this->PrintHelp('label') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -908,6 +983,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="text" id="tag" name="tag" value="<?php echo $this->rule['tag']; ?>" />
+						<?php $this->PrintHelp('tag') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -916,6 +992,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" />
+						<?php $this->PrintHelp('tagged') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -925,7 +1002,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['os'], $href, 'dropos');
-						$this->PrintAddControls('addos', NULL, 'os name or macro', NULL, NULL, NULL, isset($this->rule['os']));
+						$this->PrintAddControls('addos', NULL, 'os name or macro');
+						$this->PrintHelp('os');
 						?>
 					</td>
 				</tr>
@@ -957,6 +1035,7 @@ class Filter extends Rule
 						}
 						?>
 						</select>
+						<?php $this->PrintHelp('filter-queue') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -993,7 +1072,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['route-to'], $href, 'droprouteto');
-						$this->PrintAddControls('addrouteto', NULL, 'ip, host, table or macro', NULL, NULL, NULL, isset($this->rule['route-to']));
+						$this->PrintAddControls('addrouteto', NULL, 'ip, host, table or macro');
+						$this->PrintHelp('route-to');
 						?>
 					</td>
 				</tr>
@@ -1004,7 +1084,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['reply-to'], $href, 'dropreplyto');
-						$this->PrintAddControls('addreplyto', NULL, 'ip, host, table or macro', NULL, NULL, NULL, isset($this->rule['reply-to']));
+						$this->PrintAddControls('addreplyto', NULL, 'ip, host, table or macro');
+						$this->PrintHelp('reply-to');
 						?>
 					</td>
 				</tr>
@@ -1015,7 +1096,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['dup-to'], $href, 'dropdupto');
-						$this->PrintAddControls('adddupto', NULL, 'ip, host, table or macro', NULL, NULL, NULL, isset($this->rule['dup-to']));
+						$this->PrintAddControls('adddupto', NULL, 'ip, host, table or macro');
+						$this->PrintHelp('dup-to');
 						?>
 					</td>
 				</tr>
@@ -1025,6 +1107,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="checkbox" id="divert-reply" name="divert-reply" value="divert-reply" <?php echo ($this->rule['divert-reply'] ? 'checked' : ''); ?> />
+						<?php $this->PrintHelp('divert-reply') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -1033,6 +1116,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<input type="checkbox" id="allow-opts" name="allow-opts" value="allow-opts" <?php echo ($this->rule['allow-opts'] ? 'checked' : ''); ?> />
+						<?php $this->PrintHelp('allow-opts') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -1042,6 +1126,7 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintAddControls('probability', NULL, 'probability in percent', $this->rule['probability'], 20);
+						$this->PrintHelp('probability');
 						?>
 					</td>
 				</tr>
@@ -1052,7 +1137,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['user'], $href, 'dropuser');
-						$this->PrintAddControls('adduser', NULL, 'username or userid', NULL, NULL, NULL, isset($this->rule['user']));
+						$this->PrintAddControls('adduser', NULL, 'username or userid');
+						$this->PrintHelp('user');
 						?>
 					</td>
 				</tr>
@@ -1063,7 +1149,8 @@ class Filter extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['group'], $href, 'dropgroup');
-						$this->PrintAddControls('addgroup', NULL, 'groupname or groupid', NULL, NULL, NULL, isset($this->rule['group']));
+						$this->PrintAddControls('addgroup', NULL, 'groupname or groupid');
+						$this->PrintHelp('group');
 						?>
 					</td>
 				</tr>

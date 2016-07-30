@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Anchor.php,v 1.3 2016/07/29 03:12:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -213,7 +213,7 @@ class Anchor extends Filter
 	{
 		$href= "conf.php?sender=anchor&amp;rulenumber=$rulenumber";
 		?>
-		<h2>Edit Anchor Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Anchor Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Anchor') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" name="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -223,6 +223,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<input type="text" id="identifier" name="identifier" size="20" value="<?php echo $this->rule['identifier']; ?>" />
+						<?php $this->PrintHelp('anchor-id') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -235,6 +236,7 @@ class Anchor extends Filter
 							<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : ''); ?>>in</option>
 							<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
 						</select>
+						<?php $this->PrintHelp('direction') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -244,7 +246,8 @@ class Anchor extends Filter
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
-						$this->PrintAddControls('addinterface', 'add interface', 'if or macro', NULL, 10, NULL, isset($this->rule['interface']));
+						$this->PrintAddControls('addinterface', 'add interface', 'if or macro', NULL, 10);
+						$this->PrintHelp('interface');
 						?>
 					</td>
 				</tr>
@@ -258,6 +261,7 @@ class Anchor extends Filter
 							<option value="inet" label="inet" <?php echo ($this->rule['family'] == 'inet' ? 'selected' : ''); ?>>inet</option>
 							<option value="inet6" label="inet6" <?php echo ($this->rule['family'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
 						</select>			
+						<?php $this->PrintHelp('address-family') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -267,7 +271,8 @@ class Anchor extends Filter
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['proto'], $href, 'dropproto');
-						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10, NULL, isset($this->rule['proto']));
+						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
+						$this->PrintHelp('proto');
 						?>
 					</td>
 				</tr>
@@ -277,6 +282,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<input type="checkbox" id="all" name="all" value="all" <?php echo ($this->rule['all'] ? 'checked' : ''); ?> onclick="document.theform.submit()" />
+						<?php $this->PrintHelp('match-all') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -286,7 +292,8 @@ class Anchor extends Filter
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
-						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all'], isset($this->rule['from']));
+						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
+						$this->PrintHelp('src-dst');
 						?>
 					</td>
 				</tr>
@@ -297,7 +304,7 @@ class Anchor extends Filter
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['fromport'], $href, 'dropfromport');
-						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all'], isset($this->rule['fromport']));
+						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
@@ -308,7 +315,7 @@ class Anchor extends Filter
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
-						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all'], isset($this->rule['to']));
+						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>
@@ -319,7 +326,7 @@ class Anchor extends Filter
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['port'], $href, 'dropport');
-						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all'], isset($this->rule['port']));
+						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
 				</tr>

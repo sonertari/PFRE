@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.7 2016/07/27 09:15:30 soner Exp $ */
+/* $pfre: Macro.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -174,7 +174,7 @@ class Macro extends Rule
 	{
 		$href= "conf.php?sender=macro&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Macro Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Macro Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Macro') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo $href; ?>" method="post">
 			<table id="nvp">
@@ -193,7 +193,7 @@ class Macro extends Rule
 					<td>
 						<?php
 						$this->PrintDeleteLinks($this->rule['value'], $href, 'dropvalue');
-						$this->PrintAddControls('addvalue', NULL, 'add value', NULL, 30, NULL, isset($this->rule['value']));
+						$this->PrintAddControls('addvalue', NULL, 'add value', NULL, 30);
 						?>
 					</td>
 				</tr>

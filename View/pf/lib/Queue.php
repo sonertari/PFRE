@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.7 2016/07/27 03:10:47 soner Exp $ */
+/* $pfre: Queue.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -262,7 +262,7 @@ class Queue extends Rule
 	{
 		$href= "conf.php?sender=queue&rulenumber=$rulenumber";
 		?>
-		<h2>Edit Queue Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<h2>Edit Queue Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Queue') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
 		<form id="theform" action="<?php echo "conf.php?sender=queue&rulenumber=$rulenumber"; ?>" method="post">
 			<table id="nvp">
@@ -280,6 +280,7 @@ class Queue extends Rule
 					</td>
 					<td>
 						<input type="text" id="interface" name="interface" size="10" value="<?php echo $this->rule['interface']; ?>" />
+						<?php $this->PrintHelp('queue-interface') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
@@ -288,6 +289,7 @@ class Queue extends Rule
 					</td>
 					<td>
 						<input type="text" id="parent" name="parent" size="10" value="<?php echo $this->rule['parent']; ?>" />
+						<?php $this->PrintHelp('parent') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -303,7 +305,7 @@ class Queue extends Rule
 											<td class="ifs">
 												<input type="text" id="bandwidth" name="bandwidth" size="10" value="<?php echo $this->rule['bandwidth']; ?>" />
 											</td>
-											<td class="optitle">bandwidth</td>
+											<td class="optitle">bandwidth<?php $this->PrintHelp('bandwidth') ?></td>
 										</tr>
 										<tr>
 											<td class="ifs">
@@ -395,6 +397,7 @@ class Queue extends Rule
 					</td>
 					<td>
 						<input type="text" id="qlimit" name="qlimit" size="10" value="<?php echo $this->rule['qlimit']; ?>" />
+						<?php $this->PrintHelp('qlimit') ?>
 					</td>
 				</tr>
 				<tr class="evenline">
@@ -403,6 +406,7 @@ class Queue extends Rule
 					</td>
 					<td>
 						<input type="checkbox" id="default" name="default" <?php echo ($this->rule['default']) ? 'checked' : '' ; ?> />
+						<?php $this->PrintHelp('default') ?>
 					</td>
 				</tr>
 				<tr class="oddline">
