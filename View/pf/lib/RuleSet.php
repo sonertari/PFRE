@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.4 2016/07/30 00:23:56 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.5 2016/07/30 02:34:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -359,6 +359,7 @@ class RuleSet
 		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == 'Cancel')) {
 			unset($_SESSION['edit']);
 			header('Location: conf.php');
+			exit;
 		}
 
 		if (filter_has_var(INPUT_POST, 'save') && filter_input(INPUT_POST, 'save') == 'Save') {
@@ -369,20 +370,22 @@ class RuleSet
 				$this->rules[$rulenumber]= $ruleObj;
 				unset($_SESSION['edit']);
 				header('Location: conf.php');
+				exit;
 			}
 		}
 
-		$modified= FALSE;
+		$modified= TRUE;
+		if ($action != 'create') {
+			// Make sure keys are sorted before comparison
+			$newRule= $ruleObj->rule;
+			ksort($newRule);
 
-		// Make sure keys are sorted before comparison
-		$newRule= $ruleObj->rule;
-		ksort($newRule);
+			$origRule= $this->rules[$rulenumber]->rule;
+			ksort($origRule);
 
-		$origRule= $this->rules[$rulenumber]->rule;
-		ksort($origRule);
-
-		if (serialize($newRule) !== serialize($origRule)) {
-			$modified= TRUE;
+			if (serialize($newRule) === serialize($origRule)) {
+				$modified= FALSE;
+			}
 		}
 	}
 	

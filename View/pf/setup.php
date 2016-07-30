@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: setup.php,v 1.3 2016/07/29 03:12:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,6 +37,7 @@
 if ($ForceHTTPs) {
 	if (!filter_has_var(INPUT_SERVER, 'HTTPS')) {
 		header('Location: https://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').filter_input(INPUT_SERVER, 'REQUEST_URI'));
+		exit;
 	}
 }
 
@@ -107,6 +108,7 @@ if (count($_POST)) {
 			}
 			// Reload the page using plain HTTP to activate the change
 			header('Location: http://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').filter_input(INPUT_SERVER, 'REQUEST_URI'));
+			exit;
 		}
 		// Reset defaults to their new values
 		require($VIEW_PATH.'/lib/setup.php');

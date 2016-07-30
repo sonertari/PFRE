@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.1 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Option.php,v 1.2 2016/07/30 02:34:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -94,28 +94,28 @@ class Option extends Rule
 		
 		for ($i= 0; $i < count($words); $i++) {
 			switch ($words[$i]) {
-				case "loginterface":
+				case 'loginterface':
 					$this->rule['option']['loginterface']= $words[++$i];
 					break;
-				case "block-policy":
+				case 'block-policy':
 					$this->rule['option']['block-policy']= $words[++$i];
 					break;
-				case "state-policy":
+				case 'state-policy':
 					$this->rule['option']['state-policy']= $words[++$i];
 					break;
-				case "fingerprints":
+				case 'fingerprints':
 					$this->rule['option']['fingerprints']= $words['3'];
 					break;
-				case "optimization":
+				case 'optimization':
 					$this->rule['option']['optimization']= $words[++$i];
 					break;
-				case "ruleset-optimization":
+				case 'ruleset-optimization':
 					$this->rule['option']['ruleset-optimization']= $words[++$i];
 					break;
-				case "debug":
+				case 'debug':
 					$this->rule['option']['debug']= $words[++$i];
 					break;
-				case "skip":
+				case 'skip':
 					list($this->rule['option']['skip'], $i)= $this->parseItem($words, ++$i);
 					break;
 			}

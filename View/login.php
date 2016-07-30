@@ -1,5 +1,5 @@
 <?php
-/* $pfre: login.php,v 1.22 2016/07/11 17:31:39 soner Exp $ */
+/* $pfre: login.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -46,6 +46,7 @@ require_once($ROOT.'/lib/setup.php');
 if ($ForceHTTPs) {
 	if (!filter_has_var(INPUT_SERVER, 'HTTPS')) {
 		header('Location: https://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').'/index.php');
+		exit;
 	}
 }
 
@@ -79,6 +80,7 @@ else {
 				LogUserOut('Session timed out');
 			} else {
 				header("Location: /pf/index.php");
+				exit;
 			}
 		}
 	}

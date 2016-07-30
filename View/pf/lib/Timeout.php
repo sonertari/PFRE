@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Timeout.php,v 1.1 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -88,26 +88,26 @@ class Timeout extends Rule
 		
 		$words= preg_split("/[\s,\t\.]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
 		
-		for ($i= '0'; $i < count($words); $i++) {
+		for ($i= 0; $i < count($words); $i++) {
 			switch ($words[$i]) {
-				case "timeout":
+				case 'timeout':
 					break;
-				case "frag":
-				case "interval":
+				case 'frag':
+				case 'interval':
 					$this->rule['proto']['all'][$words[$i]]= $words[$i + 1];
 					$i++;
 					break;
-				case "src":
+				case 'src':
 					if ($words[$i + 1] == 'track') {
 						$this->rule['proto']['all']['src.track']= $words[$i + 2];
 						$i+= 2;
 					}
 					break;
-				case "tcp":
-				case "udp":
-				case "icmp":
-				case "other":
-				case "adaptive":
+				case 'tcp':
+				case 'udp':
+				case 'icmp':
+				case 'other':
+				case 'adaptive':
 					$this->rule['proto'][$words[$i]][$words[$i + 1]]= $words[$i + 2];
 					$i+= 2;
 					break;
@@ -117,33 +117,36 @@ class Timeout extends Rule
 
 	function generate()
 	{
-		/// @attention This reset is critical if a page calls this function twice, and it does in this case
-		reset($this->rule['proto']);
-		
-		if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
-			list($proto, $kvps)= each($this->rule['proto']);
-			$proto= $proto == 'all' ? '' : "$proto.";
+		$str= '';
+		if (count($this->rule['proto'])) {
+			/// @attention This reset is critical if a page calls this function twice, and it does in this case
+			reset($this->rule['proto']);
 
-			list($key, $val)= each($kvps);
-			$str= "set timeout $proto$key $val";
-		} else {
-			$str= 'set timeout {';
-			while (list($proto, $kvps)= each($this->rule['proto'])) {
+			if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
+				list($proto, $kvps)= each($this->rule['proto']);
 				$proto= $proto == 'all' ? '' : "$proto.";
 
-				if (count($kvps) == 1) {
-					list($key, $val)= each($kvps);
-					$str.= " $proto$key $val,";
-				} else {
-					while (list($key, $val)= each($kvps)) {
+				list($key, $val)= each($kvps);
+				$str= "set timeout $proto$key $val";
+			} else {
+				$str= 'set timeout {';
+				while (list($proto, $kvps)= each($this->rule['proto'])) {
+					$proto= $proto == 'all' ? '' : "$proto.";
+
+					if (count($kvps) == 1) {
+						list($key, $val)= each($kvps);
 						$str.= " $proto$key $val,";
+					} else {
+						while (list($key, $val)= each($kvps)) {
+							$str.= " $proto$key $val,";
+						}
 					}
 				}
+				$str= rtrim($str, ",");
+				$str.= " }";
 			}
-			$str= rtrim($str, ",");
-			$str.= " }";
 		}
-		
+
 		if ($this->rule['comment']) {
 			$str.= " # " . trim(stripslashes($this->rule['comment']));
 		}
@@ -163,11 +166,13 @@ class Timeout extends Rule
 			</td>
 			<td title="Timeout" colspan="12">
 				<?php
-				reset($this->rule['proto']);
-				while (list($proto, $kvps)= each($this->rule['proto'])) {	
-					$proto= $proto == 'all' ? '' : "$proto.";
-					while (list($key, $val)= each($kvps)) {
-						echo "$proto$key: $val<br>";
+				if (count($this->rule['proto'])) {
+					reset($this->rule['proto']);
+					while (list($proto, $kvps)= each($this->rule['proto'])) {	
+						$proto= $proto == 'all' ? '' : "$proto.";
+						while (list($key, $val)= each($kvps)) {
+							echo "$proto$key: $val<br>";
+						}
 					}
 				}
 				?>

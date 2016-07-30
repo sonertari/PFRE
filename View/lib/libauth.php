@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libauth.php,v 1.33 2016/07/26 23:08:20 soner Exp $ */
+/* $pfre: libauth.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -96,6 +96,7 @@ function LogUserOut($reason= 'User logged out')
 	session_write_close();
 
 	header('Location: /index.php');
+	exit;
 }
 
 /** Authenticates session user with the password supplied.
@@ -132,6 +133,7 @@ function Authentication($passwd)
 	$_SESSION['Timeout']= time() + $SessionTimeout;
 	
 	header("Location: /pf/index.php");
+	exit;
 }
 
 /** HTML Header without authentication.

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.1 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Limit.php,v 1.1 2016/07/30 02:34:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -92,7 +92,7 @@ class Limit extends Rule
 		 */
 		$words= preg_split("/[\s,\t]+/", $str, '-1', PREG_SPLIT_NO_EMPTY);
 		
-		for ($i= '0'; $i < count($words); $i++) {
+		for ($i= 0; $i < count($words); $i++) {
 			switch ($words[$i]) {
 				case 'states':
 					$this->rule['limit']['states']= $words[++$i];
@@ -115,19 +115,21 @@ class Limit extends Rule
 
 	function generate()
 	{
-		reset($this->rule['limit']);
-		
 		$str= '';
-		if (count($this->rule['limit']) == 1) {
-			list($key, $val)= each($this->rule['limit']);
-			$str.= "set limit $key $val";
-		} else {
-			$str= 'set limit {';
-			while (list($key, $val)= each($this->rule['limit'])) {
-				$str.= " $key $val,";
+		if (count($this->rule['limit'])) {
+			reset($this->rule['limit']);
+
+			if (count($this->rule['limit']) == 1) {
+				list($key, $val)= each($this->rule['limit']);
+				$str.= "set limit $key $val";
+			} else {
+				$str= 'set limit {';
+				while (list($key, $val)= each($this->rule['limit'])) {
+					$str.= " $key $val,";
+				}
+				$str= rtrim($str, ",");
+				$str.= " }";
 			}
-			$str= rtrim($str, ",");
-			$str.= " }";
 		}
 
 		if ($this->rule['comment']) {
@@ -149,9 +151,11 @@ class Limit extends Rule
 			</td>
 			<td title="Limit" colspan="12">
 				<?php
-				reset($this->rule['limit']);
-				while (list($key, $val)= each($this->rule['limit'])) {
-					echo "$key: $val<br>";
+				if (count($this->rule['limit'])) {
+					reset($this->rule['limit']);
+					while (list($key, $val)= each($this->rule['limit'])) {
+						echo "$key: $val<br>";
+					}
 				}
 				?>
 			</td>

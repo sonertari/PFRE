@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: pfrec.php,v 1.3 2016/07/29 06:42:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -55,6 +55,7 @@ chdir(dirname(__FILE__));
 if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {
 	pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Requested on the wui, exiting...');
 	header('Location: /index.php');
+	exit;
 }
 
 require_once($ROOT.'/lib/lib.php');

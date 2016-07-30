@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: files.php,v 1.3 2016/07/29 06:42:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -141,7 +141,7 @@ if (filter_has_var(INPUT_POST, 'download')) {
 	header('Content-Type: application/octet-stream');
 	header('Content-Disposition: attachment; filename="pf.conf"');
 	echo $View->RuleSet->generate();
-	exit();
+	exit;
 }
 
 $View->Controller($Output, 'GetPfRuleFiles');
