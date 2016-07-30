@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Queue.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -105,7 +105,7 @@ class Queue extends Rule
 			);
 
 		// Base should not merge keywords
-		parent::__construct($str, FALSE);
+		parent::__construct($str);
 	}
 
 	function sanitize()
@@ -211,7 +211,7 @@ class Queue extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=queue&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -243,7 +243,6 @@ class Queue extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=queue&rulenumber=$rulenumber";
 		?>
 		<h2>Edit Queue Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Queue') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>

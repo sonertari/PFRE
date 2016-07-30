@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.3 2016/07/30 00:23:56 soner Exp $ */
+/* $pfre: Include.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -75,7 +75,7 @@ class _Include extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=include&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -98,12 +98,10 @@ class _Include extends Rule
 
 		$View->Controller($Output, 'GetPfRuleFiles');
 		$ruleFiles= $Output;
-
-		$href= "conf.php?sender=include&amp;rulenumber=$rulenumber";
 		?>
 		<h2>Edit Include Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Include') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">

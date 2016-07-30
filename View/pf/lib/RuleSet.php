@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.6 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.7 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -251,8 +251,10 @@ class RuleSet
 				case 'pass':
 				case 'block':
 				case 'match':
-				case 'antispoof':
 					$this->rules[]= new Filter($str);
+					break;
+				case 'antispoof':
+					$this->rules[]= new Antispoof($str);
 					break;
 				case 'af-to':
 				case 'nat-to':

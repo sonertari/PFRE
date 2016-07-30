@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.3 2016/07/30 00:23:56 soner Exp $ */
+/* $pfre: Rule.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,7 +79,9 @@ class Rule
 
 	protected $keywords = array();
 
-	function __construct($str, $merge= TRUE)
+	protected $href= '';
+
+	function __construct($str, $merge= FALSE)
 	{
 		/// @todo We should not merge anything here, keywords in the base class should be empty
 		if ($merge) {
@@ -135,6 +137,7 @@ class Rule
 		}
 
 		$this->cat= get_called_class();
+		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&rulenumber=';
 		$this->parse($str);
 	}
 
@@ -566,10 +569,10 @@ class Rule
 		}
 	}
 	
-	function PrintEditLinks($rulenumber, $href, $count, $up= 'up', $down= 'down', $del= 'del')
+	function PrintEditLinks($rulenumber, $count, $up= 'up', $down= 'down', $del= 'del')
 	{
 		?>
-		<a href="<?php echo $href; ?>" title="Edit">e</a>
+		<a href="<?php echo $this->href . $rulenumber; ?>" title="Edit">e</a>
 		<?php
 		if ($rulenumber > 0) {
 			?>
@@ -590,7 +593,7 @@ class Rule
 		<?php
 	}
 	
-	function PrintDeleteLinks($value, $href, $name, $prefix= '', $postfix= '')
+	function PrintDeleteLinks($value, $rulenumber, $name, $prefix= '', $postfix= '')
 	{
 		if (isset($value)) {
 			if (is_array($value)) {
@@ -598,14 +601,14 @@ class Rule
 					$v= htmlentities($v);
 					echo "$prefix$v$postfix";
 					?>
-					<a href="<?php echo $href; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
+					<a href="<?php echo $this->href . $rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
 					<?php
 				}
 			} else {
 				$value= htmlentities($value);
 				echo "$prefix$value$postfix";
 				?>
-				<a href="<?php echo $href; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
+				<a href="<?php echo $this->href . $rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
 				<?php
 			}
 			?>

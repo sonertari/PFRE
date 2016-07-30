@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Nat.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -145,7 +145,7 @@ class Nat extends Rule
 				)
 			);
 
-		parent::__construct($str);
+		parent::__construct($str, TRUE);
 	}
 
 	function sanitize()
@@ -169,8 +169,10 @@ class Nat extends Rule
 	{
 		$this->setBool();
 
-		// XXX: What is a possible pattern for key?
-		if (preg_match('/[a-f\d]{16,}/', $this->words[$this->index + 1])) {
+		/// @attention No pattern for hash key or string, so check keywords instead
+		/// This is one of the benefits of using keyword lists instead of switch/case structs while parsing
+		//if (preg_match('/[a-f\d]{16,}/', $this->words[$this->index + 1])) {
+		if (!in_array($this->words[$this->index + 1], $this->keywords)) {
 			$this->rule['source-hash-key']= $this->words[++$this->index];
 		}
 	}
@@ -363,7 +365,7 @@ class Nat extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=nat&rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -493,11 +495,10 @@ class Nat extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=nat&rulenumber=$rulenumber";
 		?>
 		<h2>Edit NAT Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Nat') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" name="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" name="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">
@@ -562,7 +563,7 @@ class Nat extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
+						$this->PrintDeleteLinks($this->rule['interface'], $rulenumber, 'dropinterface');
 						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
 						$this->PrintHelp('interface');
 						?>
@@ -587,7 +588,7 @@ class Nat extends Rule
 								</select>
 								<?php
 							} else {
-								$this->PrintDeleteLinks($this->rule['proto'], $href, 'dropproto');
+								$this->PrintDeleteLinks($this->rule['proto'], $rulenumber, 'dropproto');
 								$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
 							}
 							$this->PrintHelp('proto');
@@ -624,7 +625,7 @@ class Nat extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
+						$this->PrintDeleteLinks($this->rule['from'], $rulenumber, 'dropfrom');
 						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
 						$this->PrintHelp('src-dst');
 						?>
@@ -646,7 +647,7 @@ class Nat extends Rule
 						</td>
 						<td>
 							<?php
-							$this->PrintDeleteLinks($this->rule['fromport'], $href, 'dropfromport');
+							$this->PrintDeleteLinks($this->rule['fromport'], $rulenumber, 'dropfromport');
 							$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
 							?>
 						</td>
@@ -660,7 +661,7 @@ class Nat extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
+						$this->PrintDeleteLinks($this->rule['to'], $rulenumber, 'dropto');
 						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
 
 						if ($this->rule['type'] == "af-to") {
@@ -683,7 +684,7 @@ class Nat extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['port'], $href, 'dropport');
+						$this->PrintDeleteLinks($this->rule['port'], $rulenumber, 'dropport');
 						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>

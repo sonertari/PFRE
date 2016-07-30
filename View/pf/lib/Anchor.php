@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.4 2016/07/30 00:23:56 soner Exp $ */
+/* $pfre: Anchor.php,v 1.5 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -76,7 +76,7 @@ class Anchor extends Filter
 				),
 			);
 
-		parent::__construct($str);
+		parent::__construct($str, TRUE);
 	}
 
 	function setAnchor()
@@ -155,7 +155,7 @@ class Anchor extends Filter
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=anchor&rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -236,11 +236,10 @@ class Anchor extends Filter
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=anchor&amp;rulenumber=$rulenumber";
 		?>
 		<h2>Edit Anchor Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Anchor') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" name="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" name="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">
@@ -270,7 +269,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
+						$this->PrintDeleteLinks($this->rule['interface'], $rulenumber, 'dropinterface');
 						$this->PrintAddControls('addinterface', 'add interface', 'if or macro', NULL, 10);
 						$this->PrintHelp('interface');
 						?>
@@ -295,7 +294,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['proto'], $href, 'dropproto');
+						$this->PrintDeleteLinks($this->rule['proto'], $rulenumber, 'dropproto');
 						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
 						$this->PrintHelp('proto');
 						?>
@@ -316,7 +315,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
+						$this->PrintDeleteLinks($this->rule['from'], $rulenumber, 'dropfrom');
 						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
 						$this->PrintHelp('src-dst');
 						?>
@@ -328,7 +327,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['fromport'], $href, 'dropfromport');
+						$this->PrintDeleteLinks($this->rule['fromport'], $rulenumber, 'dropfromport');
 						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
@@ -339,7 +338,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
+						$this->PrintDeleteLinks($this->rule['to'], $rulenumber, 'dropto');
 						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
@@ -350,7 +349,7 @@ class Anchor extends Filter
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['port'], $href, 'dropport');
+						$this->PrintDeleteLinks($this->rule['port'], $rulenumber, 'dropport');
 						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>

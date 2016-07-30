@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.4 2016/07/30 02:34:35 soner Exp $ */
+/* $pfre: vars.php,v 1.5 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -53,6 +53,7 @@ $PF_PATH= $VIEW_PATH.'/pf';
 require_once($PF_PATH.'/lib/RuleSet.php');
 require_once($PF_PATH.'/lib/Rule.php');
 require_once($PF_PATH.'/lib/Filter.php');
+require_once($PF_PATH.'/lib/Antispoof.php');
 require_once($PF_PATH.'/lib/Anchor.php');
 require_once($PF_PATH.'/lib/Macro.php');
 require_once($PF_PATH.'/lib/Table.php');

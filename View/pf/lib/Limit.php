@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.2 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: Limit.php,v 1.3 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -93,7 +93,7 @@ class Limit extends Rule
 			);
 
 		// Base should not merge keywords
-		parent::__construct($str, FALSE);
+		parent::__construct($str);
 	}
 
 	function sanitize()
@@ -162,7 +162,7 @@ class Limit extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=limit&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -216,11 +216,10 @@ class Limit extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=limit&rulenumber=$rulenumber";
 		?>
 		<h2>Edit Limit Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Limit') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.2 2016/07/30 00:23:56 soner Exp $ */
+/* $pfre: edit.php,v 1.3 2016/07/30 02:34:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,6 +36,7 @@ require_once ('include.php');
 
 $ruleType2Class= array(
     'filter' => 'Filter',
+    'antispoof' => 'Antispoof',
     'anchor' => 'Anchor',
     'macro' => 'Macro',
     'table' => 'Table',

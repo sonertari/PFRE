@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Filter.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -84,10 +84,6 @@ class Filter extends Rule
 					'method' => 'setNVP',
 					'params' => array('type'),
 					),
-				'antispoof' => array(
-					'method' => 'setNVP',
-					'params' => array('type'),
-					),
 				'inet' => array(
 					'method' => 'setNVP',
 					'params' => array('family'),
@@ -152,11 +148,11 @@ class Filter extends Rule
 					'method' => 'setNVPInc',
 					'params' => array('state'),
 					),
-				'keep' => array(
+				'modulate' => array(
 					'method' => 'setNVPInc',
 					'params' => array('state'),
 					),
-				'keep' => array(
+				'synproxy' => array(
 					'method' => 'setNVPInc',
 					'params' => array('state'),
 					),
@@ -195,7 +191,7 @@ class Filter extends Rule
 				)
 			);
 
-		parent::__construct($str);
+		parent::__construct($str, TRUE);
 	}
 
 	function generate()
@@ -226,11 +222,7 @@ class Filter extends Rule
 			$str.= ' quick';
 		}
 		if ($this->rule['interface']) {
-			if ($this->rule['type'] == 'antispoof') {
-				$str.= $this->generateItem($this->rule['interface'], 'for');
-			} else {
-				$str.= $this->generateItem($this->rule['interface'], 'on');
-			}
+			$str.= $this->generateItem($this->rule['interface'], 'on');
 		}
 		if ($this->rule['route-to']) {
 			$str.= $this->generateItem($this->rule['route-to'], 'route-to');
@@ -428,7 +420,7 @@ class Filter extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=filter&rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -636,12 +628,10 @@ class Filter extends Rule
 		global $View;
 		
 		$queueNames= $View->RuleSet->getQueueNames();
-		
-		$href= "conf.php?sender=filter&rulenumber=$rulenumber";
 		?>
 		<h2>Edit Filter Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Filter') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form method="post" id="theform" name="theform" action="<?php echo $href; ?>">
+		<form method="post" id="theform" name="theform" action="<?php echo $this->href . $rulenumber; ?>">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">
@@ -652,7 +642,6 @@ class Filter extends Rule
 							<option value="pass" label="pass" <?php echo ($this->rule['type'] == 'pass' ? 'selected' : ''); ?>>pass</option>
 							<option value="block" label="block" <?php echo ($this->rule['type'] == 'block' ? 'selected' : ''); ?>>block</option>
 							<option value="match" label="match" <?php echo ($this->rule['type'] == 'match' ? 'selected' : ''); ?>>match</option>
-							<option value="antispoof" label="antispoof" <?php echo ($this->rule['type'] == 'antispoof' ? 'selected' : ''); ?>>antispoof</option>
 						</select>
 						<?php $this->PrintHelp($this->rule['type']) ?>
 					</td>
@@ -676,7 +665,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['interface'], $href, 'dropinterface');
+						$this->PrintDeleteLinks($this->rule['interface'], $rulenumber, 'dropinterface');
 						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
 						$this->PrintHelp('interface');
 						?>
@@ -701,7 +690,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['proto'], $href, 'dropproto');
+						$this->PrintDeleteLinks($this->rule['proto'], $rulenumber, 'dropproto');
 						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
 						$this->PrintHelp('proto');
 						?>
@@ -800,7 +789,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['from'], $href, 'dropfrom');
+						$this->PrintDeleteLinks($this->rule['from'], $rulenumber, 'dropfrom');
 						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
 						$this->PrintHelp('src-dst');
 						?>
@@ -812,7 +801,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['fromport'], $href, 'dropfromport');
+						$this->PrintDeleteLinks($this->rule['fromport'], $rulenumber, 'dropfromport');
 						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
@@ -823,7 +812,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['to'], $href, 'dropto');
+						$this->PrintDeleteLinks($this->rule['to'], $rulenumber, 'dropto');
 						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
@@ -834,7 +823,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['port'], $href, 'dropport');
+						$this->PrintDeleteLinks($this->rule['port'], $rulenumber, 'dropport');
 						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
 						?>
 					</td>
@@ -848,7 +837,7 @@ class Filter extends Rule
 						</td>
 						<td>
 							<?php
-							$this->PrintDeleteLinks($this->rule['icmp-type'], $href, 'dropicmptype');
+							$this->PrintDeleteLinks($this->rule['icmp-type'], $rulenumber, 'dropicmptype');
 							$this->PrintAddControls('addicmptype', NULL, 'number, name or macro');
 							$this->PrintHelp('icmp-type');
 							?>
@@ -872,7 +861,7 @@ class Filter extends Rule
 						</td>
 						<td>
 							<?php
-							$this->PrintDeleteLinks($this->rule['icmp6-type'], $href, 'dropicmp6type');
+							$this->PrintDeleteLinks($this->rule['icmp6-type'], $rulenumber, 'dropicmp6type');
 							$this->PrintAddControls('addicmp6type', NULL, 'number, name or macro');
 							$this->PrintHelp('icmp6-type');
 							?>
@@ -922,7 +911,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['os'], $href, 'dropos');
+						$this->PrintDeleteLinks($this->rule['os'], $rulenumber, 'dropos');
 						$this->PrintAddControls('addos', NULL, 'os name or macro');
 						$this->PrintHelp('os');
 						?>
@@ -992,7 +981,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['route-to'], $href, 'droprouteto');
+						$this->PrintDeleteLinks($this->rule['route-to'], $rulenumber, 'droprouteto');
 						$this->PrintAddControls('addrouteto', NULL, 'ip, host, table or macro');
 						$this->PrintHelp('route-to');
 						?>
@@ -1004,7 +993,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['reply-to'], $href, 'dropreplyto');
+						$this->PrintDeleteLinks($this->rule['reply-to'], $rulenumber, 'dropreplyto');
 						$this->PrintAddControls('addreplyto', NULL, 'ip, host, table or macro');
 						$this->PrintHelp('reply-to');
 						?>
@@ -1016,7 +1005,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['dup-to'], $href, 'dropdupto');
+						$this->PrintDeleteLinks($this->rule['dup-to'], $rulenumber, 'dropdupto');
 						$this->PrintAddControls('adddupto', NULL, 'ip, host, table or macro');
 						$this->PrintHelp('dup-to');
 						?>
@@ -1057,7 +1046,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['user'], $href, 'dropuser');
+						$this->PrintDeleteLinks($this->rule['user'], $rulenumber, 'dropuser');
 						$this->PrintAddControls('adduser', NULL, 'username or userid');
 						$this->PrintHelp('user');
 						?>
@@ -1069,7 +1058,7 @@ class Filter extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['group'], $href, 'dropgroup');
+						$this->PrintDeleteLinks($this->rule['group'], $rulenumber, 'dropgroup');
 						$this->PrintAddControls('addgroup', NULL, 'groupname or groupid');
 						$this->PrintHelp('group');
 						?>

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.3 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: Option.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -109,7 +109,7 @@ class Option extends Rule
 			);
 
 		// Base should not merge keywords
-		parent::__construct($str, FALSE);
+		parent::__construct($str);
 	}
 
 	function setOption()
@@ -193,7 +193,7 @@ class Option extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=option&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -259,12 +259,10 @@ class Option extends Rule
 		if (isset($this->rule['option']) && count($this->rule['option'])) {
 			$type= key($this->rule['option']);
 		}
-
-		$href= "conf.php?sender=option&rulenumber=$rulenumber";
 		?>
 		<h2>Edit Option Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Option') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<?php
 				if (!isset($type)) {

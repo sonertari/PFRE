@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Comment.php,v 1.3 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -74,7 +74,7 @@ class Comment extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=comment&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -92,10 +92,9 @@ class Comment extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=comment&amp;rulenumber=$rulenumber";
 		?>
 		<h2>Edit Comment <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<textarea cols="80" rows="5" id="comment" name="comment" placeholder="Enter comment here"><?php echo stripslashes($this->rule['comment']); ?></textarea>
 			<div class="buttons">
 				<input type="submit" id="apply" name="apply" value="Apply" />

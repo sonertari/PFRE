@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: Blank.php,v 1.3 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,7 +60,7 @@ class Blank extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=blank&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -84,11 +84,9 @@ class Blank extends Rule
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
 		$count= count(explode("\n", $this->rule['blank'])) - 1;
-
-		$href= "conf.php?sender=blank&amp;rulenumber=$rulenumber";
 		?>
 		<h2>Edit Blank <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<?php echo _('Number of lines') . ': ' . $count; ?><br>
 			<textarea cols="80" rows="5" id="blank" name="blank" placeholder="Enter blank lines here"><?php echo $this->rule['blank']; ?></textarea>
 			<div class="buttons">

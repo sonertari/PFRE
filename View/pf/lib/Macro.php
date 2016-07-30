@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: Macro.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -141,7 +141,7 @@ class Macro extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=macro&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -168,11 +168,10 @@ class Macro extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=macro&rulenumber=$rulenumber";
 		?>
 		<h2>Edit Macro Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Macro') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">
@@ -188,7 +187,7 @@ class Macro extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['value'], $href, 'dropvalue');
+						$this->PrintDeleteLinks($this->rule['value'], $rulenumber, 'dropvalue');
 						$this->PrintAddControls('addvalue', NULL, 'add value', NULL, 30);
 						?>
 					</td>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.3 2016/07/30 00:23:56 soner Exp $ */
+/* $pfre: Table.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -96,7 +96,7 @@ class Table extends Rule
 			);
 
 		// Base should not merge keywords
-		parent::__construct($str, FALSE);
+		parent::__construct($str);
 	}
 
 	function sanitize()
@@ -197,7 +197,7 @@ class Table extends Rule
 			</td>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, "conf.php?sender=table&amp;rulenumber=$rulenumber", $count);
+				$this->PrintEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
@@ -237,11 +237,10 @@ class Table extends Rule
 	
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$href= "conf.php?sender=table&rulenumber=$rulenumber";
 		?>
 		<h2>Edit Table Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Table') ?></h2>
 		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $href; ?>" method="post">
+		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
 			<table id="nvp">
 				<tr class="oddline">
 					<td class="title">
@@ -275,8 +274,8 @@ class Table extends Rule
 					</td>
 					<td>
 						<?php
-						$this->PrintDeleteLinks($this->rule['data'], $href, 'dropvalue');
-						$this->PrintDeleteLinks($this->rule['file'], $href, 'dropfile', 'file "', '"');
+						$this->PrintDeleteLinks($this->rule['data'], $rulenumber, 'dropvalue');
+						$this->PrintDeleteLinks($this->rule['file'], $rulenumber, 'dropfile', 'file "', '"');
 						$this->PrintAddControls('addfile', 'add file', 'filename', NULL, 30);
 						?>
 						<br />
