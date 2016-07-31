@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Option.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,77 +33,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
 class Option extends Rule
 {
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'loginterface' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'block-policy' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'state-policy' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'optimization' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'ruleset-optimization' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'debug' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'hostid' => array(
-				'method' => 'setOption',
+				'method' => 'parseOption',
 				'params' => array(),
 				),
 			'skip' => array(
-				'method' => 'setSkip',
+				'method' => 'parseSkip',
 				'params' => array(),
 				),
 			'fingerprints' => array(
-				'method' => 'setFingerprints',
+				'method' => 'parseFingerprints',
 				'params' => array(),
 				),
 			);
@@ -112,17 +80,17 @@ class Option extends Rule
 		parent::__construct($str);
 	}
 
-	function setOption()
+	function parseOption()
 	{
 		$this->rule['option'][$this->words[$this->index]]= $this->words[++$this->index];
 	}
 
-	function setSkip()
+	function parseSkip()
 	{
 		list($this->rule['option']['skip'], $this->index)= $this->parseItem($this->words, ++$this->index);
 	}
 
-	function setFingerprints()
+	function parseFingerprints()
 	{
 		// File name is in quotes, skip the quote
 		$this->index+= 2;
@@ -131,34 +99,38 @@ class Option extends Rule
 
 	function generate()
 	{
-		$str= '';
-		if (isset($this->rule['option']['loginterface'])) {
-			$str.= "set loginterface " . $this->rule['option']['loginterface'];
-		} elseif (isset($this->rule['option']['optimization'])) {
-			$str.= "set optimization " . $this->rule['option']['optimization'];
-		} elseif (isset($this->rule['option']['ruleset-optimization'])) {
-			$str.= "set ruleset-optimization " . $this->rule['option']['ruleset-optimization'];
-		} elseif (isset($this->rule['option']['block-policy'])) {
-			$str.= "set block-policy " . $this->rule['option']['block-policy'];
-		} elseif (isset($this->rule['option']['state-policy'])) {
-			$str.= "set state-policy " . $this->rule['option']['state-policy'];
-		} elseif (isset($this->rule['option']['debug'])) {
-			$str.= "set debug " . $this->rule['option']['debug'];
-		} elseif (isset($this->rule['option']['fingerprints'])) {
-			$str.= "set fingerprints \"" . preg_replace("/\"/", "", $this->rule['option']['fingerprints']) . "\"";
-		} elseif (isset($this->rule['option']['skip'])) {
+		$this->str= '';
+
+		$this->genOption('loginterface');
+		$this->genOption('optimization');
+		$this->genOption('ruleset-optimization');
+		$this->genOption('block-policy');
+		$this->genOption('state-policy');
+		$this->genOption('debug');
+		$this->genOption('fingerprints', '"', '"');
+		$this->genSkip();
+		
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
+	}
+
+	function genOption($key, $head= '', $tail= '')
+	{
+		if (isset($this->rule['option'][$key])) {
+			$this->str.= "set $key " . $head . preg_replace('/"/', '', $this->rule['option'][$key]) . $tail;
+		}
+	}
+
+	function genSkip()
+	{
+		if (isset($this->rule['option']['skip'])) {
 			if (!is_array($this->rule['option']['skip'])) {
-				$str.= "set skip on " . $this->rule['option']['skip'];
+				$this->genOption('skip', 'on ');
 			} else {
-				$str.= 'set skip on { ' . implode(' ', $this->rule['option']['skip']) . ' }';
+				$this->str.= 'set skip on { ' . implode(' ', $this->rule['option']['skip']) . ' }';
 			}
 		}
-
-		if ($this->rule['comment']) {
-			$str.= " # " . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
 	}
 
 	function display($rulenumber, $count, $class)

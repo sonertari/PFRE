@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.3 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Timeout.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,73 +33,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
- 
 class Timeout extends Rule
 {
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'frag' => array(
-				'method' => 'setAll',
+				'method' => 'parseAll',
 				'params' => array(),
 				),
 			'interval' => array(
-				'method' => 'setAll',
+				'method' => 'parseAll',
 				'params' => array(),
 				),
 			'src' => array(
-				'method' => 'setSrcTrack',
+				'method' => 'parseSrcTrack',
 				'params' => array(),
 				),
 			'tcp' => array(
-				'method' => 'setTimeout',
+				'method' => 'parseTimeout',
 				'params' => array(),
 				),
 			'udp' => array(
-				'method' => 'setTimeout',
+				'method' => 'parseTimeout',
 				'params' => array(),
 				),
 			'icmp' => array(
-				'method' => 'setTimeout',
+				'method' => 'parseTimeout',
 				'params' => array(),
 				),
 			'other' => array(
-				'method' => 'setTimeout',
+				'method' => 'parseTimeout',
 				'params' => array(),
 				),
 			'adaptive' => array(
-				'method' => 'setTimeout',
+				'method' => 'parseTimeout',
 				'params' => array(),
 				),
 			);
@@ -113,12 +81,12 @@ class Timeout extends Rule
 		$this->words= preg_split('/[\s,\t\.]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
 	}
 
-	function setAll()
+	function parseAll()
 	{
 		$this->rule['proto']['all'][$this->words[$this->index]]= $this->words[++$this->index];
 	}
 
-	function setSrcTrack()
+	function parseSrcTrack()
 	{
 		if ($this->words[$this->index + 1] == 'track') {
 			$this->rule['proto']['all']['src.track']= $this->words[$this->index + 2];
@@ -126,7 +94,7 @@ class Timeout extends Rule
 		}
 	}
 
-	function setTimeout()
+	function parseTimeout()
 	{
 		$this->rule['proto'][$this->words[$this->index]][$this->words[$this->index + 1]]= $this->words[$this->index + 2];
 		$this->index+= 2;
@@ -134,7 +102,8 @@ class Timeout extends Rule
 
 	function generate()
 	{
-		$str= '';
+		$this->str= '';
+
 		if (count($this->rule['proto'])) {
 			/// @attention This reset is critical if a page calls this function twice, and it does in this case
 			reset($this->rule['proto']);
@@ -144,31 +113,29 @@ class Timeout extends Rule
 				$proto= $proto == 'all' ? '' : "$proto.";
 
 				list($key, $val)= each($kvps);
-				$str= "set timeout $proto$key $val";
+				$this->str= "set timeout $proto$key $val";
 			} else {
-				$str= 'set timeout {';
+				$this->str= 'set timeout {';
 				while (list($proto, $kvps)= each($this->rule['proto'])) {
 					$proto= $proto == 'all' ? '' : "$proto.";
 
 					if (count($kvps) == 1) {
 						list($key, $val)= each($kvps);
-						$str.= " $proto$key $val,";
+						$this->str.= " $proto$key $val,";
 					} else {
 						while (list($key, $val)= each($kvps)) {
-							$str.= " $proto$key $val,";
+							$this->str.= " $proto$key $val,";
 						}
 					}
 				}
-				$str= rtrim($str, ",");
-				$str.= " }";
+				$this->str= rtrim($this->str, ',');
+				$this->str.= ' }';
 			}
 		}
 
-		if ($this->rule['comment']) {
-			$str.= " # " . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 	
 	function display($rulenumber, $count, $class)

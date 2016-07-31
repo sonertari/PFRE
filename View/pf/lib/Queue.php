@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Queue.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,73 +33,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 class Queue extends Rule
 {
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'queue' => array(
-				'method' => 'setNextNVP',
+				'method' => 'parseNextNVP',
 				'params' => array('name'),
 				),
-			/// @todo interface is a repetition, exists in Rule base class
 			'on' => array(
-				'method' => 'setItems',
+				'method' => 'parseItems',
 				'params' => array('interface'),
 				),
 			'parent' => array(
-				'method' => 'setNextValue',
+				'method' => 'parseNextValue',
 				'params' => array(),
 				),
 			'bandwidth' => array(
-				'method' => 'setBandwidth',
+				'method' => 'parseBandwidth',
 				'params' => array('bw-burst', 'bw-time'),
 				),
 			'min' => array(
-				'method' => 'setBandwidth',
+				'method' => 'parseBandwidth',
 				'params' => array('min-burst', 'min-time'),
 				),
 			'max' => array(
-				'method' => 'setBandwidth',
+				'method' => 'parseBandwidth',
 				'params' => array('max-burst', 'max-time'),
 				),
 			'qlimit' => array(
-				'method' => 'setNextValue',
+				'method' => 'parseNextValue',
 				'params' => array(),
 				),
 			'default' => array(
-				'method' => 'setBool',
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			);
@@ -117,9 +85,9 @@ class Queue extends Rule
 		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
-	function setBandwidth($burst, $time)
+	function parseBandwidth($burst, $time)
 	{
-		$this->setNextValue();
+		$this->parseNextValue();
 
 		/// @todo Fix this possible off-by-N errors
 		if ($this->words[$this->index + 1] == 'burst') {
@@ -134,44 +102,27 @@ class Queue extends Rule
 
 	function generate()
 	{
-		$str= "queue " . $this->rule['name'];
-		if ($this->rule['interface']) {
-			if (!is_array($this->rule['interface'])) {
-				$str.= " on " . $this->rule['interface'];
-			} else {
-				$str.= " { ";
-				foreach ($this->rule['interface'] as $interface) {
-					$str.= $interface . ", ";
-				}
-				$str= rtrim($str, ", ");
-				$str.= " }";
-			}
-		}
-		if ($this->rule['parent']) {
-			$str.= " parent " . $this->rule['parent'];
-		}
-		if ($this->rule['bandwidth']) {
-			$str.= " bandwidth " . $this->rule['bandwidth'] . ($this->rule['bw-burst'] ? ' burst ' . $this->rule['bw-burst'] : '') . ($this->rule['bw-time'] ? ' for ' . $this->rule['bw-time'] : '');
-		}
-		if ($this->rule['min']) {
-			$str.= " min " . $this->rule['min'] . ($this->rule['min-burst'] ? ' burst ' . $this->rule['min-burst'] : '') . ($this->rule['min-time'] ? ' for ' . $this->rule['min-time'] : '');
-		}
-		if ($this->rule['max']) {
-			$str.= " max " . $this->rule['max'] . ($this->rule['max-burst'] ? ' burst ' . $this->rule['max-burst'] : '') . ($this->rule['max-time'] ? ' for ' . $this->rule['max-time'] : '');
-		}
-		if ($this->rule['qlimit']) {
-			$str.= " qlimit " . $this->rule['qlimit'];
-		}
-		if ($this->rule['default']) {
-			$str.= " default";
-		}
-		if ($this->rule['comment']) {
-			$str.= " # " . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
+		$this->str= 'queue ' . $this->rule['name'];
+		$this->genItems('interface', 'on');
+		$this->genValue('parent', 'parent ');
+		$this->genBandwidth('bandwidth', 'bw');
+		$this->genBandwidth('min', 'min');
+		$this->genBandwidth('max', 'max');
+		$this->genValue('qlimit', 'qlimit ');
+		$this->genKey('default');
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 	
+	function genBandwidth($key, $pre)
+	{
+		if (isset($this->rule[$key])) {
+			$this->str.= " $key " . $this->rule[$key] . ($this->rule["$pre-burst"] ? ' burst ' . $this->rule["$pre-burst"] : '') . ($this->rule["$pre-time"] ? ' for ' . $this->rule["$pre-time"] : '');
+		}
+	}
+
 	function display($rulenumber, $count, $class)
 	{
 		?>

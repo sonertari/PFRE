@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Rule.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -81,61 +81,8 @@ class Rule
 
 	protected $href= '';
 
-	function __construct($str, $merge= FALSE)
+	function __construct($str)
 	{
-		/// @todo We should not merge anything here, keywords in the base class should be empty
-		if ($merge) {
-			$this->keywords = array_merge(
-				$this->keywords,
-				array(
-					'quick' => array(
-						'method' => 'setBool',
-						'params' => array(),
-						),
-					'in' => array(
-						'method' => 'setNVP',
-						'params' => array('direction'),
-						),
-					'out' => array(
-						'method' => 'setNVP',
-						'params' => array('direction'),
-						),
-					'log' => array(
-						'method' => 'setLog',
-						'params' => array(),
-						),
-					'on' => array(
-						'method' => 'setItems',
-						'params' => array('interface'),
-						),
-					'proto' => array(
-						'method' => 'setItems',
-						'params' => array('proto'),
-						),
-					'any' => array(
-						'method' => 'setAny',
-						'params' => array(),
-						),
-					'all' => array(
-						'method' => 'setBool',
-						'params' => array(),
-						),
-					'from' => array(
-						'method' => 'setSrcDest',
-						'params' => array('fromport'),
-						),
-					'to' => array(
-						'method' => 'setSrcDest',
-						'params' => array('port'),
-						),
-					'flags' => array(
-						'method' => 'setNextValue',
-						'params' => array(),
-						),
-					)
-				);
-		}
-
 		$this->cat= get_called_class();
 		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&rulenumber=';
 		$this->parse($str);
@@ -197,37 +144,37 @@ class Rule
 		$this->words= preg_split('/[\s,\t]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
 	}
 
-	function setNVP($key)
+	function parseNVP($key)
 	{
 		$this->rule[$key]= $this->words[$this->index];
 	}
 
-	function setNVPInc($key)
+	function parseNVPInc($key)
 	{
 		$this->rule[$key]= $this->words[$this->index++];
 	}
 
-	function setNextValue()
+	function parseNextValue()
 	{
 		$this->rule[$this->words[$this->index]]= preg_replace('/"/', '', $this->words[++$this->index]);
 	}
 
-	function setNextNVP($key)
+	function parseNextNVP($key)
 	{
 		$this->rule[$key]= $this->words[++$this->index];
 	}
 
-	function setBool()
+	function parseBool()
 	{
 		$this->rule[$this->words[$this->index]]= TRUE;
 	}
 	
-	function setItems($key, $pre= '{', $post= '}')
+	function parseItems($key, $pre= '{', $post= '}')
 	{
 		list($this->rule[$key], $this->index)= $this->parseItem($this->words, $this->index, $pre, $post);		
 	}
 	
-	function setAny()
+	function parseAny()
 	{
 		if (!isset($this->rule['from'])) {
 			$this->rule['from']= 'any';
@@ -236,7 +183,7 @@ class Rule
 		}
 	}
 
-	function setSrcDest($port)
+	function parseSrcDest($port)
 	{
 		if ($this->words[$this->index + 1] != 'port') {
 			list($this->rule[$this->words[$this->index]], $this->index)= $this->parseItem($this->words, $this->index);
@@ -246,7 +193,7 @@ class Rule
 		}
 	}
 
-	function setOS()
+	function parseOS()
 	{
 		$this->index++;
 		unset($_data);
@@ -270,7 +217,7 @@ class Rule
 		}
 	}
 
-	function setLog()
+	function parseLog()
 	{
 		if ($this->words[$this->index + 1] == '\(') {
 			list($lo, $this->index)= $this->parseItem($this->words, $this->index, '\(', '\)');
@@ -287,11 +234,56 @@ class Rule
 		}
 	}
 	
-	function setICMPType($code)
+	function parseICMPType($code)
 	{
 		list($this->rule[$this->words[$this->index]], $this->index)= $this->parseItem($this->words, $this->index);
 		if ($this->words[$this->index + 1] == 'code') {
 			list($this->rule[$code], $this->index)= $this->parseItem($this->words, ++$this->index);
+		}
+	}
+
+	function genKey($key)
+	{
+		if (isset($this->rule[$key])) {
+			$this->str.= ' ' . $key;
+		}
+	}
+
+	function genValue($key, $head= '', $tail= '')
+	{
+		if (isset($this->rule[$key])) {
+//			$head= $head === '' ? '' : $head . ' ';
+//			$tail= $tail === '' ? '' : ' ' . $tail;
+			$this->str.= ' ' . $head . $this->rule[$key] . $tail;
+		}
+	}
+
+	function genItems($key, $head= '')
+	{
+		if (isset($this->rule[$key])) {
+			$this->str.= $this->generateItem($this->rule[$key], $head);
+		}
+	}
+
+	function genComment()
+	{
+		if (isset($this->rule['comment'])) {
+			$this->str.= ' # ' . trim(stripslashes($this->rule['comment']));
+		}
+	}
+
+	function genLog()
+	{
+		if (isset($this->rule['log'])) {
+			if (is_array($this->rule['log'])) {
+				$s= ' log ( ';
+				foreach ($this->rule['log'] as $k => $v) {
+					$s.= (is_bool($v) ? "$k" : "$k $v") . ', ';
+				}
+				$this->str.= rtrim($s, ', ') . ' )';
+			} else {
+				$this->str.= ' log';
+			}
 		}
 	}
 

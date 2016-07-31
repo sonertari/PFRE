@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,275 +33,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-class Nat extends Rule
+class DivertTo extends Filter
 {
 	function __construct($str)
 	{
 		$this->keywords = array_merge(
 			$this->keywords,
 			array(
-				'pass' => array(
-					'method' => 'setNVP',
-					'params' => array('action'),
-					),
-				'block' => array(
-					'method' => 'setNVP',
-					'params' => array('action'),
-					),
-				'match' => array(
-					'method' => 'setNVP',
-					'params' => array('action'),
-					),
-				'inet' => array(
-					'method' => 'setFamily',
-					'params' => array(),
-					),
-				'inet6' => array(
-					'method' => 'setFamily',
-					'params' => array(),
-					),
-				'bitmask' => array(
-					'method' => 'setBool',
-					'params' => array(),
-					),
-				'least-states' => array(
-					'method' => 'setBool',
-					'params' => array(),
-					),
-				'round-robin' => array(
-					'method' => 'setBool',
-					'params' => array(),
-					),
-				'random' => array(
-					'method' => 'setBool',
-					'params' => array(),
-					),
-				'source-hash' => array(
-					'method' => 'setSourceHash',
-					'params' => array(),
-					),
-				'sticky-address' => array(
-					'method' => 'setBool',
-					'params' => array(),
-					),
-				'static-port' => array(
-					'method' => 'setBool',
-					'params' => array(),
-					),
-				/// @todo af-to should have its own class
-				'af-to' => array(
-					'method' => 'setNVP',
-					'params' => array('type'),
-					),
-				'nat-to' => array(
-					'method' => 'setNatDivert',
-					'params' => array(),
-					),
-				'binat-to' => array(
-					'method' => 'setNatDivert',
-					'params' => array(),
-					),
-				/// @todo divert-to should have its own class
 				'divert-to' => array(
-					'method' => 'setNatDivert',
-					'params' => array(),
-					),
-				/// @todo rdr-to should have its own class
-				'rdr-to' => array(
-					'method' => 'setNatDivert',
+					'method' => 'parseRedirHostPort',
 					'params' => array(),
 					),
 				)
 			);
 
-		parent::__construct($str, TRUE);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace("/! +/", "!", $this->str);
-		$this->str= preg_replace("/{/", " { ", $this->str);
-		$this->str= preg_replace("/}/", " } ", $this->str);
-		$this->str= preg_replace("/\"/", " \" ", $this->str);
-	}
-
-	function setFamily()
-	{
-		if (!isset($this->rule['family'])) {
-			$this->rule['family']= $this->words[$this->index];
-		} else {
-			$this->rule['to-family']= $this->words[$this->index];
-		}
-	}
-
-	function setSourceHash()
-	{
-		$this->setBool();
-
-		/// @attention No pattern for hash key or string, so check keywords instead
-		/// This is one of the benefits of using keyword lists instead of switch/case structs while parsing
-		//if (preg_match('/[a-f\d]{16,}/', $this->words[$this->index + 1])) {
-		if (!in_array($this->words[$this->index + 1], $this->keywords)) {
-			$this->rule['source-hash-key']= $this->words[++$this->index];
-		}
-	}
-
-	function setNatDivert()
-	{
-		$this->setNVP('type');
-
-		/// @todo Fix these off-by-N errors
-		if ($this->words[$this->index + 1] != 'port') {
-			$this->rule['natdest']= $this->words[++$this->index];
-		}
-		// @attention Do not use else here
-		if ($this->words[$this->index + 1] == 'port') {
-			$this->index+= 2;
-			$this->rule['natdestport']= $this->words[$this->index];
-		}
+		parent::__construct($str);
 	}
 
 	function generate()
 	{
-		$str= "";
-		if ($this->rule['action']) {
-			$str.= $this->rule['action'];
-		}
-		if ($this->rule['direction']) {
-			if ($this->rule['type'] != "binat-to") {
-				$str.= " " . $this->rule['direction'];
-			}
-		}
-		if ($this->rule['log']) {
-			if (is_array($this->rule['log'])) {
-				$s= ' log ( ';
-				foreach ($this->rule['log'] as $k => $v) {
-					$s.= (is_bool($v) ? "$k" : "$k $v") . ', ';
-				}
-				$str.= rtrim($s, ', ') . ' )';
-			} else {
-				$str.= ' log';
-			}
-		}
-		if ($this->rule['quick']) {
-			$str.= " quick";
-		}
-		if ($this->rule['interface']) {
-			$str.= $this->generateItem($this->rule['interface'], "on");
-		}
-		if ($this->rule['family']) {
-			if ($this->rule['type'] == "af-to") {
-				$str.= " " . $this->rule['family'] . " af-to " . $this->rule['to-family'];
-			} else {
-				$str.= " " . $this->rule['family'];
-			}
-		}
-		if ($this->rule['proto']) {
-			if ($this->rule['type'] != "af-to") {
-				$str.= $this->generateItem($this->rule['proto'], "proto");
-			}
-		}
+		$this->str= $this->rule['action'];
 
-		if ($this->rule['from'] || $this->rule['fromport']) {
-			$str.= ' from';
-			if ($this->rule['from']) {
-				$str.= $this->generateItem($this->rule['from']);
-			}
+		$this->genFilterHead();
+		$this->genFilterOpts();
 
-			if ($this->rule['fromport']) {
-				$str.= $this->generateItem($this->rule['fromport'], 'port');
-			}
-		}
+		$this->genValue('type');
+		/// @todo This is not redirhost, but host and port
+		$this->genValue('redirhost');
+		$this->genValue('redirport', 'port ');
 
-		if ($this->rule['to'] || $this->rule['port']) {
-			$str.= ' to';
-			if ($this->rule['to']) {
-				$str.= $this->generateItem($this->rule['to']);
-			}
-
-			if ($this->rule['port']) {
-				$str.= $this->generateItem($this->rule['port'], 'port');
-			}
-		}
-
-		if ($this->rule['natdest']) {
-			if ($this->rule['type'] != "af-to") {
-				$str.= " " . $this->rule['type'] . " " . stripslashes($this->rule['natdest']);
-				if ($this->rule['natdestport']) {
-					$str.= " port " . $this->rule['natdestport'];
-				}
-			}
-		}
-		
-		if ($this->rule['bitmask']) {
-			$str.= " bitmask";
-		}
-		if ($this->rule['least-states']) {
-			$str.= " least-states";
-		}
-		if ($this->rule['random']) {
-			$str.= " random";
-		}
-		if ($this->rule['round-robin']) {
-			$str.= " round-robin";
-		}
-		if ($this->rule['source-hash']) {
-			$str.= " source-hash";
-			if ($this->rule['source-hash-key']) {
-				$str.= ' ' . $this->rule['source-hash-key'];
-			}
-		}
-		if ($this->rule['sticky-address']) {
-			$str.= " sticky-address";
-		}
-		if ($this->rule['static-port']) {
-			if ($this->rule['type'] != "rdr-to") {
-				$str.= " static-port";
-			}
-		}
-		
-		if ($this->rule['flags']) {
-			$str.= " flags " . $this->rule['flags'];
-		}
-
-        if ($this->rule['comment']) {
-			$str.= " # " . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
-	
+
 	function display($rulenumber, $count, $class)
 	{
 		?>
@@ -355,10 +120,10 @@ class Nat extends Rule
 				<?php $this->PrintFromTo($this->rule['port']); ?>
 			</td>
 			<td title="Nat Destination">
-				<?php $this->PrintFromTo($this->rule['natdest']); ?>
+				<?php $this->PrintFromTo($this->rule['redirhost']); ?>
 			</td>
 			<td title="Nat Destination Port">
-				<?php $this->PrintFromTo($this->rule['natdestport']); ?>
+				<?php $this->PrintFromTo($this->rule['redirport']); ?>
 			</td>
 			<td class="comment">
 				<?php echo stripslashes($this->rule['comment']); ?>
@@ -412,8 +177,8 @@ class Nat extends Rule
 				if ($this->rule['type'] == 'af-to') {
 					unset($this->rule['quick']);
 					unset($this->rule['proto']);
-					unset($this->rule['natdest']);
-					unset($this->rule['natdestport']);
+					unset($this->rule['redirhost']);
+					unset($this->rule['redirport']);
 				}
 			}
 
@@ -468,8 +233,8 @@ class Nat extends Rule
 				$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
 			}
 
-			$this->rule['natdest']= filter_input(INPUT_POST, 'natdest');
-			$this->rule['natdestport']= filter_input(INPUT_POST, 'natdestport');
+			$this->rule['redirhost']= filter_input(INPUT_POST, 'redirhost');
+			$this->rule['redirport']= filter_input(INPUT_POST, 'redirport');
 
 			$this->rule['family']= filter_input(INPUT_POST, 'family');
 			$this->rule['to-family']= filter_input(INPUT_POST, 'to-family');
@@ -697,7 +462,7 @@ class Nat extends Rule
 							<?php echo _TITLE('NAT Destination').':' ?>
 						</td>
 						<td>
-							<input type="text" id="natdest" name="natdest" size="20" value="<?php echo $this->rule['natdest']; ?>" />
+							<input type="text" id="natdest" name="natdest" size="20" value="<?php echo $this->rule['redirhost']; ?>" />
 							<?php $this->PrintHelp('divert-to') ?>
 						</td>
 					</tr>
@@ -706,7 +471,7 @@ class Nat extends Rule
 							<?php echo _TITLE('NAT Destination Port').':' ?>
 						</td>
 						<td>
-							<input type="text" id="natdestport" name="natdestport" size="20" value="<?php echo $this->rule['natdestport']; ?>" />
+							<input type="text" id="natdestport" name="natdestport" size="20" value="<?php echo $this->rule['redirport']; ?>" />
 							<?php $this->PrintHelp('divert-to') ?>
 						</td>
 					</tr>

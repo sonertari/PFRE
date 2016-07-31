@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Scrub.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,65 +33,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-class Scrub extends Rule
+class Scrub extends Filter
 {
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'no-df' => array(
-				'method' => 'setBool',
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			'min-ttl' => array(
-				'method' => 'setNextValue',
+				'method' => 'parseNextValue',
 				'params' => array(),
 				),
 			'max-mss' => array(
-				'method' => 'setNextValue',
+				'method' => 'parseNextValue',
 				'params' => array(),
 				),
 			'random-id' => array(
-				'method' => 'setBool',
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			'reassemble' => array(
-				'method' => 'setNextValue',
+				'method' => 'parseNextValue',
 				'params' => array(),
 				),
 			);
 
-		parent::__construct($str, TRUE);
+		parent::__construct($str);
 	}
 
 	function sanitize()
@@ -105,78 +74,41 @@ class Scrub extends Rule
 
 	function generate()
 	{
-		$str= 'match';
-		if ($this->rule['direction']) {
-			$str.= " " . $this->rule['direction'];
-		}
-		if ($this->rule['interface']) {
-			if (!is_array($this->rule['interface'])) {
-				$str.= " on " . stripslashes($this->rule['interface']);
-			} else {
-				$str.= " on { ";
-				foreach ($this->rule['interface'] as $interface) {
-					$str.= stripslashes($interface) . ", ";
-				}
-				$str= rtrim($str, " ,");
-				$str.= " }";
-			}
-		}
-		if ($this->rule['all']) {
-			$str.= " all";
-		} else {
-			if ($this->rule['from']) {
-				if (!is_array($this->rule['from'])) {
-					$str.= " from " . $this->rule['from'];
-				} else {
-					$str.= " from { ";
-					foreach ($this->rule['from'] as $from) {
-						$str.= $from . ", ";
-					}
-					$str= rtrim($str, " ,");
-					$str.= " }";
-				}
-			}
-			if ($this->rule['to']) {
-				if (!is_array($this->rule['to'])) {
-					$str.= " to " . stripslashes($this->rule['to']);
-				} else {
-					$str.= " to { ";
-					foreach ($this->rule['to'] as $to) {
-						$str.= stripslashes($to) . ", ";
-					}
-					$str= rtrim($str, ", ");
-					$str.= " }";
-				}
-			}
-		}
-		$str.= " scrub";
+		$this->str= 'match';
+
+		$this->genFilterHead();
+		$this->genFilterOpts();
+		$this->genScrub();
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
+	}
+
+	function genScrub()
+	{
+		$this->str.= ' scrub';
 		$opt= '';
-		if ($this->rule['no-df']) {
-			$opt.= " no-df";
+		if (isset($this->rule['no-df'])) {
+			$opt.= 'no-df';
 		}
-		if ($this->rule['min-ttl']) {
-			$opt.= " min-ttl " . $this->rule['min-ttl'];
+		if (isset($this->rule['min-ttl'])) {
+			$opt.= ', min-ttl ' . $this->rule['min-ttl'];
 		}
-		if ($this->rule['max-mss']) {
-			$opt.= " max-mss " . $this->rule['max-mss'];
+		if (isset($this->rule['max-mss'])) {
+			$opt.= ', max-mss ' . $this->rule['max-mss'];
 		}
-		if ($this->rule['random-id']) {
-			$opt.= " random-id";
+		if (isset($this->rule['random-id'])) {
+			$opt.= ', random-id';
 		}
-		if ($this->rule['reassemble']) {
-			$opt.= " reassemble " . $this->rule['reassemble'];
+		if (isset($this->rule['reassemble'])) {
+			$opt.= ', reassemble ' . $this->rule['reassemble'];
 		}
 		if ($opt !== '') {
-			$str.= " (" . trim($opt) . ")";
+			$this->str.= ' (' . trim($opt, ' ,') . ')';
 		}
-		
-		if ($this->rule['comment']) {
-			$str.= " # " . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
 	}
-	
+
 	function display($rulenumber, $count, $class)
 	{
 		?>

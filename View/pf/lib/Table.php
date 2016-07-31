@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Table.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,64 +33,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
 class Table extends Rule
 {
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'table' => array(
-				'method' => 'setNextNVP',
+				'method' => 'parseNextNVP',
 				'params' => array('identifier'),
 				),
 			'persist' => array(
-				'method' => 'setBool',
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			'const' => array(
-				'method' => 'setBool',
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			'counters' => array(
-				'method' => 'setBool',
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			'file' => array(
-				'method' => 'setFile',
+				'method' => 'parseFile',
 				'params' => array(),
 				),
 			'{' => array(
-				'method' => 'setData',
+				'method' => 'parseData',
 				'params' => array(),
 				),
 			);
@@ -106,7 +75,7 @@ class Table extends Rule
 		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
-	function setFile()
+	function parseFile()
 	{
 		$filename= preg_replace('/"/', '', $this->words[++$this->index]);
 		if (!$this->rule['file']) {
@@ -121,7 +90,7 @@ class Table extends Rule
 		}
 	}
 
-	function setData()
+	function parseData()
 	{
 		while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
 			$this->rule['data'][]= $this->words[$this->index];
@@ -130,42 +99,44 @@ class Table extends Rule
 
 	function generate()
 	{
-		$str= 'table ' . $this->rule['identifier'];
-		if ($this->rule['persist']) {
-			$str.= ' persist';
-		}
-		if ($this->rule['const']) {
-			$str.= ' const';
-		}
-		if ($this->rule['counters']) {
-			$str.= ' counters';
-		}
-		if ($this->rule['file']) {
+		$this->str= 'table ' . $this->rule['identifier'];
+		$this->genKey('persist');
+		$this->genKey('const');
+		$this->genKey('counters');
+		$this->genFiles();
+		$this->genData();
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
+	}
+	
+	function genFiles()
+	{
+		if (isset($this->rule['file'])) {
 			if (!is_array($this->rule['file'])) {
-				$str.= ' file "' . $this->rule['file'] . '"';
+				$this->str.= ' file "' . $this->rule['file'] . '"';
 			} else {
 				foreach ($this->rule['file'] as $file) {
-					$str.= ' file "' . $file . '"';
+					$this->str.= ' file "' . $file . '"';
 				}
 			}
 		}
-		if ($this->rule['data']) {
-			$str.= ' { ';
-			if (!is_array($this->rule['data'])) {
-				$str.= $this->rule['data'];
-			} else {
-				$str.= implode(', ', $this->rule['data']);
-			}
-			$str.= ' }';
-		}
-		
-		if ($this->rule['comment']) {
-			$str.= ' # ' . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
 	}
-	
+
+	function genData()
+	{
+		if (isset($this->rule['data'])) {
+			$this->str.= ' { ';
+			if (!is_array($this->rule['data'])) {
+				$this->str.= $this->rule['data'];
+			} else {
+				$this->str.= implode(', ', $this->rule['data']);
+			}
+			$this->str.= ' }';
+		}
+	}
+
 	function display($rulenumber, $count, $class)
 	{
 		?>

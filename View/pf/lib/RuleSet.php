@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.7 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.8 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -196,18 +196,18 @@ class RuleSet
 		$rulebase= array();
 
 		$text= preg_replace("/\n#/", "\n# ", $text);
-		$text= str_replace("\\\n", "", $text);
-		foreach (preg_split("/\n/", $text, '-1') as $line) {
+		$text= str_replace("\\\n", '', $text);
+		foreach (preg_split("/\n/", $text, -1) as $line) {
 			$rulebase[]= trim($line);
 		}
 
 		$order= 0;
 		foreach ($rulebase as $str) {
-			$words= preg_split('/[\s,\t]+/', $str, '-1');
+			$words= preg_split('/[\s,\t]+/', $str, -1);
 			
 			$type= $words[0];
             // Do not search in comment lines
-			if ($type != '' && $type != '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout|limit)\b/', $str, $match)) {
+			if ($type != '' && $type != '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout|limit|route-to|reply-to|dup-to)\b/', $str, $match)) {
 				$type= $match[1];
 			}
 
@@ -257,11 +257,24 @@ class RuleSet
 					$this->rules[]= new Antispoof($str);
 					break;
 				case 'af-to':
+					$this->rules[]= new AfTo($str);
+					break;
 				case 'nat-to':
+					$this->rules[]= new NatTo($str);
+					break;
 				case 'binat-to':
+					$this->rules[]= new BinatTo($str);
+					break;
 				case 'divert-to':
+					$this->rules[]= new DivertTo($str);
+					break;
 				case 'rdr-to':
-					$this->rules[]= new Nat($str);
+					$this->rules[]= new RdrTo($str);
+					break;
+				case 'route-to':
+				case 'reply-to':
+				case 'dup-to':
+					$this->rules[]= new Route($str);
 					break;
 				case 'timeout':
 					$this->rules[]= new Timeout($str);

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.1 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -41,27 +41,27 @@ class Antispoof extends Rule
 			$this->keywords,
 			array(
 				'log' => array(
-					'method' => 'setLog',
+					'method' => 'parseLog',
 					'params' => array(),
 					),
 				'quick' => array(
-					'method' => 'setBool',
+					'method' => 'parseBool',
 					'params' => array(),
 					),
 				'for' => array(
-					'method' => 'setItems',
+					'method' => 'parseItems',
 					'params' => array('interface'),
 					),
 				'inet' => array(
-					'method' => 'setNVP',
+					'method' => 'parseNVP',
 					'params' => array('family'),
 					),
 				'inet6' => array(
-					'method' => 'setNVP',
+					'method' => 'parseNVP',
 					'params' => array('family'),
 					),
 				'label' => array(
-					'method' => 'setItems',
+					'method' => 'parseItems',
 					'params' => array('label'),
 					),
 				)
@@ -72,35 +72,17 @@ class Antispoof extends Rule
 
 	function generate()
 	{
-		$str= 'antispoof';
-		if ($this->rule['log']) {
-			if (is_array($this->rule['log'])) {
-				$s= ' log ( ';
-				foreach ($this->rule['log'] as $k => $v) {
-					$s.= (is_bool($v) ? "$k" : "$k $v") . ', ';
-				}
-				$str.= rtrim($s, ', ') . ' )';
-			} else {
-				$str.= ' log';
-			}
-		}
-		if ($this->rule['quick']) {
-			$str.= ' quick';
-		}
-		if ($this->rule['interface']) {
-			$str.= $this->generateItem($this->rule['interface'], 'for');
-		}
-		if ($this->rule['family']) {
-			$str.= ' ' . $this->rule['family'];
-		}
-		if ($this->rule['label']) {
-			$str.= ' label "' . $this->rule['label'] . '"';
-		}
-		if ($this->rule['comment']) {
-			$str.= ' # ' . trim(stripslashes($this->rule['comment']));
-		}
-		$str.= "\n";
-		return $str;
+		$this->str= 'antispoof';
+
+		$this->genLog();
+		$this->genKey('quick');
+		$this->genItems('interface', 'for');
+		$this->genValue('family');
+		$this->genValue('label', 'label "', '"');
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 	
 	function display($rulenumber, $count, $class)
@@ -285,6 +267,5 @@ class Antispoof extends Rule
 		</form>
 		<?php
 	}
-
 }
 ?>

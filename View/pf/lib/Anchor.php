@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.5 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Anchor.php,v 1.6 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,63 +33,51 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-class Anchor extends Filter
+class Anchor extends FilterBase
 {	
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'anchor' => array(
-				'method' => 'setAnchor',
+				'method' => 'parseAnchor',
 				'params' => array(),
 				),
 			);
 
-		parent::__construct($str, TRUE);
+		parent::__construct($str);
 	}
 
-	function setAnchor()
+	function parseAnchor()
 	{
-		$this->rule['type']= $this->words[$this->index++];
-		if ($this->words[$this->index] == '"') {
-			$this->rule['identifier']= $this->words[++$this->index];
+		$this->rule['action']= 'anchor';
+		if ($this->words[$this->index + 1] == '"') {
+			$this->index+= 2;
+			$this->rule['identifier']= $this->words[$this->index];
 			if ($this->words[$this->index + 1] == '"') {
 				$this->index++;
 			}
-		} else {
+		} elseif (!in_array($this->words[$this->index + 1], $this->keywords)) {
 			$this->rule['identifier']= $this->words[$this->index];
 		}
+		/// @todo identifier can be empty, but "anchors without explicit rules must specify a name"
+	}
+
+	function generate()
+	{
+		$this->str= $this->rule['action'];
+		$this->genValue('identifier', '"', '"');
+
+		$this->genValue('direction');
+		$this->genItems('interface', 'on');
+		$this->genValue('family');
+		$this->genItems('proto', 'proto');
+		$this->genSrcDest();
+
+		$this->genFilterOpts();
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 
 	function display($rulenumber, $count, $class)
@@ -102,8 +90,8 @@ class Anchor extends Filter
 			<td title="Category" class="category">
 				<?php echo $this->cat; ?>
 			</td>
-			<td title="Id" class="<?php echo $this->rule['type']; ?>" nowrap="nowrap">
-				<?php echo $this->rule['type'] . ' ' . $this->rule['identifier']; ?>
+			<td title="Id" class="<?php echo $this->rule['action']; ?>" nowrap="nowrap">
+				<?php echo $this->rule['action'] . ' ' . $this->rule['identifier']; ?>
 			</td>
 			<td title="Direction">
 				<?php echo $this->rule['direction']; ?>
@@ -189,32 +177,32 @@ class Anchor extends Filter
 		}
 
 		if (count($_POST)) {
-			if (filter_has_var(INPUT_POST, 'addfrom') != '') {
+			if (filter_input(INPUT_POST, 'addfrom') != '') {
 				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
 			}
 
-			if (filter_has_var(INPUT_POST, 'addfromport') != '') {
+			if (filter_input(INPUT_POST, 'addfromport') != '') {
 				$this->addEntity("fromport", filter_input(INPUT_POST, 'addfromport'));
 			}
 
-			if (filter_has_var(INPUT_POST, 'addto') != '') {
+			if (filter_input(INPUT_POST, 'addto') != '') {
 				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
 			}
 
-			if (filter_has_var(INPUT_POST, 'addport') != '') {
+			if (filter_input(INPUT_POST, 'addport') != '') {
 				$this->addEntity("port", filter_input(INPUT_POST, 'addport'));
 			}
 
-			if (filter_has_var(INPUT_POST, 'addinterface') != '') {
+			if (filter_input(INPUT_POST, 'addinterface') != '') {
 				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
 			}
 
-			if (filter_has_var(INPUT_POST, 'addproto') != '') {
+			if (filter_input(INPUT_POST, 'addproto') != '') {
 				$this->addEntity("proto", filter_input(INPUT_POST, 'addproto'));
 			}
 
-			$this->rule['type']= "anchor";
-			$this->rule['identifier']= preg_replace("/\"/", "", filter_input(INPUT_POST, 'identifier'));
+			$this->rule['action']= 'anchor';
+			$this->rule['identifier']= preg_replace('/"/', '', filter_input(INPUT_POST, 'identifier'));
 			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
 			$this->rule['family']= filter_input(INPUT_POST, 'family');
 

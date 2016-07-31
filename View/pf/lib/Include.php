@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.4 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Include.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -50,8 +50,11 @@ class _Include extends Rule
 
 	function generate()
 	{
-		$comment= isset($this->rule['comment']) ? ' # ' . $this->rule['comment'] : '';
-		return 'include "' . $this->rule['file'] . '"' . $comment . "\n";
+		$this->str= 'include "' . $this->rule['file'] . '"';
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 	
 	function display($rulenumber, $count, $class)

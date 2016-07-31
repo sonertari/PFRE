@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,43 +32,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-require_once ('include.php');
 
-$ruleType2Class= array(
-    'filter' => 'Filter',
-    'antispoof' => 'Antispoof',
-    'anchor' => 'Anchor',
-    'macro' => 'Macro',
-    'table' => 'Table',
-    'afto' => 'AfTo',
-    'natto' => 'NatTo',
-    'binatto' => 'BinatTo',
-    'divertto' => 'DivertTo',
-    'rdrto' => 'RdrTo',
-    'route' => 'Route',
-    'queue' => 'Queue',
-    'scrub' => 'Scrub',
-    'option' => 'Option',
-    'timeout' => 'Timeout',
-    'limit' => 'Limit',
-    'loadanchor' => 'LoadAnchor',
-    'include' => '_Include',
-    'comment' => 'Comment',
-    'blank' => 'Blank',
-);
+class Route extends NatBase
+{
+	function __construct($str)
+	{
+		$this->keywords = array_merge(
+			$this->keywords,
+			array(
+				'route-to' => array(
+					'method' => 'parseRoute',
+					'params' => array(),
+					),
+				'reply-to' => array(
+					'method' => 'parseRoute',
+					'params' => array(),
+					),
+				'dup-to' => array(
+					'method' => 'parseRoute',
+					'params' => array(),
+					),
+				)
+			);
 
-if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
-	$cat= $ruleType2Class[$edit];
+		parent::__construct($str);
+	}
 
-	$View->RuleSet->SetupEditSession($cat, $action, $rulenumber);
+	function parseRoute()
+	{
+		$this->rule['type']= $this->words[$this->index];
+		// @todo routehost not redirhost
+		$this->parseItems('redirhost');
+	}
 
-	$ruleObj= &$_SESSION['edit']['object'];
-	$ruleObj->processInput();
+	function generate()
+	{
+		$this->str= $this->rule['action'];
 
-	$View->RuleSet->ProcessTestCancelSaveModified($action, $rulenumber, $ruleObj, $modified, $testResult);
+		$this->genFilterHead();
+		$this->genFilterOpts();
 
-	require_once($VIEW_PATH.'/header.php');
-	$ruleObj->edit($rulenumber, $modified, $testResult, $action);
-	require_once($VIEW_PATH.'/footer.php');
+		$this->genValue('type');
+		$this->genItems('redirhost');
+		$this->genPoolType();
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
+	}
 }
 ?>
