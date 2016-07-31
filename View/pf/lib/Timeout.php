@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Timeout.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -138,41 +138,32 @@ class Timeout extends Rule
 		return $this->str;
 	}
 	
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Timeout" colspan="12">
-				<?php
-				if (count($this->rule['proto'])) {
-					reset($this->rule['proto']);
-					while (list($proto, $kvps)= each($this->rule['proto'])) {	
-						$proto= $proto == 'all' ? '' : "$proto.";
-						while (list($key, $val)= each($kvps)) {
-							echo "$proto$key: $val<br>";
-						}
-					}
-				}
-				?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispTimeout();
+		$this->dispTail($rulenumber, $count);
 	}
 	
+	function dispTimeout()
+	{
+		?>
+		<td title="Timeout" colspan="12">
+			<?php
+			if (count($this->rule['proto'])) {
+				reset($this->rule['proto']);
+				while (list($proto, $kvps)= each($this->rule['proto'])) {	
+					$proto= $proto == 'all' ? '' : "$proto.";
+					while (list($key, $val)= each($kvps)) {
+						echo "$proto$key: $val<br>";
+					}
+				}
+			}
+			?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (count($_POST)) {

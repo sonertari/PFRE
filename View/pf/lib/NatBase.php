@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: NatBase.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -122,74 +122,9 @@ class NatBase extends Filter
 		$this->genKey('sticky-address');
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Action" class="<?php echo $this->rule['action']; ?>">
-				<?php echo $this->rule['action']; ?>
-			</td>
-			<td title="Type">
-				<?php echo $this->rule['type']; ?>
-			</td>
-			<td title="Interface">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<td title="Log">
-				<?php
-				if ($this->rule['log']) {
-					if (is_array($this->rule['log'])) {
-						$s= 'log ';
-						foreach ($this->rule['log'] as $k => $v) {
-							$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
-						}
-						echo trim($s, ', ');
-					} else {
-						echo 'log';
-					}
-				}
-				?>
-			</td>
-			<td title="Quick">
-				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
-			</td>
-			<td title="Proto">
-				<?php $this->PrintValue($this->rule['proto']); ?>
-			</td>
-			<td title="Source">
-				<?php $this->PrintFromTo($this->rule['from']); ?>
-			</td>
-			<td title="Source Port">
-				<?php $this->PrintFromTo($this->rule['fromport']); ?>
-			</td>
-			<td title="Destination">
-				<?php $this->PrintFromTo($this->rule['to']); ?>
-			</td>
-			<td title="Destination Port">
-				<?php $this->PrintFromTo($this->rule['port']); ?>
-			</td>
-			<td title="Nat Destination">
-				<?php $this->PrintFromTo($this->rule['redirhost']); ?>
-			</td>
-			<td title="Nat Destination Port">
-				<?php $this->PrintFromTo($this->rule['redirport']); ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->displayNat($rulenumber, $count);
 	}
 	
 	function processInput()

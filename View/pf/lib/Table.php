@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Table.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -137,44 +137,38 @@ class Table extends Rule
 		}
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispId();
+		$this->dispKey('const', 'Flag');
+		$this->dispKey('persist', 'Flag');
+		$this->dispKey('counters', 'Flag');
+		$this->dispValues();
+		$this->dispTail($rulenumber, $count);
+	}
+
+	function dispId()
 	{
 		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Id">
-				<?php echo htmlentities($this->rule['identifier']); ?>
-			</td>
-			<td title="Flags" colspan="5">
-				<?php
-				echo $this->rule['const'] ? 'const<br>' : '';
-				echo $this->rule['persist'] ? 'persist<br>' : '';
-				echo $this->rule['counters'] ? 'counters' : '';
-				?>
-			</td>
-			<td title="Values" colspan="6">
-				<?php
-				$this->PrintValue($this->rule['data']);
-				$this->PrintValue($this->rule['file'], 'file "', '"');
-				?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
+		<td title="Id">
+			<?php echo htmlentities($this->rule['identifier']); ?>
+		</td>
 		<?php
 	}
-	
+
+	function dispValues()
+	{
+		?>
+		<td title="Values" colspan="8">
+			<?php
+			$this->PrintValue($this->rule['data']);
+			$this->PrintValue($this->rule['file'], 'file "', '"');
+			?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (filter_has_var(INPUT_GET, 'dropvalue')) {

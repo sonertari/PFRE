@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.6 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: rules.php,v 1.7 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -149,9 +149,8 @@ require_once($VIEW_PATH.'/header.php');
         <?php
         $rulenumber = 0;
         $count = count($View->RuleSet->rules) - 1;
-        $colorcount = 0;
         foreach ($View->RuleSet->rules as $rule) {
-            $rule->display($rulenumber++, $count, $colorcount++ % 2 ? ' class="oddline"' : '');
+            $rule->display($rulenumber++, $count);
         }
         ?>
     </table>

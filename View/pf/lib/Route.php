@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Route.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,6 +79,21 @@ class Route extends NatBase
 		$this->genComment();
 		$this->str.= "\n";
 		return $this->str;
+	}
+
+	function display($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispValue('interface', 'Interface');
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('type', 'Type');
+		$this->dispValue('redirhost', 'Redirect Host');
+		$this->dispTail($rulenumber, $count);
 	}
 }
 ?>

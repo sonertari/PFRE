@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.1 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.2 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -85,53 +85,15 @@ class Antispoof extends Rule
 		return $this->str;
 	}
 	
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Interface" colspan="2">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<td title="Quick">
-				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
-			</td>
-			<td title="Family" colspan="2">
-				<?php echo $this->rule['family']; ?>
-			</td>
-			<td title="Log" colspan="5">
-				<?php
-				if ($this->rule['log']) {
-					if (is_array($this->rule['log'])) {
-						$s= 'log ';
-						foreach ($this->rule['log'] as $k => $v) {
-							$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
-						}
-						echo trim($s, ', ');
-					} else {
-						echo 'log';
-					}
-				}
-				?>
-			</td>
-			<td title="Label" colspan="2">
-				<?php echo $this->rule['label']; ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispValue('interface', 'Interface');
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('family', 'Address Family');
+		$this->dispLog(8);
+		$this->dispValue('label', 'Label');
+		$this->dispTail($rulenumber, $count);
 	}
 	
 	function processInput()

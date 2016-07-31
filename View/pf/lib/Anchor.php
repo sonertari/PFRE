@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.6 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Anchor.php,v 1.7 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -80,76 +80,15 @@ class Anchor extends FilterBase
 		return $this->str;
 	}
 
-	function display($rulenumber, $count, $class)
+	function dispAction()
 	{
 		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Id" class="<?php echo $this->rule['action']; ?>" nowrap="nowrap">
-				<?php echo $this->rule['action'] . ' ' . $this->rule['identifier']; ?>
-			</td>
-			<td title="Direction">
-				<?php echo $this->rule['direction']; ?>
-			</td>
-			<td title="Interface">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<td title="Log">
-				<?php echo $this->rule['log'] ? 'log' : ''; ?>
-			</td>
-			<td title="Quick">
-				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
-			</td>
-			<td title="Proto">
-				<?php $this->PrintValue($this->rule['proto']); ?>
-			</td>
-			<?php
-			if ($this->rule['all']) {
-				?>
-				<td title="Source->Destination" colspan="4" class="all">
-					All
-				</td>
-				<?php
-			} else {
-				?>
-				<td title="Source">
-					<?php $this->PrintFromTo($this->rule['from']); ?>
-				</td>
-				<td title="Source Port">
-					<?php $this->PrintFromTo($this->rule['fromport']); ?>
-				</td>
-				<td title="Destination">
-					<?php $this->PrintFromTo($this->rule['to']); ?>
-				</td>
-				<td title="Destination Port">
-					<?php $this->PrintFromTo($this->rule['port']); ?>
-				</td>
-				<?php
-			}
-			?>
-			<td title="State">
-				<?php echo $this->rule['state']; ?>
-			</td>
-			<td title="Queue">
-				<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue'][0] . '<br>' . $this->rule['queue'][1]) : ''; ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
+		<td title="Id" nowrap="nowrap">
+			<?php echo $this->rule['action'] . ' ' . $this->rule['identifier']; ?>
+		</td>
 		<?php
 	}
-	
+
 	function processInput()
 	{
 		if (filter_has_var(INPUT_GET, 'dropfrom')) {

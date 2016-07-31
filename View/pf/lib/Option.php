@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Option.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -133,45 +133,36 @@ class Option extends Rule
 		}
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispOption();
+		$this->dispTail($rulenumber, $count);
+	}
+	
+	function dispOption()
 	{
 		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Option" colspan="12">
-				<?php
-				$option= key($this->rule['option']);
-				$value= $this->rule['option'][$option];
-				if (in_array($option, array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints'))) {
-					echo "$option: $value";
-				} elseif ($option == 'skip') {
-					if (!is_array($value)) {
-						echo "skip on $value";
-					} else {
-						foreach ($value as $skip) {
-							echo "skip on $skip<br>";
-						}
+		<td title="Option" colspan="12">
+			<?php
+			$option= key($this->rule['option']);
+			$value= $this->rule['option'][$option];
+			if (in_array($option, array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints'))) {
+				echo "$option: $value";
+			} elseif ($option == 'skip') {
+				if (!is_array($value)) {
+					echo "skip on $value";
+				} else {
+					foreach ($value as $skip) {
+						echo "skip on $skip<br>";
 					}
 				}
-				?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
+			}
+			?>
+		</td>
 		<?php
-	}		
-	
+	}
+
 	function processInput()
 	{
 		if (count($_POST)) {

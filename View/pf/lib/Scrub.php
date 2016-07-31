@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Scrub.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -109,61 +109,30 @@ class Scrub extends Filter
 		}
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispValue('direction', 'Direction');
+		$this->dispValue('interface', 'Interface');
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('min-ttl', 'Min-ttl');
+		$this->dispValue('max-mss', 'Max-mss');
+		$this->dispScrubOpts();
+		$this->dispTail($rulenumber, $count);
+	}
+
+	function dispScrubOpts()
 	{
 		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Direction">
-				<?php echo $this->rule['direction']; ?>
-			</td>
-			<td title="Interface">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<?php
-			if ($this->rule['all']) {
-				?>
-				<td title="Source-Destination" colspan="2" class="all">
-					All
-				</td>
-				<?php
-			} else {
-				?>
-				<td title="Source">
-					<?php $this->PrintFromTo($this->rule['from']); ?>
-				</td>
-				<td title="Destination">
-					<?php $this->PrintFromTo($this->rule['to']); ?>
-				</td>
-				<?php
-			}
-			?>
-			<td title="Min-ttl">
-				<?php echo $this->rule['min-ttl']; ?>
-			</td>
-			<td title="Max-mss">
-				<?php echo $this->rule['max-mss']; ?>
-			</td>
-			<td title="Parameters" colspan="6">
-				<?php echo ($this->rule['no-df'] ? 'no-df<br>' : '') . ($this->rule['random-id'] ? 'random-id<br>' : '') . ($this->rule['reassemble'] ? 'reassemble ' . $this->rule['reassemble'] . '<br>' : ''); ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
+		<td title="Options">
+			<?php echo ($this->rule['no-df'] ? 'no-df<br>' : '') . ($this->rule['random-id'] ? 'random-id<br>' : '') . ($this->rule['reassemble'] ? 'reassemble ' . $this->rule['reassemble'] . '<br>' : ''); ?>
+		</td>
 		<?php
 	}
-	
+
 	function processInput()
 	{
 		if (filter_has_var(INPUT_GET, 'dropinterface')) {

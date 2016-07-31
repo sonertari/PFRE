@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Limit.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -104,38 +104,29 @@ class Limit extends Rule
 		return $this->str;
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispLimit();
+		$this->dispTail($rulenumber, $count);
+	}
+	
+	function dispLimit()
 	{
 		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Limit" colspan="12">
-				<?php
-				if (count($this->rule['limit'])) {
-					reset($this->rule['limit']);
-					while (list($key, $val)= each($this->rule['limit'])) {
-						echo "$key: $val<br>";
-					}
+		<td title="Limit" colspan="12">
+			<?php
+			if (count($this->rule['limit'])) {
+				reset($this->rule['limit']);
+				while (list($key, $val)= each($this->rule['limit'])) {
+					echo "$key: $val<br>";
 				}
-				?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
+			}
+			?>
+		</td>
 		<?php
-	}		
-	
+	}
+
 	function processInput()
 	{
 		if (count($_POST)) {

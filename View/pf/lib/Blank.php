@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.3 2016/07/30 15:36:35 soner Exp $ */
+/* $pfre: Blank.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -45,28 +45,22 @@ class Blank extends Rule
 		return $singleLine ? "\n" : $this->rule['blank'];
 	}
 	
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td class="blank" colspan="13">
-				<?php echo nl2br($this->rule['blank']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispBlank();
+		$this->dispTailEditLinks($rulenumber, $count);
 	}
 	
+	function dispBlank()
+	{
+		?>
+		<td class="blank" colspan="13">
+			<?php echo nl2br($this->rule['blank']); ?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (count($_POST)) {

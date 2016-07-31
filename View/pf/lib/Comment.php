@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Comment.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -59,28 +59,22 @@ class Comment extends Rule
 		return $this->str;
 	}
 	
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td class="comment" colspan="13">
-				<?php echo nl2br(stripslashes($this->rule['comment'])); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispComment();
+		$this->dispTailEditLinks($rulenumber, $count);
 	}
 	
+	function dispComment()
+	{
+		?>
+		<td class="comment" colspan="13">
+			<?php echo nl2br(stripslashes($this->rule['comment'])); ?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (count($_POST)) {

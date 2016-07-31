@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: AfTo.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -88,74 +88,19 @@ class AfTo extends Filter
 		$this->genValue('toredirhost', 'to ');
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Action" class="<?php echo $this->rule['action']; ?>">
-				<?php echo $this->rule['action']; ?>
-			</td>
-			<td title="Interface">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<td title="Log">
-				<?php
-				if ($this->rule['log']) {
-					if (is_array($this->rule['log'])) {
-						$s= 'log ';
-						foreach ($this->rule['log'] as $k => $v) {
-							$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
-						}
-						echo trim($s, ', ');
-					} else {
-						echo 'log';
-					}
-				}
-				?>
-			</td>
-			<td title="Quick">
-				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
-			</td>
-			<td title="Proto">
-				<?php $this->PrintValue($this->rule['proto']); ?>
-			</td>
-			<td title="Source">
-				<?php $this->PrintFromTo($this->rule['from']); ?>
-			</td>
-			<td title="Source Port">
-				<?php $this->PrintFromTo($this->rule['fromport']); ?>
-			</td>
-			<td title="Destination">
-				<?php $this->PrintFromTo($this->rule['to']); ?>
-			</td>
-			<td title="Destination Port">
-				<?php $this->PrintFromTo($this->rule['port']); ?>
-			</td>
-			<td title="Redirect Address Family">
-				<?php echo $this->rule['rediraf']; ?>
-			</td>
-			<td title="From Redirect Host">
-				<?php $this->PrintFromTo($this->rule['redirhost']); ?>
-			</td>
-			<td title="To Redirect Host">
-				<?php $this->PrintFromTo($this->rule['toredirhost']); ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispValue('interface', 'Interface');
+		$this->dispLog();
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('rediraf', 'Redirect Address Family');
+		$this->dispValue('redirhost', 'From Redirect Host');
+		$this->dispValue('toredirhost', 'To Redirect Host');
+		$this->dispTail($rulenumber, $count);
 	}
 	
 	function processInput()

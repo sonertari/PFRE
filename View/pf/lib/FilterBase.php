@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -331,88 +331,80 @@ class FilterBase extends Rule
 		$this->genValue('probability', 'probability ');
 	}
 	
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Action" class="<?php echo $this->rule['action']; ?>" nowrap="nowrap">
-				<?php echo $this->rule['action']; ?>
-			</td>
-			<td title="Direction">
-				<?php echo $this->rule['direction']; ?>
-			</td>
-			<td title="Interface">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<td title="Log">
-				<?php
-				if ($this->rule['log']) {
-					if (is_array($this->rule['log'])) {
-						$s= 'log ';
-						foreach ($this->rule['log'] as $k => $v) {
-							$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
-						}
-						echo trim($s, ', ');
-					} else {
-						echo 'log';
-					}
-				}
-				?>
-			</td>
-			<td title="Quick">
-				<?php echo $this->rule['quick'] ? 'quick' : ''; ?>
-			</td>
-			<td title="Proto">
-				<?php $this->PrintValue($this->rule['proto']); ?>
-			</td>
-			<?php
-			if ($this->rule['all']) {
-				?>
-				<td title="Source->Destination" colspan="4" class="all">
-					All
-				</td>
-				<?php
-			} else {
-				?>
-				<td title="Source">
-					<?php $this->PrintFromTo($this->rule['from']); ?>
-				</td>
-				<td title="Source Port">
-					<?php $this->PrintFromTo($this->rule['fromport']); ?>
-				</td>
-				<td title="Destination">
-					<?php $this->PrintFromTo($this->rule['to']); ?>
-				</td>
-				<td title="Destination Port">
-					<?php $this->PrintFromTo($this->rule['port']); ?>
-				</td>
-				<?php
-			}
-			?>
-			<td title="State">
-				<?php echo $this->rule['state']; ?>
-			</td>
-			<td title="Queue">
-				<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue'][0] . '<br>' . $this->rule['queue'][1]) : ''; ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispValue('interface', 'Interface');
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('state', 'State');
+		$this->dispQueue();
+		$this->dispTail($rulenumber, $count);
 	}
 	
+	function displayNat($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispValue('interface', 'Interface');
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('redirhost', 'Redirect Host');
+		$this->dispValue('redirport', 'Redirect Port');
+		$this->dispTail($rulenumber, $count);
+	}
+	
+	function dispAction()
+	{
+		?>
+		<td title="Action" class="<?php echo $this->rule['action']; ?>" nowrap="nowrap">
+			<?php echo $this->rule['action']; ?>
+		</td>
+		<?php
+	}
+
+	function dispSrcDest()
+	{
+		if ($this->rule['all']) {
+			?>
+			<td title="Source->Destination" colspan="4" class="all">
+				all
+			</td>
+			<?php
+		} else {
+			?>
+			<td title="Source">
+				<?php $this->PrintFromTo($this->rule['from']); ?>
+			</td>
+			<td title="Source Port">
+				<?php $this->PrintFromTo($this->rule['fromport']); ?>
+			</td>
+			<td title="Destination">
+				<?php $this->PrintFromTo($this->rule['to']); ?>
+			</td>
+			<td title="Destination Port">
+				<?php $this->PrintFromTo($this->rule['port']); ?>
+			</td>
+			<?php
+		}
+	}
+
+	function dispQueue()
+	{
+		?>
+		<td title="Queue">
+			<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue'][0] . '<br>' . $this->rule['queue'][1]) : ''; ?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (filter_has_var(INPUT_GET, 'dropfrom')) {

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Macro.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -83,34 +83,23 @@ class Macro extends Rule
 		return $this->str;
 	}
 	
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Id">
-				<?php echo $this->rule['identifier']; ?>
-			</td>
-			<td title="Value" colspan="11">
-				<?php $this->PrintValue($this->rule['value']); ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispMacro();
+		$this->dispTail($rulenumber, $count);
 	}
 	
+	function dispMacro()
+	{
+		$this->dispValue('identifier', 'Id');
+		?>
+		<td title="Value" colspan="11">
+			<?php $this->PrintValue($this->rule['value']); ?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (filter_has_var(INPUT_GET, 'dropvalue')) {

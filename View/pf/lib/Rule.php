@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Rule.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -287,6 +287,80 @@ class Rule
 		}
 	}
 
+	function dispHead($rulenumber)
+	{
+		?>
+		<tr title="<?php echo ltrim($this->cat, '_'); ?> rule"<?php echo ($rulenumber % 2 ? ' class="oddline"' : ''); ?>>
+			<td class="center">
+				<?php echo $rulenumber; ?>
+			</td>
+			<td title="Category" class="category">
+				<?php echo ltrim($this->cat, '_'); ?>
+			</td>
+		<?php
+	}
+
+	function dispTail($rulenumber, $count)
+	{
+		?>
+		<td class="comment">
+			<?php echo stripslashes($this->rule['comment']); ?>
+		</td>
+		<?php
+		$this->dispTailEditLinks($rulenumber, $count);
+	}
+
+	function dispTailEditLinks($rulenumber, $count)
+	{
+		?>
+			<td class="edit">
+				<?php
+				$this->PrintEditLinks($rulenumber, $count);
+				?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function dispKey($key, $title)
+	{
+		?>
+		<td title="<?php echo $title; ?>">
+			<?php echo $this->rule[$key] ? $key : ''; ?>
+		</td>
+		<?php
+	}
+
+	function dispValue($key, $title)
+	{
+		?>
+		<td title="<?php echo $title; ?>">
+			<?php $this->PrintValue($this->rule[$key]); ?>
+		</td>
+		<?php
+	}
+
+	function dispLog($colspan= 1)
+	{
+		?>
+		<td title="Log" colspan="<?php echo $colspan; ?>">
+			<?php
+			if ($this->rule['log']) {
+				if (is_array($this->rule['log'])) {
+					$s= 'log ';
+					foreach ($this->rule['log'] as $k => $v) {
+						$s.= (is_bool($v) ? "$k" : "$k=$v") . ', ';
+					}
+					echo trim($s, ', ');
+				} else {
+					echo 'log';
+				}
+			}
+			?>
+		</td>
+		<?php
+	}
+
 	function deleteEmptyEntries()
 	{
 		/// @todo Implement deeper delete than just one level?
@@ -531,6 +605,7 @@ class Rule
 	{
 		if ($value) {
 			if (!is_array($value)) {
+				// Add <br> to call this function twice
 				echo "$prefix$value$postfix<br>";
 			} else {
 				$i= 1;

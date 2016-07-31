@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Queue.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -123,52 +123,29 @@ class Queue extends Rule
 		}
 	}
 
-	function display($rulenumber, $count, $class)
+	function display($rulenumber, $count)
 	{
-		?>
-		<tr title="<?php echo $this->cat; ?> rule"<?php echo $class; ?>>
-			<td class="center">
-				<?php echo $rulenumber; ?>
-			</td>
-			<td title="Category" class="category">
-				<?php echo $this->cat; ?>
-			</td>
-			<td title="Name">
-				<?php echo $this->rule['name']; ?>
-			</td>
-			<td title="Interface">
-				<?php $this->PrintValue($this->rule['interface']); ?>
-			</td>
-			<td title="Parent">
-				<?php echo $this->rule['parent']; ?>
-			</td>
-			<td title="Bandwidth" colspan="2">
-				<?php echo $this->rule['bandwidth'] . ($this->rule['bw-burst'] ? '<br>burst: ' . $this->rule['bw-burst'] : '') . ($this->rule['bw-time'] ? '<br>time: ' . $this->rule['bw-time'] : ''); ?>
-			</td>
-			<td title="Min" colspan="2">
-				<?php echo $this->rule['min'] . ($this->rule['min-burst'] ? '<br>burst: ' . $this->rule['min-burst'] : '') . ($this->rule['min-time'] ? '<br>time: ' . $this->rule['min-time'] : ''); ?>
-			</td>
-			<td title="Max" colspan="2">
-				<?php echo $this->rule['max'] . ($this->rule['max-burst'] ? '<br>burst: ' . $this->rule['max-burst'] : '') . ($this->rule['max-time'] ? '<br>time: ' . $this->rule['max-time'] : ''); ?>
-			</td>
-			<td title="Qlimit" colspan="2">
-				<?php echo $this->rule['qlimit']; ?>
-			</td>
-			<td title="Default">
-				<?php echo $this->rule['default']; ?>
-			</td>
-			<td class="comment">
-				<?php echo stripslashes($this->rule['comment']); ?>
-			</td>
-			<td class="edit">
-				<?php
-				$this->PrintEditLinks($rulenumber, $count);
-				?>
-			</td>
-		</tr>
-		<?php
+		$this->dispHead($rulenumber);
+		$this->dispValue('name', 'Name');
+		$this->dispValue('interface', 'Interface');
+		$this->dispValue('parent', 'Parent');
+		$this->dispBandwidth('bandwidth', 'bw', 'Bandwidth', 3);
+		$this->dispBandwidth('min', 'min', 'Min', 2);
+		$this->dispBandwidth('max', 'max', 'Max', 2);
+		$this->dispValue('qlimit', 'Qlimit');
+		$this->dispKey('default', 'Default');
+		$this->dispTail($rulenumber, $count);
 	}
 	
+	function dispBandwidth($key, $pre, $title, $colspan)
+	{
+		?>
+		<td title="<?php echo $title; ?>" colspan="<?php echo $colspan; ?>">
+			<?php echo $this->rule[$key] . ($this->rule["$pre-burst"] ? '<br>burst: ' . $this->rule["$pre-burst"] : '') . ($this->rule["$pre-time"] ? '<br>time: ' . $this->rule["$pre-time"] : ''); ?>
+		</td>
+		<?php
+	}
+
 	function processInput()
 	{
 		if (count($_POST)) {
