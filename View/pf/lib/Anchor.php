@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.9 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Anchor.php,v 1.10 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -124,8 +124,7 @@ class Anchor extends FilterBase
 	{
 		?>
 		<td title="Id" nowrap="nowrap">
-			<?php echo 'anchor ' . $this->rule['identifier']; ?>
-			<text
+			<?php echo $this->rule['identifier']; ?>
 		</td>
 		<?php
 	}

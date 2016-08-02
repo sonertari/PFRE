@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.14 2016/08/02 19:44:38 soner Exp $ */
+/* $pfre: Rule.php,v 1.15 2016/08/02 19:58:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -82,7 +82,7 @@ class Rule
 	function __construct($str)
 	{
 		$this->cat= get_called_class();
-		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&rulenumber=';
+		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&amp;rulenumber=';
 		$this->parse($str);
 	}
 
