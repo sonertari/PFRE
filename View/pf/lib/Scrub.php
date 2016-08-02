@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Scrub.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,15 +61,6 @@ class Scrub extends Filter
 			);
 
 		parent::__construct($str);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace('/{/', ' { ', $this->str);
-		$this->str= preg_replace('/}/', ' } ', $this->str);
-		$this->str= preg_replace('/\(/', ' ( ', $this->str);
-		$this->str= preg_replace('/\)/', ' ) ', $this->str);
-		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
 	function generate()
