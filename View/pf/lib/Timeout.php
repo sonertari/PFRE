@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Timeout.php,v 1.6 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -105,7 +105,7 @@ class Timeout extends Rule
 		$this->str= '';
 
 		if (count($this->rule['proto'])) {
-			/// @attention This reset is critical if a page calls this function twice, and it does in this case
+			/// @attention This reset is critical if a page calls this function twice, and it does so in this case
 			reset($this->rule['proto']);
 
 			if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
@@ -164,373 +164,219 @@ class Timeout extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
+		$this->inputTimeout('frag', 'frag', 'all');
+		$this->inputTimeout('interval', 'interval', 'all');
+		$this->inputTimeout('src.track', 'src_track', 'all');
 
-			if (filter_has_var(INPUT_POST, 'frag')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'frag')))) {
-					$this->rule['proto']['all']['frag']= trim(filter_input(INPUT_POST, 'frag'));
-				} else {
-					unset($this->rule['proto']['all']['frag']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'interval')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'interval')))) {
-					$this->rule['proto']['all']['interval']= trim(filter_input(INPUT_POST, 'interval'));
-				} else {
-					unset($this->rule['proto']['all']['interval']);
-				}
-			}
-			/// @attention POST cannot handle dots in keys: src.track, use src_track instead
-			if (filter_has_var(INPUT_POST, 'src_track')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'src_track')))) {
-					$this->rule['proto']['all']['src.track']= trim(filter_input(INPUT_POST, 'src_track'));
-				} else {
-					unset($this->rule['proto']['all']['src.track']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tcp_first')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tcp_first')))) {
-					$this->rule['proto']['tcp']['first']= trim(filter_input(INPUT_POST, 'tcp_first'));
-				} else {
-					unset($this->rule['proto']['tcp']['first']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tcp_opening')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tcp_opening')))) {
-					$this->rule['proto']['tcp']['opening']= trim(filter_input(INPUT_POST, 'tcp_opening'));
-				} else {
-					unset($this->rule['proto']['tcp']['opening']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tcp_established')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tcp_established')))) {
-					$this->rule['proto']['tcp']['established']= trim(filter_input(INPUT_POST, 'tcp_established'));
-				} else {
-					unset($this->rule['proto']['tcp']['established']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tcp_closing')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tcp_closing')))) {
-					$this->rule['proto']['tcp']['closing']= trim(filter_input(INPUT_POST, 'tcp_closing'));
-				} else {
-					unset($this->rule['proto']['tcp']['closing']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tcp_finwait')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tcp_finwait')))) {
-					$this->rule['proto']['tcp']['finwait']= trim(filter_input(INPUT_POST, 'tcp_finwait'));
-				} else {
-					unset($this->rule['proto']['tcp']['finwait']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tcp_closed')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tcp_closed')))) {
-					$this->rule['proto']['tcp']['closed']= trim(filter_input(INPUT_POST, 'tcp_closed'));
-				} else {
-					unset($this->rule['proto']['tcp']['closed']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'udp_first')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'udp_first')))) {
-					$this->rule['proto']['udp']['first']= trim(filter_input(INPUT_POST, 'udp_first'));
-				} else {
-					unset($this->rule['proto']['udp']['first']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'udp_single')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'udp_single')))) {
-					$this->rule['proto']['udp']['single']= trim(filter_input(INPUT_POST, 'udp_single'));
-				} else {
-					unset($this->rule['proto']['udp']['single']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'udp_multiple')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'udp_multiple')))) {
-					$this->rule['proto']['udp']['multiple']= trim(filter_input(INPUT_POST, 'udp_multiple'));
-				} else {
-					unset($this->rule['proto']['udp']['multiple']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'icmp_first')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'icmp_first')))) {
-					$this->rule['proto']['icmp']['first']= trim(filter_input(INPUT_POST, 'icmp_first'));
-				} else {
-					unset($this->rule['proto']['icmp']['first']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'icmp_error')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'icmp_error')))) {
-					$this->rule['proto']['icmp']['error']= trim(filter_input(INPUT_POST, 'icmp_error'));
-				} else {
-					unset($this->rule['proto']['icmp']['error']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'other_first')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'other_first')))) {
-					$this->rule['proto']['other']['first']= trim(filter_input(INPUT_POST, 'other_first'));
-				} else {
-					unset($this->rule['proto']['other']['first']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'other_single')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'other_single')))) {
-					$this->rule['proto']['other']['single']= trim(filter_input(INPUT_POST, 'other_single'));
-				} else {
-					unset($this->rule['proto']['other']['single']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'other_multiple')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'other_multiple')))) {
-					$this->rule['proto']['other']['multiple']= trim(filter_input(INPUT_POST, 'other_multiple'));
-				} else {
-					unset($this->rule['proto']['other']['multiple']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'adaptive_start')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'adaptive_start')))) {
-					$this->rule['proto']['adaptive']['start']= trim(filter_input(INPUT_POST, 'adaptive_start'));
-				} else {
-					unset($this->rule['proto']['adaptive']['start']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'adaptive_end')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'adaptive_end')))) {
-					$this->rule['proto']['adaptive']['end']= trim(filter_input(INPUT_POST, 'adaptive_end'));
-				} else {
-					unset($this->rule['proto']['adaptive']['end']);
-				}
-			}
-		}
+		$this->inputTimeout('first', 'tcp_first', 'tcp');
+		$this->inputTimeout('opening', 'tcp_opening', 'tcp');
+		$this->inputTimeout('established', 'tcp_established', 'tcp');
+		$this->inputTimeout('closing', 'tcp_closing', 'tcp');
+		$this->inputTimeout('finwait', 'tcp_finwait', 'tcp');
+		$this->inputTimeout('closed', 'tcp_closed', 'tcp');
 
-		$this->deleteEmptyEntries();
+		$this->inputTimeout('first', 'udp_first', 'udp');
+		$this->inputTimeout('single', 'udp_single', 'udp');
+		$this->inputTimeout('multiple', 'udp_multiple', 'udp');
+
+		$this->inputTimeout('first', 'icmp_first', 'icmp');
+		$this->inputTimeout('error', 'icmp_error', 'icmp');
+
+		$this->inputTimeout('first', 'other_first', 'other');
+		$this->inputTimeout('single', 'other_single', 'other');
+		$this->inputTimeout('multiple', 'other_multiple', 'other');
+
+		$this->inputTimeout('start', 'adaptive_start', 'adaptive');
+		$this->inputTimeout('end', 'adaptive_end', 'adaptive');
+
+		$this->inputKey('comment');
+		$this->inputDelEmpty(FALSE);
 	}
-	
+
+	function inputTimeout($key, $var, $parent)
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$this->rule['proto'][$parent][$key]= trim(filter_input(INPUT_POST, $var), '" ');
+		}
+	}
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editFragment();
+		$this->editInterval();
+		$this->editSrcTrack();
+		$this->editTcpTimeouts();
+		$this->editUdpTimeouts();
+		$this->editIcmpTimeouts();
+		$this->editOtherTimeouts();
+		$this->editAdaptiveTimeouts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editFragment()
+	{
 		?>
-		<h2>Edit Timeout Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Timeout') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Fragment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['proto']['all']['frag']; ?>" />
-						<?php $this->PrintHelp('frag') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Interval').':' ?>
-					</td>
-					<td>
-						<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['proto']['all']['interval']; ?>" />
-						<?php $this->PrintHelp('interval') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Src track').':' ?>
-					</td>
-					<td>
-						<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['proto']['all']['src.track']; ?>" />
-						<?php $this->PrintHelp('src.track') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('TCP').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="tcp_first" name="tcp_first" value="<?php echo $this->rule['proto']['tcp']['first']; ?>" />
-											</td>
-											<td class="optitle">first<?php $this->PrintHelp('tcp_timeout') ?></td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="tcp_opening" name="tcp_opening" value="<?php echo $this->rule['proto']['tcp']['opening']; ?>" />
-											</td>
-											<td class="optitle">opening</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="tcp_established" name="tcp_established" value="<?php echo $this->rule['proto']['tcp']['established']; ?>" />
-											</td>
-											<td class="optitle">established</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="tcp_closing" name="tcp_closing" value="<?php echo $this->rule['proto']['tcp']['closing']; ?>" />
-											</td>
-											<td class="optitle">closing</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="tcp_finwait" name="tcp_finwait" value="<?php echo $this->rule['proto']['tcp']['finwait']; ?>" />
-											</td>
-											<td class="optitle">fin wait</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="tcp_closed" name="tcp_closed" value="<?php echo $this->rule['proto']['tcp']['closed']; ?>" />
-											</td>
-											<td class="optitle">closed</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('UDP').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="udp_first" name="udp_first" value="<?php echo $this->rule['proto']['udp']['first']; ?>" />
-											</td>
-											<td class="optitle">first<?php $this->PrintHelp('udp_timeout') ?></td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="udp_single" name="udp_single" value="<?php echo $this->rule['proto']['udp']['single']; ?>" />
-											</td>
-											<td class="optitle">single</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="udp_multiple" name="udp_multiple" value="<?php echo $this->rule['proto']['udp']['multiple']; ?>" />
-											</td>
-											<td class="optitle">multiple</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('ICMP').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="icmp_first" name="icmp_first" value="<?php echo $this->rule['proto']['icmp']['first']; ?>" />
-											</td>
-											<td class="optitle">first<?php $this->PrintHelp('icmp_timeout') ?></td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="icmp_error" name="icmp_error" value="<?php echo $this->rule['proto']['icmp']['error']; ?>" />
-											</td>
-											<td class="optitle">error</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Other').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="other_first" name="other_first" value="<?php echo $this->rule['proto']['other']['first']; ?>" />
-											</td>
-											<td class="optitle">first<?php $this->PrintHelp('other_timeout') ?></td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="other_single" name="other_single" value="<?php echo $this->rule['proto']['other']['single']; ?>" />
-											</td>
-											<td class="optitle">single</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="other_multiple" name="other_multiple" value="<?php echo $this->rule['proto']['other']['multiple']; ?>" />
-											</td>
-											<td class="optitle">multiple</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Adaptive').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="adaptive_start" name="adaptive_start" value="<?php echo $this->rule['proto']['adaptive']['start']; ?>" />
-											</td>
-											<td class="optitle">start<?php $this->PrintHelp('adaptive_timeout') ?></td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" size="10" id="adaptive_end" name="adaptive_end" value="<?php echo $this->rule['proto']['adaptive']['end']; ?>" />
-											</td>
-											<td class="optitle">end</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Fragment').':' ?>
+			</td>
+			<td>
+				<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['proto']['all']['frag']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('frag') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editInterval()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Interval').':' ?>
+			</td>
+			<td>
+				<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['proto']['all']['interval']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('interval') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editSrcTrack()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Src track').':' ?>
+			</td>
+			<td>
+				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['proto']['all']['src.track']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('src.track') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editTcpTimeouts()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php $this->PrintHelp('tcp_timeout') ?><?php echo _TITLE('TCP').':' ?>
+			</td>
+			<td>
+				<table style="width: auto;">
+					<?php
+					$this->editTimeout('tcp', 'first');
+					$this->editTimeout('tcp', 'opening');
+					$this->editTimeout('tcp', 'established');
+					$this->editTimeout('tcp', 'closing');
+					$this->editTimeout('tcp', 'finwait');
+					$this->editTimeout('tcp', 'closed');
+					?>
+				</table>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editUdpTimeouts()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php $this->PrintHelp('udp_timeout') ?><?php echo _TITLE('UDP').':' ?>
+			</td>
+			<td>
+				<table style="width: auto;">
+					<?php
+					$this->editTimeout('udp', 'first');
+					$this->editTimeout('udp', 'single');
+					$this->editTimeout('udp', 'multiple');
+					?>
+				</table>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editIcmpTimeouts()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php $this->PrintHelp('icmp_timeout') ?><?php echo _TITLE('ICMP').':' ?>
+			</td>
+			<td>
+				<table style="width: auto;">
+					<?php
+					$this->editTimeout('icmp', 'first');
+					$this->editTimeout('icmp', 'error');
+					?>
+				</table>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editOtherTimeouts()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php $this->PrintHelp('other_timeout') ?><?php echo _TITLE('Other').':' ?>
+			</td>
+			<td>
+				<table style="width: auto;">
+					<?php
+					$this->editTimeout('other', 'first');
+					$this->editTimeout('other', 'single');
+					$this->editTimeout('other', 'multiple');
+					?>
+				</table>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editAdaptiveTimeouts()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php $this->PrintHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive').':' ?>
+			</td>
+			<td>
+				<table style="width: auto;">
+					<?php
+					$this->editTimeout('adaptive', 'start');
+					$this->editTimeout('adaptive', 'end');
+					?>
+				</table>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editTimeout($proto, $key)
+	{
+		?>
+		<tr>
+			<td class="ifs">
+				<input type="text" size="10" id="<?php echo $proto ?>_<?php echo $key ?>" name="<?php echo $proto ?>_<?php echo $key ?>" value="<?php echo $this->rule['proto'][$proto][$key]; ?>" placeholder="number" />
+			</td>
+			<td class="optitle"><?php echo $key ?></td>
+		</tr>
 		<?php
 	}
 }

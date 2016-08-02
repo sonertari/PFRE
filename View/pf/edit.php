@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: edit.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -34,36 +34,13 @@
  */
 require_once ('include.php');
 
-$ruleType2Class= array(
-    'filter' => 'Filter',
-    'antispoof' => 'Antispoof',
-    'anchor' => 'Anchor',
-    'macro' => 'Macro',
-    'table' => 'Table',
-    'afto' => 'AfTo',
-    'natto' => 'NatTo',
-    'binatto' => 'BinatTo',
-    'divertto' => 'DivertTo',
-    'rdrto' => 'RdrTo',
-    'route' => 'Route',
-    'queue' => 'Queue',
-    'scrub' => 'Scrub',
-    'option' => 'Option',
-    'timeout' => 'Timeout',
-    'limit' => 'Limit',
-    'loadanchor' => 'LoadAnchor',
-    'include' => '_Include',
-    'comment' => 'Comment',
-    'blank' => 'Blank',
-);
-
 if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	$cat= $ruleType2Class[$edit];
 
 	$View->RuleSet->SetupEditSession($cat, $action, $rulenumber);
 
 	$ruleObj= &$_SESSION['edit']['object'];
-	$ruleObj->processInput();
+	$ruleObj->input();
 
 	$View->RuleSet->ProcessTestCancelSaveModified($action, $rulenumber, $ruleObj, $modified, $testResult);
 

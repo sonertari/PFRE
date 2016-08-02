@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.8 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.9 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -197,22 +197,21 @@ class RuleSet
 
 		$text= preg_replace("/\n#/", "\n# ", $text);
 		$text= str_replace("\\\n", '', $text);
-		foreach (preg_split("/\n/", $text, -1) as $line) {
-			$rulebase[]= trim($line);
-		}
 
-		$order= 0;
-		foreach ($rulebase as $str) {
-			$words= preg_split('/[\s,\t]+/', $str, -1);
+		$rulebase= explode("\n", $text);
+
+		for ($order= 0; $order < count($rulebase); $order++) {
+			$str= $rulebase[$order];
+			$words= preg_split('/[\s,\t]+/', trim($str), -1);
 			
 			$type= $words[0];
             // Do not search in comment lines
-			if ($type != '' && $type != '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout|limit|route-to|reply-to|dup-to)\b/', $str, $match)) {
+			if ($type !== '' && $type !== '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout|limit|route-to|reply-to|dup-to|divert-packet)\b/', $str, $match)) {
 				$type= $match[1];
 			}
 
 			// Add any accumulated comment or blank lines if a non-comment/blank rule is next
-			if ($type != '' && $type != '#') {
+			if ($type !== '' && $type !== '#') {
 				if (isset($comment)) {
 					$this->rules[]= new Comment($comment);
 					unset($comment);
@@ -221,6 +220,10 @@ class RuleSet
 					$this->rules[]= new Blank($blank);
 					$blank= '';
 				}
+			}
+
+			if ($type === 'anchor' && preg_match('/^.*{\s*$/', $str)) {
+				$this->parseInlineRules($rulebase, $str, $order);
 			}
 
 			switch ($type) {
@@ -268,6 +271,9 @@ class RuleSet
 				case 'divert-to':
 					$this->rules[]= new DivertTo($str);
 					break;
+				case 'divert-packet':
+					$this->rules[]= new DivertPacket($str);
+					break;
 				case 'rdr-to':
 					$this->rules[]= new RdrTo($str);
 					break;
@@ -310,6 +316,41 @@ class RuleSet
         /// @attention Do not append accumulated blank lines to the end
 	}
 
+	function parseInlineRules($rulebase, &$str, &$order)
+	{
+		if (preg_match('/^(.*){\s*$/', $str, $match)) {
+			$str= $match[1] . ' inline ';
+
+			$nesting= 1;
+			$order++;
+			while ($order < count($rulebase)) {
+				$line= $rulebase[$order];
+
+				// anchor-close = "}", but there may be a comment after it, hence match
+				if (!preg_match('/^\s*}(.*)$/', $line, $match)) {
+					$str.= "$line\n";
+					/// @todo Use recursion instead?
+					if (preg_match('/^.*{\s*$/', $line)) {
+						// Do not allow more than 2 nested inline rules
+						if (++$nesting > 2) {
+							break;
+						}
+					}
+				} else {
+					if (--$nesting == 0) {
+						// Discard the last anchor-close, keep the trailing text
+						$str.= $match[1] . "\n";
+						break;
+					} else {
+						// Don't discard the anchor-close of nested anchors
+						$str.= "$line\n";
+					}
+				}
+				$order++;
+			}
+		}
+	}
+	
 	function generate($lines= FALSE, $uptoRuleNumber= NULL, $includeNonRules= TRUE, $singleLineNonRules= FALSE)
 	{
 		if ($uptoRuleNumber == NULL) {
@@ -331,6 +372,7 @@ class RuleSet
 			}
 		}
         
+		// Do not merge this loop with the generate loop above
 		if ($lines) {
 			$linenumber= 0;
 			foreach (explode("\n", $str) as $line) {

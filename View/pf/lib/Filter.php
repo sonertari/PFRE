@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Filter.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -72,7 +72,7 @@ class Filter extends FilterBase
 
 	function generate()
 	{
-		$this->str= $this->rule['action'];
+		$this->genAction();
 
 		$this->genFilterHead();
 		$this->genFilterOpts();
@@ -80,6 +80,107 @@ class Filter extends FilterBase
 		$this->genComment();
 		$this->str.= "\n";
 		return $this->str;
+	}
+
+	function genAction()
+	{
+		$this->str= $this->rule['action'];
+		if ($this->rule['action'] == 'block') {
+			$this->genValue('blockoption');
+		}
+	}
+
+	function input()
+	{
+		$this->inputAction();
+
+		$this->inputFilterHead();
+
+		$this->inputLog();
+		$this->inputBool('quick');
+
+		$this->inputFilterOpts();
+
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
+	}
+
+	function inputAction()
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$this->inputKey('action');
+			if (filter_input(INPUT_POST, 'action') === 'block') {
+				$this->inputKey('blockoption');
+			} else {
+				unset($this->rule['blockoption']);
+			}
+		}
+	}
+
+	function edit($rulenumber, $modified, $testResult, $action)
+	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editAction();
+
+		$this->editFilterHead();
+
+		$this->editLog();
+		$this->editCheckbox('quick', 'Quick');
+
+		$this->editFilterOpts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editAction()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Action').':' ?>
+			</td>
+			<td>
+				<select id="action" name="action">
+					<option label="pass" <?php echo $this->rule['action'] == 'pass' ? 'selected' : ''; ?>>pass</option>
+					<option label="match" <?php echo $this->rule['action'] == 'match' ? 'selected' : ''; ?>>match</option>
+					<option label="block" <?php echo $this->rule['action'] == 'block' ? 'selected' : ''; ?>>block</option>
+				</select>
+				<?php
+				$this->PrintHelp($this->rule['action']);
+				?>
+			</td>
+		</tr>
+		<?php
+		if ($this->rule['action'] == 'block') {
+			$this->editBlockOption();
+		}
+	}
+
+	function editBlockOption()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Block Option').':' ?>
+			</td>
+			<td>
+				<select id="blockoption" name="blockoption">
+					<option value=""></option>
+					<option value="drop" <?php echo ($this->rule['blockoption'] == 'drop' ? 'selected' : ''); ?>>drop</option>
+					<option value="return" <?php echo ($this->rule['blockoption'] == 'return' ? 'selected' : ''); ?>>return</option>
+					<option value="return-rst" <?php echo ($this->rule['blockoption'] == 'return-rst' ? 'selected' : ''); ?>>return-rst</option>
+					<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
+					<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
+				</select>
+				<?php $this->PrintHelp('block') ?>
+			</td>
+		</tr>
+		<?php
 	}
 }
 ?>

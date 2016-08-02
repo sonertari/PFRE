@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libauth.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: libauth.php,v 1.3 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -146,30 +146,29 @@ function Authentication($passwd)
  */
 function HTMLHeader($color= 'white')
 {
-// Unindent these html lines, against the project style guidelines, otherwise they are indented in page source too
-?>
-<!DOCTYPE html>
-<html>
-	<head>
-		<title><?php echo _MENU('PF Rule Editor') ?></title>
-		<meta http-equiv="content-type" content="text/html" />
-		<meta name="description" content="PF Rule Editor" />
-		<meta name="author" content="Soner Tari"/>
-		<meta name="keywords" content="PF, Rule, Editor, :)" />
-		<link rel="stylesheet" href="../pfre.css" type="text/css" media="screen" />
-	</head>
-	<body style="background: <?php echo $color ?>;">
-		<table>
-		<?php
+	?>
+	<!DOCTYPE html>
+	<html>
+		<head>
+			<title><?php echo _MENU('PF Rule Editor') ?></title>
+			<meta http-equiv="content-type" content="text/html" />
+			<meta name="description" content="PF Rule Editor" />
+			<meta name="author" content="Soner Tari"/>
+			<meta name="keywords" content="PF, Rule, Editor, :)" />
+			<link rel="stylesheet" href="../pfre.css" type="text/css" media="screen" />
+		</head>
+		<body style="background: <?php echo $color ?>;">
+			<table>
+			<?php
 }
 
 function HTMLFooter()
 {
-		?>
-		</table>
-	</body>
-</html>
-<?php
+			?>
+			</table>
+		</body>
+	</html>
+	<?php
 }
 
 /** Sets session submenu variable.

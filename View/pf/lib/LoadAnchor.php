@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LoadAnchor.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: LoadAnchor.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -78,60 +78,27 @@ class LoadAnchor extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
-			$this->rule['anchor']= filter_input(INPUT_POST, 'anchor');
-			$this->rule['file']= filter_input(INPUT_POST, 'file');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-		}
+		$this->inputKey('anchor');
+		$this->inputKey('file');
 
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		?>
-		<h2>Edit Load Anchor Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('LoadAnchor') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Identifier').':' ?>
-					</td>
-					<td>
-						<input type="text" id="anchor" name="anchor" size="20" value="<?php echo $this->rule['anchor']; ?>" />
-						<?php $this->PrintHelp('anchor-id') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('File').':' ?>
-					</td>
-					<td>
-						<input type="text" id="file" name="file" size="40" value="<?php echo $this->rule['file']; ?>" />
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
-		<?php
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editText('anchor', 'Anchor', 'anchor-id', NULL, 'name, may be nested');
+		$this->editText('file', 'File', FALSE, 40, 'filename');
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
 	}
 }
 ?>

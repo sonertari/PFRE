@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Limit.php,v 1.6 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -127,121 +127,79 @@ class Limit extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
+		$this->inputKey('states', 'limit');
+		$this->inputKey('frags', 'limit');
+		$this->inputKey('src-nodes', 'limit');
+		$this->inputKey('tables', 'limit');
+		$this->inputKey('table-entries', 'limit');
 
-			if (filter_has_var(INPUT_POST, 'states')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'states')))) {
-					$this->rule['limit']['states']= trim(filter_input(INPUT_POST, 'states'));
-				} else {
-					unset($this->rule['limit']['states']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'frags')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'frags')))) {
-					$this->rule['limit']['frags']= trim(filter_input(INPUT_POST, 'frags'));
-				} else {
-					unset($this->rule['limit']['frags']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'src-nodes')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'src-nodes')))) {
-					$this->rule['limit']['src-nodes']= trim(filter_input(INPUT_POST, 'src-nodes'));
-				} else {
-					unset($this->rule['limit']['src-nodes']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'tables')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'tables')))) {
-					$this->rule['limit']['tables']= trim(filter_input(INPUT_POST, 'tables'));
-				} else {
-					unset($this->rule['limit']['tables']);
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'table-entries')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'table-entries')))) {
-					$this->rule['limit']['table-entries']= trim(filter_input(INPUT_POST, 'table-entries'));
-				} else {
-					unset($this->rule['limit']['table-entries']);
-				}
-			}
-		}
-
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty(FALSE);
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editLimit();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editLimit()
+	{
 		?>
-		<h2>Edit Limit Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Limit') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('States').':' ?>
-					</td>
-					<td>
-						<input type="text" size="10" id="states" name="states" value="<?php echo $this->rule['limit']['states']; ?>" placeholder="number" />
-						<?php $this->PrintHelp('states') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Frags').':' ?>
-					</td>
-					<td>
-						<input type="text" size="10" id="frags" name="frags" value="<?php echo $this->rule['limit']['frags']; ?>" placeholder="number" />
-						<?php $this->PrintHelp('frags') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Src Nodes').':' ?>
-					</td>
-					<td>
-						<input type="text" size="10" id="srcnodes" name="src-nodes" value="<?php echo $this->rule['limit']['src-nodes']; ?>" placeholder="number" />
-						<?php $this->PrintHelp('src-nodes') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Tables').':' ?>
-					</td>
-					<td>
-						<input type="text" size="10" id="tables" name="tables" value="<?php echo $this->rule['limit']['tables']; ?>" placeholder="number" />
-						<?php $this->PrintHelp('tables') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Table Entries').':' ?>
-					</td>
-					<td>
-						<input type="text" size="10" id="table-entries" name="table-entries" value="<?php echo $this->rule['limit']['table-entries']; ?>" placeholder="number" />
-						<?php $this->PrintHelp('table-entries') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('States').':' ?>
+			</td>
+			<td>
+				<input type="text" size="10" id="states" name="states" value="<?php echo $this->rule['limit']['states']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('states') ?>
+			</td>
+		</tr>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Frags').':' ?>
+			</td>
+			<td>
+				<input type="text" size="10" id="frags" name="frags" value="<?php echo $this->rule['limit']['frags']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('frags') ?>
+			</td>
+		</tr>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Src Nodes').':' ?>
+			</td>
+			<td>
+				<input type="text" size="10" id="srcnodes" name="src-nodes" value="<?php echo $this->rule['limit']['src-nodes']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('src-nodes') ?>
+			</td>
+		</tr>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Tables').':' ?>
+			</td>
+			<td>
+				<input type="text" size="10" id="tables" name="tables" value="<?php echo $this->rule['limit']['tables']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('tables') ?>
+			</td>
+		</tr>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Table Entries').':' ?>
+			</td>
+			<td>
+				<input type="text" size="10" id="table-entries" name="table-entries" value="<?php echo $this->rule['limit']['table-entries']; ?>" placeholder="number" />
+				<?php $this->PrintHelp('table-entries') ?>
+			</td>
+		</tr>
 		<?php
 	}
 }

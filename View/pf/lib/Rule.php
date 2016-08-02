@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Rule.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -80,7 +80,8 @@ class Rule
 	protected $keywords = array();
 
 	protected $href= '';
-
+	protected $rulenumber= 0;
+	
 	function __construct($str)
 	{
 		$this->cat= get_called_class();
@@ -118,9 +119,10 @@ class Rule
 
 	function parseComment()
 	{
-		if (strpos($this->str, '#')) {
-			$this->rule['comment']= substr($this->str, strpos($this->str, '#') + 1);
-			$this->str= substr($this->str, 0, strpos($this->str, '#'));
+		$pos= strpos($this->str, '#');
+		if ($pos) {
+			$this->rule['comment']= trim(substr($this->str, $pos + 1));
+			$this->str= substr($this->str, 0, $pos);
 		}
 	}
 
@@ -174,6 +176,11 @@ class Rule
 		list($this->rule[$key], $this->index)= $this->parseItem($this->words, $this->index, $pre, $post);		
 	}
 	
+	function parseDelimitedStr($key, $delim_pre= '"', $delim_post= '"')
+	{
+		list($this->rule[$key], $this->index)= $this->parseString($this->words, $this->index, $delim_pre, $delim_post);		
+	}
+
 	function parseAny()
 	{
 		if (!isset($this->rule['from'])) {
@@ -252,16 +259,14 @@ class Rule
 	function genValue($key, $head= '', $tail= '')
 	{
 		if (isset($this->rule[$key])) {
-//			$head= $head === '' ? '' : $head . ' ';
-//			$tail= $tail === '' ? '' : ' ' . $tail;
 			$this->str.= ' ' . $head . $this->rule[$key] . $tail;
 		}
 	}
 
-	function genItems($key, $head= '')
+	function genItems($key, $head= '', $delim_pre= '{', $delim_post= '}')
 	{
 		if (isset($this->rule[$key])) {
-			$this->str.= $this->generateItem($this->rule[$key], $head);
+			$this->str.= $this->generateItem($this->rule[$key], $head, $delim_pre, $delim_post);
 		}
 	}
 
@@ -361,65 +366,292 @@ class Rule
 		<?php
 	}
 
-	function deleteEmptyEntries()
+	function inputKey($key, $parent= NULL)
 	{
-		/// @todo Implement deeper delete than just one level?
-		foreach ($this->rule as $key => $value) {
-			if ($value == '') {
-				unset($this->rule[$key]);
-			} elseif (is_array($value) && count($value) == 0) {
-				unset($this->rule[$key]);
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$rule= &$this->rule;
+			if ($parent !== NULL) {
+				$rule= &$this->rule[$parent];
+			}
+
+			//$rule[$key]= preg_replace('/"/', '', filter_input(INPUT_POST, $key));
+			$rule[$key]= trim(filter_input(INPUT_POST, $key), "\" \t\n\r\0\x0B");
+		}
+	}
+
+	function inputBool($key)
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$this->rule[$key]= (filter_has_var(INPUT_POST, $key) ? TRUE : '');
+		}
+	}
+
+	function inputKeyIfHasVar($key, $var)
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			if (filter_has_var(INPUT_POST, $var)) {
+				$this->rule[$key]= filter_input(INPUT_POST, $key);
 			}
 		}
 	}
-	
-	/**
-	 * Adds an entity to the rule, used for things that can hold more than one thing.
-	 *
-	 * @param string $type What we are adding the entity to.
-	 * @param string $data The data to add to the $type.
-	 * @return void
-	 */
-	function addEntity($type, $data)
+
+	function inputDel($key, $var, $parent= NULL)
 	{
-		if (!isset($this->rule[$type])) {
-			$this->rule[$type]= $data;
+		if (count($_GET)) {
+			if (filter_has_var(INPUT_GET, $var)) {
+				$this->delEntity($key, filter_input(INPUT_GET, $var), $parent);
+			}
+		}
+	}
+
+	function inputAdd($key, $var, $parent= NULL)
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			if (filter_input(INPUT_POST, $var) !== '') {
+				$this->addEntity($key, preg_replace('/"/', '', filter_input(INPUT_POST, $var)), $parent);
+			}
+		}
+	}
+
+	function addEntity($key, $data, $parent= NULL)
+	{
+		$rule= &$this->rule;
+		if ($parent !== NULL) {
+			$rule= &$this->rule[$parent];
+		}
+
+		if (!isset($rule[$key])) {
+			$rule[$key]= $data;
 		} else 
-			if (!is_array($this->rule[$type])) {
-				$_temp= $this->rule[$type];
-				unset($this->rule[$type]);
-				$this->rule[$type][]= $_temp;
-				$this->rule[$type][]= $data;
-				$this->rule[$type]= array_unique($this->rule[$type]);
+			if (!is_array($rule[$key])) {
+				$value= $rule[$key];
+				unset($rule[$key]);
+				$rule[$key][]= $value;
+				$rule[$key][]= $data;
+				$rule[$key]= array_unique($rule[$key]);
 			} else {
-				$this->rule[$type][]= $data;
-				$this->rule[$type]= array_unique($this->rule[$type]);
+				$rule[$key][]= $data;
+				$rule[$key]= array_unique($rule[$key]);
 			}
 	}
 
-	/**
-	 * Deletes an entity from the rule, used for things that can hold more than one thing.
-	 *
-	 * @param string $type What we are deleting the entity from.
-	 * @param string $data The data to delete from the $type.
-	 * @return void
-	 */
-	function delEntity($type, $data)
+	function delEntity($key, $data, $parent= NULL)
 	{
-		if (is_array($this->rule[$type])) {
-			foreach ($this->rule[$type] as $entity) {
-				if ($entity != $data) {
-					$_new_data[]= $entity;
+		$rule= &$this->rule;
+		if ($parent !== NULL) {
+			$rule= &$this->rule[$parent];
+		}
+
+		if (is_array($rule[$key])) {
+			foreach ($rule[$key] as $value) {
+				if ($value != $data) {
+					$nvp[]= $value;
 				}
 			}
-			if (count($_new_data) == 1) {
-				$this->rule[$type]= $_new_data[0];
+			if (count($nvp) == 1) {
+				$rule[$key]= $nvp[0];
 			} else {
-				$this->rule[$type]= $_new_data;
+				$rule[$key]= $nvp;
 			}
 		} else {
-			unset($this->rule[$type]);
+			unset($rule[$key]);
 		}
+	}
+
+	function inputLog()
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$this->inputBool('log');
+
+			if ($this->rule['log'] == TRUE) {
+				if (filter_has_var(INPUT_POST, 'log-all') || filter_has_var(INPUT_POST, 'log-matches') ||
+					filter_has_var(INPUT_POST, 'log-user') || filter_input(INPUT_POST, 'log-to') != '') {
+					$this->rule['log']= array();
+					if (filter_has_var(INPUT_POST, 'log-all')) {
+						$this->rule['log']['all']= TRUE;
+					}
+					if (filter_has_var(INPUT_POST, 'log-matches')) {
+						$this->rule['log']['matches']= TRUE;
+					}
+					if (filter_has_var(INPUT_POST, 'log-user')) {
+						$this->rule['log']['user']= TRUE;
+					}
+					if (filter_input(INPUT_POST, 'log-to') != '') {
+						$this->rule['log']['to']= filter_input(INPUT_POST, 'log-to');
+					}
+				}
+			}
+		}
+	}
+
+	function inputDelEmpty($flatten= TRUE)
+	{
+		/// @todo Check why we cannot combine inputDelEmpty() with inputDelEmptyRecursive()
+		$this->rule= $this->inputDelEmptyRecursive($this->rule, $flatten);
+	}
+
+	function inputDelEmptyRecursive($array, $flatten)
+	{
+		foreach ($array as $key => $value) {
+			if ($value == '') {
+				unset($array[$key]);
+			} elseif (is_array($value)) {
+				$array[$key]= $this->inputDelEmptyRecursive($value, $flatten);
+
+				if (count($array[$key]) == 0) {
+					// Array is empty, delete it
+					unset($array[$key]);
+				} elseif (count($array[$key]) == 1 && $flatten) {
+					// Array has only one element, convert from array to simple NVP
+					list($k, $v)= each($array[$key]);
+					unset($array[$key]);
+					$array[$key]= $v;
+				}
+			}
+		}
+		return $array;
+	}
+
+	function editCheckbox($key, $title)
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo $title.':' ?>
+			</td>
+			<td>
+				<input type="checkbox" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $key ?>" <?php echo ($this->rule[$key] ? 'checked' : ''); ?> />
+				<?php $this->PrintHelp($key) ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editText($key, $title, $help= NULL, $size= 0, $hint= '')
+	{
+		$help= $help === NULL ? $key : $help;
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo $title.':' ?>
+			</td>
+			<td>
+				<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $this->rule[$key]; ?>" size="<?php echo $size ?>" placeholder="<?php echo $hint ?>" />
+				<?php
+				if ($help !== FALSE) {
+					$this->PrintHelp($help);
+				}
+				?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editValues($key, $title, $dropname, $addname, $hint, $help= NULL, $size= 0, $disabled= FALSE)
+	{
+		$help= $help === NULL ? $key : $help;
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo $title.':' ?>
+			</td>
+			<td>
+				<?php
+				$this->PrintDeleteLinks($this->rule[$key], $dropname);
+				$this->PrintAddControls($addname, NULL, $hint, $size, $disabled);
+				if ($help !== FALSE) {
+					$this->PrintHelp($help);
+				}
+				?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editHead($modified)
+	{
+		?>
+		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp(ltrim($this->cat, '_')); ?></h2>
+		<h4><?php echo htmlentities($this->generate()); ?></h4>
+		<form id="theform" name="theform" action="<?php echo $this->href . $this->rulenumber; ?>" method="post">
+			<table id="nvp">
+			<?php
+	}
+
+	function editTail($modified, $testResult, $action)
+	{
+			?>
+			</table>
+			<div class="buttons">
+				<input type="submit" id="apply" name="apply" value="Apply" />
+				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
+				<input type="submit" id="cancel" name="cancel" value="Cancel" />
+				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
+				<label for="forcesave">Save with errors</label>
+				<input type="hidden" name="state" value="<?php echo $action; ?>" />
+			</div>
+		</form>
+		<?php
+	}
+
+	function editAf()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Address Family').':' ?>
+			</td>
+			<td>
+				<select id="af" name="af">
+					<option value="" label=""></option>
+					<option value="inet" label="inet" <?php echo ($this->rule['af'] == 'inet' ? 'selected' : ''); ?>>inet</option>
+					<option value="inet6" label="inet6" <?php echo ($this->rule['af'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
+				</select>
+				<?php $this->PrintHelp('address-family') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editLog()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Logging').':' ?>
+			</td>
+			<td>
+				<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : ''); ?> />
+				<label for="log">Log</label>
+				<?php
+				$disabled= isset($this->rule['log']) ? '' : 'disabled';
+				?>
+				<label for="log">to:</label>
+				<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" placeholder="logging interface" <?php echo $disabled; ?> />
+				<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+				<label for="log">all</label>
+				<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+				<label for="log">matches</label>
+				<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+				<label for="log">user</label>
+				<?php $this->PrintHelp('log') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editComment()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Comment').':' ?>
+			</td>
+			<td>
+				<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" placeholder="enter comment, such as a description of the rule" />
+			</td>
+		</tr>
+		<?php
 	}
 
 	/**
@@ -429,13 +661,13 @@ class Rule
 	 * @param int $i The pointer to where in the ruleset the parsing is at.
 	 * @return array $data,$i The parsed string and the new pointer.
 	 */
-	function parseString($ruleArray, $i)
+	function parseString($ruleArray, $i, $delim_pre= '"', $delim_post= '"')
 	{
 		$i++;
-		if ($ruleArray[$i] == "\"") {
+		if ($ruleArray[$i] == $delim_pre) {
 			$data= $ruleArray[++$i];
-			while ($ruleArray[++$i] != "\"") {
-				$data.= " " . $ruleArray[$i];
+			while ($ruleArray[++$i] != $delim_post) {
+				$data.= ' ' . $ruleArray[$i];
 			}
 		} else {
 			$data= $ruleArray[$i];
@@ -588,19 +820,19 @@ class Rule
 	 * Generates output from either an array of items or a single item into a joined output string.
 	 *
 	 * @param array $items The item or items that should be generated
-	 * @param string $heading The heading for this particular item list
+	 * @param string $head The heading for this particular item list
 	 * @return string $data The parsed output with the rulestring.
 	 */
-	function generateItem($items, $heading= '')
+	function generateItem($items, $head= '', $delim_pre= '{', $delim_post= '}')
 	{
-		$heading= $heading == '' ? '' : ' ' . trim($heading);
+		$head= $head == '' ? '' : ' ' . trim($head);
 		if (is_array($items)) {
-			return $heading . ' { ' . implode(', ', $items) . ' }';
+			return $head . " $delim_pre " . implode(', ', $items) . " $delim_post";
 		} else {
-			return $heading . ' ' . $items;
+			return $head . ' ' . $items;
 		}
 	}
-	
+
 	function PrintValue($value, $prefix= '', $postfix= '', $count= 10)
 	{
 		if ($value) {
@@ -619,7 +851,7 @@ class Rule
 			}
 		}
 	}
-	
+
 	function PrintFromTo($value, $noAny= TRUE, $count= 10)
 	{
 		if (!is_array($value)) {
@@ -635,7 +867,7 @@ class Rule
 			}
 		}
 	}
-	
+
 	function PrintEditLinks($rulenumber, $count, $up= 'up', $down= 'down', $del= 'del')
 	{
 		?>
@@ -659,8 +891,8 @@ class Rule
 		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $rulenumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $rulenumber; ?>?')">x</a>
 		<?php
 	}
-	
-	function PrintDeleteLinks($value, $rulenumber, $name, $prefix= '', $postfix= '')
+
+	function PrintDeleteLinks($value, $name, $prefix= '', $postfix= '')
 	{
 		if (isset($value)) {
 			if (is_array($value)) {
@@ -668,14 +900,14 @@ class Rule
 					$v= htmlentities($v);
 					echo "$prefix$v$postfix";
 					?>
-					<a href="<?php echo $this->href . $rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
+					<a href="<?php echo $this->href . $this->rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
 					<?php
 				}
 			} else {
 				$value= htmlentities($value);
 				echo "$prefix$value$postfix";
 				?>
-				<a href="<?php echo $this->href . $rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
+				<a href="<?php echo $this->href . $this->rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
 				<?php
 			}
 			?>
@@ -683,7 +915,7 @@ class Rule
 			<?php
 		}
 	}
-	
+
 	/** Prints add value controls.
 	 *
 	 * @param[in]	$id		string	Id of the input
@@ -693,16 +925,14 @@ class Rule
 	 * @param[in]	$size	int		Size of the input
 	 * @param[in]	$disabled	bool	Condition to disable the input
 	 */
-	function PrintAddControls($id, $label, $hint, $value= NULL, $size= 0, $disabled= FALSE)
+	function PrintAddControls($id, $label, $hint, $size= 0, $disabled= FALSE)
 	{
-		$value= ($value == NULL) ? '' : $value;
 		?>
-		<input type="text" id="<?php echo $id; ?>" name="<?php echo $id; ?>" size="<?php echo $size; ?>" value="<?php echo $value; ?>"
-			placeholder="<?php echo $hint; ?>" <?php echo $disabled ? 'disabled' : ''; ?> />
+		<input type="text" id="<?php echo $id; ?>" name="<?php echo $id; ?>" size="<?php echo $size; ?>" placeholder="<?php echo $hint; ?>" <?php echo $disabled ? 'disabled' : ''; ?> />
 		<label for="<?php echo $id; ?>"><?php echo $label; ?></label>
 		<?php
 	}
-	
+
 	function PrintHelp($label) {
 		global $IMG_PATH;
 		?>

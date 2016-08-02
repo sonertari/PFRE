@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.7 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: rules.php,v 1.8 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -44,6 +44,7 @@ $ruleCategoryNames = array(
     'natto' => 'Nat',
     'binatto' => 'Binat',
     'divertto' => 'Divert',
+    'divertpacket' => 'Divert Packet',
     'rdrto' => 'Redirect',
     'route' => 'Route',
     'queue' => 'Queue',
@@ -55,6 +56,30 @@ $ruleCategoryNames = array(
     'include' => 'Include',
     'comment' => 'Comment',
     'blank' => 'Blank Line',
+);
+
+$ruleType2Class= array(
+    'filter' => 'Filter',
+    'antispoof' => 'Antispoof',
+    'anchor' => 'Anchor',
+    'macro' => 'Macro',
+    'table' => 'Table',
+    'afto' => 'AfTo',
+    'natto' => 'NatTo',
+    'binatto' => 'BinatTo',
+    'divertto' => 'DivertTo',
+    'divertpacket' => 'DivertPacket',
+    'rdrto' => 'RdrTo',
+    'route' => 'Route',
+    'queue' => 'Queue',
+    'scrub' => 'Scrub',
+    'option' => 'Option',
+    'timeout' => 'Timeout',
+    'limit' => 'Limit',
+    'loadanchor' => 'LoadAnchor',
+    'include' => '_Include',
+    'comment' => 'Comment',
+    'blank' => 'Blank',
 );
 
 if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_GET, 'sender'), $ruleCategoryNames)) {
@@ -75,10 +100,19 @@ if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_G
 	}
 }
 
-if (filter_has_var(INPUT_POST, 'add') && filter_input(INPUT_POST, 'rulenumber') != "") {
+if (filter_has_var(INPUT_POST, 'add') && filter_input(INPUT_POST, 'rulenumber') != '') {
     $edit= filter_input(INPUT_POST, 'category');
 	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
 	$action= 'add';
+} elseif (filter_has_var(INPUT_POST, 'edit') && filter_input(INPUT_POST, 'rulenumber') != '') {
+	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
+	if (array_key_exists($rulenumber, $View->RuleSet->rules)) {
+		$edit= array_search($View->RuleSet->rules[$rulenumber]->cat, $ruleType2Class);
+	} else {
+		// Will add a new rule of category $edit otherwise
+		$edit= filter_input(INPUT_POST, 'category');
+	}
+	$action= 'edit';
 }
 
 if (isset($edit)) {
@@ -104,6 +138,10 @@ if (filter_has_var(INPUT_GET, 'del')) {
 }
 
 if (filter_has_var(INPUT_POST, 'delete')) {
+    $View->RuleSet->del(filter_input(INPUT_POST, 'rulenumber'));
+}
+
+if (filter_has_var(INPUT_POST, 'delete-all')) {
 	$View->RuleSet->deleteRules();
 	PrintHelpWindow('Rulebase deleted');
 }
@@ -130,8 +168,10 @@ require_once($VIEW_PATH.'/header.php');
             <label for="rulenumber">rule as rule number:</label>
             <input type="text" name="rulenumber" id="rulenumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" />
             <input type="submit" name="add" value="Add" />
-			<input type="submit" id="delete" name="delete" value="Delete" onclick="return confirm('Are you sure you want to delete the rulebase?')"/>
-			<label for="delete">Delete current working rulebase</label><br />
+            <input type="submit" name="edit" value="Edit" />
+            <input type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure you want to delete the rule?')"/>
+			<input type="submit" id="delete-all" name="delete-all" value="Delete All" onclick="return confirm('Are you sure you want to delete the entire rulebase?')"/>
+			<label for="delete-all">Delete current working rulebase</label><br />
         </form>
     </fieldset>
 	<?php

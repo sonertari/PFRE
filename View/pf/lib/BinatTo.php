@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: BinatTo.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -50,5 +50,4 @@ class BinatTo extends NatBase
 		parent::__construct($str);
 	}
 }
-
 ?>

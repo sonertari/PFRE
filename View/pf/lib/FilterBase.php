@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,12 +65,12 @@ class FilterBase extends Rule
 					'params' => array('interface'),
 					),
 				'inet' => array(
-					'method' => 'parseFamily',
-					'params' => array(),
+					'method' => 'parseNVP',
+					'params' => array('af'),
 					),
 				'inet6' => array(
-					'method' => 'parseFamily',
-					'params' => array(),
+					'method' => 'parseNVP',
+					'params' => array('af'),
 					),
 				'proto' => array(
 					'method' => 'parseItems',
@@ -116,20 +116,23 @@ class FilterBase extends Rule
 					'method' => 'parseNextValue',
 					'params' => array(),
 					),
-				// @todo Support "no" state and "(" state-opts ")" 
+				// @todo Support "(" state-opts ")" 
+				'no' => array(
+					'method' => 'parseNVPInc',
+					'params' => array('tcp-state'),
+					),
 				'keep' => array(
 					'method' => 'parseNVPInc',
-					'params' => array('state'),
+					'params' => array('tcp-state'),
 					),
 				'modulate' => array(
 					'method' => 'parseNVPInc',
-					'params' => array('state'),
+					'params' => array('tcp-state'),
 					),
 				'synproxy' => array(
 					'method' => 'parseNVPInc',
-					'params' => array('state'),
+					'params' => array('tcp-state'),
 					),
-				// @todo Move scrub here
 				'fragment' => array(
 					'method' => 'parseBool',
 					'params' => array(),
@@ -142,28 +145,32 @@ class FilterBase extends Rule
 					'method' => 'parseBool',
 					'params' => array(),
 					),
-				// @todo Support "divert-packet" "port" port
 				'divert-reply' => array(
 					'method' => 'parseBool',
 					'params' => array(),
 					),
 				'label' => array(
-					'method' => 'parseItems',
+					'method' => 'parseDelimitedStr',
 					'params' => array('label'),
 					),
 				'tag' => array(
-					'method' => 'parseItems',
+					'method' => 'parseDelimitedStr',
 					'params' => array('tag'),
 					),
 				'tagged' => array(
-					'method' => 'parseItems',
+					'method' => 'parseDelimitedStr',
 					'params' => array('tagged'),
 					),
-				'!tagged' => array(
-					'method' => 'parseItems',
-					'params' => array('!tagged'),
+				// @todo Support !tagged
+//				'!tagged' => array(
+//					'method' => 'parseDelimitedStr',
+//					'params' => array('!tagged'),
+//					),
+				// "set prio" and "set tos"
+				'set' => array(
+					'method' => 'parseSet',
+					'params' => array(),
 					),
-				// @todo Support "set prio" ( number | "(" number [ [ "," ] number ] ")" )
 				'queue' => array(
 					'method' => 'parseItems',
 					'params' => array('queue', '\(', '\)'),
@@ -180,8 +187,11 @@ class FilterBase extends Rule
 					'method' => 'parseNextValue',
 					'params' => array(),
 					),
-				// @todo Support "set tos" too
 				// @todo Support [ [ "!" ] "received-on" ( interface-name | interface-group ) ]
+				'received-on' => array(
+					'method' => 'parseItems',
+					'params' => array('received-on', '\(', '\)'),
+					),
 				'drop' => array(
 					'method' => 'parseNVP',
 					'params' => array('blockoption'),
@@ -216,28 +226,30 @@ class FilterBase extends Rule
 		parent::__construct($str);
 	}
 
-	function parseFamily()
+	function parseSet()
 	{
-		if (!isset($this->rule['family'])) {
-			$this->rule['family']= $this->words[$this->index];
-		} else {
-			$this->rule['to-family']= $this->words[$this->index];
+		if ($this->words[$this->index + 1] === 'prio') {
+			$this->index++;
+			$this->parseItems('set-prio', '\(', '\)');
+		} elseif ($this->words[$this->index + 1] === 'tos') {
+			$this->index++;
+			$this->parseNextNVP('set-tos');
 		}
 	}
 
 	function genSrcDest()
 	{
-		if ($this->rule['all']) {
+		if (isset($this->rule['all'])) {
 			$this->str.= ' all';
 		} else {
-			if ($this->rule['from'] || $this->rule['fromport']) {
+			if (isset($this->rule['from']) || isset($this->rule['fromport'])) {
 				$this->str.= ' from';
 				$this->genItems('from');
 				$this->genItems('fromport', 'port');
 			}
 
 			/// @todo Create a function for this
-			if ($this->rule['os']) {
+			if (isset($this->rule['os'])) {
 				if (!is_array($this->rule['os'])) {
 					$this->str.= ' os "' . $this->rule['os'] . '"';
 				} else {
@@ -245,7 +257,7 @@ class FilterBase extends Rule
 				}
 			}
 			
-			if ($this->rule['to'] || $this->rule['port']) {
+			if (isset($this->rule['to']) || isset($this->rule['port'])) {
 				$this->str.= ' to';
 				$this->genItems('to');
 				$this->genItems('port', 'port');
@@ -255,7 +267,7 @@ class FilterBase extends Rule
 
 	function genIcmpType()
 	{
-		if (($this->rule['family'] === 'inet') &&
+		if (($this->rule['af'] === 'inet') &&
 			((isset($this->rule['proto']) && $this->rule['proto'] === 'icmp') ||
 			 (is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto'])))) {
 			if (isset($this->rule['icmp-type'])) {
@@ -269,7 +281,7 @@ class FilterBase extends Rule
 
 	function genIcmp6Type()
 	{
-		if (($this->rule['family'] === 'inet6') &&
+		if (($this->rule['af'] === 'inet6') &&
 			((isset($this->rule['proto']) && $this->rule['proto'] === 'icmp6') ||
 			 (is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto'])))) {
 			if (isset($this->rule['icmp6-type'])) {
@@ -294,13 +306,12 @@ class FilterBase extends Rule
 
 	function genFilterHead()
 	{
-		$this->genValue('blockoption');
 		$this->genValue('direction');
 		$this->genLog();
 		$this->genKey('quick');
 		/// @todo Support rdomain
 		$this->genItems('interface', 'on');
-		$this->genValue('family');
+		$this->genValue('af');
 		$this->genItems('proto', 'proto');
 		$this->genSrcDest();
 	}
@@ -312,23 +323,24 @@ class FilterBase extends Rule
 		$this->genValue('flags', 'flags ');
 		$this->genIcmpType();
 		$this->genIcmp6Type();
-
-		$this->genValue('state', NULL, ' state');
-
+		$this->genValue('tos', 'tos ');
+		$this->genValue('tcp-state', NULL, ' state');
 		$this->genKey('fragment');
 		$this->genKey('allow-opts');
 		$this->genKey('once');
-
 		$this->genKey('divert-reply');
-
 		$this->genValue('label', 'label "', '"');
 		$this->genValue('tag', 'tag "', '"');
 		$this->genValue('tagged', 'tagged "', '"');
-		$this->genValue('!tagged', '!tagged "', '"');
-
+		/// @todo !tagged
+		//$this->genValue('!tagged', '!tagged "', '"');
+		$this->genItems('set-prio', 'set prio', '(', ')');
 		$this->genQueue();
-
+		$this->genValue('rtable', 'rtable ');
 		$this->genValue('probability', 'probability ');
+		$this->genValue('prio', 'prio ');
+		$this->genValue('set-tos', 'set tos ');
+		$this->genValue('received-on', 'received-on ');
 	}
 	
 	function display($rulenumber, $count)
@@ -341,7 +353,7 @@ class FilterBase extends Rule
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
-		$this->dispValue('state', 'State');
+		$this->dispValue('tcp-state', 'State');
 		$this->dispQueue();
 		$this->dispTail($rulenumber, $count);
 	}
@@ -405,177 +417,92 @@ class FilterBase extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (filter_has_var(INPUT_GET, 'dropfrom')) {
-			$this->delEntity('from', filter_input(INPUT_GET, 'dropfrom'));
-		}
+		$this->inputFilterHead();
+		$this->inputFilterOpts();
 
-		if (filter_has_var(INPUT_GET, 'dropfromport')) {
-			$this->delEntity('fromport', filter_input(INPUT_GET, 'dropfromport'));
-		}
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
+	}
 
-		if (filter_has_var(INPUT_GET, 'dropto')) {
-			$this->delEntity('to', filter_input(INPUT_GET, 'dropto'));
-		}
+	function inputFilterHead()
+	{
+		$this->inputKey('direction');
 
-		if (filter_has_var(INPUT_GET, 'dropport')) {
-			$this->delEntity('port', filter_input(INPUT_GET, 'dropport'));
-		}
+		$this->inputDel('interface', 'dropinterface');
+		$this->inputAdd('interface', 'addinterface');
 
-		if (filter_has_var(INPUT_GET, 'dropinterface')) {
-			$this->delEntity('interface', filter_input(INPUT_GET, 'dropinterface'));
-		}
+		$this->inputKey('af');
 
-		if (filter_has_var(INPUT_GET, 'dropproto')) {
-			$this->delEntity('proto', filter_input(INPUT_GET, 'dropproto'));
-		}
+		$this->inputDel('proto', 'dropproto');
+		$this->inputAdd('proto', 'addproto');
 
-		if (filter_has_var(INPUT_GET, 'dropuser')) {
-			$this->delEntity('user', filter_input(INPUT_GET, 'dropuser'));
-		}
+		$this->inputDel('from', 'dropfrom');
+		$this->inputAdd('from', 'addfrom');
 
-		if (filter_has_var(INPUT_GET, 'dropgroup')) {
-			$this->delEntity('group', filter_input(INPUT_GET, 'dropgroup'));
-		}
+		$this->inputDel('fromport', 'dropfromport');
+		$this->inputAdd('fromport', 'addfromport');
 
-		if (filter_has_var(INPUT_GET, 'dropicmptype')) {
-			$this->delEntity('icmp-type', filter_input(INPUT_GET, 'dropicmptype'));
-		}
+		$this->inputDel('to', 'dropto');
+		$this->inputAdd('to', 'addto');
 
-		if (filter_has_var(INPUT_GET, 'dropicmp6type')) {
-			$this->delEntity('icmp6-type', filter_input(INPUT_GET, 'dropicmp6type'));
-		}
+		$this->inputDel('port', 'dropport');
+		$this->inputAdd('port', 'addport');
 
-		if (filter_has_var(INPUT_GET, 'dropos')) {
-			$this->delEntity('os', filter_input(INPUT_GET, 'dropos'));
-		}
+		/// @attention process all after src and dest
+		$this->inputAll();
 
-		if (filter_has_var(INPUT_GET, 'droprouteto')) {
-			$this->delEntity('route-to', filter_input(INPUT_GET, 'droprouteto'));
-		}
+		$this->inputDel('os', 'dropos');
+		$this->inputAdd('os', 'addos');
+	}
 
-		if (filter_has_var(INPUT_GET, 'dropreplyto')) {
-			$this->delEntity('reply-to', filter_input(INPUT_GET, 'dropreplyto'));
-		}
+	function inputFilterOpts()
+	{
+		$this->inputKey('tcp-state');
+		$this->inputKey('flags');
+		$this->inputQueue();
 
-		if (filter_has_var(INPUT_GET, 'dropdupto')) {
-			$this->delEntity('dup-to', filter_input(INPUT_GET, 'dropdupto'));
-		}
+		$this->inputDel('icmp-type', 'dropicmptype');
+		$this->inputAdd('icmp-type', 'addicmptype');
+		$this->inputKeyIfHasVar('icmp-code', 'icmp-type');
 
-		if (count($_POST)) {
-			if (filter_input(INPUT_POST, 'addfrom') != '') {
-				$this->addEntity('from', filter_input(INPUT_POST, 'addfrom'));
-			}
+		$this->inputDel('icmp6-type', 'dropicmp6type');
+		$this->inputAdd('icmp6-type', 'addicmp6type');
+		$this->inputKeyIfHasVar('icmp6-code', 'icmp6-type');
+		
+		$this->inputBool('fragment');
+		$this->inputBool('allow-opts');
+		$this->inputBool('once');
+		$this->inputBool('divert-reply');
+		
+		$this->inputDel('user', 'dropuser');
+		$this->inputAdd('user', 'adduser');
 
-			if (filter_input(INPUT_POST, 'addfromport') != '') {
-				$this->addEntity('fromport', filter_input(INPUT_POST, 'addfromport'));
-			}
+		$this->inputDel('group', 'dropgroup');
+		$this->inputAdd('group', 'addgroup');
 
-			if (filter_input(INPUT_POST, 'addto') != '') {
-				$this->addEntity('to', filter_input(INPUT_POST, 'addto'));
-			}
+		$this->inputKey('label');
+		$this->inputKey('tag');
+		/// @todo !tagged?
+		$this->inputKey('tagged');
 
-			if (filter_input(INPUT_POST, 'addport') != '') {
-				$this->addEntity('port', filter_input(INPUT_POST, 'addport'));
-			}
+		$this->inputKey('tos');
+		$this->inputKey('set-tos');
+		$this->inputKey('prio');
 
-			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity('interface', filter_input(INPUT_POST, 'addinterface'));
-			}
+		$this->inputDel('set-prio', 'dropprio');
+		$this->inputAdd('set-prio', 'addprio');
 
-			if (filter_input(INPUT_POST, 'addproto') != '') {
-				$this->addEntity('proto', filter_input(INPUT_POST, 'addproto'));
-			}
+		$this->inputKey('probability');
 
-			if (filter_input(INPUT_POST, 'adduser') != '') {
-				$this->addEntity('user', filter_input(INPUT_POST, 'adduser'));
-			}
+		$this->inputKey('rtable');
+		$this->inputKey('received-on');
+	}
 
-			if (filter_input(INPUT_POST, 'addgroup') != '') {
-				$this->addEntity('group', filter_input(INPUT_POST, 'addgroup'));
-			}
-
-			if (filter_input(INPUT_POST, 'addicmptype') != '') {
-				$this->addEntity('icmp-type', filter_input(INPUT_POST, 'addicmptype'));
-			}
-
-			if (filter_input(INPUT_POST, 'addicmp6type') != '') {
-				$this->addEntity('icmp6-type', filter_input(INPUT_POST, 'addicmp6type'));
-			}
-
-			if (filter_input(INPUT_POST, 'addos') != '') {
-				$this->addEntity('os', preg_replace('/"/', '', filter_input(INPUT_POST, 'addos')));
-			}
-
-			if (filter_input(INPUT_POST, 'addrouteto') != '') {
-				$this->addEntity('route-to', preg_replace('/"/', '', filter_input(INPUT_POST, 'addrouteto')));
-			}
-
-			if (filter_input(INPUT_POST, 'addreplyto') != '') {
-				$this->addEntity('reply-to', preg_replace('/"/', '', filter_input(INPUT_POST, 'addreplyto')));
-			}
-
-			if (filter_input(INPUT_POST, 'adddupto') != '') {
-				$this->addEntity('dup-to', preg_replace('/"/', '', filter_input(INPUT_POST, 'adddupto')));
-			}
-
-			$this->rule['action']= filter_input(INPUT_POST, 'action');
-			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
-
-			$this->rule['log']= (filter_has_var(INPUT_POST, 'log') ? TRUE : '');
-			
-			if ($this->rule['log'] == TRUE) {
-				if (filter_has_var(INPUT_POST, 'log-all') || filter_has_var(INPUT_POST, 'log-matches') ||
-					filter_has_var(INPUT_POST, 'log-user') || filter_input(INPUT_POST, 'log-to') != '') {
-					$this->rule['log']= array();
-					if (filter_has_var(INPUT_POST, 'log-all')) {
-						$this->rule['log']['all']= TRUE;
-					}
-					if (filter_has_var(INPUT_POST, 'log-matches')) {
-						$this->rule['log']['matches']= TRUE;
-					}
-					if (filter_has_var(INPUT_POST, 'log-user')) {
-						$this->rule['log']['user']= TRUE;
-					}
-					if (filter_input(INPUT_POST, 'log-to') != '') {
-						$this->rule['log']['to']= filter_input(INPUT_POST, 'log-to');
-					}
-				}
-			}
-
-			$this->rule['quick']= (filter_has_var(INPUT_POST, 'quick') ? TRUE : '');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-			$this->rule['label']= preg_replace('/"/', '', filter_input(INPUT_POST, 'label'));
-			$this->rule['tag']= preg_replace('/"/', '', filter_input(INPUT_POST, 'tag'));
-			$this->rule['tagged']= preg_replace('/"/', '', filter_input(INPUT_POST, 'tagged'));
-
-			if (filter_has_var(INPUT_POST, 'icmp-code')) {
-				$this->rule['icmp-code']= filter_input(INPUT_POST, 'icmp-code');
-			}
-
-			if (filter_has_var(INPUT_POST, 'icmp6-code')) {
-				$this->rule['icmp6-code']= filter_input(INPUT_POST, 'icmp6-code');
-			}
-
-			$this->rule['family']= filter_input(INPUT_POST, 'family');
-			$this->rule['divert-reply']= (filter_has_var(INPUT_POST, 'divert-reply') ? TRUE : '');
-			$this->rule['allow-opts']= (filter_has_var(INPUT_POST, 'allow-opts') ? TRUE : '');
-
-			if (filter_has_var(INPUT_POST, 'stateful')) {
-				$this->rule['state']= filter_input(INPUT_POST, 'stateful');
-			}
-
-			if (filter_input(INPUT_POST, 'action') === 'block') {
-				$this->rule['blockoption']= filter_input(INPUT_POST, 'blockoption');
-			} else {
-				unset($this->rule['blockoption']);
-			}
-
-			$this->rule['flags']= filter_input(INPUT_POST, 'flags');
-
-			$this->rule['probability']= filter_input(INPUT_POST, 'probability');
-
+	function inputQueue()
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
 			if ((filter_input(INPUT_POST, 'queue-pri') != '') && (filter_input(INPUT_POST, 'queue-sec') != '')) {
 				$this->rule['queue']= array();
 				$this->rule['queue'][0]= filter_input(INPUT_POST, 'queue-pri');
@@ -585,7 +512,12 @@ class FilterBase extends Rule
 			} else {
 				unset($this->rule['queue']);
 			}
+		}
+	}
 
+	function inputAll()
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
 			if (filter_has_var(INPUT_POST, 'all')) {
 				$this->rule['all']= TRUE;
 				unset($this->rule['from']);
@@ -596,472 +528,200 @@ class FilterBase extends Rule
 				unset($this->rule['all']);
 			}
 		}
-
-		$this->deleteEmptyEntries();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		// XXX: Fix this
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editFilterHead();
+		$this->editFilterOpts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editFilterHead()
+	{
+		$this->editDirection();
+		$this->editValues('interface', 'Interface', 'dropinterface', 'addinterface', 'if or macro', NULL, 10);
+		$this->editAf();
+		$this->editValues('proto', 'Protocol', 'dropproto', 'addproto', 'protocol', NULL, 10);
+		$this->editCheckbox('all', 'Match All');
+		$this->editValues('from', 'Source', 'dropfrom', 'addfrom', 'ip, host, table or macro', 'src-dst', NULL, isset($this->rule['all']));
+		$this->editValues('fromport', 'Source Port', 'dropfromport', 'addfromport', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('to', 'Destination', 'dropto', 'addto', 'ip, host, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('port', 'Destination Port', 'dropport', 'addport', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('os', 'OS', 'dropos', 'addos', 'os name or macro');
+	}
+
+	function editFilterOpts()
+	{
+		$this->editState();
+		$this->editText('flags', 'TCP Flags', NULL, 20, 'defaults to S/SA');
+		$this->editQueue();
+		$this->editIcmpType();
+		$this->editIcmp6Type();
+		
+		$this->editCheckbox('fragment', 'Fragment');
+		$this->editCheckbox('allow-opts', 'Allow Opts');
+		$this->editCheckbox('once', 'Once');
+		$this->editCheckbox('divert-reply', 'Divert Reply');
+		
+		$this->editValues('user', 'User', 'dropuser', 'adduser', 'username or userid');
+		$this->editValues('group', 'Group', 'dropgroup', 'addgroup', 'groupname or groupid');
+		$this->editText('label', 'Label', NULL, NULL, 'string');
+		$this->editText('tagged', 'Match Tagged', NULL, NULL, 'string');
+		/// @todo !tagged?
+		$this->editText('tag', 'Assign Tag', NULL, NULL, 'string');
+		$this->editText('tos', 'Match TOS', NULL, NULL, 'string or number');
+		$this->editText('set-tos', 'Enforce TOS', NULL, NULL, 'string or number');
+		$this->editText('prio', 'Match Priority', NULL, 10, 'number 0-7');
+		$this->editValues('set-prio', 'Assign Priority', 'dropprio', 'addprio', 'number 0-7', NULL, 10);
+		$this->editText('probability', 'Probability', NULL, 10, '0-100% or 0-1');
+		$this->editText('rtable', 'Routing Table', NULL, 10, 'number');
+		$this->editText('received-on', 'Received on interface', NULL, 10, 'if or macro');
+	}
+
+	function editDirection()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Direction').':' ?>
+			</td>
+			<td>
+				<select id="direction" name="direction">
+					<option value="" label=""></option>
+					<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : ''); ?>>in</option>
+					<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
+				</select>
+				<?php $this->PrintHelp('direction') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editState()
+	{
+		/// @todo "[ "(" state-opts ")" ]
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('TCP State').':' ?>
+			</td>
+			<td>
+				<select id="tcp-state" name="tcp-state">
+					<option value=""></option>
+					<option value="no" <?php echo ($this->rule['tcp-state'] == 'no' ? 'selected' : ''); ?>>No State</option>
+					<option value="keep" <?php echo ($this->rule['tcp-state'] == 'keep' ? 'selected' : ''); ?>>Keep State</option>
+					<option value="modulate" <?php echo ($this->rule['tcp-state'] == 'modulate' ? 'selected' : ''); ?>>Modulate State</option>
+					<option value="synproxy" <?php echo ($this->rule['tcp-state'] == 'synproxy' ? 'selected' : ''); ?>>Synproxy</option>
+				</select>
+				<?php $this->PrintHelp('stateful') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editIcmpType()
+	{
+		if (isset($this->rule['proto']) && ($this->rule['proto'] == "icmp" || is_array($this->rule['proto']) && in_array("icmp", $this->rule['proto']))) {
+			$this->editValues('icmp-type', 'ICMP Type', 'dropicmptype', 'addicmptype', 'number, name or macro');
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('ICMP Code').':' ?>
+				</td>
+				<td>
+					<input type="text" name="icmp-code" id="icmp-code" value="<?php echo $this->rule['icmp-code']; ?>" <?php echo (isset($this->rule['icmp-type']) && !is_array($this->rule['icmp-type']) ? "" : "disabled=\"disabled\"")?> />
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editIcmp6Type()
+	{
+		if (isset($this->rule['proto']) && ($this->rule['proto'] == "icmp6" || is_array($this->rule['proto']) && in_array("icmp6", $this->rule['proto']))) {
+			$this->editValues('icmp6-type', 'ICMP6 Type', 'dropicmp6type', 'addicmp6type', 'number, name or macro');
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('ICMP6 Code').':' ?>
+				</td>
+				<td>
+					<input type="text" name="icmp6-code" id="icmp6-code" value="<?php echo $this->rule['icmp6-code']; ?>" <?php echo (isset($this->rule['icmp6-type']) && !is_array($this->rule['icmp6-type']) ? "" : "disabled=\"disabled\"")?> />
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editQueue()
+	{
 		global $View;
 		
 		$queueNames= $View->RuleSet->getQueueNames();
 		?>
-		<h2>Edit Filter Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Filter') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form method="post" id="theform" name="theform" action="<?php echo $this->href . $rulenumber; ?>">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Type').':' ?>
-					</td>
-					<td>
-						<select id="action" name="action" onchange="document.theform.submit()">
-							<option value="pass" label="pass" <?php echo ($this->rule['action'] == 'pass' ? 'selected' : ''); ?>>pass</option>
-							<option value="block" label="block" <?php echo ($this->rule['action'] == 'block' ? 'selected' : ''); ?>>block</option>
-							<option value="match" label="match" <?php echo ($this->rule['action'] == 'match' ? 'selected' : ''); ?>>match</option>
-						</select>
-						<?php $this->PrintHelp($this->rule['action']) ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Direction').':' ?>
-					</td>
-					<td>
-						<select id="direction" name="direction">
-							<option value="" label=""></option>
-							<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : ''); ?>>in</option>
-							<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
-						</select>
-						<?php $this->PrintHelp('direction') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Interface').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['interface'], $rulenumber, 'dropinterface');
-						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
-						$this->PrintHelp('interface');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Address Family').':' ?>
-					</td>
-					<td>
-						<select id="family" name="family">
-							<option value="" label=""></option>
-							<option value="inet" label="inet" <?php echo ($this->rule['family'] == 'inet' ? 'selected' : ''); ?>>inet</option>
-							<option value="inet6" label="inet6" <?php echo ($this->rule['family'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
-						</select>			
-						<?php $this->PrintHelp('address-family') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Protocol').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['proto'], $rulenumber, 'dropproto');
-						$this->PrintAddControls('addproto', NULL, 'protocol', NULL, 10);
-						$this->PrintHelp('proto');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Logging').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : ''); ?> />
-						<label for="log">Log</label>
-						<?php
-						$disabled= isset($this->rule['log']) ? '' : 'disabled';
-						?>
-						<label for="log">to:</label>
-						<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" <?php echo $disabled; ?> />
-						<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
-						<label for="log">all</label>
-						<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
-						<label for="log">matches</label>
-						<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
-						<label for="log">user</label>
-						<?php $this->PrintHelp('log') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Queue').':' ?>
+			</td>
+			<td>
+				<select id="queue-pri" name="queue-pri">
+				<?php
+				if (count($queueNames) == 0) {
+					?>
+					<option value="" disabled>No Queues defined</option>
 					<?php
-					if ($this->rule['action'] == "block") {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Block Option').':' ?>
-						</td>
-						<td>
-							<select id="blockoption" name="blockoption">
-								<option value=""></option>
-								<option value="drop" <?php echo ($this->rule['blockoption'] == 'drop' ? 'selected' : ''); ?>>drop</option>
-								<option value="return" <?php echo ($this->rule['blockoption'] == 'return' ? 'selected' : ''); ?>>return</option>
-								<option value="return-rst" <?php echo ($this->rule['blockoption'] == 'return-rst' ? 'selected' : ''); ?>>return-rst</option>
-								<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
-								<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
-							</select>
-							<?php $this->PrintHelp('block') ?>
-						</td>
-						<?php
+				} else {
+					?>
+					<option value="">none</option>
+					<?php
+					if (!is_array($this->rule['queue'])) {
+						$queuepri= $this->rule['queue'];
 					} else {
+						$queuepri= $this->rule['queue'][0];
+					}
+					foreach ($queueNames as $queue) {
 						?>
-						<td class="title">
-							<?php echo _TITLE('State').':' ?>
-						</td>
-						<td>
-							<select id="stateful" name="stateful">
-								<option value=""></option>
-								<option value="keep" <?php echo ($this->rule['state'] == 'keep' ? 'selected' : ''); ?>>Keep State</option>
-								<option value="modulate" <?php echo ($this->rule['state'] == 'modulate' ? 'selected' : ''); ?>>Modulate State</option>
-								<option value="synproxy" <?php echo ($this->rule['state'] == 'synproxy' ? 'selected' : ''); ?>>Synproxy</option>
-							</select>
-							<?php $this->PrintHelp('stateful') ?>
-						</td>
+						<option value="<?php echo $queue; ?>" <?php echo $queuepri == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
 						<?php
 					}
-					?>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Quick').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="quick" name="quick" value="quick" <?php echo ($this->rule['quick'] ? 'checked' : ''); ?> />
-						<?php $this->PrintHelp('quick') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('TCP Flags').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintAddControls('flags', NULL, 'flags or macro', $this->rule['flags'], 12);
-						$this->PrintHelp('flags');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Match All').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="all" name="all" value="all" <?php echo ($this->rule['all'] ? 'checked' : ''); ?> onclick="document.theform.submit()" />
-						<?php $this->PrintHelp('match-all') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Source').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['from'], $rulenumber, 'dropfrom');
-						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
-						$this->PrintHelp('src-dst');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Source Port').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['fromport'], $rulenumber, 'dropfromport');
-						$this->PrintAddControls('addfromport', NULL, 'number, name, table or macro', NULL, NULL, $this->rule['all']);
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Destination').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['to'], $rulenumber, 'dropto');
-						$this->PrintAddControls('addto', NULL, 'ip, host, table or macro', NULL, NULL, $this->rule['all']);
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Destination Port').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['port'], $rulenumber, 'dropport');
-						$this->PrintAddControls('addport', NULL, 'number, name or macro', NULL, NULL, $this->rule['all']);
-						?>
-					</td>
-				</tr>
-				<?php
-				if (isset($this->rule['proto']) && ($this->rule['proto'] == "icmp" || is_array($this->rule['proto']) && in_array("icmp", $this->rule['proto']))) {
-					?>
-					<tr class="oddline">
-						<td class="title">
-							<?php echo _TITLE('ICMP Type').':' ?>
-						</td>
-						<td>
-							<?php
-							$this->PrintDeleteLinks($this->rule['icmp-type'], $rulenumber, 'dropicmptype');
-							$this->PrintAddControls('addicmptype', NULL, 'number, name or macro');
-							$this->PrintHelp('icmp-type');
-							?>
-						</td>
-					</tr>
-					<tr class="evenline">
-						<td class="title">
-							<?php echo _TITLE('ICMP Code').':' ?>
-						</td>
-						<td>
-							<input type="text" name="icmp-code" id="icmp-code" value="<?php echo $this->rule['icmp-code']; ?>" <?php echo (isset($this->rule['icmp-type']) && !is_array($this->rule['icmp-type']) ? "" : "disabled=\"disabled\"")?> />
-						</td>
-					</tr>
-					<?php
-				}
-				if (isset($this->rule['proto']) && ($this->rule['proto'] == "icmp6" || is_array($this->rule['proto']) && in_array("icmp6", $this->rule['proto']))) {
-					?>
-					<tr class="oddline">
-						<td class="title">
-							<?php echo _TITLE('ICMP6 Type').':' ?>
-						</td>
-						<td>
-							<?php
-							$this->PrintDeleteLinks($this->rule['icmp6-type'], $rulenumber, 'dropicmp6type');
-							$this->PrintAddControls('addicmp6type', NULL, 'number, name or macro');
-							$this->PrintHelp('icmp6-type');
-							?>
-						</td>
-					</tr>
-					<tr class="evenline">
-						<td class="title">
-							<?php echo _TITLE('ICMP6 Code').':' ?>
-						</td>
-						<td>
-							<input type="text" name="icmp6-code" id="icmp6-code" value="<?php echo $this->rule['icmp6-code']; ?>" <?php echo (isset($this->rule['icmp6-type']) && !is_array($this->rule['icmp6-type']) ? "" : "disabled=\"disabled\"")?> />
-						</td>
-					</tr>
-					<?php
 				}
 				?>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Label').':' ?>
-					</td>
-					<td>
-						<input type="text" id="label" name="label" value="<?php echo $this->rule['label']; ?>" />
-						<?php $this->PrintHelp('label') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Tag').':' ?>
-					</td>
-					<td>
-						<input type="text" id="tag" name="tag" value="<?php echo $this->rule['tag']; ?>" />
-						<?php $this->PrintHelp('tag') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Match Tagged').':' ?>
-					</td>
-					<td>
-						<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" />
-						<?php $this->PrintHelp('tagged') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('OS').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['os'], $rulenumber, 'dropos');
-						$this->PrintAddControls('addos', NULL, 'os name or macro');
-						$this->PrintHelp('os');
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Primary Queue').':' ?>
-					</td>
-					<td>
-						<select id="queue-pri" name="queue-pri">
-						<?php
-						if (count($queueNames) == 0) {
+				</select>
+				<?php echo _TITLE('primary') ?>
+
+				<select id="queue-sec" name="queue-sec">
+				<?php
+				if (count($queueNames) == 0) {
+					?>
+					<option value="" disabled>No Queues defined</option>
+					<?php
+				} else {
+					?>
+					<option value="">none</option>
+					<?php
+					if (isset($this->rule['queue'])) {
+						foreach ($queueNames as $queue) {
 							?>
-							<option value="" disabled>No Queues defined</option>
+							<option value="<?php echo $queue; ?>" <?php echo $this->rule['queue'][1] == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
 							<?php
-						} else {
-							?>
-							<option value="">none</option>
-							<?php
-							if (!is_array($this->rule['queue'])) {
-								$queuepri= $this->rule['queue'];
-							} else {
-								$queuepri= $this->rule['queue'][0];
-							}
-							foreach ($queueNames as $queue) {
-								?>
-								<option value="<?php echo $queue; ?>" <?php echo $queuepri == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
-								<?php
-							}
 						}
-						?>
-						</select>
-						<?php $this->PrintHelp('filter-queue') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Secondary Queue').':' ?>
-					</td>
-					<td>
-						<select id="queue-sec" name="queue-sec">
-						<?php
-						if (count($queueNames) == 0) {
-							?>
-							<option value="" disabled>No Queues defined</option>
-							<?php
-						} else {
-							?>
-							<option value="">none</option>
-							<?php
-							if (isset($this->rule['queue'])) {
-								foreach ($queueNames as $queue) {
-									?>
-									<option value="<?php echo $queue; ?>" <?php echo $this->rule['queue'][1] == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
-									<?php
-								}
-							}
-						}
-						?>
-						</select>	
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Route to').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['route-to'], $rulenumber, 'droprouteto');
-						$this->PrintAddControls('addrouteto', NULL, 'ip, host, table or macro');
-						$this->PrintHelp('route-to');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Reply to').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['reply-to'], $rulenumber, 'dropreplyto');
-						$this->PrintAddControls('addreplyto', NULL, 'ip, host, table or macro');
-						$this->PrintHelp('reply-to');
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Dup to').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['dup-to'], $rulenumber, 'dropdupto');
-						$this->PrintAddControls('adddupto', NULL, 'ip, host, table or macro');
-						$this->PrintHelp('dup-to');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Divert Reply').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="divert-reply" name="divert-reply" value="divert-reply" <?php echo ($this->rule['divert-reply'] ? 'checked' : ''); ?> />
-						<?php $this->PrintHelp('divert-reply') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Allow Opts').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="allow-opts" name="allow-opts" value="allow-opts" <?php echo ($this->rule['allow-opts'] ? 'checked' : ''); ?> />
-						<?php $this->PrintHelp('allow-opts') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Probability').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintAddControls('probability', NULL, 'probability in percent', $this->rule['probability'], 20);
-						$this->PrintHelp('probability');
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('User').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['user'], $rulenumber, 'dropuser');
-						$this->PrintAddControls('adduser', NULL, 'username or userid');
-						$this->PrintHelp('user');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Group').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['group'], $rulenumber, 'dropgroup');
-						$this->PrintAddControls('addgroup', NULL, 'groupname or groupid');
-						$this->PrintHelp('group');
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+					}
+				}
+				?>
+				</select>	
+				<?php echo _TITLE('secondary') ?>
+				<?php $this->PrintHelp('filter-queue') ?>
+			</td>
+		</tr>
 		<?php
 	}
-
 }
 ?>

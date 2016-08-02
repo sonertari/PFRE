@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Route.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,7 +67,7 @@ class Route extends NatBase
 
 	function generate()
 	{
-		$this->str= $this->rule['action'];
+		$this->genAction();
 
 		$this->genFilterHead();
 		$this->genFilterOpts();
@@ -94,6 +94,66 @@ class Route extends NatBase
 		$this->dispValue('type', 'Type');
 		$this->dispValue('redirhost', 'Redirect Host');
 		$this->dispTail($rulenumber, $count);
+	}
+
+	function input()
+	{
+		$this->inputAction();
+
+		$this->inputFilterHead();
+
+		$this->inputLog();
+		$this->inputBool('quick');
+
+		$this->inputKey('type');
+		$this->inputKey('redirhost');
+
+		$this->inputFilterOpts();
+
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
+	}
+
+	function edit($rulenumber, $modified, $testResult, $action)
+	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editAction();
+
+		$this->editFilterHead();
+
+		$this->editLog();
+		$this->editCheckbox('quick', 'Quick');
+
+		$this->editRouteOption();
+		$this->editText('redirhost', 'Redirect Host', 'Nat', NULL, 'ip, host, table or macro');
+
+		$this->editFilterOpts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editRouteOption()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Route Option').':' ?>
+			</td>
+			<td>
+				<select id="type" name="type">
+					<option value="dup-to" <?php echo ($this->rule['type'] == 'dup-to' ? 'selected' : ''); ?>>dup-to</option>
+					<option value="reply-to" <?php echo ($this->rule['type'] == 'reply-to' ? 'selected' : ''); ?>>reply-to</option>
+					<option value="route-to" <?php echo ($this->rule['type'] == 'route-to' ? 'selected' : ''); ?>>route-to</option>
+				</select>
+				<?php $this->PrintHelp($this->rule['type']) ?>
+			</td>
+		</tr>
+		<?php
 	}
 }
 ?>

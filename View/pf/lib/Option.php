@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Option.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,8 +35,12 @@
 
 class Option extends Rule
 {
+	private $type= NULL;
+
 	function __construct($str)
 	{
+		/// @todo Support set reassemble yes | no [no-df]
+		/// @todo Support set state-defaults state-option, ...
 		$this->keywords = array(
 			'loginterface' => array(
 				'method' => 'parseOption',
@@ -93,21 +97,21 @@ class Option extends Rule
 	function parseFingerprints()
 	{
 		// File name is in quotes, skip the quote
-		$this->index+= 2;
-		$this->rule['option']['fingerprints']= $this->words[$this->index];
+		list($this->rule['option']['fingerprints'], $this->index)= $this->parseString($this->words, $this->index);		
 	}
 
 	function generate()
 	{
 		$this->str= '';
 
+		$this->genOption('block-policy');
+		$this->genOption('debug');
+		$this->genOption('fingerprints', '"', '"');
+		$this->genOption('hostid');
 		$this->genOption('loginterface');
 		$this->genOption('optimization');
 		$this->genOption('ruleset-optimization');
-		$this->genOption('block-policy');
 		$this->genOption('state-policy');
-		$this->genOption('debug');
-		$this->genOption('fingerprints', '"', '"');
 		$this->genSkip();
 		
 		$this->genComment();
@@ -147,7 +151,7 @@ class Option extends Rule
 			<?php
 			$option= key($this->rule['option']);
 			$value= $this->rule['option'][$option];
-			if (in_array($option, array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints'))) {
+			if (in_array($option, array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints', 'hostid'))) {
 				echo "$option: $value";
 			} elseif ($option == 'skip') {
 				if (!is_array($value)) {
@@ -163,236 +167,261 @@ class Option extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
+		$this->inputKey('block-policy', 'option');
+		$this->inputKey('optimization', 'option');
+		$this->inputKey('ruleset-optimization', 'option');
+		$this->inputKey('state-policy', 'option');
+		$this->inputKey('fingerprints', 'option');
+		$this->inputKey('hostid', 'option');
+		$this->inputKey('loginterface', 'option');
+		$this->inputKey('debug', 'option');
+		$this->inputDel('skip', 'dropskip', 'option');
+		$this->inputAdd('skip', 'addskip', 'option');
 
-			if (filter_has_var(INPUT_POST, 'block-policy')) {
-				$this->rule['option']['block-policy']= filter_input(INPUT_POST, 'block-policy');
-			}
-			if (filter_has_var(INPUT_POST, 'optimization')) {
-				$this->rule['option']['optimization']= filter_input(INPUT_POST, 'optimization');
-			}
-			if (filter_has_var(INPUT_POST, 'ruleset-optimization')) {
-				$this->rule['option']['ruleset-optimization']= filter_input(INPUT_POST, 'ruleset-optimization');
-			}
-			if (filter_has_var(INPUT_POST, 'state-policy')) {
-				$this->rule['option']['state-policy']= filter_input(INPUT_POST, 'state-policy');
-			}
-			if (filter_has_var(INPUT_POST, 'debug')) {
-				$this->rule['option']['debug']= filter_input(INPUT_POST, 'debug');
-			}
-			if (filter_has_var(INPUT_POST, 'fingerprints')) {
-				$this->rule['option']['fingerprints']= trim(preg_replace("/\"/", "", filter_input(INPUT_POST, 'fingerprints')));
-			}
-
-			if (filter_has_var(INPUT_POST, 'loginterface')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'loginterface')))) {
-					$this->rule['option']['loginterface']= trim(filter_input(INPUT_POST, 'loginterface'));
-				} else {
-					$this->rule['option']['loginterface']= '';
-				}
-			}
-			if (filter_has_var(INPUT_POST, 'skip')) {
-				if (strlen(trim(filter_input(INPUT_POST, 'skip')))) {
-					if (count(preg_split("/[\s,\t]+/", trim(filter_input(INPUT_POST, 'skip')))) > 1) {
-						unset($this->rule['option']['skip']);
-						foreach (preg_split("/[\s,\t]+/", trim(filter_input(INPUT_POST, 'skip'))) as $skip) {
-							$this->rule['option']['skip'][]= $skip;
-						}
-					} else {
-						$this->rule['option']['skip']= trim(filter_input(INPUT_POST, 'skip'));
-					}
-				} else {
-					$this->rule['option']['skip']= '';
-				}
-			}
-		}
-
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty(FALSE);
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		// XXX: Fix this
-		if (count($_POST)) {
-			$type= filter_input(INPUT_POST, 'type');
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$this->type= filter_input(INPUT_POST, 'type');
 		}
+
 		if (isset($this->rule['option']) && count($this->rule['option'])) {
-			$type= key($this->rule['option']);
+			$this->type= key($this->rule['option']);
 		}
+
+		if (!isset($this->type)) {
+			$this->editSelectOption();
+		}
+
+		$this->editBlockPolicy();
+		$this->editOptimization();
+		$this->editRulesetOptimization();
+		$this->editStatePolicy();
+		$this->editFingerprints();
+		$this->editHostid();
+		$this->editLogInterface();
+		$this->editDebug();
+		$this->editSkip();
+
+		if (isset($this->type)) {
+			$this->editComment();
+		}
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editSelectOption()
+	{
 		?>
-		<h2>Edit Option Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Option') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<?php
-				if (!isset($type)) {
-					?>
-					<tr class="oddline">
-						<td class="title">
-							<?php echo _TITLE('Select Option Type').':' ?>
-						</td>
-						<td>
-							<select id="type" name="type">
-								<option value="block-policy" <?php echo ($type == 'block-policy' ? 'selected' : ''); ?>>block-policy</option>
-								<option value="optimization" <?php echo ($type == 'optimization' ? 'selected' : ''); ?>>optimization</option>
-								<option value="ruleset-optimization" <?php echo ($type == 'ruleset-optimization' ? 'selected' : ''); ?>>ruleset-optimization</option>
-								<option value="state-policy" <?php echo ($type == 'state-policy' ? 'selected' : ''); ?>>state-policy</option>
-								<option value="fingerprints" <?php echo ($type == 'fingerprints' ? 'selected' : ''); ?>>fingerprints</option>
-								<option value="loginterface" <?php echo ($type == 'loginterface' ? 'selected' : ''); ?>>loginterface</option>
-								<option value="debug" <?php echo ($type == 'debug' ? 'selected' : ''); ?>>debug</option>
-								<option value="skip" <?php echo ($type == 'skip' ? 'selected' : ''); ?>>skip</option>
-							</select>
-						</td>
-					</tr>
-					<?php
-				}
-				?>
-				<tr class="oddline">
-					<?php
-					if (isset($this->rule['option']['block-policy']) || $type == 'block-policy') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Block Policy').':' ?>
-						</td>
-						<td>
-							<select id="block-policy" name="block-policy">
-								<option value="drop" label="drop" <?php echo ($this->rule['option']['block-policy'] == 'drop' ? 'selected' : ''); ?>>drop</option>
-								<option value="return" label="return" <?php echo ($this->rule['option']['block-policy'] == 'return' ? 'selected' : ''); ?>>return</option>
-							</select>
-							<?php $this->PrintHelp('block-policy') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['optimization']) || $type == 'optimization') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Optimization').':' ?>
-						</td>
-						<td>
-							<select id="optimization" name="optimization">
-								<option value="normal" <?php echo ($this->rule['option']['optimization'] == 'normal' ? 'selected' : ''); ?>>normal</option>
-								<option value="high-latency" <?php echo ($this->rule['option']['optimization'] == 'high-latency' ? 'selected' : ''); ?>>high-latency</option>
-								<option value="satellite" <?php echo ($this->rule['option']['optimization'] == 'satellite' ? 'selected' : ''); ?>>satellite</option>
-								<option value="aggressive" <?php echo ($this->rule['option']['optimization'] == 'aggressive' ? 'selected' : ''); ?>>aggressive</option>
-								<option value="conservative" <?php echo ($this->rule['option']['optimization'] == 'conservative' ? 'selected' : ''); ?>>conservative</option>
-							</select>
-							<?php $this->PrintHelp('optimization') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['ruleset-optimization']) || $type == 'ruleset-optimization') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Ruleset Optimization').':' ?>
-						</td>
-						<td>
-							<select id="ruleset-optimization" name="ruleset-optimization">
-								<option value="none" <?php echo ($this->rule['option']['ruleset-optimization'] == 'none' ? 'selected' : ''); ?>>none</option>
-								<option value="basic" <?php echo ($this->rule['option']['ruleset-optimization'] == 'basic' ? 'selected' : ''); ?>>basic</option>
-								<option value="profile" <?php echo ($this->rule['option']['ruleset-optimization'] == 'profile' ? 'selected' : ''); ?>>profile</option>
-							</select>
-							<?php $this->PrintHelp('ruleset-optimization') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['state-policy']) || $type == 'state-policy') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('State Policy').':' ?>
-						</td>
-						<td>
-							<select id="state-policy" name="state-policy">
-								<option value="if-bound" <?php echo ($this->rule['option']['state-policy'] == 'if-bound' ? 'selected' : ''); ?>>if-bound</option>
-								<option value="floating" <?php echo ($this->rule['option']['state-policy'] == 'floating' ? 'selected' : ''); ?>>floating</option>
-							</select>
-							<?php $this->PrintHelp('state-policy') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['fingerprints']) || $type == 'fingerprints') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Fingerprints File').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="fingerprints" name="fingerprints" value="<?php echo $this->rule['option']['fingerprints']; ?>" placeholder="filename"/>
-							<?php $this->PrintHelp('fingerprints') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['loginterface']) || $type == 'loginterface') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Log Interface').':' ?>
-						</td>
-						<td>
-							<input type="text" size="10" id="loginterface" name="loginterface" value="<?php echo $this->rule['option']['loginterface']; ?>"  placeholder="interface"/>
-							<?php $this->PrintHelp('loginterface') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['debug']) || $type == 'debug') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Debug').':' ?>
-						</td>
-						<td>
-							<select id="debug" name="debug">
-								<option value="emerg" <?php echo ($this->rule['option']['debug'] == 'emerg' ? 'selected' : ''); ?>>emerg</option>
-								<option value="alert" <?php echo ($this->rule['option']['debug'] == 'alert' ? 'selected' : ''); ?>>alert</option>
-								<option value="crit" <?php echo ($this->rule['option']['debug'] == 'crit' ? 'selected' : ''); ?>>crit</option>
-								<option value="err" <?php echo ($this->rule['option']['debug'] == 'err' ? 'selected' : ''); ?>>err</option>
-								<option value="warning" <?php echo ($this->rule['option']['debug'] == 'warning' ? 'selected' : ''); ?>>warning</option>
-								<option value="notice" <?php echo ($this->rule['option']['debug'] == 'notice' ? 'selected' : ''); ?>>notice</option>
-								<option value="info" <?php echo ($this->rule['option']['debug'] == 'info' ? 'selected' : ''); ?>>info</option>
-								<option value="debug" <?php echo ($this->rule['option']['debug'] == 'debug' ? 'selected' : ''); ?>>debug</option>
-							</select>
-							<?php $this->PrintHelp('debug') ?>
-						</td>
-						<?php
-					}
-					if (isset($this->rule['option']['skip']) || $type == 'skip') {
-						?>
-						<td class="title">
-							<?php echo _TITLE('Skip Interfaces').':' ?>
-						</td>
-						<td>
-							<input type="text" size="40" id="skip" name="skip" value="<?php echo (is_array($this->rule['option']['skip']) ? implode(' ', $this->rule['option']['skip']) : $this->rule['option']['skip']); ?>"
-								placeholder="comma or space separated list of interfaces"/>
-							<?php $this->PrintHelp('skip') ?>
-						</td>
-						<?php
-					}
-					?>
-				</tr>
-				<?php
-				if (isset($type)) {
-					?>
-					<tr class="evenline">
-						<td class="title">
-							<?php echo _TITLE('Comment').':' ?>
-						</td>
-						<td>
-							<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-						</td>
-					</tr>
-					<?php
-				}
-				?>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="oddline">
+			<td class="title">
+				<?php echo _TITLE('Select Option Type').':' ?>
+			</td>
+			<td>
+				<select id="type" name="type">
+					<option value="block-policy" <?php echo ($this->type == 'block-policy' ? 'selected' : ''); ?>>block-policy</option>
+					<option value="optimization" <?php echo ($this->type == 'optimization' ? 'selected' : ''); ?>>optimization</option>
+					<option value="ruleset-optimization" <?php echo ($this->type == 'ruleset-optimization' ? 'selected' : ''); ?>>ruleset-optimization</option>
+					<option value="state-policy" <?php echo ($this->type == 'state-policy' ? 'selected' : ''); ?>>state-policy</option>
+					<option value="fingerprints" <?php echo ($this->type == 'fingerprints' ? 'selected' : ''); ?>>fingerprints</option>
+					<option value="hostid" <?php echo ($this->type == 'hostid' ? 'selected' : ''); ?>>hostid</option>
+					<option value="loginterface" <?php echo ($this->type == 'loginterface' ? 'selected' : ''); ?>>loginterface</option>
+					<option value="debug" <?php echo ($this->type == 'debug' ? 'selected' : ''); ?>>debug</option>
+					<option value="skip" <?php echo ($this->type == 'skip' ? 'selected' : ''); ?>>skip</option>
+				</select>
+			</td>
+		</tr>
 		<?php
+	}
+
+	function editBlockPolicy()
+	{
+		if (isset($this->rule['option']['block-policy']) || $this->type == 'block-policy') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Block Policy').':' ?>
+				</td>
+				<td>
+					<select id="block-policy" name="block-policy">
+						<option value="drop" label="drop" <?php echo ($this->rule['option']['block-policy'] == 'drop' ? 'selected' : ''); ?>>drop</option>
+						<option value="return" label="return" <?php echo ($this->rule['option']['block-policy'] == 'return' ? 'selected' : ''); ?>>return</option>
+					</select>
+					<?php $this->PrintHelp('block-policy') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editOptimization()
+	{
+		if (isset($this->rule['option']['optimization']) || $this->type == 'optimization') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Optimization').':' ?>
+				</td>
+				<td>
+					<select id="optimization" name="optimization">
+						<option value="normal" <?php echo ($this->rule['option']['optimization'] == 'normal' ? 'selected' : ''); ?>>normal</option>
+						<option value="high-latency" <?php echo ($this->rule['option']['optimization'] == 'high-latency' ? 'selected' : ''); ?>>high-latency</option>
+						<option value="satellite" <?php echo ($this->rule['option']['optimization'] == 'satellite' ? 'selected' : ''); ?>>satellite</option>
+						<option value="aggressive" <?php echo ($this->rule['option']['optimization'] == 'aggressive' ? 'selected' : ''); ?>>aggressive</option>
+						<option value="conservative" <?php echo ($this->rule['option']['optimization'] == 'conservative' ? 'selected' : ''); ?>>conservative</option>
+					</select>
+					<?php $this->PrintHelp('optimization') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editRulesetOptimization()
+	{
+		if (isset($this->rule['option']['ruleset-optimization']) || $this->type == 'ruleset-optimization') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Ruleset Optimization').':' ?>
+				</td>
+				<td>
+					<select id="ruleset-optimization" name="ruleset-optimization">
+						<option value="none" <?php echo ($this->rule['option']['ruleset-optimization'] == 'none' ? 'selected' : ''); ?>>none</option>
+						<option value="basic" <?php echo ($this->rule['option']['ruleset-optimization'] == 'basic' ? 'selected' : ''); ?>>basic</option>
+						<option value="profile" <?php echo ($this->rule['option']['ruleset-optimization'] == 'profile' ? 'selected' : ''); ?>>profile</option>
+					</select>
+					<?php $this->PrintHelp('ruleset-optimization') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editStatePolicy()
+	{
+		if (isset($this->rule['option']['state-policy']) || $this->type == 'state-policy') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('State Policy').':' ?>
+				</td>
+				<td>
+					<select id="state-policy" name="state-policy">
+						<option value="if-bound" <?php echo ($this->rule['option']['state-policy'] == 'if-bound' ? 'selected' : ''); ?>>if-bound</option>
+						<option value="floating" <?php echo ($this->rule['option']['state-policy'] == 'floating' ? 'selected' : ''); ?>>floating</option>
+					</select>
+					<?php $this->PrintHelp('state-policy') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editFingerprints()
+	{
+		if (isset($this->rule['option']['fingerprints']) || $this->type == 'fingerprints') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Fingerprints File').':' ?>
+				</td>
+				<td>
+					<input type="text" size="50" id="fingerprints" name="fingerprints" value="<?php echo $this->rule['option']['fingerprints']; ?>" placeholder="filename"/>
+					<?php $this->PrintHelp('fingerprints') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editHostid()
+	{
+		if (isset($this->rule['option']['hostid']) || $this->type == 'hostid') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Host Id').':' ?>
+				</td>
+				<td>
+					<input type="text" size="20" id="hostid" name="hostid" value="<?php echo $this->rule['option']['hostid']; ?>"  placeholder="number"/>
+					<?php $this->PrintHelp('hostid') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editLogInterface()
+	{
+		if (isset($this->rule['option']['loginterface']) || $this->type == 'loginterface') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Log Interface').':' ?>
+				</td>
+				<td>
+					<input type="text" size="10" id="loginterface" name="loginterface" value="<?php echo $this->rule['option']['loginterface']; ?>"  placeholder="interface"/>
+					<?php $this->PrintHelp('loginterface') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editDebug()
+	{
+		if (isset($this->rule['option']['debug']) || $this->type == 'debug') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Debug').':' ?>
+				</td>
+				<td>
+					<select id="debug" name="debug">
+						<option value="emerg" <?php echo ($this->rule['option']['debug'] == 'emerg' ? 'selected' : ''); ?>>emerg</option>
+						<option value="alert" <?php echo ($this->rule['option']['debug'] == 'alert' ? 'selected' : ''); ?>>alert</option>
+						<option value="crit" <?php echo ($this->rule['option']['debug'] == 'crit' ? 'selected' : ''); ?>>crit</option>
+						<option value="err" <?php echo ($this->rule['option']['debug'] == 'err' ? 'selected' : ''); ?>>err</option>
+						<option value="warning" <?php echo ($this->rule['option']['debug'] == 'warning' ? 'selected' : ''); ?>>warning</option>
+						<option value="notice" <?php echo ($this->rule['option']['debug'] == 'notice' ? 'selected' : ''); ?>>notice</option>
+						<option value="info" <?php echo ($this->rule['option']['debug'] == 'info' ? 'selected' : ''); ?>>info</option>
+						<option value="debug" <?php echo ($this->rule['option']['debug'] == 'debug' ? 'selected' : ''); ?>>debug</option>
+					</select>
+					<?php $this->PrintHelp('debug') ?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editSkip()
+	{
+		if (isset($this->rule['option']['skip']) || $this->type == 'skip') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Skip Interfaces').':' ?>
+				</td>
+				<td>
+					<?php
+					$this->PrintDeleteLinks($this->rule['option']['skip'], 'dropskip');
+					$this->PrintAddControls('addskip', NULL, 'if or macro', 40);
+					$this->PrintHelp('skip');
+					?>
+				</td>
+			</tr>
+			<?php
+		}
 	}
 }
 ?>

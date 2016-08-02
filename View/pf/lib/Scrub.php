@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Scrub.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,16 +38,16 @@ class Scrub extends Filter
 	function __construct($str)
 	{
 		$this->keywords = array(
-			'no-df' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
 			'min-ttl' => array(
 				'method' => 'parseNextValue',
 				'params' => array(),
 				),
 			'max-mss' => array(
 				'method' => 'parseNextValue',
+				'params' => array(),
+				),
+			'no-df' => array(
+				'method' => 'parseBool',
 				'params' => array(),
 				),
 			'random-id' => array(
@@ -74,11 +74,11 @@ class Scrub extends Filter
 
 	function generate()
 	{
-		$this->str= 'match';
+		$this->genAction();
 
 		$this->genFilterHead();
-		$this->genFilterOpts();
 		$this->genScrub();
+		$this->genFilterOpts();
 
 		$this->genComment();
 		$this->str.= "\n";
@@ -112,10 +112,10 @@ class Scrub extends Filter
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);
+		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispValue('interface', 'Interface');
 		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
 		$this->dispValue('min-ttl', 'Min-ttl');
@@ -133,171 +133,73 @@ class Scrub extends Filter
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (filter_has_var(INPUT_GET, 'dropinterface')) {
-			$this->delEntity("interface", filter_input(INPUT_GET, 'dropinterface'));
-		}
+		$this->inputAction();
 
-		if (filter_has_var(INPUT_GET, 'dropto')) {
-			$this->delEntity("to", filter_input(INPUT_GET, 'dropto'));
-		}
+		$this->inputFilterHead();
 
-		if (filter_has_var(INPUT_GET, 'dropfrom')) {
-			$this->delEntity("from", filter_input(INPUT_GET, 'dropfrom'));
-		}
+		$this->inputLog();
+		$this->inputBool('quick');
 
-		if (count($_POST)) {
-			if (filter_input(INPUT_POST, 'addfrom') != '') {
-				$this->addEntity("from", filter_input(INPUT_POST, 'addfrom'));
-			}
+		$this->inputBool('no-df');
+		$this->inputBool('random-id');
+		/// @todo This is bool actually, fix parser first
+		$this->inputKey('reassemble');
+		$this->inputKey('min-ttl');
+		$this->inputKey('max-mss');
 
-			if (filter_input(INPUT_POST, 'addto') != '') {
-				$this->addEntity("to", filter_input(INPUT_POST, 'addto'));
-			}
+		$this->inputFilterOpts();
 
-			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity("interface", filter_input(INPUT_POST, 'addinterface'));
-			}
-
-			$this->rule['direction']= filter_input(INPUT_POST, 'direction');
-			$this->rule['no-df']= (filter_has_var(INPUT_POST, 'no-df') ? TRUE : '');
-			$this->rule['random-id']= (filter_has_var(INPUT_POST, 'random-id') ? TRUE : '');
-			$this->rule['min-ttl']= filter_input(INPUT_POST, 'min-ttl');
-			$this->rule['max-mss']= filter_input(INPUT_POST, 'max-mss');
-			$this->rule['reassemble']= filter_input(INPUT_POST, 'reassemble');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-
-			if (filter_has_var(INPUT_POST, 'all')) {
-				$this->rule['all']= TRUE;
-				unset($this->rule['from']);
-				unset($this->rule['to']);
-			} else {
-				unset($this->rule['all']);
-			}
-		}
-
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editAction();
+
+		$this->editFilterHead();
+
+		$this->editLog();
+		$this->editCheckbox('quick', 'Quick');
+
+		$this->editScrubOptions();
+		$this->editText('min-ttl', 'Min TTL', NULL, 10, 'number');
+		$this->editText('max-mss', 'Max MSS', NULL, 10, 'number');
+
+		$this->editFilterOpts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editScrubOptions()
+	{
 		?>
-		<h2>Edit Scrub Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Scrub') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" name="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Direction').':' ?>
-					</td>
-					<td>
-						<select id="direction" name="direction">
-							<option value="" label=""></option>
-							<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : '')?>>in</option>
-							<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : '')?>>out</option>					
-						</select>
-						<?php $this->PrintHelp('direction') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Interface').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['interface'], $rulenumber, 'dropinterface');
-						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
-						$this->PrintHelp('interface');
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Match All').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="all" name="all" value="all" <?php echo ($this->rule['all'] ? 'checked' : ''); ?> onclick="document.theform.submit()" />
-						<?php $this->PrintHelp('match-all') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Source').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['from'], $rulenumber, 'dropfrom');
-						$this->PrintAddControls('addfrom', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
-						$this->PrintHelp('src-dst');
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Destination').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['to'], $rulenumber, 'dropto');
-						$this->PrintAddControls('addto', NULL, 'ip, host or macro', NULL, NULL, $this->rule['all']);
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Options').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="no-df" name="no-df" value="no-df" <?php echo ($this->rule['no-df'] ? 'checked' : '')?> />
-						<label for="no-df">no-df</label>
-						<?php $this->PrintHelp('no-df') ?>
-						<br>
-						<input type="checkbox" id="random-id" name="random-id" value="random-id" <?php echo ($this->rule['random-id'] ? 'checked' : '')?> />
-						<label for="random-id">random-id</label>
-						<?php $this->PrintHelp('random-id') ?>
-						<br>
-						<input type="checkbox" id="reassemble" name="reassemble" value="tcp" <?php echo ($this->rule['reassemble'] == 'tcp' ? 'checked' : '')?> />
-						<label for="reassemble">reassemble tcp</label>
-						<?php $this->PrintHelp('reassemble-tcp') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Min TTL').':' ?>
-					</td>
-					<td>
-						<input type="text" id="min-ttl" name="min-ttl" size="4" value="<?php echo $this->rule['min-ttl']; ?>" />
-						<?php $this->PrintHelp('min-ttl') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Max MSS').':' ?>
-					</td>
-					<td>
-						<input type="text" id="max-mss" name="max-mss" size="4" value="<?php echo $this->rule['max-mss']; ?>" />
-						<?php $this->PrintHelp('max-mss') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Scrub Options').':' ?>
+			</td>
+			<td>
+				<input type="checkbox" id="no-df" name="no-df" value="no-df" <?php echo ($this->rule['no-df'] ? 'checked' : '')?> />
+				<label for="no-df">no-df</label>
+				<?php $this->PrintHelp('no-df') ?>
+				<br>
+				<input type="checkbox" id="random-id" name="random-id" value="random-id" <?php echo ($this->rule['random-id'] ? 'checked' : '')?> />
+				<label for="random-id">random-id</label>
+				<?php $this->PrintHelp('random-id') ?>
+				<br>
+				<input type="checkbox" id="reassemble" name="reassemble" value="tcp" <?php echo ($this->rule['reassemble'] == 'tcp' ? 'checked' : '')?> />
+				<label for="reassemble">reassemble tcp</label>
+				<?php $this->PrintHelp('reassemble-tcp') ?>
+			</td>
+		</tr>
 		<?php
 	}
 }

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.4 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: Blank.php,v 1.5 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,9 +61,9 @@ class Blank extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
+		if (filter_has_var(INPUT_POST, 'state')) {
 			// Untaint: convert all into blank lines
 			$blank= '';
 			foreach (explode("\n", filter_input(INPUT_POST, 'blank')) as $line) {
@@ -72,7 +72,7 @@ class Blank extends Rule
 			$this->rule['blank']= $blank;
 		}
 
-		$this->deleteEmptyEntries();
+		$this->inputDelEmpty();
 	}
 	
 	function edit($rulenumber, $modified, $testResult, $action)

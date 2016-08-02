@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Include.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -76,66 +76,54 @@ class _Include extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
-			$this->rule['file']= filter_input(INPUT_POST, 'file');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-		}
+		$this->inputKey('file');
 
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
+	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editInclude();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editInclude()
 	{
 		global $View, $PF_CONFIG_PATH;
 
-		$View->Controller($Output, 'GetPfRuleFiles');
-		$ruleFiles= $Output;
+		$View->Controller($ruleFiles, 'GetPfRuleFiles');
 		?>
-		<h2>Edit Include Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Include') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('File').':' ?>
-					</td>
-					<td>
-						<select id="file" name="file">
-							<?php
-							foreach ($ruleFiles as $file) {
-								$file= "$PF_CONFIG_PATH/$file";
-								?>
-								<option value="<?php echo $file; ?>" label="<?php echo $file; ?>" <?php echo ($this->rule['file'] == $file ? 'selected' : ''); ?>><?php echo $file; ?></option>
-								<?php
-							}
-							?>
-						</select>
-						
-					</td>
-					<td class="none">
-						<?php PrintHelpBox(_HELPBOX("Only files under the $PF_CONFIG_PATH folder can be included here.")) ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('File').':' ?>
+			</td>
+			<td>
+				<select id="file" name="file">
+					<?php
+					foreach ($ruleFiles as $file) {
+						$file= "$PF_CONFIG_PATH/$file";
+						?>
+						<option value="<?php echo $file; ?>" label="<?php echo $file; ?>" <?php echo ($this->rule['file'] == $file ? 'selected' : ''); ?>><?php echo $file; ?></option>
+						<?php
+					}
+					?>
+				</select>
+
+			</td>
+			<td class="none">
+				<?php PrintHelpBox(_HELPBOX("Only files under the $PF_CONFIG_PATH folder can be included here.")) ?>
+			</td>
+		</tr>
 		<?php
 	}
 }

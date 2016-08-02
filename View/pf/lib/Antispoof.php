@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.2 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.3 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -54,14 +54,14 @@ class Antispoof extends Rule
 					),
 				'inet' => array(
 					'method' => 'parseNVP',
-					'params' => array('family'),
+					'params' => array('af'),
 					),
 				'inet6' => array(
 					'method' => 'parseNVP',
-					'params' => array('family'),
+					'params' => array('af'),
 					),
 				'label' => array(
-					'method' => 'parseItems',
+					'method' => 'parseDelimitedStr',
 					'params' => array('label'),
 					),
 				)
@@ -77,7 +77,7 @@ class Antispoof extends Rule
 		$this->genLog();
 		$this->genKey('quick');
 		$this->genItems('interface', 'for');
-		$this->genValue('family');
+		$this->genValue('af');
 		$this->genValue('label', 'label "', '"');
 
 		$this->genComment();
@@ -90,144 +90,42 @@ class Antispoof extends Rule
 		$this->dispHead($rulenumber);
 		$this->dispValue('interface', 'Interface');
 		$this->dispKey('quick', 'Quick');
-		$this->dispValue('family', 'Address Family');
+		$this->dispValue('af', 'Address Family');
 		$this->dispLog(8);
 		$this->dispValue('label', 'Label');
 		$this->dispTail($rulenumber, $count);
 	}
 	
-	function processInput()
+	function input()
 	{
-		if (filter_has_var(INPUT_GET, 'dropinterface')) {
-			$this->delEntity('interface', filter_input(INPUT_GET, 'dropinterface'));
-		}
+		$this->inputLog();
+		$this->inputBool('quick');
 
-		if (count($_POST)) {
-			if (filter_input(INPUT_POST, 'addinterface') != '') {
-				$this->addEntity('interface', filter_input(INPUT_POST, 'addinterface'));
-			}
+		$this->inputDel('interface', 'dropinterface');
+		$this->inputAdd('interface', 'addinterface');
+		$this->inputKey('af');
+		$this->inputKey('label');
 
-			$this->rule['quick']= (filter_has_var(INPUT_POST, 'quick') ? TRUE : '');
-			$this->rule['family']= filter_input(INPUT_POST, 'family');
-
-			$this->rule['log']= (filter_has_var(INPUT_POST, 'log') ? TRUE : '');
-			
-			if ($this->rule['log'] == TRUE) {
-				if (filter_has_var(INPUT_POST, 'log-all') || filter_has_var(INPUT_POST, 'log-matches') ||
-					filter_has_var(INPUT_POST, 'log-user') || filter_input(INPUT_POST, 'log-to') != '') {
-					$this->rule['log']= array();
-					if (filter_has_var(INPUT_POST, 'log-all')) {
-						$this->rule['log']['all']= TRUE;
-					}
-					if (filter_has_var(INPUT_POST, 'log-matches')) {
-						$this->rule['log']['matches']= TRUE;
-					}
-					if (filter_has_var(INPUT_POST, 'log-user')) {
-						$this->rule['log']['user']= TRUE;
-					}
-					if (filter_input(INPUT_POST, 'log-to') != '') {
-						$this->rule['log']['to']= filter_input(INPUT_POST, 'log-to');
-					}
-				}
-			}
-
-			$this->rule['label']= preg_replace('/"/', '', filter_input(INPUT_POST, 'label'));
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-		}
-
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		?>
-		<h2>Edit Antispoof Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Antispoof') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form method="post" id="theform" name="theform" action="<?php echo $this->href . $rulenumber; ?>">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Interface').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['interface'], $rulenumber, 'dropinterface');
-						$this->PrintAddControls('addinterface', NULL, 'if or macro', NULL, 10);
-						$this->PrintHelp('interface');
-						?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Quick').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="quick" name="quick" value="quick" <?php echo ($this->rule['quick'] ? 'checked' : ''); ?> />
-						<?php $this->PrintHelp('quick') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Address Family').':' ?>
-					</td>
-					<td>
-						<select id="family" name="family">
-							<option value="" label=""></option>
-							<option value="inet" label="inet" <?php echo ($this->rule['family'] == 'inet' ? 'selected' : ''); ?>>inet</option>
-							<option value="inet6" label="inet6" <?php echo ($this->rule['family'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
-						</select>			
-						<?php $this->PrintHelp('address-family') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Logging').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : ''); ?> />
-						<label for="log">Log</label>
-						<?php
-						$disabled= isset($this->rule['log']) ? '' : 'disabled';
-						?>
-						<label for="log">to:</label>
-						<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" <?php echo $disabled; ?> />
-						<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
-						<label for="log">all</label>
-						<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
-						<label for="log">matches</label>
-						<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
-						<label for="log">user</label>
-						<?php $this->PrintHelp('log') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Label').':' ?>
-					</td>
-					<td>
-						<input type="text" id="label" name="label" value="<?php echo $this->rule['label']; ?>" />
-						<?php $this->PrintHelp('label') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
-		<?php
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editLog();
+		$this->editCheckbox('quick', 'Quick');
+
+		$this->editValues('interface', 'Interface', 'dropinterface', 'addinterface', 'if or macro', NULL, 10);
+		$this->editAf();
+		$this->editText('label', 'Label', NULL, NULL, 'string');
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
 	}
 }
 ?>

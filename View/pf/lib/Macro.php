@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Macro.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -100,69 +100,28 @@ class Macro extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (filter_has_var(INPUT_GET, 'dropvalue')) {
-			$this->delEntity("value", filter_input(INPUT_GET, 'dropvalue'));
-		}
+		$this->inputKey('identifier');
+		$this->inputDel('value', 'dropvalue');
+		$this->inputAdd('value', 'addvalue');
 
-		if (count($_POST)) {
-			if (filter_input(INPUT_POST, 'addvalue') != '') {
-				$this->addEntity("value", filter_input(INPUT_POST, 'addvalue'));
-			}
-
-			$this->rule['identifier']= filter_input(INPUT_POST, 'identifier');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-		}
-	
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		?>
-		<h2>Edit Macro Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Macro') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Identifier').':' ?>
-					</td>
-					<td>
-						<input type="text" id="identifier" name="identifier" size="20" value="<?php echo $this->rule['identifier']; ?>" />
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Value').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['value'], $rulenumber, 'dropvalue');
-						$this->PrintAddControls('addvalue', NULL, 'add value', NULL, 30);
-						?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
-		<?php
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editText('identifier', 'Identifier', FALSE, NULL, 'valid string');
+		$this->editValues('value', 'Value', 'dropvalue', 'addvalue', 'add value', NULL, 30);
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
 	}
 }
 ?>

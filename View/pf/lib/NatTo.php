@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Nat.php,v 1.5 2016/07/30 20:38:08 soner Exp $ */
+/* $pfre: NatTo.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -56,7 +56,7 @@ class NatTo extends NatBase
 
 	function generate()
 	{
-		$this->str= $this->rule['action'];
+		$this->genAction();
 
 		$this->genFilterHead();
 		$this->genFilterOpts();
@@ -71,6 +71,46 @@ class NatTo extends NatBase
 		$this->str.= "\n";
 		return $this->str;
 	}
-}
 
+	function input()
+	{
+		$this->inputAction();
+
+		$this->inputFilterHead();
+
+		$this->inputLog();
+		$this->inputBool('quick');
+
+		$this->inputNat();
+		$this->inputBool('static-port');
+
+		$this->inputFilterOpts();
+
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
+	}
+
+	function edit($rulenumber, $modified, $testResult, $action)
+	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editAction();
+
+		$this->editFilterHead();
+
+		$this->editLog();
+		$this->editCheckbox('quick', 'Quick');
+
+		$this->editNat();
+		$this->editCheckbox('static-port', 'Static Port');
+
+		$this->editFilterOpts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+}
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RdrTo.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: DivertTo.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,15 +33,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class RdrTo extends NatBase
+class DivertPacket extends Filter
 {
 	function __construct($str)
 	{
 		$this->keywords = array_merge(
 			$this->keywords,
 			array(
-				'rdr-to' => array(
-					'method' => 'parseRedirHostPort',
+				'divert-packet' => array(
+					'method' => 'parseRedirPort',
 					'params' => array(),
 					),
 				)
@@ -49,5 +49,85 @@ class RdrTo extends NatBase
 
 		parent::__construct($str);
 	}
+
+	function parseRedirPort()
+	{
+		$this->parseNVP('type');
+
+		if ($this->words[$this->index + 1] == 'port') {
+			$this->index+= 2;
+			$this->rule['redirport']= $this->words[$this->index];
+		}
+	}
+
+	function generate()
+	{
+		$this->genAction();
+
+		$this->genFilterHead();
+		$this->genFilterOpts();
+
+		$this->genValue('type');
+		/// @todo This is not redirport, but port
+		$this->genValue('redirport', 'port ');
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
+	}
+
+	function display($rulenumber, $count)
+	{
+		$this->dispHead($rulenumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispValue('interface', 'Interface');
+		$this->dispLog(2);
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('redirport', 'Redirect Port');
+		$this->dispTail($rulenumber, $count);
+	}
+	
+	function input()
+	{
+		$this->inputAction();
+
+		$this->inputFilterHead();
+
+		$this->inputLog();
+		$this->inputBool('quick');
+
+		$this->inputKey('redirport');
+
+		$this->inputFilterOpts();
+
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
+	}
+
+	function edit($rulenumber, $modified, $testResult, $action)
+	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editAction();
+
+		$this->editFilterHead();
+
+		$this->editLog();
+		$this->editCheckbox('quick', 'Quick');
+
+		$this->editText('redirport', 'Redirect Port', 'divert-packet', NULL, 'number, name, table or macro');
+
+		$this->editFilterOpts();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
 }
+
 ?>

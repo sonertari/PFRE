@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.5 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Comment.php,v 1.6 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -75,13 +75,13 @@ class Comment extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
+		if (filter_has_var(INPUT_POST, 'state')) {
 			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
 		}
 
-		$this->deleteEmptyEntries();
+		$this->inputDelEmpty();
 	}
 	
 	function edit($rulenumber, $modified, $testResult, $action)

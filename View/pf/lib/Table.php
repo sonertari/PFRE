@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Table.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,8 +39,8 @@ class Table extends Rule
 	{
 		$this->keywords = array(
 			'table' => array(
-				'method' => 'parseNextNVP',
-				'params' => array('identifier'),
+				'method' => 'parseDelimitedStr',
+				'params' => array('identifier', '<', '>'),
 				),
 			'persist' => array(
 				'method' => 'parseBool',
@@ -72,6 +72,8 @@ class Table extends Rule
 	{
 		$this->str= preg_replace('/{/', ' { ', $this->str);
 		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/</', ' < ', $this->str);
+		$this->str= preg_replace('/>/', ' > ', $this->str);
 		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
@@ -99,7 +101,7 @@ class Table extends Rule
 
 	function generate()
 	{
-		$this->str= 'table ' . $this->rule['identifier'];
+		$this->str= 'table <' . $this->rule['identifier'] . '>';
 		$this->genKey('persist');
 		$this->genKey('const');
 		$this->genKey('counters');
@@ -169,103 +171,77 @@ class Table extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (filter_has_var(INPUT_GET, 'dropvalue')) {
-			$this->delEntity("data", filter_input(INPUT_GET, 'dropvalue'));
-		}
+		$this->inputKey('identifier');
+		$this->inputBool('const');
+		$this->inputBool('persist');
+		$this->inputBool('counters');
+		$this->inputDel('data', 'dropvalue');
+		$this->inputAdd('data', 'addvalue');
+		$this->inputDel('file', 'dropfile');
+		$this->inputAdd('file', 'addfile');
 
-		if (filter_has_var(INPUT_GET, 'dropfile')) {
-			$this->delEntity("file", filter_input(INPUT_GET, 'dropfile'));
-		}
-
-		if (count($_POST)) {
-			if (filter_input(INPUT_POST, 'addvalue') != '') {
-				foreach (preg_split("/[\s,]+/", filter_input(INPUT_POST, 'addvalue')) as $value) {
-					$this->addEntity("data", trim($value));
-				}
-			}
-
-			if (filter_input(INPUT_POST, 'addfile') != '') {
-				$this->addEntity("file", preg_replace("/\"/", "", filter_input(INPUT_POST, 'addfile')));
-			}
-
-			$this->rule['identifier']= "<" . preg_replace("/[<>]/", "", filter_input(INPUT_POST, 'identifier')) . ">";
-			$this->rule['const']= (filter_has_var(INPUT_POST, 'const') ? TRUE : '');
-			$this->rule['persist']= (filter_has_var(INPUT_POST, 'persist') ? TRUE : '');
-			$this->rule['counters']= (filter_has_var(INPUT_POST, 'counters') ? TRUE : '');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-		}
-
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editText('identifier', 'Identifier', FALSE, NULL, 'string');
+		$this->editFlags();
+		$this->editValues();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editFlags()
+	{
 		?>
-		<h2>Edit Table Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Table') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Identifier').':' ?>
-					</td>
-					<td>
-						<input type="text" id="identifier" name="identifier" size="20" value="<?php echo $this->rule['identifier']; ?>" />
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Flags').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="const" name="const" value="const" <?php echo $this->rule['const'] ? 'checked' : ''; ?> />
-						<label for="const">const</label>
-						<?php $this->PrintHelp('const') ?>
-						<br>
-						<input type="checkbox" id="persist" name="persist" value="persist" <?php echo $this->rule['persist'] ? 'checked' : ''; ?> />
-						<label for="persist">persist</label>
-						<?php $this->PrintHelp('persist') ?>
-						<br>
-						<input type="checkbox" id="counters" name="counters" value="counters" <?php echo $this->rule['counters'] ? 'checked' : ''; ?> />
-						<label for="counters">counters</label>
-						<?php $this->PrintHelp('counters') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Values').':' ?>
-					</td>
-					<td>
-						<?php
-						$this->PrintDeleteLinks($this->rule['data'], $rulenumber, 'dropvalue');
-						$this->PrintDeleteLinks($this->rule['file'], $rulenumber, 'dropfile', 'file "', '"');
-						$this->PrintAddControls('addfile', 'add file', 'filename', NULL, 30);
-						?>
-						<br />
-						<textarea id="addvalue" name="addvalue" cols="30" rows="5" placeholder="hosts or networks separated by comma, space or newline"></textarea>
-						<label for="addvalue">add hosts or networks</label>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Flags').':' ?>
+			</td>
+			<td>
+				<input type="checkbox" id="const" name="const" value="const" <?php echo $this->rule['const'] ? 'checked' : ''; ?> />
+				<label for="const">const</label>
+				<?php $this->PrintHelp('const') ?>
+				<br>
+				<input type="checkbox" id="persist" name="persist" value="persist" <?php echo $this->rule['persist'] ? 'checked' : ''; ?> />
+				<label for="persist">persist</label>
+				<?php $this->PrintHelp('persist') ?>
+				<br>
+				<input type="checkbox" id="counters" name="counters" value="counters" <?php echo $this->rule['counters'] ? 'checked' : ''; ?> />
+				<label for="counters">counters</label>
+				<?php $this->PrintHelp('counters') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editValues()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Values').':' ?>
+			</td>
+			<td>
+				<?php
+				$this->PrintDeleteLinks($this->rule['data'], 'dropvalue');
+				$this->PrintDeleteLinks($this->rule['file'], 'dropfile', 'file "', '"');
+				$this->PrintAddControls('addvalue', 'add host or network', 'host or network', 30);
+				echo '<br />';
+				$this->PrintAddControls('addfile', 'add file', 'filename', 30);
+				?>
+			</td>
+		</tr>
 		<?php
 	}
 }

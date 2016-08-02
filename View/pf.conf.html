@@ -6,7 +6,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<!--$pfre: pf.conf.html,v 1.4 2016/07/30 20:38:08 soner Exp $-->
+<!--$pfre: pf.conf.html,v 1.5 2016/07/31 10:33:34 soner Exp $-->
 <style type="text/css">
 	BODY {font-family: arial, helvetica, sans-serif; }
 	SPAN.bold { color: navy; font-weight: bold; }
@@ -331,6 +331,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
              rule that is used when a packet does not match any rules does not
              allow IP options.
 
+<a name="divert-packet"></a>
      <span class="bold">divert-packet</span> <span class="bold">port</span> <span class="underline">port</span>
              Used to send matching packets to divert(4) sockets bound to port
              <span class="underline">port</span>.  If the default option of fragment reassembly is enabled,
@@ -342,7 +343,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
              Used to receive replies for sockets that are bound to addresses
              which are not local to the machine.  See setsockopt(2) for
              information on how to bind these sockets.
-<a name="divert-to"></a>
+<a name="DivertTo"></a>
      <span class="bold">divert-to</span> <span class="underline">host</span> <span class="bold">port</span> <span class="underline">port</span>
              Used to redirect packets to a local socket bound to <span class="underline">host</span> and
              <span class="underline">port</span>.  The packets will not be modified, so getsockname(2) on the
@@ -426,6 +427,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
              The macro expansion for the <span class="bold">label</span> directive occurs only at
              configuration file parse time, not during runtime.
 
+<a name="once"></a>
      <span class="bold">once</span>    Creates a one shot rule that will remove itself from an active
              ruleset after the first match.  In case this is the only rule in
              the anchor, the anchor will be destroyed automatically after the
@@ -440,20 +442,24 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
 
                    block in proto icmp probability 20%
 
+<a name="prio"></a>
      <span class="bold">prio</span> <span class="underline">number</span>
              Only match packets which have the given queueing priority
              assigned.
 
+<a name="received-on"></a>
      <span class="bold">received-on</span> <span class="underline">interface</span>
              Only match packets which were received on the specified <span class="bold">interface</span>
              (or interface group).  <span class="bold">any</span> will match any existing interface
              except loopback ones.
 
+<a name="rtable"></a>
      <span class="bold">rtable</span> <span class="underline">number</span>
              Used to select an alternate routing table for the routing lookup.
              Only effective before the route lookup happened, i.e. when
              filtering inbound.
 
+<a name="set-prio"></a>
      <span class="bold">set</span> <span class="bold">prio</span> <span class="underline">priority</span> | (<span class="underline">priority</span>, <span class="underline">priority</span>)
              Packets matching this rule will be assigned a specific queueing
              priority.  Priorities are assigned as integers 0 through 7, with
@@ -488,7 +494,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
                    pass in proto tcp to port 25 set queue mail
                    pass in proto tcp to port 22 set queue(ssh_bulk, ssh_prio)
 
-<a name="option-tos"></a>
+<a name="set-tos"></a>
      <span class="bold">set</span> <span class="bold">tos</span> <span class="underline">string</span> | <span class="underline">number</span>
              Enforces a TOS for matching packets.  <span class="underline">string</span> may be one of
              <span class="bold">critical</span>, <span class="bold">inetcontrol</span>, <span class="bold">lowdelay</span>, <span class="bold">netcontrol</span>, <span class="bold">throughput</span>,
@@ -515,6 +521,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
              the rule.  Inverse tag matching can also be done by specifying
              the <span class="bold">!</span> operator before the <span class="bold">tagged</span> keyword.
 
+<a name="tos"></a>
      <span class="bold">tos</span> <span class="underline">string</span> | <span class="underline">number</span>
              This rule applies to packets with the specified TOS bits set.
              <span class="underline">string</span> may be one of <span class="bold">critical</span>, <span class="bold">inetcontrol</span>, <span class="bold">lowdelay</span>, <span class="bold">netcontrol</span>,
@@ -577,7 +584,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
 
      Different types of translation are possible with pf:
 
-<a name="af-to"></a>
+<a name="AfTo"></a>
      <span class="bold">af-to</span>     Translation between different address families (NAT64) is
                handled using <span class="bold">af-to</span> rules.  Because address family translation
                overrides the routing table, it's only possible to use <span class="bold">af-to</span> on
@@ -623,12 +630,12 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
                from the IPv6 addresses with a prefix length of /96 and
                greater.
 
-<a name="binat-to"></a>
+<a name="BinatTo"></a>
      <span class="bold">binat-to</span>  A <span class="bold">binat-to</span> rule specifies a bidirectional mapping between an
                external IP netblock and an internal IP netblock.  It expands
                to an outbound <span class="bold">nat-to</span> rule and an inbound <span class="bold">rdr-to</span> rule.
 
-<a name="nat-to"></a>
+<a name="NatTo"></a>
      <span class="bold">nat-to</span>    A <span class="bold">nat-to</span> option specifies that IP addresses are to be changed
                as the packet traverses the given interface.  This technique
                allows one or more IP addresses on the translating host to
@@ -645,7 +652,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
                <span class="bold">nat-to</span> is usually applied outbound.  If applied inbound, nat-to
                to a local IP address is not supported.
 
-<a name="rdr-to"></a>
+<a name="RdrTo"></a>
      <span class="bold">rdr-to</span>    The packet is redirected to another destination and possibly a
                different port.  <span class="bold">rdr-to</span> can optionally specify port ranges
                instead of single ports.  For instance:
@@ -697,12 +704,12 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
      connections only to daemons bound to this address or not bound to any
      address.
 
+<a name="rdr-method"></a>
      For <span class="bold">af-to</span>, <span class="bold">nat-to</span> and <span class="bold">rdr-to</span> options for which there is a single
      redirection address which has a subnet mask smaller than 32 for IPv4 or
      128 for IPv6 (more than one IP address), a variety of different methods
      for assigning this address can be used:
 
-<a name="rdr-method"></a>
      <span class="bold">bitmask</span>
            The <span class="bold">bitmask</span> option applies the network portion of the redirection
            address to the address to be modified (source with <span class="bold">nat-to</span>,
@@ -1276,6 +1283,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
            anchor spam
            load anchor spam from "/etc/pf-spam.conf"
 
+<a name="inline"></a>
      Filter rule anchors can also be loaded inline in the ruleset within a
      brace-delimited block.  Brace delimited blocks may contain rules or other
      brace-delimited blocks.  When anchors are loaded this way the anchor name
@@ -1646,6 +1654,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
 
            match in all scrub (no-df random-id max-mss 1440)
 
+<a name="fragment"></a>
    <span class="bold">Fragment</span> <span class="bold">Handling</span>
      The size of IP datagrams (packets) can be significantly larger than the
      maximum transmission unit (MTU) of the network.  In cases when it is

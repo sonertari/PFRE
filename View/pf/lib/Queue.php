@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.6 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: Queue.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -146,197 +146,79 @@ class Queue extends Rule
 		<?php
 	}
 
-	function processInput()
+	function input()
 	{
-		if (count($_POST)) {
-			$this->rule['name']= filter_input(INPUT_POST, 'name');
-			$this->rule['interface']= filter_input(INPUT_POST, 'interface');
-			$this->rule['parent']= filter_input(INPUT_POST, 'parent');
-			$this->rule['bandwidth']= filter_input(INPUT_POST, 'bandwidth');
-			$this->rule['bw-burst']= filter_input(INPUT_POST, 'bw-burst');
-			$this->rule['bw-time']= filter_input(INPUT_POST, 'bw-time');
-			$this->rule['min']= filter_input(INPUT_POST, 'min');
-			$this->rule['min-burst']= filter_input(INPUT_POST, 'min-burst');
-			$this->rule['min-time']= filter_input(INPUT_POST, 'min-time');
-			$this->rule['max']= filter_input(INPUT_POST, 'max');
-			$this->rule['max-burst']= filter_input(INPUT_POST, 'max-burst');
-			$this->rule['max-time']= filter_input(INPUT_POST, 'max-time');
-			$this->rule['qlimit']= filter_input(INPUT_POST, 'qlimit');
-			$this->rule['default']= (filter_has_var(INPUT_POST, 'default') ? TRUE : '');
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
-		}
+		$this->inputKey('name');
+		$this->inputKey('interface');
+		$this->inputKey('parent');
+		$this->inputKey('bandwidth');
+		$this->inputKey('bw-burst');
+		$this->inputKey('bw-time');
+		$this->inputKey('min');
+		$this->inputKey('min-burst');
+		$this->inputKey('min-time');
+		$this->inputKey('max');
+		$this->inputKey('max-burst');
+		$this->inputKey('max-time');
+		$this->inputKey('qlimit');
+		$this->inputBool('default');
 
-		$this->deleteEmptyEntries();
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
 	}
-	
+
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
+		$this->index= 0;
+		$this->rulenumber= $rulenumber;
+
+		$this->editHead($modified);
+
+		$this->editText('name', 'Name', FALSE, NULL, 'string');
+		$this->editText('interface', 'Interface', 'queue-interface', 10, 'if or macro');
+		$this->editText('parent', 'Parent', NULL, NULL, 'string');
+		$this->editBandwidth('bandwidth', 'bw', 'Bandwidth');
+		$this->editBandwidth('min', 'min', 'Min');
+		$this->editBandwidth('max', 'max', 'Max');
+		$this->editText('qlimit', 'Qlimit', NULL, NULL, 'number');
+		$this->editCheckbox('default', 'Default');
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editBandwidth($key, $pre, $title)
+	{
 		?>
-		<h2>Edit Queue Rule <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp('Queue') ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
-		<form id="theform" action="<?php echo "conf.php?sender=queue&rulenumber=$rulenumber"; ?>" method="post">
-			<table id="nvp">
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Name').':' ?>
-					</td>
-					<td>
-						<input type="text" id="name" name="name" size="10" value="<?php echo $this->rule['name']; ?>" />
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Interface').':' ?>
-					</td>
-					<td>
-						<input type="text" id="interface" name="interface" size="10" value="<?php echo $this->rule['interface']; ?>" />
-						<?php $this->PrintHelp('queue-interface') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Parent').':' ?>
-					</td>
-					<td>
-						<input type="text" id="parent" name="parent" size="10" value="<?php echo $this->rule['parent']; ?>" />
-						<?php $this->PrintHelp('parent') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Bandwidth').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="bandwidth" name="bandwidth" size="10" value="<?php echo $this->rule['bandwidth']; ?>" />
-											</td>
-											<td class="optitle">bandwidth<?php $this->PrintHelp('bandwidth') ?></td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="bw-burst" name="bw-burst" size="10" value="<?php echo $this->rule['bw-burst']; ?>" />
-											</td>
-											<td class="optitle">burst</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="bw-time" name="bw-time" size="10" value="<?php echo $this->rule['bw-time']; ?>" />
-											</td>
-											<td class="optitle">time</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Min').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="min" name="min" size="10" value="<?php echo $this->rule['min']; ?>" />
-											</td>
-											<td class="optitle">bandwidth</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="min-burst" name="min-burst" size="10" value="<?php echo $this->rule['min-burst']; ?>" />
-											</td>
-											<td class="optitle">burst</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="min-time" name="min-time" size="10" value="<?php echo $this->rule['min-time']; ?>" />
-											</td>
-											<td class="optitle">time</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Max').':' ?>
-					</td>
-					<td>
-						<table style="width: auto;">
-							<tr>
-								<td class="ifs">
-									<table>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="max" name="max" size="10" value="<?php echo $this->rule['max']; ?>" />
-											</td>
-											<td class="optitle">bandwidth</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="max-burst" name="max-burst" size="10" value="<?php echo $this->rule['max-burst']; ?>" />
-											</td>
-											<td class="optitle">burst</td>
-										</tr>
-										<tr>
-											<td class="ifs">
-												<input type="text" id="max-time" name="max-time" size="10" value="<?php echo $this->rule['max-time']; ?>" />
-											</td>
-											<td class="optitle">time</td>
-										</tr>
-									</table>
-								</td>
-							</tr>
-						</table>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Qlimit').':' ?>
-					</td>
-					<td>
-						<input type="text" id="qlimit" name="qlimit" size="10" value="<?php echo $this->rule['qlimit']; ?>" />
-						<?php $this->PrintHelp('qlimit') ?>
-					</td>
-				</tr>
-				<tr class="evenline">
-					<td class="title">
-						<?php echo _TITLE('Default').':' ?>
-					</td>
-					<td>
-						<input type="checkbox" id="default" name="default" <?php echo ($this->rule['default']) ? 'checked' : '' ; ?> />
-						<?php $this->PrintHelp('default') ?>
-					</td>
-				</tr>
-				<tr class="oddline">
-					<td class="title">
-						<?php echo _TITLE('Comment').':' ?>
-					</td>
-					<td>
-						<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" />
-					</td>
-				</tr>
-			</table>
-			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
-			</div>
-		</form>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE($title).':' ?>
+			</td>
+			<td>
+				<table style="width: auto;">
+					<tr>
+						<td class="ifs">
+							<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" size="15" value="<?php echo $this->rule[$key]; ?>" placeholder="number[(K|M|G)]" />
+						</td>
+						<td class="optitle"><?php echo $key ?><?php $this->PrintHelp('bandwidth') ?></td>
+					</tr>
+					<tr>
+						<td class="ifs">
+							<input type="text" id="<?php echo $pre ?>-burst" name="<?php echo $pre ?>-burst" size="15" value="<?php echo $this->rule["$pre-burst"]; ?>"
+								   placeholder="number[(K|M|G)]" <?php echo isset($this->rule[$key]) ? '' : 'disabled'; ?> />
+						</td>
+						<td class="optitle">burst</td>
+					</tr>
+					<tr>
+						<td class="ifs">
+							<input type="text" id="<?php echo $pre ?>-time" name="<?php echo $pre ?>-time" size="15" value="<?php echo $this->rule["$pre-time"]; ?>"
+								   placeholder="number(ms)" <?php echo isset($this->rule[$key]) ? '' : 'disabled'; ?> />
+						</td>
+						<td class="optitle">time</td>
+					</tr>
+				</table>
+			</td>
+		</tr>
 		<?php
 	}
 }
