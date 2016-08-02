@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.13 2016/08/02 19:34:26 soner Exp $ */
+/* $pfre: Rule.php,v 1.14 2016/08/02 19:44:38 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -174,14 +174,14 @@ class Rule
 		$this->index++;
 		if (($this->words[$this->index] == $delimPre)) {
 			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != $delimPost) {
-				$data[]= $this->parseParenthesized();
+				$value[]= $this->parseParenthesized();
 			}
 		} else {
 			// ($ext_if)
-			$data[]= $this->parseParenthesized();
-			$this->flattenArray($data);
+			$value[]= $this->parseParenthesized();
+			$this->flattenArray($value);
 		}
-		return $data;
+		return $value;
 	}
 
 	function parseParenthesized()
@@ -202,12 +202,12 @@ class Rule
 		if ($this->words[$this->index] == '{') {
 			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
 				$this->words[$this->index]= preg_replace('/[\s,]+/', '', $this->words[$this->index]);
-				$data[]= $this->parsePort();
+				$value[]= $this->parsePort();
 			}
 		} else {
-			$data= $this->parsePort();
+			$value= $this->parsePort();
 		}
-		return $data;
+		return $value;
 	}
 
 	function parsePort()
@@ -235,12 +235,12 @@ class Rule
 	{
 		if ($this->words[$this->index] == $delimPre) {
 			while ($this->words[++$this->index] != $delimPost) {
-				$data.= ' ' . $this->words[$this->index];
+				$value.= ' ' . $this->words[$this->index];
 			}
 		} else {
-			$data= $this->words[$this->index];
+			$value= $this->words[$this->index];
 		}
-		return trim($data);
+		return trim($value);
 	}
 
 	function parseAny()
@@ -466,7 +466,7 @@ class Rule
 		}
 	}
 
-	function inputDelValue($key, $data, $parent= NULL)
+	function inputDelValue($key, $value, $parent= NULL)
 	{
 		$rule= &$this->rule;
 		if ($parent !== NULL) {
@@ -474,7 +474,7 @@ class Rule
 		}
 
 		if (is_array($rule[$key])) {
-			$index= array_search($data, $rule[$key]);
+			$index= array_search($value, $rule[$key]);
 			if ($index !== FALSE) {
 				unset($rule[$key][$index]);
 				/// @todo Should we also update the keys?
@@ -503,7 +503,7 @@ class Rule
 		}
 	}
 
-	function inputAddValue($key, $data, $parent= NULL)
+	function inputAddValue($key, $value, $parent= NULL)
 	{
 		$rule= &$this->rule;
 		if ($parent !== NULL) {
@@ -511,18 +511,17 @@ class Rule
 		}
 
 		if (!isset($rule[$key])) {
-			$rule[$key]= $data;
-		} else 
+			$rule[$key]= $value;
+		} else { 
 			if (!is_array($rule[$key])) {
-				$value= $rule[$key];
+				// Make array
+				$tmp= $rule[$key];
 				unset($rule[$key]);
-				$rule[$key][]= $value;
-				$rule[$key][]= $data;
-				$rule[$key]= array_unique($rule[$key]);
-			} else {
-				$rule[$key][]= $data;
-				$rule[$key]= array_unique($rule[$key]);
+				$rule[$key][]= $tmp;
 			}
+			$rule[$key][]= $value;
+			$rule[$key]= array_unique($rule[$key]);
+		}
 	}
 
 	function inputLog()
