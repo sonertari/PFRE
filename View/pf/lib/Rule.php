@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Rule.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,41 +33,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
- * Copyright (c) 2004 Allard Consulting.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this
- *    software must display the following acknowledgement: This
- *    product includes software developed by Allard Consulting
- *    and its contributors.
- * 4. Neither the name of Allard Consulting nor the names of
- *    its contributors may be used to endorse or promote products
- *    derived from this software without specific prior written
- *    permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
-/**
- * Base rule class.
- */
 class Rule
 {
 	public $rule= array();
@@ -160,10 +125,6 @@ class Rule
 
 	function sanitize()
 	{
-		/*
-		 * Sanitize the rule string so that we can deal with '{foo' as '{ foo' in
-		 * the code further down without any special treatment
-		 */
 		$this->str= preg_replace('/! +/', '!', $this->str);
 		$this->str= preg_replace('/{/', ' { ', $this->str);
 		$this->str= preg_replace('/}/', ' } ', $this->str);
@@ -203,14 +164,86 @@ class Rule
 		$this->rule[$this->words[$this->index]]= TRUE;
 	}
 	
-	function parseItems($key, $pre= '{', $post= '}')
+	function parseItems($key, $delimPre= '{', $delimPost= '}')
 	{
-		list($this->rule[$key], $this->index)= $this->parseItem($this->words, $this->index, $pre, $post);		
+		$this->rule[$key]= $this->parseItem($delimPre, $delimPost);		
 	}
 	
-	function parseDelimitedStr($key, $delim_pre= '"', $delim_post= '"')
+	function parseItem($delimPre= '{', $delimPost= '}')
 	{
-		list($this->rule[$key], $this->index)= $this->parseString($this->words, $this->index, $delim_pre, $delim_post);		
+		$this->index++;
+		if (($this->words[$this->index] == $delimPre)) {
+			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != $delimPost) {
+				$data[]= $this->parseParenthesized();
+			}
+		} else {
+			// ($ext_if)
+			$data[]= $this->parseParenthesized();
+			if (count($data) == 1) {
+				$data= $data[0];
+			}
+		}
+		return $data;
+	}
+
+	function parseParenthesized()
+	{
+		if ($this->words[$this->index] == '\(') {
+			while ($this->words[++$this->index] != '\)') {
+				$items[]= $this->words[$this->index];
+			}
+			return '(' . implode(' ', $items) . ')';
+		} else {
+			return $this->words[$this->index];
+		}
+	}
+
+	function parsePortItem()
+	{
+		$this->index++;
+		if ($this->words[$this->index] == '{') {
+			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
+				$this->words[$this->index]= preg_replace('/[\s,]+/', '', $this->words[$this->index]);
+				$data[]= $this->parsePort();
+			}
+		} else {
+			$data= $this->parsePort();
+		}
+		return $data;
+	}
+
+	function parsePort()
+	{
+		if (in_array($this->words[$this->index], array('=', '!=', '<', '<=', '>', '>='))) {
+			// unary-op = [ "=" | "!=" | "<" | "<=" | ">" | ">=" ] ( name | number )
+			return $this->words[$this->index] . ' ' . $this->words[++$this->index];
+		} elseif (in_array($this->words[$this->index + 1], array('<>', '><', ':'))) {
+			// binary-op = number ( "<>" | "><" | ":" ) number
+			// portspec = "port" ( number | name ) [ ":" ( "*" | number | name ) ]
+			return $this->words[$this->index] . ' ' . $this->words[++$this->index] . ' ' . $this->words[++$this->index];
+		} else {
+			// ( name | number )
+			return $this->words[$this->index];
+		}
+	}
+
+	function parseDelimitedStr($key, $delimPre= '"', $delimPost= '"')
+	{
+		$this->rule[$key]= $this->parseString($delimPre, $delimPost);		
+	}
+
+	function parseString($delimPre= '"', $delimPost= '"')
+	{
+		$this->index++;
+		if ($this->words[$this->index] == $delimPre) {
+			$data= $this->words[++$this->index];
+			while ($this->words[++$this->index] != $delimPost) {
+				$data.= ' ' . $this->words[$this->index];
+			}
+		} else {
+			$data= $this->words[$this->index];
+		}
+		return $data;
 	}
 
 	function parseAny()
@@ -225,10 +258,11 @@ class Rule
 	function parseSrcDest($port)
 	{
 		if ($this->words[$this->index + 1] != 'port') {
-			list($this->rule[$this->words[$this->index]], $this->index)= $this->parseItem($this->words, $this->index);
+			$this->rule[$this->words[$this->index]]= $this->parseItem();
 		}
 		if ($this->words[$this->index + 1] == 'port') {
-			list($this->rule[$port], $this->index)= $this->parsePortItem($this->words, ++$this->index);
+			$this->index++;
+			$this->rule[$port]= $this->parsePortItem();
 		}
 	}
 
@@ -259,13 +293,13 @@ class Rule
 	function parseLog()
 	{
 		if ($this->words[$this->index + 1] == '\(') {
-			list($lo, $this->index)= $this->parseItem($this->words, $this->index, '\(', '\)');
+			$opts= $this->parseItem('\(', '\)');
 			$this->rule['log']= array();
-			for ($i= 0; $i < count($lo); $i++) {
-				if ($lo[$i] == 'to') {
-					$this->rule['log']['to']= $lo[++$i];
+			for ($i= 0; $i < count($opts); $i++) {
+				if ($opts[$i] == 'to') {
+					$this->rule['log']['to']= $opts[++$i];
 				} else {
-					$this->rule['log'][$lo[$i]]= TRUE;
+					$this->rule['log'][$opts[$i]]= TRUE;
 				}
 			}
 		} else {
@@ -275,9 +309,10 @@ class Rule
 	
 	function parseICMPType($code)
 	{
-		list($this->rule[$this->words[$this->index]], $this->index)= $this->parseItem($this->words, $this->index);
+		$this->rule[$this->words[$this->index]]= $this->parseItem();
 		if ($this->words[$this->index + 1] == 'code') {
-			list($this->rule[$code], $this->index)= $this->parseItem($this->words, ++$this->index);
+			$this->index++;
+			$this->rule[$code]= $this->parseItem();
 		}
 	}
 
@@ -295,10 +330,20 @@ class Rule
 		}
 	}
 
-	function genItems($key, $head= '', $delim_pre= '{', $delim_post= '}')
+	function genItems($key, $head= '', $delimPre= '{', $delimPost= '}')
 	{
 		if (isset($this->rule[$key])) {
-			$this->str.= $this->generateItem($this->rule[$key], $head, $delim_pre, $delim_post);
+			$this->str.= $this->generateItem($this->rule[$key], $head, $delimPre, $delimPost);
+		}
+	}
+
+	function generateItem($items, $head= '', $delimPre= '{', $delimPost= '}')
+	{
+		$head= $head == '' ? '' : ' ' . trim($head);
+		if (is_array($items)) {
+			return $head . " $delimPre " . implode(', ', $items) . " $delimPost";
+		} else {
+			return $head . ' ' . $items;
 		}
 	}
 
@@ -431,43 +476,12 @@ class Rule
 	{
 		if (count($_GET)) {
 			if (filter_has_var(INPUT_GET, $var)) {
-				$this->delEntity($key, filter_input(INPUT_GET, $var), $parent);
+				$this->inputDelValue($key, filter_input(INPUT_GET, $var), $parent);
 			}
 		}
 	}
 
-	function inputAdd($key, $var, $parent= NULL)
-	{
-		if (filter_has_var(INPUT_POST, 'state')) {
-			if (filter_input(INPUT_POST, $var) !== '') {
-				$this->addEntity($key, preg_replace('/"/', '', filter_input(INPUT_POST, $var)), $parent);
-			}
-		}
-	}
-
-	function addEntity($key, $data, $parent= NULL)
-	{
-		$rule= &$this->rule;
-		if ($parent !== NULL) {
-			$rule= &$this->rule[$parent];
-		}
-
-		if (!isset($rule[$key])) {
-			$rule[$key]= $data;
-		} else 
-			if (!is_array($rule[$key])) {
-				$value= $rule[$key];
-				unset($rule[$key]);
-				$rule[$key][]= $value;
-				$rule[$key][]= $data;
-				$rule[$key]= array_unique($rule[$key]);
-			} else {
-				$rule[$key][]= $data;
-				$rule[$key]= array_unique($rule[$key]);
-			}
-	}
-
-	function delEntity($key, $data, $parent= NULL)
+	function inputDelValue($key, $data, $parent= NULL)
 	{
 		$rule= &$this->rule;
 		if ($parent !== NULL) {
@@ -488,6 +502,37 @@ class Rule
 		} else {
 			unset($rule[$key]);
 		}
+	}
+
+	function inputAdd($key, $var, $parent= NULL)
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			if (filter_input(INPUT_POST, $var) !== '') {
+				$this->inputAddValue($key, preg_replace('/"/', '', filter_input(INPUT_POST, $var)), $parent);
+			}
+		}
+	}
+
+	function inputAddValue($key, $data, $parent= NULL)
+	{
+		$rule= &$this->rule;
+		if ($parent !== NULL) {
+			$rule= &$this->rule[$parent];
+		}
+
+		if (!isset($rule[$key])) {
+			$rule[$key]= $data;
+		} else 
+			if (!is_array($rule[$key])) {
+				$value= $rule[$key];
+				unset($rule[$key]);
+				$rule[$key][]= $value;
+				$rule[$key][]= $data;
+				$rule[$key]= array_unique($rule[$key]);
+			} else {
+				$rule[$key][]= $data;
+				$rule[$key]= array_unique($rule[$key]);
+			}
 	}
 
 	function inputLog()
@@ -686,195 +731,16 @@ class Rule
 		<?php
 	}
 
-	/**
-	 * Parse rule string.
-	 *
-	 * @param array $ruleArray Rule string split into an array.
-	 * @param int $i The pointer to where in the ruleset the parsing is at.
-	 * @return array $data,$i The parsed string and the new pointer.
-	 */
-	function parseString($ruleArray, $i, $delim_pre= '"', $delim_post= '"')
-	{
-		$i++;
-		if ($ruleArray[$i] == $delim_pre) {
-			$data= $ruleArray[++$i];
-			while ($ruleArray[++$i] != $delim_post) {
-				$data.= ' ' . $ruleArray[$i];
-			}
-		} else {
-			$data= $ruleArray[$i];
-		}
-		return Array(
-			$data,
-			$i
-		);
-	}
-
-	function parseItem($ruleArray, $i, $delimiter_pre= "{", $delimiter_post= "}")
-	{
-		$i++;
-		//
-		// Check if the rule is negated (! { $item1, $item2})
-		// If it is, replace with ({ !$item1, !$item2})
-		//
-		if ($ruleArray[$i] == "!") {
-			$ii= ++$i; // Need a new iterator for this loop
-			while (preg_replace("/[\s,]+/", "", $ruleArray[++$ii]) != $delimiter_post) {
-				if (($ruleArray[$ii] != $delimiter_pre) and ($ruleArray[$ii] != $delimiter_post)) {
-					if ($ruleArray[$ii]{0} == "!") {
-						// Delete Double negations
-						$ruleArray[$ii]= substr($ruleArray[$ii], 1);
-					} else {
-						$ruleArray[$ii]= "!" . $ruleArray[$ii];
-					}
-				}
-			}
-		}
-		if (($ruleArray[$i] == $delimiter_pre)) {
-			while (preg_replace("/[\s,]+/", "", $ruleArray[++$i]) != $delimiter_post) {
-				if (($ruleArray[$i] != $delimiter_pre) and ($ruleArray[$i] != $delimiter_post)) {
-					if ($ruleArray[$i] == "\(") {
-						while ($ruleArray[++$i] != "\)") {
-							$data2[]= $ruleArray[$i];
-						}
-						$data[]= '(' . implode(' ', $data2) . ')';
-						unset($data2);
-					} else {
-						$data[]= $ruleArray[$i];
-					}
-				}
-			}
-		} else {
-			//
-			// Check if we have for instance ($ext_if) that by now has been
-			// translated to \( $ext_if \)
-			//
-			if ($ruleArray[$i] == "\(") {
-				while ($ruleArray[++$i] != "\)") {
-					$data2[]= $ruleArray[$i];
-				}
-				$data[]= '(' . implode(' ', $data2) . ')';
-				unset($data2);
-			} else {
-				$data= $ruleArray[$i];
-			}
-		}
-		return Array(
-			$data,
-			$i
-		);
-	}
-
-	function parsePortItem($ruleArray, $i)
-	{
-		$i++;
-		//
-		// Check if the rule is negated (! { $item1, $item2})
-		// If it is, replace with ({ !$item1, !$item2})
-		//
-		if ($ruleArray[$i] == "!") {
-			$ii= ++$i; // Need a new iterator for this loop
-			while (preg_replace("/[\s,]+/", "", $ruleArray[++$ii]) != "}") {
-				if (($ruleArray[$ii] != "{") and ($ruleArray[$ii] != "}")) {
-					if ($ruleArray[$ii]{0} == "!") {
-						// Delete Double negations
-						$ruleArray[$ii]= substr($ruleArray[$ii], 1);
-					} else {
-						$ruleArray[$ii]= "!" . $ruleArray[$ii];
-					}
-				}
-			}
-		}
-		
-		if ($ruleArray[$i] == "{") {
-			while (preg_replace("/[\s,]+/", "", $ruleArray[++$i]) != "}") {
-				$ruleArray[$i]= preg_replace("/[\s,]+/", "", $ruleArray[$i]);
-				switch ($ruleArray[$i]) {
-					case "}":
-						break;
-					case "=":
-						$data[]= $ruleArray[++$i];
-						break;
-					case "!=":
-					case "<":
-					case "<=":
-					case ">":
-					case ">=":
-						$data[]= $ruleArray[$i] . " " . $ruleArray[++$i];
-						break;
-					default:
-						switch (preg_replace("/[\s,]+/", "", $ruleArray[$i + 1])) {
-							case "<>":
-							case "><":
-							case ":":
-								$data[]= $ruleArray[$i] . " " . $ruleArray[++$i] . " " . $ruleArray[++$i];
-								break;
-							default:
-								$data[]= $ruleArray[$i];
-								break;
-						}
-						break;
-				}
-			}
-		} else {
-			switch ($ruleArray[$i]) {
-				case "=":
-					$data= $ruleArray[++$i];
-					break;
-				case "!=":
-				case "<":
-				case "<=":
-				case ">":
-				case ">=":
-					$data= $ruleArray[$i] . " " . $ruleArray[++$i];
-					break;
-				default:
-					switch (preg_replace("/[\s,]+/", "", $ruleArray[$i + 1])) {
-						case "<>":
-						case "><":
-						case ":":
-							$data= $ruleArray[$i] . " " . $ruleArray[++$i] . " " . $ruleArray[++$i];
-							break;
-						default:
-							$data= $ruleArray[$i];
-							break;
-					}
-					break;
-			}
-		}
-		return Array(
-			$data,
-			$i
-		);
-	}
-
-	/**
-	 * Generates output from either an array of items or a single item into a joined output string.
-	 *
-	 * @param array $items The item or items that should be generated
-	 * @param string $head The heading for this particular item list
-	 * @return string $data The parsed output with the rulestring.
-	 */
-	function generateItem($items, $head= '', $delim_pre= '{', $delim_post= '}')
-	{
-		$head= $head == '' ? '' : ' ' . trim($head);
-		if (is_array($items)) {
-			return $head . " $delim_pre " . implode(', ', $items) . " $delim_post";
-		} else {
-			return $head . ' ' . $items;
-		}
-	}
-
-	function PrintValue($value, $prefix= '', $postfix= '', $count= 10)
+	function PrintValue($value, $pre= '', $post= '', $count= 10)
 	{
 		if ($value) {
 			if (!is_array($value)) {
 				// Add <br> to call this function twice
-				echo "$prefix$value$postfix<br>";
+				echo "$pre$value$post<br>";
 			} else {
 				$i= 1;
 				foreach ($value as $v) {
-					echo "$prefix$v$postfix<br>";
+					echo "$pre$v$post<br>";
 					if (++$i > $count) {
 						echo '+' . (count($value) - $count) . ' more entries (not displayed)<br>';
 						break;

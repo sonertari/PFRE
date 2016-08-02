@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Option.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -90,13 +90,14 @@ class Option extends Rule
 
 	function parseSkip()
 	{
-		list($this->rule['option']['skip'], $this->index)= $this->parseItem($this->words, ++$this->index);
+		$this->index++;
+		$this->rule['option']['skip']= $this->parseItem();
 	}
 
 	function parseFingerprints()
 	{
-		// File name is in quotes, skip the quote
-		list($this->rule['option']['fingerprints'], $this->index)= $this->parseString($this->words, $this->index);		
+		// File name is in quotes
+		$this->rule['option']['fingerprints']= $this->parseString();		
 	}
 
 	function generate()
