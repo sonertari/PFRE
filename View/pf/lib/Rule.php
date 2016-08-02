@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.11 2016/08/02 18:01:09 soner Exp $ */
+/* $pfre: Rule.php,v 1.12 2016/08/02 18:18:51 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -227,12 +227,12 @@ class Rule
 
 	function parseDelimitedStr($key, $delimPre= '"', $delimPost= '"')
 	{
+		$this->index++;
 		$this->rule[$key]= $this->parseString($delimPre, $delimPost);		
 	}
 
 	function parseString($delimPre= '"', $delimPost= '"')
 	{
-		$this->index++;
 		if ($this->words[$this->index] == $delimPre) {
 			$data= $this->words[++$this->index];
 			while ($this->words[++$this->index] != $delimPost) {
@@ -241,7 +241,7 @@ class Rule
 		} else {
 			$data= $this->words[$this->index];
 		}
-		return $data;
+		return trim($data);
 	}
 
 	function parseAny()
@@ -267,24 +267,12 @@ class Rule
 	function parseOS()
 	{
 		$this->index++;
-		unset($_data);
-		if ($this->words[$this->index] != '{') {
-			if ($this->words[$this->index] != '"') {
-				$_data.= $this->words[$this->index++];
-			} else {
-				while ($this->words[++$this->index] != '"') {
-					$_data.= ' ' . $this->words[$this->index];
-				}
-			}
-			$this->rule['os']= trim($_data);
-		} else {
+		if ($this->words[$this->index] == '{') {
 			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
-				$_data= '';
-				while ($this->words[++$this->index] != '"') {
-					$_data.= ' ' . $this->words[$this->index];
-				}
-				$this->rule['os'][]= trim($_data);
+				$this->rule['os'][]= $this->parseString();		
 			}
+		} else {
+			$this->rule['os']= $this->parseString();		
 		}
 	}
 

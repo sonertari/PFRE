@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.5 2016/08/02 12:03:37 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.6 2016/08/02 13:30:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -216,13 +216,8 @@ class FilterBase extends Rule
 				$this->genItems('fromport', 'port');
 			}
 
-			/// @todo Create a function for this
 			if (isset($this->rule['os'])) {
-				if (!is_array($this->rule['os'])) {
-					$this->str.= ' os "' . $this->rule['os'] . '"';
-				} else {
-					$this->str.= ' os { "' . implode('" "', $this->rule['os']) . '" }';
-				}
+				$this->genItems('os', 'os');
 			}
 			
 			if (isset($this->rule['to']) || isset($this->rule['port'])) {

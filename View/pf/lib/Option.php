@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Option.php,v 1.10 2016/08/02 17:35:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -97,6 +97,7 @@ class Option extends Rule
 	function parseFingerprints()
 	{
 		// File name is in quotes
+		$this->index++;
 		$this->rule['option']['fingerprints']= $this->parseString();		
 	}
 
