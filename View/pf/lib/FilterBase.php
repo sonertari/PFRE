@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -178,10 +178,10 @@ class FilterBase extends Rule
 			'params' => array('tagged'),
 			),
 		// @todo Support !tagged
-//			'!tagged' => array(
-//				'method' => 'parseDelimitedStr',
-//				'params' => array('!tagged'),
-					),
+//		'!tagged' => array(
+//			'method' => 'parseDelimitedStr',
+//			'params' => array('!tagged'),
+//			),
 		// "set prio" and "set tos"
 		'set' => array(
 			'method' => 'parseSet',
