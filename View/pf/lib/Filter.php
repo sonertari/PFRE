@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Filter.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,10 +35,46 @@
 
 class Filter extends FilterBase
 {
+	protected $keyAction= array(
+		'pass' => array(
+			'method' => 'parseNVP',
+			'params' => array('action'),
+			),
+		'match' => array(
+			'method' => 'parseNVP',
+			'params' => array('action'),
+			),
+		'block' => array(
+			'method' => 'parseNVP',
+			'params' => array('action'),
+			),
+		'drop' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return-rst' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return-icmp' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return-icmp6' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
 			$this->keywords,
+			$this->keyAction,
 			$this->keyLog,
 			$this->keyQuick
 			);

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.9 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.10 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -97,52 +97,24 @@ class RuleSet
 		$this->rules= array();
 	}
 	
-	/**
-	 * Moves a rule in a ruleset up.
-	 *
-	 * @param int $rulenumber The number of the rule to move up in the ruleset.
-	 * @return void
-	 */
 	function up($rulenumber)
 	{
-		$rules= array();
-		for ($i= 0; $i < count($this->rules); $i++) {
-			if ($i == ($rulenumber - 1)) {
-				$rules[]= $this->rules[$i + 1];
-				$rules[]= $this->rules[$i];
-			} elseif ($i != $rulenumber) {
-				$rules[]= $this->rules[$i];
-			}
+		if (isset($this->rules[$rulenumber - 1])) {
+			$tmp= $this->rules[$rulenumber - 1];
+			$this->rules[$rulenumber - 1]= $this->rules[$rulenumber];
+			$this->rules[$rulenumber]= $tmp;
 		}
-		$this->rules= $rules;
 	}
 	
-	/**
-	 * Moves a rule in a ruleset down.
-	 *
-	 * @param int $rulenumber The number of the rule to move down in the ruleset.
-	 * @return void
-	 */
 	function down($rulenumber)
 	{
-		$rules= array();
-		for ($i= 0; $i < count($this->rules); $i++) {
-			if ($i == $rulenumber) {
-				$rules[]= $this->rules[$i + 1];
-				$rules[]= $this->rules[$i];
-			} elseif ($i != ($rulenumber + 1)) {
-				$rules[]= $this->rules[$i];
-			}
+		if (isset($this->rules[$rulenumber + 1])) {
+			$tmp= $this->rules[$rulenumber + 1];
+			$this->rules[$rulenumber + 1]= $this->rules[$rulenumber];
+			$this->rules[$rulenumber]= $tmp;
 		}
-		$this->rules= $rules;
 	}
 	
-	/**
-	 * Deletes a rule in the ruleset
-	 *
-	 * @param int $rulenumber The number of the rule to delete
-	 * @return void
-	 */
 	function del($rulenumber)
 	{
 		/// @todo No need for a separate function now
@@ -151,12 +123,6 @@ class RuleSet
 		$this->rules= array_slice($this->rules, 0);
 	}
 	
-	/**
-	 * Adds a rule to the ruleset
-	 *
-	 * @param int $rulenumber The number in the rulebase where you want to insert the rule, if not specified, it will be the last rule.
-	 * @return int The number of the inserted rule in the ruleset
-	 */
 	function addRule($rulenumber= 0)
 	{
 		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {

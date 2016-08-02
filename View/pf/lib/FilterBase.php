@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.5 2016/08/02 12:03:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,41 +35,6 @@
 
 class FilterBase extends Rule
 {
-	protected $keyAction= array(
-		'pass' => array(
-			'method' => 'parseNVP',
-			'params' => array('action'),
-			),
-		'match' => array(
-			'method' => 'parseNVP',
-			'params' => array('action'),
-			),
-		'block' => array(
-			'method' => 'parseNVP',
-			'params' => array('action'),
-			),
-		'drop' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return-rst' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return-icmp' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return-icmp6' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		);
-
 	protected $keyDirection= array(
 		'in' => array(
 			'method' => 'parseNVP',
@@ -217,7 +182,6 @@ class FilterBase extends Rule
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
-			$this->keyAction,
 			$this->keyDirection,
 			$this->keyInterface,
 			$this->keyAf,
