@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Filter.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,16 +39,8 @@ class Filter extends FilterBase
 	{
 		$this->keywords= array_merge(
 			$this->keywords,
-			array(
-				'log' => array(
-					'method' => 'parseLog',
-					'params' => array(),
-					),
-				'quick' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				)
+			$this->keyLog,
+			$this->keyQuick
 			);
 
 		parent::__construct($str);

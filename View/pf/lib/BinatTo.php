@@ -1,5 +1,5 @@
 <?php
-/* $pfre: BinatTo.php,v 1.1 2016/07/31 10:33:34 soner Exp $ */
+/* $pfre: BinatTo.php,v 1.2 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,14 +37,11 @@ class BinatTo extends NatBase
 {
 	function __construct($str)
 	{
-		$this->keywords = array_merge(
-			$this->keywords,
-			array(
-				'binat-to' => array(
-					'method' => 'parseRedirHostPort',
-					'params' => array(),
-					),
-				)
+		$this->keywords = array(
+			'binat-to' => array(
+				'method' => 'parseRedirHostPort',
+				'params' => array(),
+				),
 			);
 
 		parent::__construct($str);

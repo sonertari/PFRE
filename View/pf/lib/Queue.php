@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Queue.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,42 +37,40 @@ class Queue extends Rule
 {
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'queue' => array(
-				'method' => 'parseNextNVP',
-				'params' => array('name'),
-				),
-			'on' => array(
-				'method' => 'parseItems',
-				'params' => array('interface'),
-				),
-			'parent' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'bandwidth' => array(
-				'method' => 'parseBandwidth',
-				'params' => array('bw-burst', 'bw-time'),
-				),
-			'min' => array(
-				'method' => 'parseBandwidth',
-				'params' => array('min-burst', 'min-time'),
-				),
-			'max' => array(
-				'method' => 'parseBandwidth',
-				'params' => array('max-burst', 'max-time'),
-				),
-			'qlimit' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'default' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
+		$this->keywords= array_merge(
+			$this->keyInterface,
+			array(
+				'queue' => array(
+					'method' => 'parseNextNVP',
+					'params' => array('name'),
+					),
+				'parent' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'bandwidth' => array(
+					'method' => 'parseBandwidth',
+					'params' => array('bw-burst', 'bw-time'),
+					),
+				'min' => array(
+					'method' => 'parseBandwidth',
+					'params' => array('min-burst', 'min-time'),
+					),
+				'max' => array(
+					'method' => 'parseBandwidth',
+					'params' => array('max-burst', 'max-time'),
+					),
+				'qlimit' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'default' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				)
 			);
 
-		// Base should not merge keywords
 		parent::__construct($str);
 	}
 

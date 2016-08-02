@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: AfTo.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,14 +37,11 @@ class AfTo extends Filter
 {
 	function __construct($str)
 	{
-		$this->keywords = array_merge(
-			$this->keywords,
-			array(
-				'af-to' => array(
-					'method' => 'parseAfto',
-					'params' => array(),
-					),
-				)
+		$this->keywords = array(
+			'af-to' => array(
+				'method' => 'parseAfto',
+				'params' => array(),
+				),
 			);
 
 		parent::__construct($str);

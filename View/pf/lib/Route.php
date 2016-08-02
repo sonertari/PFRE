@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Route.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,22 +37,19 @@ class Route extends NatBase
 {
 	function __construct($str)
 	{
-		$this->keywords = array_merge(
-			$this->keywords,
-			array(
-				'route-to' => array(
-					'method' => 'parseRoute',
-					'params' => array(),
-					),
-				'reply-to' => array(
-					'method' => 'parseRoute',
-					'params' => array(),
-					),
-				'dup-to' => array(
-					'method' => 'parseRoute',
-					'params' => array(),
-					),
-				)
+		$this->keywords = array(
+			'route-to' => array(
+				'method' => 'parseRoute',
+				'params' => array(),
+				),
+			'reply-to' => array(
+				'method' => 'parseRoute',
+				'params' => array(),
+				),
+			'dup-to' => array(
+				'method' => 'parseRoute',
+				'params' => array(),
+				),
 			);
 
 		parent::__construct($str);

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,192 +35,196 @@
 
 class FilterBase extends Rule
 {
+	protected $keyAction= array(
+		'pass' => array(
+			'method' => 'parseNVP',
+			'params' => array('action'),
+			),
+		'match' => array(
+			'method' => 'parseNVP',
+			'params' => array('action'),
+			),
+		'block' => array(
+			'method' => 'parseNVP',
+			'params' => array('action'),
+			),
+		'drop' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return-rst' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return-icmp' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		'return-icmp6' => array(
+			'method' => 'parseNVP',
+			'params' => array('blockoption'),
+			),
+		);
+
+	protected $keyDirection= array(
+		'in' => array(
+			'method' => 'parseNVP',
+			'params' => array('direction'),
+			),
+		'out' => array(
+			'method' => 'parseNVP',
+			'params' => array('direction'),
+			),
+		);
+
+	protected $keyProto= array(
+		'proto' => array(
+			'method' => 'parseItems',
+			'params' => array('proto'),
+			),
+		);
+
+	protected $keySrcDest= array(
+		'any' => array(
+			'method' => 'parseAny',
+			'params' => array(),
+			),
+		'all' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'from' => array(
+			'method' => 'parseSrcDest',
+			'params' => array('fromport'),
+			),
+		'to' => array(
+			'method' => 'parseSrcDest',
+			'params' => array('port'),
+			),
+		);
+
+	protected $keyFilterOpts= array(
+		'user' => array(
+			'method' => 'parseItems',
+			'params' => array('user'),
+			),
+		'group' => array(
+			'method' => 'parseItems',
+			'params' => array('group'),
+			),
+		'flags' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'icmp-type' => array(
+			'method' => 'parseICMPType',
+			'params' => array('icmp-code'),
+			),
+		'icmp6-type' => array(
+			'method' => 'parseICMPType',
+			'params' => array('icmp6-code'),
+			),
+		'tos' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		// @todo Support "(" state-opts ")" 
+		'no' => array(
+			'method' => 'parseNVPInc',
+			'params' => array('tcp-state'),
+			),
+		'keep' => array(
+			'method' => 'parseNVPInc',
+			'params' => array('tcp-state'),
+			),
+		'modulate' => array(
+			'method' => 'parseNVPInc',
+			'params' => array('tcp-state'),
+			),
+		'synproxy' => array(
+			'method' => 'parseNVPInc',
+			'params' => array('tcp-state'),
+			),
+		'fragment' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'allow-opts' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'once' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'divert-reply' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'label' => array(
+			'method' => 'parseDelimitedStr',
+			'params' => array('label'),
+			),
+		'tag' => array(
+			'method' => 'parseDelimitedStr',
+			'params' => array('tag'),
+			),
+		'tagged' => array(
+			'method' => 'parseDelimitedStr',
+			'params' => array('tagged'),
+			),
+		// @todo Support !tagged
+//			'!tagged' => array(
+//				'method' => 'parseDelimitedStr',
+//				'params' => array('!tagged'),
+					),
+		// "set prio" and "set tos"
+		'set' => array(
+			'method' => 'parseSet',
+			'params' => array(),
+			),
+		'queue' => array(
+			'method' => 'parseItems',
+			'params' => array('queue', '\(', '\)'),
+			),
+		'rtable' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'probability' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'prio' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		// @todo Support [ [ "!" ] "received-on" ( interface-name | interface-group ) ]
+		'received-on' => array(
+			'method' => 'parseItems',
+			'params' => array('received-on', '\(', '\)'),
+			),
+		'os' => array(
+			'method' => 'parseOS',
+			'params' => array(),
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
-			$this->keywords,
-			array(
-				'pass' => array(
-					'method' => 'parseNVP',
-					'params' => array('action'),
-					),
-				'block' => array(
-					'method' => 'parseNVP',
-					'params' => array('action'),
-					),
-				'match' => array(
-					'method' => 'parseNVP',
-					'params' => array('action'),
-					),
-				'in' => array(
-					'method' => 'parseNVP',
-					'params' => array('direction'),
-					),
-				'out' => array(
-					'method' => 'parseNVP',
-					'params' => array('direction'),
-					),
-				'on' => array(
-					'method' => 'parseItems',
-					'params' => array('interface'),
-					),
-				'inet' => array(
-					'method' => 'parseNVP',
-					'params' => array('af'),
-					),
-				'inet6' => array(
-					'method' => 'parseNVP',
-					'params' => array('af'),
-					),
-				'proto' => array(
-					'method' => 'parseItems',
-					'params' => array('proto'),
-					),
-				'any' => array(
-					'method' => 'parseAny',
-					'params' => array(),
-					),
-				'all' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'from' => array(
-					'method' => 'parseSrcDest',
-					'params' => array('fromport'),
-					),
-				'to' => array(
-					'method' => 'parseSrcDest',
-					'params' => array('port'),
-					),
-				'user' => array(
-					'method' => 'parseItems',
-					'params' => array('user'),
-					),
-				'group' => array(
-					'method' => 'parseItems',
-					'params' => array('group'),
-					),
-				'flags' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'icmp-type' => array(
-					'method' => 'parseICMPType',
-					'params' => array('icmp-code'),
-					),
-				'icmp6-type' => array(
-					'method' => 'parseICMPType',
-					'params' => array('icmp6-code'),
-					),
-				'tos' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				// @todo Support "(" state-opts ")" 
-				'no' => array(
-					'method' => 'parseNVPInc',
-					'params' => array('tcp-state'),
-					),
-				'keep' => array(
-					'method' => 'parseNVPInc',
-					'params' => array('tcp-state'),
-					),
-				'modulate' => array(
-					'method' => 'parseNVPInc',
-					'params' => array('tcp-state'),
-					),
-				'synproxy' => array(
-					'method' => 'parseNVPInc',
-					'params' => array('tcp-state'),
-					),
-				'fragment' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'allow-opts' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'once' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'divert-reply' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'label' => array(
-					'method' => 'parseDelimitedStr',
-					'params' => array('label'),
-					),
-				'tag' => array(
-					'method' => 'parseDelimitedStr',
-					'params' => array('tag'),
-					),
-				'tagged' => array(
-					'method' => 'parseDelimitedStr',
-					'params' => array('tagged'),
-					),
-				// @todo Support !tagged
-//				'!tagged' => array(
-//					'method' => 'parseDelimitedStr',
-//					'params' => array('!tagged'),
-//					),
-				// "set prio" and "set tos"
-				'set' => array(
-					'method' => 'parseSet',
-					'params' => array(),
-					),
-				'queue' => array(
-					'method' => 'parseItems',
-					'params' => array('queue', '\(', '\)'),
-					),
-				'rtable' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'probability' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'prio' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				// @todo Support [ [ "!" ] "received-on" ( interface-name | interface-group ) ]
-				'received-on' => array(
-					'method' => 'parseItems',
-					'params' => array('received-on', '\(', '\)'),
-					),
-				'drop' => array(
-					'method' => 'parseNVP',
-					'params' => array('blockoption'),
-					),
-				'return' => array(
-					'method' => 'parseNVP',
-					'params' => array('blockoption'),
-					),
-				'return-rst' => array(
-					'method' => 'parseNVP',
-					'params' => array('blockoption'),
-					),
-				'return-icmp' => array(
-					'method' => 'parseNVP',
-					'params' => array('blockoption'),
-					),
-				'return-icmp6' => array(
-					'method' => 'parseNVP',
-					'params' => array('blockoption'),
-					),
-				'for' => array(
-					'method' => 'parseItems',
-					'params' => array('interface'),
-					),
-				'os' => array(
-					'method' => 'parseOS',
-					'params' => array(),
-					),
-				)
+			$this->keyAction,
+			$this->keyDirection,
+			$this->keyInterface,
+			$this->keyAf,
+			$this->keyProto,
+			$this->keySrcDest,
+			$this->keyFilterOpts,
+			$this->keywords
 			);
 
 		parent::__construct($str);

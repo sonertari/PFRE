@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.8 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Anchor.php,v 1.9 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,7 +38,7 @@ class Anchor extends FilterBase
 	function __construct($str)
 	{
 		$this->keywords = array(
-			/// @todo identifier can be empty, but "anchors without explicit rules must specify a name"
+			// identifier can be empty, but "anchors without explicit rules must specify a name"
 			'anchor' => array(
 				'method' => 'parseDelimitedStr',
 				'params' => array('identifier'),

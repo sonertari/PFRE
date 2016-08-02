@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.7 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Rule.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -82,6 +82,38 @@ class Rule
 	protected $href= '';
 	protected $rulenumber= 0;
 	
+	protected $keyInterface= array(
+		'on' => array(
+			'method' => 'parseItems',
+			'params' => array('interface'),
+			),
+		);
+
+	protected $keyAf= array(
+		'inet' => array(
+			'method' => 'parseNVP',
+			'params' => array('af'),
+			),
+		'inet6' => array(
+			'method' => 'parseNVP',
+			'params' => array('af'),
+			),
+		);
+
+	protected $keyLog= array(
+		'log' => array(
+			'method' => 'parseLog',
+			'params' => array(),
+			),
+		);
+
+	protected $keyQuick= array(
+		'quick' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->cat= get_called_class();
