@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.12 2016/08/02 18:18:51 soner Exp $ */
+/* $pfre: Rule.php,v 1.13 2016/08/02 19:34:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -234,7 +234,6 @@ class Rule
 	function parseString($delimPre= '"', $delimPost= '"')
 	{
 		if ($this->words[$this->index] == $delimPre) {
-			$data= $this->words[++$this->index];
 			while ($this->words[++$this->index] != $delimPost) {
 				$data.= ' ' . $this->words[$this->index];
 			}
