@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Rule.php,v 1.10 2016/08/02 17:35:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -179,8 +179,11 @@ class Rule
 		} else {
 			// ($ext_if)
 			$data[]= $this->parseParenthesized();
+
+			// Flat out
 			if (count($data) == 1) {
-				$data= $data[0];
+				/// @attention Don't use 0 as key to fetch the last value
+				$data= $data[key($data)];
 			}
 		}
 		return $data;
@@ -489,15 +492,15 @@ class Rule
 		}
 
 		if (is_array($rule[$key])) {
-			foreach ($rule[$key] as $value) {
-				if ($value != $data) {
-					$nvp[]= $value;
-				}
+			$index= array_search($data, $rule[$key]);
+			if ($index !== FALSE) {
+				unset($rule[$key][$index]);
 			}
-			if (count($nvp) == 1) {
-				$rule[$key]= $nvp[0];
-			} else {
-				$rule[$key]= $nvp;
+
+			// Flat out
+			if (count($rule[$key]) == 1) {
+				/// @attention Don't use 0 as key to fetch the last value
+				$rule[$key]= $rule[$key][key($rule[$key])];
 			}
 		} else {
 			unset($rule[$key]);
