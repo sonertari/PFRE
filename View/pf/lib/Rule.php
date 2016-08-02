@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.10 2016/08/02 17:35:27 soner Exp $ */
+/* $pfre: Rule.php,v 1.11 2016/08/02 18:01:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -179,12 +179,7 @@ class Rule
 		} else {
 			// ($ext_if)
 			$data[]= $this->parseParenthesized();
-
-			// Flat out
-			if (count($data) == 1) {
-				/// @attention Don't use 0 as key to fetch the last value
-				$data= $data[key($data)];
-			}
+			$this->flattenArray($data);
 		}
 		return $data;
 	}
@@ -495,15 +490,20 @@ class Rule
 			$index= array_search($data, $rule[$key]);
 			if ($index !== FALSE) {
 				unset($rule[$key][$index]);
+				/// @todo Should we also update the keys?
 			}
 
-			// Flat out
-			if (count($rule[$key]) == 1) {
-				/// @attention Don't use 0 as key to fetch the last value
-				$rule[$key]= $rule[$key][key($rule[$key])];
-			}
+			$this->flattenArray($rule[$key]);
 		} else {
 			unset($rule[$key]);
+		}
+	}
+
+	function flattenArray(&$array)
+	{
+		if (count($array) == 1) {
+			/// @attention Don't use 0 as key to fetch the last value
+			$array= $array[key($array)];
 		}
 	}
 
