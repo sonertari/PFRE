@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.6 2016/08/02 13:30:24 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.7 2016/08/02 19:34:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -142,11 +142,10 @@ class FilterBase extends Rule
 			'method' => 'parseDelimitedStr',
 			'params' => array('tagged'),
 			),
-		// @todo Support !tagged
-//		'!tagged' => array(
-//			'method' => 'parseDelimitedStr',
-//			'params' => array('!tagged'),
-//			),
+		'!tagged' => array(
+			'method' => 'parseNotTagged',
+			'params' => array(),
+			),
 		// "set prio" and "set tos"
 		'set' => array(
 			'method' => 'parseSet',
@@ -168,10 +167,13 @@ class FilterBase extends Rule
 			'method' => 'parseNextValue',
 			'params' => array(),
 			),
-		// @todo Support [ [ "!" ] "received-on" ( interface-name | interface-group ) ]
 		'received-on' => array(
 			'method' => 'parseItems',
 			'params' => array('received-on', '\(', '\)'),
+			),
+		'!received-on' => array(
+			'method' => 'parseNotReceivedOn',
+			'params' => array(),
 			),
 		'os' => array(
 			'method' => 'parseOS',
@@ -205,6 +207,55 @@ class FilterBase extends Rule
 		}
 	}
 
+	function parseNotTagged()
+	{
+		$this->parseDelimitedStr('tagged');
+		$this->rule['not-tagged']= TRUE;
+	}
+
+	function parseNotReceivedOn()
+	{
+		$this->parseItems('received-on', '\(', '\)');
+		$this->rule['not-received-on']= TRUE;
+	}
+
+	function genFilterHead()
+	{
+		$this->genValue('direction');
+		$this->genLog();
+		$this->genKey('quick');
+		/// @todo Support rdomain
+		$this->genItems('interface', 'on');
+		$this->genValue('af');
+		$this->genItems('proto', 'proto');
+		$this->genSrcDest();
+	}
+	
+	function genFilterOpts()
+	{
+		$this->genItems('user', 'user');
+		$this->genItems('group', 'group');
+		$this->genValue('flags', 'flags ');
+		$this->genIcmpType();
+		$this->genIcmp6Type();
+		$this->genValue('tos', 'tos ');
+		$this->genValue('tcp-state', NULL, ' state');
+		$this->genKey('fragment');
+		$this->genKey('allow-opts');
+		$this->genKey('once');
+		$this->genKey('divert-reply');
+		$this->genValue('label', 'label "', '"');
+		$this->genValue('tag', 'tag "', '"');
+		$this->genTagged();
+		$this->genItems('set-prio', 'set prio', '(', ')');
+		$this->genQueue();
+		$this->genValue('rtable', 'rtable ');
+		$this->genValue('probability', 'probability ');
+		$this->genValue('prio', 'prio ');
+		$this->genValue('set-tos', 'set tos ');
+		$this->genReceivedOn();
+	}
+	
 	function genSrcDest()
 	{
 		if (isset($this->rule['all'])) {
@@ -267,43 +318,26 @@ class FilterBase extends Rule
 		}
 	}
 
-	function genFilterHead()
+	function genTagged()
 	{
-		$this->genValue('direction');
-		$this->genLog();
-		$this->genKey('quick');
-		/// @todo Support rdomain
-		$this->genItems('interface', 'on');
-		$this->genValue('af');
-		$this->genItems('proto', 'proto');
-		$this->genSrcDest();
+		if (isset($this->rule['tagged'])) {
+			$not= '';
+			if (isset($this->rule['not-tagged']) && $this->rule['not-tagged'] === TRUE) {
+				$not= '!';
+			}
+			$this->str.= " ${not}tagged \"" . $this->rule['tagged'] . '"';
+		}
 	}
 	
-	function genFilterOpts()
+	function genReceivedOn()
 	{
-		$this->genItems('user', 'user');
-		$this->genItems('group', 'group');
-		$this->genValue('flags', 'flags ');
-		$this->genIcmpType();
-		$this->genIcmp6Type();
-		$this->genValue('tos', 'tos ');
-		$this->genValue('tcp-state', NULL, ' state');
-		$this->genKey('fragment');
-		$this->genKey('allow-opts');
-		$this->genKey('once');
-		$this->genKey('divert-reply');
-		$this->genValue('label', 'label "', '"');
-		$this->genValue('tag', 'tag "', '"');
-		$this->genValue('tagged', 'tagged "', '"');
-		/// @todo !tagged
-		//$this->genValue('!tagged', '!tagged "', '"');
-		$this->genItems('set-prio', 'set prio', '(', ')');
-		$this->genQueue();
-		$this->genValue('rtable', 'rtable ');
-		$this->genValue('probability', 'probability ');
-		$this->genValue('prio', 'prio ');
-		$this->genValue('set-tos', 'set tos ');
-		$this->genValue('received-on', 'received-on ');
+		if (isset($this->rule['received-on'])) {
+			$not= '';
+			if (isset($this->rule['not-received-on']) && $this->rule['not-received-on'] === TRUE) {
+				$not= '!';
+			}
+			$this->str.= " ${not}received-on " . $this->rule['received-on'];
+		}
 	}
 	
 	function display($rulenumber, $count)
@@ -447,8 +481,8 @@ class FilterBase extends Rule
 
 		$this->inputKey('label');
 		$this->inputKey('tag');
-		/// @todo !tagged?
 		$this->inputKey('tagged');
+		$this->inputBool('not-tagged');
 
 		$this->inputKey('tos');
 		$this->inputKey('set-tos');
@@ -461,6 +495,7 @@ class FilterBase extends Rule
 
 		$this->inputKey('rtable');
 		$this->inputKey('received-on');
+		$this->inputBool('not-received-on');
 	}
 
 	function inputQueue()
@@ -537,8 +572,7 @@ class FilterBase extends Rule
 		$this->editValues('user', 'User', 'dropuser', 'adduser', 'username or userid');
 		$this->editValues('group', 'Group', 'dropgroup', 'addgroup', 'groupname or groupid');
 		$this->editText('label', 'Label', NULL, NULL, 'string');
-		$this->editText('tagged', 'Match Tagged', NULL, NULL, 'string');
-		/// @todo !tagged?
+		$this->editTagged();
 		$this->editText('tag', 'Assign Tag', NULL, NULL, 'string');
 		$this->editText('tos', 'Match TOS', NULL, NULL, 'string or number');
 		$this->editText('set-tos', 'Enforce TOS', NULL, NULL, 'string or number');
@@ -546,7 +580,7 @@ class FilterBase extends Rule
 		$this->editValues('set-prio', 'Assign Priority', 'dropprio', 'addprio', 'number 0-7', NULL, 10);
 		$this->editText('probability', 'Probability', NULL, 10, '0-100% or 0-1');
 		$this->editText('rtable', 'Routing Table', NULL, 10, 'number');
-		$this->editText('received-on', 'Received on interface', NULL, 10, 'if or macro');
+		$this->editReceivedOn();
 	}
 
 	function editDirection()
@@ -682,6 +716,40 @@ class FilterBase extends Rule
 				</select>	
 				<?php echo _TITLE('secondary') ?>
 				<?php $this->PrintHelp('filter-queue') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editTagged()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo 'Match Tagged:' ?>
+			</td>
+			<td>
+				<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" placeholder="string" />
+				<?php $this->PrintHelp('tagged'); ?>
+				<input type="checkbox" id="not-tagged" name="not-tagged" value="not-tagged" <?php echo ($this->rule['not-tagged'] ? 'checked' : ''); ?> />
+				<label for="not-tagged">negated</label>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editReceivedOn()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo 'Received on interface:' ?>
+			</td>
+			<td>
+				<input type="text" id="received-on" name="received-on" value="<?php echo $this->rule['received-on']; ?>" size="10" placeholder="if or macro" />
+				<?php $this->PrintHelp('received-on'); ?>
+				<input type="checkbox" id="not-received-on" name="not-received-on" value="not-received-on" <?php echo ($this->rule['not-received-on'] ? 'checked' : ''); ?> />
+				<label for="not-received-on">negated</label>
 			</td>
 		</tr>
 		<?php
