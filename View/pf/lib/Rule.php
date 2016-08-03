@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.16 2016/08/02 20:35:27 soner Exp $ */
+/* $pfre: Rule.php,v 1.17 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -455,10 +455,15 @@ class Rule
 		}
 	}
 
-	function inputBool($key)
+	function inputBool($key, $parent= NULL)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$this->rule[$key]= (filter_has_var(INPUT_POST, $key) ? TRUE : '');
+			$rule= &$this->rule;
+			if ($parent !== NULL) {
+				$rule= &$this->rule[$parent];
+			}
+
+			$rule[$key]= (filter_has_var(INPUT_POST, $key) ? TRUE : '');
 		}
 	}
 

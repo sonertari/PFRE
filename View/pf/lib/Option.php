@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.10 2016/08/02 17:35:27 soner Exp $ */
+/* $pfre: Option.php,v 1.11 2016/08/02 19:34:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -78,6 +78,10 @@ class Option extends Rule
 				'method' => 'parseFingerprints',
 				'params' => array(),
 				),
+			'reassemble' => array(
+				'method' => 'parseReassemble',
+				'params' => array(),
+				),
 			);
 
 		parent::__construct($str);
@@ -101,6 +105,15 @@ class Option extends Rule
 		$this->rule['option']['fingerprints']= $this->parseString();		
 	}
 
+	function parseReassemble()
+	{
+		$this->parseOption();
+		if ($this->words[$this->index + 1] === 'no-df') {
+			$this->index++;
+			$this->rule['option']['reassemble-nodf']= TRUE;		
+		}
+	}
+
 	function generate()
 	{
 		$this->str= '';
@@ -114,6 +127,7 @@ class Option extends Rule
 		$this->genOption('ruleset-optimization');
 		$this->genOption('state-policy');
 		$this->genSkip();
+		$this->genReassemble();
 		
 		$this->genComment();
 		$this->str.= "\n";
@@ -134,6 +148,16 @@ class Option extends Rule
 				$this->genOption('skip', 'on ');
 			} else {
 				$this->str.= 'set skip on { ' . implode(' ', $this->rule['option']['skip']) . ' }';
+			}
+		}
+	}
+
+	function genReassemble()
+	{
+		if (isset($this->rule['option']['reassemble'])) {
+			$this->genOption('reassemble');
+			if (isset($this->rule['option']['reassemble-nodf'])) {
+				$this->str.= ' no-df';
 			}
 		}
 	}
@@ -162,6 +186,11 @@ class Option extends Rule
 						echo "skip on $skip<br>";
 					}
 				}
+			} elseif ($option == 'reassemble') {
+				echo "$option: $value";
+				if (isset($this->rule['option']['reassemble-nodf'])) {
+					echo ' no-df';
+				}
 			}
 			?>
 		</td>
@@ -180,6 +209,8 @@ class Option extends Rule
 		$this->inputKey('debug', 'option');
 		$this->inputDel('skip', 'dropskip', 'option');
 		$this->inputAdd('skip', 'addskip', 'option');
+		$this->inputKey('reassemble', 'option');
+		$this->inputBool('reassemble-nodf', 'option');
 
 		$this->inputKey('comment');
 		$this->inputDelEmpty(FALSE);
@@ -213,6 +244,7 @@ class Option extends Rule
 		$this->editLogInterface();
 		$this->editDebug();
 		$this->editSkip();
+		$this->editReassemble();
 
 		if (isset($this->type)) {
 			$this->editComment();
@@ -238,6 +270,7 @@ class Option extends Rule
 					<option value="loginterface" <?php echo ($this->type == 'loginterface' ? 'selected' : ''); ?>>loginterface</option>
 					<option value="debug" <?php echo ($this->type == 'debug' ? 'selected' : ''); ?>>debug</option>
 					<option value="skip" <?php echo ($this->type == 'skip' ? 'selected' : ''); ?>>skip</option>
+					<option value="reassemble" <?php echo ($this->type == 'reassemble' ? 'selected' : ''); ?>>reassemble</option>
 				</select>
 			</td>
 		</tr>
@@ -419,6 +452,28 @@ class Option extends Rule
 					$this->PrintAddControls('addskip', NULL, 'if or macro', 40);
 					$this->PrintHelp('skip');
 					?>
+				</td>
+			</tr>
+			<?php
+		}
+	}
+
+	function editReassemble()
+	{
+		if (isset($this->rule['option']['reassemble']) || $this->type == 'reassemble') {
+			?>
+			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+				<td class="title">
+					<?php echo _TITLE('Reassemble').':' ?>
+				</td>
+				<td>
+					<select id="reassemble" name="reassemble">
+						<option value="yes" <?php echo ($this->rule['option']['reassemble'] == 'yes' ? 'selected' : ''); ?>>yes</option>
+						<option value="no" <?php echo ($this->rule['option']['reassemble'] == 'no' ? 'selected' : ''); ?>>no</option>
+					</select>
+					<?php $this->PrintHelp('reassemble') ?>
+					<input type="checkbox" id="reassemble-nodf" name="reassemble-nodf" value="reassemble-nodf" <?php echo ($this->rule['option']['reassemble-nodf'] ? 'checked' : ''); ?> />
+					<label for="reassemble-nodf">no-df</label>
 				</td>
 			</tr>
 			<?php
