@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Filter.php,v 1.10 2016/08/02 13:30:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -70,6 +70,13 @@ class Filter extends FilterBase
 			),
 		);
 
+	protected $keyInterface= array(
+		'on' => array(
+			'method' => 'parseInterface',
+			'params' => array(),
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
@@ -80,6 +87,16 @@ class Filter extends FilterBase
 			);
 
 		parent::__construct($str);
+	}
+
+	function parseInterface()
+	{
+		if ($this->words[$this->index + 1] == 'rdomain') {
+			$this->index++;
+			$this->rule['rdomain']= $this->words[++$this->index];
+		} else {
+			$this->parseItems('interface');
+		}
 	}
 
 	/// @todo Insert a new class between Filter and Nat/Redirect classes, move this func there?
@@ -118,6 +135,30 @@ class Filter extends FilterBase
 		}
 	}
 
+	function genInterface()
+	{
+		if (isset($this->rule['interface'])) {
+			$this->genItems('interface', 'on');
+		} else {
+			$this->genValue('rdomain', 'on rdomain ');
+		}
+	}
+
+	function dispInterface()
+	{
+		?>
+		<td title="Interface">
+			<?php
+			if (isset($this->rule['interface'])) {
+				$this->PrintValue($this->rule['interface']);
+			} elseif (isset($this->rule['rdomain'])) {
+				echo 'rdomain: ' . $this->rule['rdomain'];
+			}
+			?>
+		</td>
+		<?php
+	}
+
 	function input()
 	{
 		$this->inputAction();
@@ -143,6 +184,13 @@ class Filter extends FilterBase
 				unset($this->rule['blockoption']);
 			}
 		}
+	}
+
+	function inputInterface()
+	{
+		$this->inputDel('interface', 'dropinterface');
+		$this->inputAdd('interface', 'addinterface');
+		$this->inputKey('rdomain');
 	}
 
 	function edit($rulenumber, $modified, $testResult, $action)
@@ -206,6 +254,27 @@ class Filter extends FilterBase
 					<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
 				</select>
 				<?php $this->PrintHelp('block') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editInterface()
+	{
+		?>
+		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Interface').':' ?>
+			</td>
+			<td>
+				<?php
+				$this->PrintDeleteLinks($this->rule['interface'], 'dropinterface');
+				$this->PrintAddControls('addinterface', NULL, 'if or macro', 10, isset($this->rule['rdomain']));
+				$this->PrintHelp('interface');
+				?>
+				<input type="text" name="rdomain" id="rdomain" value="<?php echo $this->rule['rdomain']; ?>" size="10" placeholder="number" <?php echo isset($this->rule['interface']) ? 'disabled' : '' ?> />
+				<label for="rdomain">routing domain</label>
+				<?php $this->PrintHelp('rdomain') ?>
 			</td>
 		</tr>
 		<?php

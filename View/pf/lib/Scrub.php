@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Scrub.php,v 1.9 2016/08/02 20:54:44 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -105,7 +105,7 @@ class Scrub extends Filter
 		$this->dispHead($rulenumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispLog();
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();

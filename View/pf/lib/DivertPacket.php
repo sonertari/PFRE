@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.1 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.2 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -78,7 +78,7 @@ class DivertPacket extends Filter
 		$this->dispHead($rulenumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispLog(2);
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');

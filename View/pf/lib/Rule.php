@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.15 2016/08/02 19:58:31 soner Exp $ */
+/* $pfre: Rule.php,v 1.16 2016/08/02 20:35:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -332,6 +332,11 @@ class Rule
 		}
 	}
 
+	function genInterface()
+	{
+		$this->genItems('interface', 'on');
+	}
+
 	function genComment()
 	{
 		if (isset($this->rule['comment'])) {
@@ -403,6 +408,15 @@ class Rule
 		?>
 		<td title="<?php echo $title; ?>">
 			<?php $this->PrintValue($this->rule[$key]); ?>
+		</td>
+		<?php
+	}
+
+	function dispInterface()
+	{
+		?>
+		<td title="Interface">
+			<?php $this->PrintValue($this->rule['interface']); ?>
 		</td>
 		<?php
 	}
@@ -497,7 +511,7 @@ class Rule
 	function inputAdd($key, $var, $parent= NULL)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			if (filter_input(INPUT_POST, $var) !== '') {
+			if (filter_has_var(INPUT_POST, $var) && filter_input(INPUT_POST, $var) !== '') {
 				$this->inputAddValue($key, preg_replace('/"/', '', filter_input(INPUT_POST, $var)), $parent);
 			}
 		}
@@ -524,6 +538,12 @@ class Rule
 		}
 	}
 
+	function inputInterface()
+	{
+		$this->inputDel('interface', 'dropinterface');
+		$this->inputAdd('interface', 'addinterface');
+	}
+
 	function inputLog()
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
@@ -531,7 +551,7 @@ class Rule
 
 			if ($this->rule['log'] == TRUE) {
 				if (filter_has_var(INPUT_POST, 'log-all') || filter_has_var(INPUT_POST, 'log-matches') ||
-					filter_has_var(INPUT_POST, 'log-user') || filter_input(INPUT_POST, 'log-to') != '') {
+					filter_has_var(INPUT_POST, 'log-user') || (filter_has_var(INPUT_POST, 'log-to') && filter_input(INPUT_POST, 'log-to') !== '')) {
 					$this->rule['log']= array();
 					if (filter_has_var(INPUT_POST, 'log-all')) {
 						$this->rule['log']['all']= TRUE;
@@ -542,7 +562,7 @@ class Rule
 					if (filter_has_var(INPUT_POST, 'log-user')) {
 						$this->rule['log']['user']= TRUE;
 					}
-					if (filter_input(INPUT_POST, 'log-to') != '') {
+					if (filter_has_var(INPUT_POST, 'log-to') && filter_input(INPUT_POST, 'log-to') !== '') {
 						$this->rule['log']['to']= filter_input(INPUT_POST, 'log-to');
 					}
 				}
@@ -658,6 +678,11 @@ class Rule
 			</div>
 		</form>
 		<?php
+	}
+
+	function editInterface()
+	{
+		$this->editValues('interface', 'Interface', 'dropinterface', 'addinterface', 'if or macro', NULL, 10);
 	}
 
 	function editAf()

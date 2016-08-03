@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.4 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.5 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -74,7 +74,7 @@ class Antispoof extends Rule
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('af', 'Address Family');
 		$this->dispLog(8);
@@ -87,8 +87,7 @@ class Antispoof extends Rule
 		$this->inputLog();
 		$this->inputBool('quick');
 
-		$this->inputDel('interface', 'dropinterface');
-		$this->inputAdd('interface', 'addinterface');
+		$this->inputInterface();
 		$this->inputKey('af');
 		$this->inputKey('label');
 
@@ -106,7 +105,7 @@ class Antispoof extends Rule
 		$this->editLog();
 		$this->editCheckbox('quick', 'Quick');
 
-		$this->editValues('interface', 'Interface', 'dropinterface', 'addinterface', 'if or macro', NULL, 10);
+		$this->editInterface();
 		$this->editAf();
 		$this->editText('label', 'Label', NULL, NULL, 'string');
 

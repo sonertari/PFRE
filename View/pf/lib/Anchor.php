@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.10 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Anchor.php,v 1.11 2016/08/02 20:35:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -94,7 +94,7 @@ class Anchor extends FilterBase
 		$this->genValue('identifier', '"', '"');
 
 		$this->genValue('direction');
-		$this->genItems('interface', 'on');
+		$this->genInterface();
 		$this->genValue('af');
 		$this->genItems('proto', 'proto');
 		$this->genSrcDest();

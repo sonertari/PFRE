@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Queue.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -101,7 +101,7 @@ class Queue extends Rule
 	function generate()
 	{
 		$this->str= 'queue ' . $this->rule['name'];
-		$this->genItems('interface', 'on');
+		$this->genInterface();
 		$this->genValue('parent', 'parent ');
 		$this->genBandwidth('bandwidth', 'bw');
 		$this->genBandwidth('min', 'min');
@@ -125,7 +125,7 @@ class Queue extends Rule
 	{
 		$this->dispHead($rulenumber);
 		$this->dispValue('name', 'Name');
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispValue('parent', 'Parent');
 		$this->dispBandwidth('bandwidth', 'bw', 'Bandwidth', 3);
 		$this->dispBandwidth('min', 'min', 'Min', 2);

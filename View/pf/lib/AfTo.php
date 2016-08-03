@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: AfTo.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -90,7 +90,7 @@ class AfTo extends Filter
 		$this->dispHead($rulenumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispLog();
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();

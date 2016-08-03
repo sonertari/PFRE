@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.8 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: rules.php,v 1.9 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -100,11 +100,11 @@ if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_G
 	}
 }
 
-if (filter_has_var(INPUT_POST, 'add') && filter_input(INPUT_POST, 'rulenumber') != '') {
+if (filter_has_var(INPUT_POST, 'add') && (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '')) {
     $edit= filter_input(INPUT_POST, 'category');
 	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
 	$action= 'add';
-} elseif (filter_has_var(INPUT_POST, 'edit') && filter_input(INPUT_POST, 'rulenumber') != '') {
+} elseif (filter_has_var(INPUT_POST, 'edit') && (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '')) {
 	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
 	if (array_key_exists($rulenumber, $View->RuleSet->rules)) {
 		$edit= array_search($View->RuleSet->rules[$rulenumber]->cat, $ruleType2Class);

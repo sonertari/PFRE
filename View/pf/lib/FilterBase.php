@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.7 2016/08/02 19:34:26 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.8 2016/08/02 22:13:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -224,8 +224,7 @@ class FilterBase extends Rule
 		$this->genValue('direction');
 		$this->genLog();
 		$this->genKey('quick');
-		/// @todo Support rdomain
-		$this->genItems('interface', 'on');
+		$this->genInterface();
 		$this->genValue('af');
 		$this->genItems('proto', 'proto');
 		$this->genSrcDest();
@@ -345,7 +344,7 @@ class FilterBase extends Rule
 		$this->dispHead($rulenumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispLog();
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
@@ -360,7 +359,7 @@ class FilterBase extends Rule
 		$this->dispHead($rulenumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
-		$this->dispValue('interface', 'Interface');
+		$this->dispInterface();
 		$this->dispLog();
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
@@ -427,8 +426,7 @@ class FilterBase extends Rule
 	{
 		$this->inputKey('direction');
 
-		$this->inputDel('interface', 'dropinterface');
-		$this->inputAdd('interface', 'addinterface');
+		$this->inputInterface();
 
 		$this->inputKey('af');
 
@@ -501,11 +499,12 @@ class FilterBase extends Rule
 	function inputQueue()
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			if ((filter_input(INPUT_POST, 'queue-pri') != '') && (filter_input(INPUT_POST, 'queue-sec') != '')) {
+			if (filter_has_var(INPUT_POST, 'queue-pri') && filter_input(INPUT_POST, 'queue-pri') !== '' &&
+				filter_has_var(INPUT_POST, 'queue-sec') && filter_input(INPUT_POST, 'queue-sec') !== '') {
 				$this->rule['queue']= array();
 				$this->rule['queue'][0]= filter_input(INPUT_POST, 'queue-pri');
 				$this->rule['queue'][1]= filter_input(INPUT_POST, 'queue-sec');
-			} elseif (filter_input(INPUT_POST, 'queue-pri') != '') {
+			} elseif (filter_has_var(INPUT_POST, 'queue-pri') && filter_input(INPUT_POST, 'queue-pri') !== '') {
 				$this->rule['queue']= filter_input(INPUT_POST, 'queue-pri');
 			} else {
 				unset($this->rule['queue']);
@@ -545,7 +544,7 @@ class FilterBase extends Rule
 	function editFilterHead()
 	{
 		$this->editDirection();
-		$this->editValues('interface', 'Interface', 'dropinterface', 'addinterface', 'if or macro', NULL, 10);
+		$this->editInterface();
 		$this->editAf();
 		$this->editValues('proto', 'Protocol', 'dropproto', 'addproto', 'protocol', NULL, 10);
 		$this->editCheckbox('all', 'Match All');
@@ -626,7 +625,7 @@ class FilterBase extends Rule
 
 	function editIcmpType()
 	{
-		if (isset($this->rule['proto']) && ($this->rule['proto'] == "icmp" || is_array($this->rule['proto']) && in_array("icmp", $this->rule['proto']))) {
+		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp' || is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto']))) {
 			$this->editValues('icmp-type', 'ICMP Type', 'dropicmptype', 'addicmptype', 'number, name or macro');
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
@@ -634,7 +633,7 @@ class FilterBase extends Rule
 					<?php echo _TITLE('ICMP Code').':' ?>
 				</td>
 				<td>
-					<input type="text" name="icmp-code" id="icmp-code" value="<?php echo $this->rule['icmp-code']; ?>" <?php echo (isset($this->rule['icmp-type']) && !is_array($this->rule['icmp-type']) ? "" : "disabled=\"disabled\"")?> />
+					<input type="text" name="icmp-code" id="icmp-code" value="<?php echo $this->rule['icmp-code']; ?>" <?php echo (isset($this->rule['icmp-type']) && !is_array($this->rule['icmp-type']) ? '' : 'disabled')?> />
 				</td>
 			</tr>
 			<?php
@@ -643,7 +642,7 @@ class FilterBase extends Rule
 
 	function editIcmp6Type()
 	{
-		if (isset($this->rule['proto']) && ($this->rule['proto'] == "icmp6" || is_array($this->rule['proto']) && in_array("icmp6", $this->rule['proto']))) {
+		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp6' || is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto']))) {
 			$this->editValues('icmp6-type', 'ICMP6 Type', 'dropicmp6type', 'addicmp6type', 'number, name or macro');
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
@@ -651,7 +650,7 @@ class FilterBase extends Rule
 					<?php echo _TITLE('ICMP6 Code').':' ?>
 				</td>
 				<td>
-					<input type="text" name="icmp6-code" id="icmp6-code" value="<?php echo $this->rule['icmp6-code']; ?>" <?php echo (isset($this->rule['icmp6-type']) && !is_array($this->rule['icmp6-type']) ? "" : "disabled=\"disabled\"")?> />
+					<input type="text" name="icmp6-code" id="icmp6-code" value="<?php echo $this->rule['icmp6-code']; ?>" <?php echo (isset($this->rule['icmp6-type']) && !is_array($this->rule['icmp6-type']) ? '' : 'disabled')?> />
 				</td>
 			</tr>
 			<?php
