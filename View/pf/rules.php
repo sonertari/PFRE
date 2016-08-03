@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.11 2016/08/03 12:33:27 soner Exp $ */
+/* $pfre: rules.php,v 1.12 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -102,19 +102,21 @@ if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_G
 	}
 }
 
-if (filter_has_var(INPUT_POST, 'add') && (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '')) {
-    $edit= filter_input(INPUT_POST, 'category');
-	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
-	$action= 'add';
-} elseif (filter_has_var(INPUT_POST, 'edit') && (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '')) {
-	$rulenumber= filter_input(INPUT_POST, 'rulenumber');
-	if (array_key_exists($rulenumber, $View->RuleSet->rules)) {
-		$edit= array_search($View->RuleSet->rules[$rulenumber]->cat, $ruleType2Class);
-	} else {
-		// Will add a new rule of category $edit otherwise
+if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '') {
+	if (filter_has_var(INPUT_POST, 'add')) {
 		$edit= filter_input(INPUT_POST, 'category');
+		$rulenumber= filter_input(INPUT_POST, 'rulenumber');
+		$action= 'add';
+	} elseif (filter_has_var(INPUT_POST, 'edit')) {
+		$rulenumber= filter_input(INPUT_POST, 'rulenumber');
+		if (array_key_exists($rulenumber, $View->RuleSet->rules)) {
+			$edit= array_search($View->RuleSet->rules[$rulenumber]->cat, $ruleType2Class);
+		} else {
+			// Will add a new rule of category $edit otherwise
+			$edit= filter_input(INPUT_POST, 'category');
+		}
+		$action= 'edit';
 	}
-	$action= 'edit';
 }
 
 if (isset($edit)) {
@@ -137,6 +139,13 @@ if (filter_has_var(INPUT_GET, 'down')) {
 
 if (filter_has_var(INPUT_GET, 'del')) {
     $View->RuleSet->del(filter_input(INPUT_GET, 'del'));
+}
+
+if (filter_has_var(INPUT_POST, 'move')) {
+	if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '' &&
+		filter_has_var(INPUT_POST, 'moveto') && filter_input(INPUT_POST, 'moveto') !== '') {
+		$View->RuleSet->move(filter_input(INPUT_POST, 'rulenumber'), filter_input(INPUT_POST, 'moveto'));
+	}
 }
 
 if (filter_has_var(INPUT_POST, 'delete')) {
@@ -168,10 +177,12 @@ require_once($VIEW_PATH.'/header.php');
                 ?>
             </select>
             <label for="rulenumber">rule as rule number:</label>
-            <input type="text" name="rulenumber" id="rulenumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" />
+            <input type="text" name="rulenumber" id="rulenumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" placeholder="number" />
             <input type="submit" name="add" value="Add" />
             <input type="submit" name="edit" value="Edit" />
             <input type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure you want to delete the rule?')"/>
+            <input type="text" name="moveto" id="moveto" size="5" value="<?php echo filter_input(INPUT_POST, 'moveto') ?>" placeholder="move to" />
+            <input type="submit" name="move" value="Move" />
 			<input type="submit" id="delete-all" name="delete-all" value="Delete All" onclick="return confirm('Are you sure you want to delete the entire rulebase?')"/>
 			<label for="delete-all">Delete current working rulebase</label><br />
         </form>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.13 2016/08/03 12:33:27 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.14 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -90,6 +90,25 @@ class RuleSet
 		unset($this->rules[$rulenumber]);
 		// Fake slice to update the keys
 		$this->rules= array_slice($this->rules, 0);
+	}
+	
+	function move($rulenumber, $moveto)
+	{
+		if ($rulenumber < 0 || $rulenumber >= count($this->rules)) {
+			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid rule number $rulenumber", 'auto', 'ERROR');
+			return;
+		}
+		if ($moveto < 0 || $moveto >= count($this->rules) || $rulenumber == $moveto) {
+			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid destination rule number: $moveto", 'auto', 'ERROR');
+			return;
+		}
+
+		$rule= $this->rules[$rulenumber];
+		unset($this->rules[$rulenumber]);
+		// array_slice() takes care of possible off-by-one error due to unset above
+		$head= array_slice($this->rules, 0, $moveto);
+		$tail= array_slice($this->rules, $moveto);
+		$this->rules= array_merge($head, array($rule), $tail);
 	}
 	
 	function addRule($rulenumber= 0)
