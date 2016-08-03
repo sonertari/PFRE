@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.12 2016/08/02 13:33:59 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.13 2016/08/03 12:33:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -221,7 +221,7 @@ class RuleSet
 					$this->rules[]= new Timeout($str);
 					break;
 				case 'state-defaults':
-					$this->rules[]= new StateDefaults($str);
+					$this->rules[]= new State($str);
 					break;
 				case 'set':
 					$this->rules[]= new Option($str);

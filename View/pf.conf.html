@@ -6,7 +6,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<!--$pfre: pf.conf.html,v 1.7 2016/08/03 01:12:24 soner Exp $-->
+<!--$pfre: pf.conf.html,v 1.8 2016/08/03 12:33:27 soner Exp $-->
 <style type="text/css">
 	BODY {font-family: arial, helvetica, sans-serif; }
 	SPAN.bold { color: navy; font-weight: bold; }
@@ -1367,6 +1367,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
      which will evaluate the rules in the spam/banned anchor, if any, before
      finally evaluating the <span class="bold">pass</span> rule.
 
+<a name="state-filter"></a>
 <span class="bold">STATEFUL</span> <span class="bold">FILTERING</span>
      pf(4) filters packets statefully, which has several advantages.  For TCP
      connections, comparing a packet to a state involves checking its sequence
@@ -1469,7 +1470,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
 
            pass in proto tcp from any to any port www synproxy state
 
-<a name="StateDefaults"></a>
+<a name="State"></a>
    <span class="bold">Stateful</span> <span class="bold">Tracking</span> <span class="bold">Options</span>
      A number of options related to stateful tracking can be applied on a per-
      rule basis.  One of <span class="bold">keep</span> <span class="bold">state</span>, <span class="bold">modulate</span> <span class="bold">state</span>, or <span class="bold">synproxy</span> <span class="bold">state</span> must be

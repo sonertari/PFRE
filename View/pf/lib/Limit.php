@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.7 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Limit.php,v 1.8 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -135,7 +135,7 @@ class Limit extends Rule
 		$this->inputKey('table-entries', 'limit');
 
 		$this->inputKey('comment');
-		$this->inputDelEmpty(FALSE);
+		$this->inputDelEmpty();
 	}
 
 	function edit($rulenumber, $modified, $testResult, $action)

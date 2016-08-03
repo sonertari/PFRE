@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.8 2016/08/02 22:13:09 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.9 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class FilterBase extends Rule
+class FilterBase extends State
 {
 	protected $keyDirection= array(
 		'in' => array(
@@ -97,22 +97,21 @@ class FilterBase extends Rule
 			'method' => 'parseNextValue',
 			'params' => array(),
 			),
-		// @todo Support "(" state-opts ")" 
 		'no' => array(
 			'method' => 'parseNVPInc',
-			'params' => array('tcp-state'),
+			'params' => array('state-filter'),
 			),
 		'keep' => array(
 			'method' => 'parseNVPInc',
-			'params' => array('tcp-state'),
+			'params' => array('state-filter'),
 			),
 		'modulate' => array(
 			'method' => 'parseNVPInc',
-			'params' => array('tcp-state'),
+			'params' => array('state-filter'),
 			),
 		'synproxy' => array(
 			'method' => 'parseNVPInc',
-			'params' => array('tcp-state'),
+			'params' => array('state-filter'),
 			),
 		'fragment' => array(
 			'method' => 'parseBool',
@@ -238,7 +237,8 @@ class FilterBase extends Rule
 		$this->genIcmpType();
 		$this->genIcmp6Type();
 		$this->genValue('tos', 'tos ');
-		$this->genValue('tcp-state', NULL, ' state');
+		$this->genValue('state-filter', NULL, ' state');
+		$this->genState();
 		$this->genKey('fragment');
 		$this->genKey('allow-opts');
 		$this->genKey('once');
@@ -274,6 +274,19 @@ class FilterBase extends Rule
 				$this->str.= ' to';
 				$this->genItems('to');
 				$this->genItems('port', 'port');
+			}
+		}
+	}
+
+	function genState()
+	{
+		if (isset($this->rule['state-filter'])) {
+			$this->arr= array();
+			$this->genStateOpts();
+			if (count($this->arr)) {
+				$this->str.= ' ( ';
+				$this->str.= implode(', ', $this->arr);
+				$this->str.= ' )';
 			}
 		}
 	}
@@ -349,7 +362,7 @@ class FilterBase extends Rule
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
-		$this->dispValue('tcp-state', 'State');
+		$this->dispValue('state-filter', 'State');
 		$this->dispQueue();
 		$this->dispTail($rulenumber, $count);
 	}
@@ -454,7 +467,9 @@ class FilterBase extends Rule
 
 	function inputFilterOpts()
 	{
-		$this->inputKey('tcp-state');
+		$this->inputKey('state-filter');
+		$this->inputState();
+
 		$this->inputKey('flags');
 		$this->inputQueue();
 
@@ -557,7 +572,7 @@ class FilterBase extends Rule
 
 	function editFilterOpts()
 	{
-		$this->editState();
+		$this->editStateFilter();
 		$this->editText('flags', 'TCP Flags', NULL, 20, 'defaults to S/SA');
 		$this->editQueue();
 		$this->editIcmpType();
@@ -601,26 +616,28 @@ class FilterBase extends Rule
 		<?php
 	}
 
-	function editState()
+	function editStateFilter()
 	{
-		/// @todo "[ "(" state-opts ")" ]
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo _TITLE('TCP State').':' ?>
+				<?php echo _TITLE('Stateful Filtering').':' ?>
 			</td>
 			<td>
-				<select id="tcp-state" name="tcp-state">
+				<select id="state-filter" name="state-filter">
 					<option value=""></option>
-					<option value="no" <?php echo ($this->rule['tcp-state'] == 'no' ? 'selected' : ''); ?>>No State</option>
-					<option value="keep" <?php echo ($this->rule['tcp-state'] == 'keep' ? 'selected' : ''); ?>>Keep State</option>
-					<option value="modulate" <?php echo ($this->rule['tcp-state'] == 'modulate' ? 'selected' : ''); ?>>Modulate State</option>
-					<option value="synproxy" <?php echo ($this->rule['tcp-state'] == 'synproxy' ? 'selected' : ''); ?>>Synproxy</option>
+					<option value="no" <?php echo ($this->rule['state-filter'] == 'no' ? 'selected' : ''); ?>>No State</option>
+					<option value="keep" <?php echo ($this->rule['state-filter'] == 'keep' ? 'selected' : ''); ?>>Keep State</option>
+					<option value="modulate" <?php echo ($this->rule['state-filter'] == 'modulate' ? 'selected' : ''); ?>>Modulate State</option>
+					<option value="synproxy" <?php echo ($this->rule['state-filter'] == 'synproxy' ? 'selected' : ''); ?>>Synproxy</option>
 				</select>
-				<?php $this->PrintHelp('stateful') ?>
+				<?php $this->PrintHelp('state-filter') ?>
 			</td>
 		</tr>
 		<?php
+		if (isset($this->rule['state-filter'])) {
+			$this->editState();
+		}
 	}
 
 	function editIcmpType()
@@ -730,7 +747,7 @@ class FilterBase extends Rule
 			<td>
 				<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" placeholder="string" />
 				<?php $this->PrintHelp('tagged'); ?>
-				<input type="checkbox" id="not-tagged" name="not-tagged" value="not-tagged" <?php echo ($this->rule['not-tagged'] ? 'checked' : ''); ?> />
+				<input type="checkbox" id="not-tagged" name="not-tagged" value="not-tagged" <?php echo ($this->rule['not-tagged'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['tagged']) ? 'disabled' : ''); ?> />
 				<label for="not-tagged">negated</label>
 			</td>
 		</tr>
@@ -742,12 +759,12 @@ class FilterBase extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo 'Received on interface:' ?>
+				<?php echo 'Received on Interface:' ?>
 			</td>
 			<td>
 				<input type="text" id="received-on" name="received-on" value="<?php echo $this->rule['received-on']; ?>" size="10" placeholder="if or macro" />
 				<?php $this->PrintHelp('received-on'); ?>
-				<input type="checkbox" id="not-received-on" name="not-received-on" value="not-received-on" <?php echo ($this->rule['not-received-on'] ? 'checked' : ''); ?> />
+				<input type="checkbox" id="not-received-on" name="not-received-on" value="not-received-on" <?php echo ($this->rule['not-received-on'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['received-on']) ? 'disabled' : ''); ?> />
 				<label for="not-received-on">negated</label>
 			</td>
 		</tr>

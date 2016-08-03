@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.9 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: vars.php,v 1.10 2016/08/03 12:33:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -52,6 +52,8 @@ $PF_PATH= $VIEW_PATH.'/pf';
 // because we save instances of these in the session
 require_once($PF_PATH.'/lib/RuleSet.php');
 require_once($PF_PATH.'/lib/Rule.php');
+require_once($PF_PATH.'/lib/Timeout.php');
+require_once($PF_PATH.'/lib/State.php');
 require_once($PF_PATH.'/lib/FilterBase.php');
 require_once($PF_PATH.'/lib/Filter.php');
 require_once($PF_PATH.'/lib/Antispoof.php');
@@ -69,9 +71,7 @@ require_once($PF_PATH.'/lib/Table.php');
 require_once($PF_PATH.'/lib/Queue.php');
 require_once($PF_PATH.'/lib/Scrub.php');
 require_once($PF_PATH.'/lib/Option.php');
-require_once($PF_PATH.'/lib/Timeout.php');
 require_once($PF_PATH.'/lib/Limit.php');
-require_once($PF_PATH.'/lib/StateDefaults.php');
 require_once($PF_PATH.'/lib/LoadAnchor.php');
 require_once($PF_PATH.'/lib/Include.php');
 require_once($PF_PATH.'/lib/Comment.php');

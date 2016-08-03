@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.12 2016/08/03 04:26:12 soner Exp $ */
+/* $pfre: Option.php,v 1.13 2016/08/03 05:53:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -211,7 +211,7 @@ class Option extends Rule
 		$this->inputBool('no-df');
 
 		$this->inputKey('comment');
-		$this->inputDelEmpty(FALSE);
+		$this->inputDelEmpty();
 	}
 
 	function edit($rulenumber, $modified, $testResult, $action)

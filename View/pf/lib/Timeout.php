@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.8 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Timeout.php,v 1.9 2016/08/03 12:33:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -82,31 +82,45 @@ class Timeout extends Rule
 
 	function split()
 	{
-		$this->words= preg_split('/[\s,\t\.]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
+		// @attention Cannot split at dots, otherwise IP addresses are split too, so split as usual
+		//$this->words= preg_split('/[\s,\t\.]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
+		parent::split();
+
+		// Split timeout keys
+		// @todo Find a better way
+		// @attention Do not use foreach here, we modify the list we loop on
+		for ($index= 0; $index < count($this->words); $index++) {
+			$word= $this->words[$index];
+			if (preg_match('/(src|tcp|udp|icmp|other|adaptive)\.(.+)/', $word, $match)) {
+				$head= array_slice($this->words, 0, $index);
+				$tail= array_slice($this->words, $index + 1);
+				$this->words= array_merge($head, array($match[1], $match[2]), $tail);
+			}
+		}
 	}
 
 	function parseAll()
 	{
-		$this->rule['proto']['all'][$this->words[$this->index]]= $this->words[++$this->index];
+		$this->rule['timeout']['all'][$this->words[$this->index]]= $this->words[++$this->index];
 	}
 
 	function parseSrcTrack()
 	{
 		if ($this->words[$this->index + 1] == 'track') {
-			$this->rule['proto']['all']['src.track']= $this->words[$this->index + 2];
+			$this->rule['timeout']['all']['src.track']= $this->words[$this->index + 2];
 			$this->index+= 2;
 		}
 	}
 
 	function parseTimeout()
 	{
-		$this->rule['proto'][$this->words[$this->index]][$this->words[$this->index + 1]]= $this->words[$this->index + 2];
+		$this->rule['timeout'][$this->words[$this->index]][$this->words[$this->index + 1]]= $this->words[$this->index + 2];
 		$this->index+= 2;
 	}
 
 	function generate()
 	{
-		$this->str= 'set timeout ';
+		$this->str= '';
 		$this->genTimeout();
 
 		$this->genComment();
@@ -116,12 +130,13 @@ class Timeout extends Rule
 	
 	function genTimeout()
 	{
-		if (count($this->rule['proto'])) {
+		if (count($this->rule['timeout'])) {
 			$this->arr= array();
 
 			$this->genTimeoutOpts();
 
 			if (count($this->arr)) {
+				$this->str= 'set timeout ';
 				$this->str.= count($this->arr) > 1 ? '{ ' : '';
 				$this->str.= implode(', ', $this->arr);
 				$this->str.= count($this->arr) > 1 ? ' }' : '';
@@ -131,25 +146,28 @@ class Timeout extends Rule
 	
 	function genTimeoutOpts()
 	{
-		/// @attention This reset is critical if a page calls this function twice, and it does so in this case
-		reset($this->rule['proto']);
+		// Check if timeout is set again, this method is used elsewhere too
+		if (count($this->rule['timeout'])) {
+			/// @attention This reset is critical if a page calls this function twice, and it does so in this case
+			reset($this->rule['timeout']);
 
-		if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
-			list($proto, $kvps)= each($this->rule['proto']);
-			$proto= $proto == 'all' ? '' : "$proto.";
+			if (count($this->rule['timeout']) == 1 && count(array_values($this->rule['timeout'][key($this->rule['timeout'])])) == 1) {
+				list($timeout, $kvps)= each($this->rule['timeout']);
+				$timeout= $timeout == 'all' ? '' : "$timeout.";
 
-			list($key, $val)= each($kvps);
-			$this->arr[]= "$proto$key $val";
-		} else {
-			while (list($proto, $kvps)= each($this->rule['proto'])) {
-				$proto= $proto == 'all' ? '' : "$proto.";
+				list($key, $val)= each($kvps);
+				$this->arr[]= "$timeout$key $val";
+			} else {
+				while (list($timeout, $kvps)= each($this->rule['timeout'])) {
+					$timeout= $timeout == 'all' ? '' : "$timeout.";
 
-				if (count($kvps) == 1) {
-					list($key, $val)= each($kvps);
-					$this->arr[]= "$proto$key $val";
-				} else {
-					while (list($key, $val)= each($kvps)) {
-						$this->arr[]= "$proto$key $val";
+					if (count($kvps) == 1) {
+						list($key, $val)= each($kvps);
+						$this->arr[]= "$timeout$key $val";
+					} else {
+						while (list($key, $val)= each($kvps)) {
+							$this->arr[]= "$timeout$key $val";
+						}
 					}
 				}
 			}
@@ -178,12 +196,12 @@ class Timeout extends Rule
 
 	function dispTimeoutOpts()
 	{
-		if (count($this->rule['proto'])) {
-			reset($this->rule['proto']);
-			while (list($proto, $kvps)= each($this->rule['proto'])) {	
-				$proto= $proto == 'all' ? '' : "$proto.";
+		if (count($this->rule['timeout'])) {
+			reset($this->rule['timeout']);
+			while (list($timeout, $kvps)= each($this->rule['timeout'])) {	
+				$timeout= $timeout == 'all' ? '' : "$timeout.";
 				while (list($key, $val)= each($kvps)) {
-					$this->arr[]= "$proto$key: $val";
+					$this->arr[]= "$timeout$key: $val";
 				}
 			}
 		}
@@ -197,7 +215,7 @@ class Timeout extends Rule
 		$this->inputTimeout();
 
 		$this->inputKey('comment');
-		$this->inputDelEmpty(FALSE);
+		$this->inputDelEmpty();
 	}
 
 	function inputTimeout()
@@ -229,7 +247,7 @@ class Timeout extends Rule
 	function inputTimeoutOpt($key, $var, $parent)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$this->rule['proto'][$parent][$key]= trim(filter_input(INPUT_POST, $var), '" ');
+			$this->rule['timeout'][$parent][$key]= trim(filter_input(INPUT_POST, $var), '" ');
 		}
 	}
 
@@ -267,7 +285,7 @@ class Timeout extends Rule
 				<?php echo _TITLE('Fragment').':' ?>
 			</td>
 			<td>
-				<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['proto']['all']['frag']; ?>" placeholder="number" />
+				<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['timeout']['all']['frag']; ?>" placeholder="number" />
 				<?php $this->PrintHelp('frag') ?>
 			</td>
 		</tr>
@@ -282,7 +300,7 @@ class Timeout extends Rule
 				<?php echo _TITLE('Interval').':' ?>
 			</td>
 			<td>
-				<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['proto']['all']['interval']; ?>" placeholder="number" />
+				<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['timeout']['all']['interval']; ?>" placeholder="number" />
 				<?php $this->PrintHelp('interval') ?>
 			</td>
 		</tr>
@@ -297,7 +315,7 @@ class Timeout extends Rule
 				<?php echo _TITLE('Source track timeout').':' ?>
 			</td>
 			<td>
-				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['proto']['all']['src.track']; ?>" placeholder="number" />
+				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['timeout']['all']['src.track']; ?>" placeholder="number" />
 				<?php $this->PrintHelp('src.track') ?>
 			</td>
 		</tr>
@@ -405,12 +423,12 @@ class Timeout extends Rule
 		<?php
 	}
 
-	function editTimeoutOpt($proto, $key)
+	function editTimeoutOpt($timeout, $key)
 	{
 		?>
 		<tr>
 			<td class="ifs">
-				<input type="text" size="10" id="<?php echo $proto ?>_<?php echo $key ?>" name="<?php echo $proto ?>_<?php echo $key ?>" value="<?php echo $this->rule['proto'][$proto][$key]; ?>" placeholder="number" />
+				<input type="text" size="10" id="<?php echo $timeout ?>_<?php echo $key ?>" name="<?php echo $timeout ?>_<?php echo $key ?>" value="<?php echo $this->rule['timeout'][$timeout][$key]; ?>" placeholder="number" />
 			</td>
 			<td class="optitle"><?php echo $key ?></td>
 		</tr>

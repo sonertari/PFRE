@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.13 2016/08/03 05:53:05 soner Exp $ */
+/* $pfre: State.php,v 1.1 2016/08/03 12:33:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,59 +33,62 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class StateDefaults extends Timeout
+class State extends Timeout
 {
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'max' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'max-src-states' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'max-src-nodes' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'max-src-conn' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'max-src-conn-rate' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'sloppy' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'no-sync' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'pflow' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'if-bound' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'floating' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'overload' => array(
-				'method' => 'parseOverload',
-				'params' => array(),
-				),
-			'source-track' => array(
-				'method' => 'parseSourceTrack',
-				'params' => array(),
-				),
+		$this->keywords = array_merge(
+			$this->keywords,
+			array(
+				'max' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'max-src-states' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'max-src-nodes' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'max-src-conn' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'max-src-conn-rate' => array(
+					'method' => 'parseNextValue',
+					'params' => array(),
+					),
+				'sloppy' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				'no-sync' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				'pflow' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				'if-bound' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				'floating' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				'overload' => array(
+					'method' => 'parseOverload',
+					'params' => array(),
+					),
+				'source-track' => array(
+					'method' => 'parseSourceTrack',
+					'params' => array(),
+					),
+				)
 			);
 
 		parent::__construct($str);
@@ -120,19 +123,26 @@ class StateDefaults extends Timeout
 	
 	function generate()
 	{
-		$this->str= 'set state-defaults ';
-
-		$this->genStateDefaults();
+		$this->str= '';
+		$this->genState();
 		
 		$this->genComment();
 		$this->str.= "\n";
 		return $this->str;
 	}
 
-	function genStateDefaults()
+	function genState()
 	{
 		$this->arr= array();
+		$this->genStateOpts();
+		if (count($this->arr)) {
+			$this->str= 'set state-defaults ';
+			$this->str.= implode(', ', $this->arr);
+		}
+	}
 
+	function genStateOpts()
+	{
 		$this->genText('max');
 		$this->genText('max-src-states');
 		$this->genText('max-src-nodes');
@@ -150,10 +160,6 @@ class StateDefaults extends Timeout
 		$this->genSourceTrack();
 
 		$this->genTimeoutOpts();
-
-		if (count($this->arr)) {
-			$this->str.= implode(', ', $this->arr);
-		}
 	}
 
 	function genText($key)
@@ -198,11 +204,11 @@ class StateDefaults extends Timeout
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);
-		$this->dispStateDefaults();
+		$this->dispState();
 		$this->dispTail($rulenumber, $count);
 	}
 	
-	function dispStateDefaults()
+	function dispState()
 	{
 		?>
 		<td title="State Defaults" colspan="12">
@@ -249,6 +255,14 @@ class StateDefaults extends Timeout
 	
 	function input()
 	{
+		$this->inputState();
+
+		$this->inputKey('comment');
+		$this->inputDelEmpty();
+	}
+
+	function inputState()
+	{
 		$this->inputKey('max');
 		$this->inputKey('max-src-states');
 		$this->inputKey('max-src-nodes');
@@ -272,9 +286,6 @@ class StateDefaults extends Timeout
 		$this->inputKey('source-track-option');
 
 		$this->inputTimeout();
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty(FALSE);
 	}
 
 	function edit($rulenumber, $modified, $testResult, $action)
@@ -284,6 +295,14 @@ class StateDefaults extends Timeout
 
 		$this->editHead($modified);
 
+		$this->editState();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editState()
+	{
 		$this->editText('max', 'Max states', 'max', 10, 'number');
 		$this->editText('max-src-states', 'Max single host states', 'max-src-states', 10, 'number');
 		$this->editText('max-src-nodes', 'Max addresses', 'max-src-nodes', 10, 'number');
@@ -296,9 +315,6 @@ class StateDefaults extends Timeout
 		$this->editOverload();
 		$this->editSourceTrack();
 		$this->editTimeout();
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
 	}
 
 	function editIfBinding()

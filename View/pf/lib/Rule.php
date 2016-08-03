@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.17 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Rule.php,v 1.18 2016/08/03 04:26:12 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -587,12 +587,14 @@ class Rule
 			if ($value == '') {
 				unset($array[$key]);
 			} elseif (is_array($value)) {
-				$array[$key]= $this->inputDelEmptyRecursive($value, $flatten);
+				/// @todo Is there a better way? Passing $flatten=FALSE down from Timeout and Limit objects does not work, Filter objects need TRUE
+				/// @attention Do not flatten timeout and limit options
+				$array[$key]= $this->inputDelEmptyRecursive($value, in_array($key, array('timeout', 'limit')) ? FALSE : $flatten);
 
 				if (count($array[$key]) == 0) {
 					// Array is empty, delete it
 					unset($array[$key]);
-				} elseif (count($array[$key]) == 1 && $flatten) {
+				} elseif (count($array[$key]) == 1 && $flatten && !in_array($key, array('timeout', 'limit'))) {
 					// Array has only one element, convert from array to simple NVP
 					list($k, $v)= each($array[$key]);
 					unset($array[$key]);
