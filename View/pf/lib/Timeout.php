@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.7 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Timeout.php,v 1.8 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,41 +35,46 @@
 
 class Timeout extends Rule
 {
+	protected $arr= array();
+
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'frag' => array(
-				'method' => 'parseAll',
-				'params' => array(),
-				),
-			'interval' => array(
-				'method' => 'parseAll',
-				'params' => array(),
-				),
-			'src' => array(
-				'method' => 'parseSrcTrack',
-				'params' => array(),
-				),
-			'tcp' => array(
-				'method' => 'parseTimeout',
-				'params' => array(),
-				),
-			'udp' => array(
-				'method' => 'parseTimeout',
-				'params' => array(),
-				),
-			'icmp' => array(
-				'method' => 'parseTimeout',
-				'params' => array(),
-				),
-			'other' => array(
-				'method' => 'parseTimeout',
-				'params' => array(),
-				),
-			'adaptive' => array(
-				'method' => 'parseTimeout',
-				'params' => array(),
-				),
+		$this->keywords = array_merge(
+			$this->keywords,
+			array(
+				'frag' => array(
+					'method' => 'parseAll',
+					'params' => array(),
+					),
+				'interval' => array(
+					'method' => 'parseAll',
+					'params' => array(),
+					),
+				'src' => array(
+					'method' => 'parseSrcTrack',
+					'params' => array(),
+					),
+				'tcp' => array(
+					'method' => 'parseTimeout',
+					'params' => array(),
+					),
+				'udp' => array(
+					'method' => 'parseTimeout',
+					'params' => array(),
+					),
+				'icmp' => array(
+					'method' => 'parseTimeout',
+					'params' => array(),
+					),
+				'other' => array(
+					'method' => 'parseTimeout',
+					'params' => array(),
+					),
+				'adaptive' => array(
+					'method' => 'parseTimeout',
+					'params' => array(),
+					),
+				)
 			);
 
 		parent::__construct($str);
@@ -101,40 +106,54 @@ class Timeout extends Rule
 
 	function generate()
 	{
-		$this->str= '';
-
-		if (count($this->rule['proto'])) {
-			/// @attention This reset is critical if a page calls this function twice, and it does so in this case
-			reset($this->rule['proto']);
-
-			if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
-				list($proto, $kvps)= each($this->rule['proto']);
-				$proto= $proto == 'all' ? '' : "$proto.";
-
-				list($key, $val)= each($kvps);
-				$this->str= "set timeout $proto$key $val";
-			} else {
-				$this->str= 'set timeout {';
-				while (list($proto, $kvps)= each($this->rule['proto'])) {
-					$proto= $proto == 'all' ? '' : "$proto.";
-
-					if (count($kvps) == 1) {
-						list($key, $val)= each($kvps);
-						$this->str.= " $proto$key $val,";
-					} else {
-						while (list($key, $val)= each($kvps)) {
-							$this->str.= " $proto$key $val,";
-						}
-					}
-				}
-				$this->str= rtrim($this->str, ',');
-				$this->str.= ' }';
-			}
-		}
+		$this->str= 'set timeout ';
+		$this->genTimeout();
 
 		$this->genComment();
 		$this->str.= "\n";
 		return $this->str;
+	}
+	
+	function genTimeout()
+	{
+		if (count($this->rule['proto'])) {
+			$this->arr= array();
+
+			$this->genTimeoutOpts();
+
+			if (count($this->arr)) {
+				$this->str.= count($this->arr) > 1 ? '{ ' : '';
+				$this->str.= implode(', ', $this->arr);
+				$this->str.= count($this->arr) > 1 ? ' }' : '';
+			}
+		}
+	}
+	
+	function genTimeoutOpts()
+	{
+		/// @attention This reset is critical if a page calls this function twice, and it does so in this case
+		reset($this->rule['proto']);
+
+		if (count($this->rule['proto']) == 1 && count(array_values($this->rule['proto'][key($this->rule['proto'])])) == 1) {
+			list($proto, $kvps)= each($this->rule['proto']);
+			$proto= $proto == 'all' ? '' : "$proto.";
+
+			list($key, $val)= each($kvps);
+			$this->arr[]= "$proto$key $val";
+		} else {
+			while (list($proto, $kvps)= each($this->rule['proto'])) {
+				$proto= $proto == 'all' ? '' : "$proto.";
+
+				if (count($kvps) == 1) {
+					list($key, $val)= each($kvps);
+					$this->arr[]= "$proto$key $val";
+				} else {
+					while (list($key, $val)= each($kvps)) {
+						$this->arr[]= "$proto$key $val";
+					}
+				}
+			}
+		}
 	}
 	
 	function display($rulenumber, $count)
@@ -149,52 +168,65 @@ class Timeout extends Rule
 		?>
 		<td title="Timeout" colspan="12">
 			<?php
-			if (count($this->rule['proto'])) {
-				reset($this->rule['proto']);
-				while (list($proto, $kvps)= each($this->rule['proto'])) {	
-					$proto= $proto == 'all' ? '' : "$proto.";
-					while (list($key, $val)= each($kvps)) {
-						echo "$proto$key: $val<br>";
-					}
-				}
-			}
+			$this->arr= array();
+			$this->dispTimeoutOpts();
+			echo implode('<br>', $this->arr);
 			?>
 		</td>
 		<?php
 	}
 
+	function dispTimeoutOpts()
+	{
+		if (count($this->rule['proto'])) {
+			reset($this->rule['proto']);
+			while (list($proto, $kvps)= each($this->rule['proto'])) {	
+				$proto= $proto == 'all' ? '' : "$proto.";
+				while (list($key, $val)= each($kvps)) {
+					$this->arr[]= "$proto$key: $val";
+				}
+			}
+		}
+	}
+
 	function input()
 	{
-		$this->inputTimeout('frag', 'frag', 'all');
-		$this->inputTimeout('interval', 'interval', 'all');
-		$this->inputTimeout('src.track', 'src_track', 'all');
+		$this->inputTimeoutOpt('frag', 'frag', 'all');
+		$this->inputTimeoutOpt('interval', 'interval', 'all');
 
-		$this->inputTimeout('first', 'tcp_first', 'tcp');
-		$this->inputTimeout('opening', 'tcp_opening', 'tcp');
-		$this->inputTimeout('established', 'tcp_established', 'tcp');
-		$this->inputTimeout('closing', 'tcp_closing', 'tcp');
-		$this->inputTimeout('finwait', 'tcp_finwait', 'tcp');
-		$this->inputTimeout('closed', 'tcp_closed', 'tcp');
-
-		$this->inputTimeout('first', 'udp_first', 'udp');
-		$this->inputTimeout('single', 'udp_single', 'udp');
-		$this->inputTimeout('multiple', 'udp_multiple', 'udp');
-
-		$this->inputTimeout('first', 'icmp_first', 'icmp');
-		$this->inputTimeout('error', 'icmp_error', 'icmp');
-
-		$this->inputTimeout('first', 'other_first', 'other');
-		$this->inputTimeout('single', 'other_single', 'other');
-		$this->inputTimeout('multiple', 'other_multiple', 'other');
-
-		$this->inputTimeout('start', 'adaptive_start', 'adaptive');
-		$this->inputTimeout('end', 'adaptive_end', 'adaptive');
+		$this->inputTimeout();
 
 		$this->inputKey('comment');
 		$this->inputDelEmpty(FALSE);
 	}
 
-	function inputTimeout($key, $var, $parent)
+	function inputTimeout()
+	{
+		$this->inputTimeoutOpt('src.track', 'src_track', 'all');
+
+		$this->inputTimeoutOpt('first', 'tcp_first', 'tcp');
+		$this->inputTimeoutOpt('opening', 'tcp_opening', 'tcp');
+		$this->inputTimeoutOpt('established', 'tcp_established', 'tcp');
+		$this->inputTimeoutOpt('closing', 'tcp_closing', 'tcp');
+		$this->inputTimeoutOpt('finwait', 'tcp_finwait', 'tcp');
+		$this->inputTimeoutOpt('closed', 'tcp_closed', 'tcp');
+
+		$this->inputTimeoutOpt('first', 'udp_first', 'udp');
+		$this->inputTimeoutOpt('single', 'udp_single', 'udp');
+		$this->inputTimeoutOpt('multiple', 'udp_multiple', 'udp');
+
+		$this->inputTimeoutOpt('first', 'icmp_first', 'icmp');
+		$this->inputTimeoutOpt('error', 'icmp_error', 'icmp');
+
+		$this->inputTimeoutOpt('first', 'other_first', 'other');
+		$this->inputTimeoutOpt('single', 'other_single', 'other');
+		$this->inputTimeoutOpt('multiple', 'other_multiple', 'other');
+
+		$this->inputTimeoutOpt('start', 'adaptive_start', 'adaptive');
+		$this->inputTimeoutOpt('end', 'adaptive_end', 'adaptive');
+	}
+
+	function inputTimeoutOpt($key, $var, $parent)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
 			$this->rule['proto'][$parent][$key]= trim(filter_input(INPUT_POST, $var), '" ');
@@ -210,15 +242,21 @@ class Timeout extends Rule
 
 		$this->editFragment();
 		$this->editInterval();
+
+		$this->editTimeout();
+
+		$this->editComment();
+		$this->editTail($modified, $testResult, $action);
+	}
+
+	function editTimeout()
+	{
 		$this->editSrcTrack();
 		$this->editTcpTimeouts();
 		$this->editUdpTimeouts();
 		$this->editIcmpTimeouts();
 		$this->editOtherTimeouts();
 		$this->editAdaptiveTimeouts();
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
 	}
 
 	function editFragment()
@@ -256,7 +294,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo _TITLE('Src track').':' ?>
+				<?php echo _TITLE('Source track timeout').':' ?>
 			</td>
 			<td>
 				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['proto']['all']['src.track']; ?>" placeholder="number" />
@@ -271,17 +309,17 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('tcp_timeout') ?><?php echo _TITLE('TCP').':' ?>
+				<?php $this->PrintHelp('tcp_timeout') ?><?php echo _TITLE('TCP timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
 					<?php
-					$this->editTimeout('tcp', 'first');
-					$this->editTimeout('tcp', 'opening');
-					$this->editTimeout('tcp', 'established');
-					$this->editTimeout('tcp', 'closing');
-					$this->editTimeout('tcp', 'finwait');
-					$this->editTimeout('tcp', 'closed');
+					$this->editTimeoutOpt('tcp', 'first');
+					$this->editTimeoutOpt('tcp', 'opening');
+					$this->editTimeoutOpt('tcp', 'established');
+					$this->editTimeoutOpt('tcp', 'closing');
+					$this->editTimeoutOpt('tcp', 'finwait');
+					$this->editTimeoutOpt('tcp', 'closed');
 					?>
 				</table>
 			</td>
@@ -294,14 +332,14 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('udp_timeout') ?><?php echo _TITLE('UDP').':' ?>
+				<?php $this->PrintHelp('udp_timeout') ?><?php echo _TITLE('UDP timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
 					<?php
-					$this->editTimeout('udp', 'first');
-					$this->editTimeout('udp', 'single');
-					$this->editTimeout('udp', 'multiple');
+					$this->editTimeoutOpt('udp', 'first');
+					$this->editTimeoutOpt('udp', 'single');
+					$this->editTimeoutOpt('udp', 'multiple');
 					?>
 				</table>
 			</td>
@@ -314,13 +352,13 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('icmp_timeout') ?><?php echo _TITLE('ICMP').':' ?>
+				<?php $this->PrintHelp('icmp_timeout') ?><?php echo _TITLE('ICMP timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
 					<?php
-					$this->editTimeout('icmp', 'first');
-					$this->editTimeout('icmp', 'error');
+					$this->editTimeoutOpt('icmp', 'first');
+					$this->editTimeoutOpt('icmp', 'error');
 					?>
 				</table>
 			</td>
@@ -333,14 +371,14 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('other_timeout') ?><?php echo _TITLE('Other').':' ?>
+				<?php $this->PrintHelp('other_timeout') ?><?php echo _TITLE('Other timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
 					<?php
-					$this->editTimeout('other', 'first');
-					$this->editTimeout('other', 'single');
-					$this->editTimeout('other', 'multiple');
+					$this->editTimeoutOpt('other', 'first');
+					$this->editTimeoutOpt('other', 'single');
+					$this->editTimeoutOpt('other', 'multiple');
 					?>
 				</table>
 			</td>
@@ -353,13 +391,13 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive').':' ?>
+				<?php $this->PrintHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
 					<?php
-					$this->editTimeout('adaptive', 'start');
-					$this->editTimeout('adaptive', 'end');
+					$this->editTimeoutOpt('adaptive', 'start');
+					$this->editTimeoutOpt('adaptive', 'end');
 					?>
 				</table>
 			</td>
@@ -367,7 +405,7 @@ class Timeout extends Rule
 		<?php
 	}
 
-	function editTimeout($proto, $key)
+	function editTimeoutOpt($proto, $key)
 	{
 		?>
 		<tr>

@@ -6,7 +6,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<!--$pfre: pf.conf.html,v 1.6 2016/08/02 09:54:29 soner Exp $-->
+<!--$pfre: pf.conf.html,v 1.7 2016/08/03 01:12:24 soner Exp $-->
 <style type="text/css">
 	BODY {font-family: arial, helvetica, sans-serif; }
 	SPAN.bold { color: navy; font-weight: bold; }
@@ -1469,26 +1469,31 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
 
            pass in proto tcp from any to any port www synproxy state
 
-<a name="stateful"></a>
+<a name="StateDefaults"></a>
    <span class="bold">Stateful</span> <span class="bold">Tracking</span> <span class="bold">Options</span>
      A number of options related to stateful tracking can be applied on a per-
      rule basis.  One of <span class="bold">keep</span> <span class="bold">state</span>, <span class="bold">modulate</span> <span class="bold">state</span>, or <span class="bold">synproxy</span> <span class="bold">state</span> must be
      specified explicitly to apply these options to a rule.
 
+<a name="if-binding"></a>
      <span class="bold">floating</span>
            States can match packets on any interfaces (the opposite of
            <span class="bold">if-bound</span>).  This is the default.
      <span class="bold">if-bound</span>
            States are bound to an interface (the opposite of <span class="bold">floating</span>).
+<a name="max"></a>
      <span class="bold">max</span> <span class="underline">number</span>
            Limits the number of concurrent states the rule may create.  When
            this limit is reached, further packets that would create state are
            dropped until existing states time out.
+<a name="no-sync"></a>
      <span class="bold">no-sync</span>
            Prevent state changes for states created by this rule from
            appearing on the pfsync(4) interface.
+<a name="pflow"></a>
      <span class="bold">pflow</span>
            States created by this rule are exported on the pflow(4) interface.
+<a name="sloppy"></a>
      <span class="bold">sloppy</span>
            Uses a sloppy TCP connection tracker that does not check sequence
            numbers at all, which makes insertion and ICMP teardown attacks way
@@ -1507,6 +1512,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
                  (max 100, source-track rule, max-src-nodes 75, \
                  max-src-states 3, tcp.established 60, tcp.closing 5)
 
+<a name="source-track"></a>
      When the <span class="bold">source-track</span> keyword is specified, the number of states per
      source IP is tracked.
 
@@ -1523,9 +1529,11 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
 
      The following limits can be set:
 
+<a name="max-src-nodes"></a>
      <span class="bold">max-src-nodes</span> <span class="underline">number</span>
            Limits the maximum number of source addresses which can
            simultaneously have state table entries.
+<a name="max-src-states"></a>
      <span class="bold">max-src-states</span> <span class="underline">number</span>
            Limits the maximum number of simultaneous state entries that a
            single source address can create with this rule.
@@ -1534,9 +1542,11 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
      (connections which have completed the TCP 3-way handshake) can also be
      enforced per source IP.
 
+<a name="max-src-conn"></a>
      <span class="bold">max-src-conn</span> <span class="underline">number</span>
            Limits the maximum number of simultaneous TCP connections which
            have completed the 3-way handshake that a single host can make.
+<a name="max-src-conn-rate"></a>
      <span class="bold">max-src-conn-rate</span> <span class="underline">number</span>/<span class="underline">seconds</span>
            Limit the rate of new connections over a time interval.  The
            connection rate is an approximation calculated as a moving average.
@@ -1544,6 +1554,7 @@ PF.CONF(5)                    File Formats Manual                   PF.CONF(5)
      When one of these limits is reached, further packets that would create
      state are dropped until existing states time out.
 
+<a name="overload"></a>
      Because the 3-way handshake ensures that the source address is not being
      spoofed, more aggressive action can be taken based on these limits.  With
      the <span class="bold">overload</span> &lt;<span class="underline">table</span>&gt; state option, source IP addresses which hit either
