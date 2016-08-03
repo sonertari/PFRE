@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.14 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.15 2016/08/03 19:02:48 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -412,6 +412,5 @@ class RuleSet
 		}
 		return $queues;
 	}
-
 }
 ?>

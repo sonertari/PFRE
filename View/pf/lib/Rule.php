@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.18 2016/08/03 04:26:12 soner Exp $ */
+/* $pfre: Rule.php,v 1.19 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -665,7 +665,7 @@ class Rule
 	{
 		?>
 		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp(ltrim($this->cat, '_')); ?></h2>
-		<h4><?php echo htmlentities($this->generate()); ?></h4>
+		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", str_replace("\n", '<br>', htmlentities($this->generate()))); ?></h4>
 		<form id="theform" name="theform" action="<?php echo $this->href . $this->rulenumber; ?>" method="post">
 			<table id="nvp">
 			<?php
