@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.2 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: NatBase.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -218,7 +218,7 @@ class NatBase extends Filter
 				<br>
 				<input type="checkbox" id="sticky-address" name="sticky-address" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? '' : 'disabled'); ?> value="sticky-address" <?php echo ($this->rule['sticky-address'] ? 'checked' : ''); ?> />
 				<label for="sticky-address">sticky-address</label>
-				<?php $this->PrintHelp('rdr-method') ?>
+				<?php $this->editHelp('rdr-method') ?>
 			</td>
 		</tr>
 		<?php

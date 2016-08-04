@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.10 2016/08/02 13:30:24 soner Exp $ */
+/* $pfre: Filter.php,v 1.11 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -150,7 +150,7 @@ class Filter extends FilterBase
 		<td title="Interface">
 			<?php
 			if (isset($this->rule['interface'])) {
-				$this->PrintValue($this->rule['interface']);
+				$this->printValue($this->rule['interface']);
 			} elseif (isset($this->rule['rdomain'])) {
 				echo 'rdomain: ' . $this->rule['rdomain'];
 			}
@@ -227,7 +227,7 @@ class Filter extends FilterBase
 					<option label="block" <?php echo $this->rule['action'] == 'block' ? 'selected' : ''; ?>>block</option>
 				</select>
 				<?php
-				$this->PrintHelp($this->rule['action']);
+				$this->editHelp($this->rule['action']);
 				?>
 			</td>
 		</tr>
@@ -253,7 +253,7 @@ class Filter extends FilterBase
 					<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
 					<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
 				</select>
-				<?php $this->PrintHelp('block') ?>
+				<?php $this->editHelp('block') ?>
 			</td>
 		</tr>
 		<?php
@@ -268,13 +268,13 @@ class Filter extends FilterBase
 			</td>
 			<td>
 				<?php
-				$this->PrintDeleteLinks($this->rule['interface'], 'dropinterface');
-				$this->PrintAddControls('addinterface', NULL, 'if or macro', 10, isset($this->rule['rdomain']));
-				$this->PrintHelp('interface');
+				$this->editDeleteValueLinks($this->rule['interface'], 'dropinterface');
+				$this->editAddValueBox('addinterface', NULL, 'if or macro', 10, isset($this->rule['rdomain']));
+				$this->editHelp('interface');
 				?>
 				<input type="text" name="rdomain" id="rdomain" value="<?php echo $this->rule['rdomain']; ?>" size="10" placeholder="number" <?php echo isset($this->rule['interface']) ? 'disabled' : '' ?> />
 				<label for="rdomain">routing domain</label>
-				<?php $this->PrintHelp('rdomain') ?>
+				<?php $this->editHelp('rdomain') ?>
 			</td>
 		</tr>
 		<?php

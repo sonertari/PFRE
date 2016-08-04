@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.10 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.11 2016/08/04 01:32:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -402,16 +402,16 @@ class FilterBase extends State
 		} else {
 			?>
 			<td title="Source">
-				<?php $this->PrintFromTo($this->rule['from']); ?>
+				<?php $this->printHostPort($this->rule['from']); ?>
 			</td>
 			<td title="Source Port">
-				<?php $this->PrintFromTo($this->rule['fromport']); ?>
+				<?php $this->printHostPort($this->rule['fromport']); ?>
 			</td>
 			<td title="Destination">
-				<?php $this->PrintFromTo($this->rule['to']); ?>
+				<?php $this->printHostPort($this->rule['to']); ?>
 			</td>
 			<td title="Destination Port">
-				<?php $this->PrintFromTo($this->rule['port']); ?>
+				<?php $this->printHostPort($this->rule['port']); ?>
 			</td>
 			<?php
 		}
@@ -610,7 +610,7 @@ class FilterBase extends State
 					<option value="in" label="in" <?php echo ($this->rule['direction'] == 'in' ? 'selected' : ''); ?>>in</option>
 					<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
 				</select>
-				<?php $this->PrintHelp('direction') ?>
+				<?php $this->editHelp('direction') ?>
 			</td>
 		</tr>
 		<?php
@@ -631,7 +631,7 @@ class FilterBase extends State
 					<option value="modulate" <?php echo ($this->rule['state-filter'] == 'modulate' ? 'selected' : ''); ?>>Modulate State</option>
 					<option value="synproxy" <?php echo ($this->rule['state-filter'] == 'synproxy' ? 'selected' : ''); ?>>Synproxy</option>
 				</select>
-				<?php $this->PrintHelp('state-filter') ?>
+				<?php $this->editHelp('state-filter') ?>
 			</td>
 		</tr>
 		<?php
@@ -731,7 +731,7 @@ class FilterBase extends State
 				?>
 				</select>	
 				<?php echo _TITLE('secondary') ?>
-				<?php $this->PrintHelp('filter-queue') ?>
+				<?php $this->editHelp('filter-queue') ?>
 			</td>
 		</tr>
 		<?php
@@ -746,7 +746,7 @@ class FilterBase extends State
 			</td>
 			<td>
 				<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" placeholder="string" />
-				<?php $this->PrintHelp('tagged'); ?>
+				<?php $this->editHelp('tagged'); ?>
 				<input type="checkbox" id="not-tagged" name="not-tagged" value="not-tagged" <?php echo ($this->rule['not-tagged'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['tagged']) ? 'disabled' : ''); ?> />
 				<label for="not-tagged">negated</label>
 			</td>
@@ -763,7 +763,7 @@ class FilterBase extends State
 			</td>
 			<td>
 				<input type="text" id="received-on" name="received-on" value="<?php echo $this->rule['received-on']; ?>" size="10" placeholder="if or macro" />
-				<?php $this->PrintHelp('received-on'); ?>
+				<?php $this->editHelp('received-on'); ?>
 				<input type="checkbox" id="not-received-on" name="not-received-on" value="not-received-on" <?php echo ($this->rule['not-received-on'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['received-on']) ? 'disabled' : ''); ?> />
 				<label for="not-received-on">negated</label>
 			</td>

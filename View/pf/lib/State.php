@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.1 2016/08/03 12:33:27 soner Exp $ */
+/* $pfre: State.php,v 1.1 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -329,7 +329,7 @@ class State extends Timeout
 				<label for="if-bound">if-bound</label>
 				<input type="checkbox" id="floating" name="floating" value="floating" <?php echo ($this->rule['floating'] ? 'checked' : ''); ?> <?php echo (isset($this->rule['if-bound']) ? 'disabled' : ''); ?> />
 				<label for="floating">floating</label>
-				<?php $this->PrintHelp('if-binding') ?>
+				<?php $this->editHelp('if-binding') ?>
 			</td>
 		</tr>
 		<?php
@@ -348,7 +348,7 @@ class State extends Timeout
 				<label for="flush">flush</label>
 				<input type="checkbox" id="global" name="global" value="global" <?php echo ($this->rule['global'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['flush']) ? 'disabled' : ''); ?> />
 				<label for="global">global</label>
-				<?php $this->PrintHelp('overload') ?>
+				<?php $this->editHelp('overload') ?>
 			</td>
 		</tr>
 		<?php
@@ -368,7 +368,7 @@ class State extends Timeout
 					<option value="rule" <?php echo ($this->rule['source-track-option'] == 'rule' ? 'selected' : ''); ?>>rule</option>
 					<option value="global" <?php echo ($this->rule['source-track-option'] == 'global' ? 'selected' : ''); ?>>global</option>
 				</select>
-				<?php $this->PrintHelp('source-track') ?>
+				<?php $this->editHelp('source-track') ?>
 			</td>
 		</tr>
 		<?php

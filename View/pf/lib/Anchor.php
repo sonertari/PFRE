@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.11 2016/08/02 20:35:27 soner Exp $ */
+/* $pfre: Anchor.php,v 1.12 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -179,7 +179,7 @@ class Anchor extends FilterBase
 			</td>
 			<td>
 				<textarea cols="80" rows="5" id="inline" name="inline" placeholder="Enter inline rules here"><?php echo $this->rule['inline']; ?></textarea>
-				<?php $this->PrintHelp('inline') ?>
+				<?php $this->editHelp('inline') ?>
 			</td>
 		</tr>
 		<?php

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.9 2016/08/03 12:33:27 soner Exp $ */
+/* $pfre: Timeout.php,v 1.10 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -286,7 +286,7 @@ class Timeout extends Rule
 			</td>
 			<td>
 				<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['timeout']['all']['frag']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('frag') ?>
+				<?php $this->editHelp('frag') ?>
 			</td>
 		</tr>
 		<?php
@@ -301,7 +301,7 @@ class Timeout extends Rule
 			</td>
 			<td>
 				<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['timeout']['all']['interval']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('interval') ?>
+				<?php $this->editHelp('interval') ?>
 			</td>
 		</tr>
 		<?php
@@ -316,7 +316,7 @@ class Timeout extends Rule
 			</td>
 			<td>
 				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['timeout']['all']['src.track']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('src.track') ?>
+				<?php $this->editHelp('src.track') ?>
 			</td>
 		</tr>
 		<?php
@@ -327,7 +327,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('tcp_timeout') ?><?php echo _TITLE('TCP timeouts').':' ?>
+				<?php $this->editHelp('tcp_timeout') ?><?php echo _TITLE('TCP timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -350,7 +350,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('udp_timeout') ?><?php echo _TITLE('UDP timeouts').':' ?>
+				<?php $this->editHelp('udp_timeout') ?><?php echo _TITLE('UDP timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -370,7 +370,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('icmp_timeout') ?><?php echo _TITLE('ICMP timeouts').':' ?>
+				<?php $this->editHelp('icmp_timeout') ?><?php echo _TITLE('ICMP timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -389,7 +389,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('other_timeout') ?><?php echo _TITLE('Other timeouts').':' ?>
+				<?php $this->editHelp('other_timeout') ?><?php echo _TITLE('Other timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -409,7 +409,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->PrintHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive timeouts').':' ?>
+				<?php $this->editHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">

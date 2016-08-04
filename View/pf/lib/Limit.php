@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.9 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: Limit.php,v 1.10 2016/08/04 01:32:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -160,7 +160,7 @@ class Limit extends Rule
 			</td>
 			<td>
 				<input type="text" size="10" id="states" name="states" value="<?php echo $this->rule['limit']['states']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('states') ?>
+				<?php $this->editHelp('states') ?>
 			</td>
 		</tr>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
@@ -169,7 +169,7 @@ class Limit extends Rule
 			</td>
 			<td>
 				<input type="text" size="10" id="frags" name="frags" value="<?php echo $this->rule['limit']['frags']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('frags') ?>
+				<?php $this->editHelp('frags') ?>
 			</td>
 		</tr>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
@@ -178,7 +178,7 @@ class Limit extends Rule
 			</td>
 			<td>
 				<input type="text" size="10" id="srcnodes" name="src-nodes" value="<?php echo $this->rule['limit']['src-nodes']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('src-nodes') ?>
+				<?php $this->editHelp('src-nodes') ?>
 			</td>
 		</tr>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
@@ -187,7 +187,7 @@ class Limit extends Rule
 			</td>
 			<td>
 				<input type="text" size="10" id="tables" name="tables" value="<?php echo $this->rule['limit']['tables']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('tables') ?>
+				<?php $this->editHelp('tables') ?>
 			</td>
 		</tr>
 		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
@@ -196,7 +196,7 @@ class Limit extends Rule
 			</td>
 			<td>
 				<input type="text" size="10" id="table-entries" name="table-entries" value="<?php echo $this->rule['limit']['table-entries']; ?>" placeholder="number" />
-				<?php $this->PrintHelp('table-entries') ?>
+				<?php $this->editHelp('table-entries') ?>
 			</td>
 		</tr>
 		<?php

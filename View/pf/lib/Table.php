@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Table.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -163,8 +163,8 @@ class Table extends Rule
 		?>
 		<td title="Values" colspan="8">
 			<?php
-			$this->PrintValue($this->rule['data']);
-			$this->PrintValue($this->rule['file'], 'file "', '"');
+			$this->printValue($this->rule['data']);
+			$this->printValue($this->rule['file'], 'file "', '"');
 			?>
 		</td>
 		<?php
@@ -210,15 +210,15 @@ class Table extends Rule
 			<td>
 				<input type="checkbox" id="const" name="const" value="const" <?php echo $this->rule['const'] ? 'checked' : ''; ?> />
 				<label for="const">const</label>
-				<?php $this->PrintHelp('const') ?>
+				<?php $this->editHelp('const') ?>
 				<br>
 				<input type="checkbox" id="persist" name="persist" value="persist" <?php echo $this->rule['persist'] ? 'checked' : ''; ?> />
 				<label for="persist">persist</label>
-				<?php $this->PrintHelp('persist') ?>
+				<?php $this->editHelp('persist') ?>
 				<br>
 				<input type="checkbox" id="counters" name="counters" value="counters" <?php echo $this->rule['counters'] ? 'checked' : ''; ?> />
 				<label for="counters">counters</label>
-				<?php $this->PrintHelp('counters') ?>
+				<?php $this->editHelp('counters') ?>
 			</td>
 		</tr>
 		<?php
@@ -233,11 +233,11 @@ class Table extends Rule
 			</td>
 			<td>
 				<?php
-				$this->PrintDeleteLinks($this->rule['data'], 'dropvalue');
-				$this->PrintDeleteLinks($this->rule['file'], 'dropfile', 'file "', '"');
-				$this->PrintAddControls('addvalue', 'add host or network', 'host or network', 30);
+				$this->editDeleteValueLinks($this->rule['data'], 'dropvalue');
+				$this->editDeleteValueLinks($this->rule['file'], 'dropfile', 'file "', '"');
+				$this->editAddValueBox('addvalue', 'add host or network', 'host or network', 30);
 				echo '<br />';
-				$this->PrintAddControls('addfile', 'add file', 'filename', 30);
+				$this->editAddValueBox('addfile', 'add file', 'filename', 30);
 				?>
 			</td>
 		</tr>

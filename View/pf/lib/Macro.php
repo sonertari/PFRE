@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Macro.php,v 1.10 2016/08/04 01:32:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -93,7 +93,7 @@ class Macro extends Rule
 		$this->dispValue('identifier', 'Id');
 		?>
 		<td title="Value" colspan="11">
-			<?php $this->PrintValue($this->rule['value']); ?>
+			<?php $this->printValue($this->rule['value']); ?>
 		</td>
 		<?php
 	}

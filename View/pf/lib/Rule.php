@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.21 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Rule.php,v 1.22 2016/08/04 01:32:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -387,10 +387,34 @@ class Rule
 		?>
 			<td class="edit">
 				<?php
-				$this->PrintEditLinks($rulenumber, $count);
+				$this->dispEditLinks($rulenumber, $count);
 				?>
 			</td>
 		</tr>
+		<?php
+	}
+
+	function dispEditLinks($rulenumber, $count, $up= 'up', $down= 'down', $del= 'del')
+	{
+		?>
+		<a href="<?php echo $this->href . $rulenumber; ?>" title="Edit">e</a>
+		<?php
+		if ($rulenumber > 0) {
+			?>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $up; ?>=<?php echo $rulenumber; ?>" title="Move up">u</a>
+			<?php
+		} else {
+			echo ' u ';
+		}
+		if ($rulenumber < $count) {
+			?>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $down; ?>=<?php echo $rulenumber; ?>" title="Move down">d</a>
+			<?php
+		} else {
+			echo ' d ';
+		}
+		?>
+		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $rulenumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $rulenumber; ?>?')">x</a>
 		<?php
 	}
 
@@ -407,7 +431,7 @@ class Rule
 	{
 		?>
 		<td title="<?php echo $title; ?>">
-			<?php $this->PrintValue($this->rule[$key]); ?>
+			<?php $this->printValue($this->rule[$key]); ?>
 		</td>
 		<?php
 	}
@@ -416,9 +440,28 @@ class Rule
 	{
 		?>
 		<td title="Interface">
-			<?php $this->PrintValue($this->rule['interface']); ?>
+			<?php $this->printValue($this->rule['interface']); ?>
 		</td>
 		<?php
+	}
+
+	function printValue($value, $pre= '', $post= '', $count= 10)
+	{
+		if ($value) {
+			if (!is_array($value)) {
+				// Add <br> to call this function twice
+				echo "$pre$value$post<br>";
+			} else {
+				$i= 1;
+				foreach ($value as $v) {
+					echo "$pre$v$post<br>";
+					if (++$i > $count) {
+						echo '+' . (count($value) - $count) . ' more entries (not displayed)<br>';
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	function dispLog($colspan= 1)
@@ -440,6 +483,22 @@ class Rule
 			?>
 		</td>
 		<?php
+	}
+
+	function printHostPort($value, $noAny= TRUE, $count= 10)
+	{
+		if (!is_array($value)) {
+			echo $value || $noAny ? htmlentities($value) : 'any';
+		} else {
+			$i= 1;
+			foreach ($value as $v) {
+				echo htmlentities($v) . '<br>';
+				if (++$i > $count) {
+					echo '+' . (count($value) - $count) . ' more entries (not displayed)<br>';
+					break;
+				}
+			}
+		}
 	}
 
 	function inputKey($key, $parent= NULL)
@@ -614,7 +673,7 @@ class Rule
 			</td>
 			<td>
 				<input type="checkbox" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $key ?>" <?php echo ($this->rule[$key] ? 'checked' : ''); ?> />
-				<?php $this->PrintHelp($key) ?>
+				<?php $this->editHelp($key) ?>
 			</td>
 		</tr>
 		<?php
@@ -632,7 +691,7 @@ class Rule
 				<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $this->rule[$key]; ?>" size="<?php echo $size ?>" placeholder="<?php echo $hint ?>" />
 				<?php
 				if ($help !== FALSE) {
-					$this->PrintHelp($help);
+					$this->editHelp($help);
 				}
 				?>
 			</td>
@@ -650,10 +709,10 @@ class Rule
 			</td>
 			<td>
 				<?php
-				$this->PrintDeleteLinks($this->rule[$key], $dropname);
-				$this->PrintAddControls($addname, NULL, $hint, $size, $disabled);
+				$this->editDeleteValueLinks($this->rule[$key], $dropname);
+				$this->editAddValueBox($addname, NULL, $hint, $size, $disabled);
 				if ($help !== FALSE) {
-					$this->PrintHelp($help);
+					$this->editHelp($help);
 				}
 				?>
 			</td>
@@ -664,7 +723,7 @@ class Rule
 	function editHead($modified)
 	{
 		?>
-		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->PrintHelp(ltrim($this->cat, '_')); ?></h2>
+		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
 		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", str_replace("\n", '<br>', htmlentities($this->generate()))); ?></h4>
 		<form id="theform" name="theform" action="<?php echo $this->href . $this->rulenumber; ?>" method="post">
 			<table id="nvp">
@@ -705,7 +764,7 @@ class Rule
 					<option value="inet" label="inet" <?php echo ($this->rule['af'] == 'inet' ? 'selected' : ''); ?>>inet</option>
 					<option value="inet6" label="inet6" <?php echo ($this->rule['af'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
 				</select>
-				<?php $this->PrintHelp('address-family') ?>
+				<?php $this->editHelp('address-family') ?>
 			</td>
 		</tr>
 		<?php
@@ -732,7 +791,7 @@ class Rule
 				<label for="log">matches</label>
 				<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
 				<label for="log">user</label>
-				<?php $this->PrintHelp('log') ?>
+				<?php $this->editHelp('log') ?>
 			</td>
 		</tr>
 		<?php
@@ -752,66 +811,7 @@ class Rule
 		<?php
 	}
 
-	function PrintValue($value, $pre= '', $post= '', $count= 10)
-	{
-		if ($value) {
-			if (!is_array($value)) {
-				// Add <br> to call this function twice
-				echo "$pre$value$post<br>";
-			} else {
-				$i= 1;
-				foreach ($value as $v) {
-					echo "$pre$v$post<br>";
-					if (++$i > $count) {
-						echo '+' . (count($value) - $count) . ' more entries (not displayed)<br>';
-						break;
-					}
-				}
-			}
-		}
-	}
-
-	function PrintFromTo($value, $noAny= TRUE, $count= 10)
-	{
-		if (!is_array($value)) {
-			echo $value || $noAny ? htmlentities($value) : 'any';
-		} else {
-			$i= 1;
-			foreach ($value as $v) {
-				echo htmlentities($v) . '<br>';
-				if (++$i > $count) {
-					echo '+' . (count($value) - $count) . ' more entries (not displayed)<br>';
-					break;
-				}
-			}
-		}
-	}
-
-	function PrintEditLinks($rulenumber, $count, $up= 'up', $down= 'down', $del= 'del')
-	{
-		?>
-		<a href="<?php echo $this->href . $rulenumber; ?>" title="Edit">e</a>
-		<?php
-		if ($rulenumber > 0) {
-			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $up; ?>=<?php echo $rulenumber; ?>" title="Move up">u</a>
-			<?php
-		} else {
-			echo ' u ';
-		}
-		if ($rulenumber < $count) {
-			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $down; ?>=<?php echo $rulenumber; ?>" title="Move down">d</a>
-			<?php
-		} else {
-			echo ' d ';
-		}
-		?>
-		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $rulenumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $rulenumber; ?>?')">x</a>
-		<?php
-	}
-
-	function PrintDeleteLinks($value, $name, $prefix= '', $postfix= '')
+	function editDeleteValueLinks($value, $name, $prefix= '', $postfix= '')
 	{
 		if (isset($value)) {
 			if (is_array($value)) {
@@ -844,7 +844,7 @@ class Rule
 	 * @param[in]	$size	int		Size of the input
 	 * @param[in]	$disabled	bool	Condition to disable the input
 	 */
-	function PrintAddControls($id, $label, $hint, $size= 0, $disabled= FALSE)
+	function editAddValueBox($id, $label, $hint, $size= 0, $disabled= FALSE)
 	{
 		?>
 		<input type="text" id="<?php echo $id; ?>" name="<?php echo $id; ?>" size="<?php echo $size; ?>" placeholder="<?php echo $hint; ?>" <?php echo $disabled ? 'disabled' : ''; ?> />
@@ -852,7 +852,7 @@ class Rule
 		<?php
 	}
 
-	function PrintHelp($label) {
+	function editHelp($label) {
 		global $IMG_PATH;
 		?>
 		<a target="<?php echo $label ?>" href="/pf.conf.html#<?php echo $label ?>">

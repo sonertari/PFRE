@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.13 2016/08/03 05:53:05 soner Exp $ */
+/* $pfre: Option.php,v 1.14 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -284,7 +284,7 @@ class Option extends Rule
 						<option value="drop" label="drop" <?php echo ($this->rule['block-policy'] == 'drop' ? 'selected' : ''); ?>>drop</option>
 						<option value="return" label="return" <?php echo ($this->rule['block-policy'] == 'return' ? 'selected' : ''); ?>>return</option>
 					</select>
-					<?php $this->PrintHelp('block-policy') ?>
+					<?php $this->editHelp('block-policy') ?>
 				</td>
 			</tr>
 			<?php
@@ -307,7 +307,7 @@ class Option extends Rule
 						<option value="aggressive" <?php echo ($this->rule['optimization'] == 'aggressive' ? 'selected' : ''); ?>>aggressive</option>
 						<option value="conservative" <?php echo ($this->rule['optimization'] == 'conservative' ? 'selected' : ''); ?>>conservative</option>
 					</select>
-					<?php $this->PrintHelp('optimization') ?>
+					<?php $this->editHelp('optimization') ?>
 				</td>
 			</tr>
 			<?php
@@ -328,7 +328,7 @@ class Option extends Rule
 						<option value="basic" <?php echo ($this->rule['ruleset-optimization'] == 'basic' ? 'selected' : ''); ?>>basic</option>
 						<option value="profile" <?php echo ($this->rule['ruleset-optimization'] == 'profile' ? 'selected' : ''); ?>>profile</option>
 					</select>
-					<?php $this->PrintHelp('ruleset-optimization') ?>
+					<?php $this->editHelp('ruleset-optimization') ?>
 				</td>
 			</tr>
 			<?php
@@ -348,7 +348,7 @@ class Option extends Rule
 						<option value="if-bound" <?php echo ($this->rule['state-policy'] == 'if-bound' ? 'selected' : ''); ?>>if-bound</option>
 						<option value="floating" <?php echo ($this->rule['state-policy'] == 'floating' ? 'selected' : ''); ?>>floating</option>
 					</select>
-					<?php $this->PrintHelp('state-policy') ?>
+					<?php $this->editHelp('state-policy') ?>
 				</td>
 			</tr>
 			<?php
@@ -365,7 +365,7 @@ class Option extends Rule
 				</td>
 				<td>
 					<input type="text" size="50" id="fingerprints" name="fingerprints" value="<?php echo $this->rule['fingerprints']; ?>" placeholder="filename"/>
-					<?php $this->PrintHelp('fingerprints') ?>
+					<?php $this->editHelp('fingerprints') ?>
 				</td>
 			</tr>
 			<?php
@@ -382,7 +382,7 @@ class Option extends Rule
 				</td>
 				<td>
 					<input type="text" size="20" id="hostid" name="hostid" value="<?php echo $this->rule['hostid']; ?>"  placeholder="number"/>
-					<?php $this->PrintHelp('hostid') ?>
+					<?php $this->editHelp('hostid') ?>
 				</td>
 			</tr>
 			<?php
@@ -399,7 +399,7 @@ class Option extends Rule
 				</td>
 				<td>
 					<input type="text" size="10" id="loginterface" name="loginterface" value="<?php echo $this->rule['loginterface']; ?>"  placeholder="interface"/>
-					<?php $this->PrintHelp('loginterface') ?>
+					<?php $this->editHelp('loginterface') ?>
 				</td>
 			</tr>
 			<?php
@@ -425,7 +425,7 @@ class Option extends Rule
 						<option value="info" <?php echo ($this->rule['debug'] == 'info' ? 'selected' : ''); ?>>info</option>
 						<option value="debug" <?php echo ($this->rule['debug'] == 'debug' ? 'selected' : ''); ?>>debug</option>
 					</select>
-					<?php $this->PrintHelp('debug') ?>
+					<?php $this->editHelp('debug') ?>
 				</td>
 			</tr>
 			<?php
@@ -442,9 +442,9 @@ class Option extends Rule
 				</td>
 				<td>
 					<?php
-					$this->PrintDeleteLinks($this->rule['skip'], 'dropskip');
-					$this->PrintAddControls('addskip', NULL, 'if or macro', 40);
-					$this->PrintHelp('skip');
+					$this->editDeleteValueLinks($this->rule['skip'], 'dropskip');
+					$this->editAddValueBox('addskip', NULL, 'if or macro', 40);
+					$this->editHelp('skip');
 					?>
 				</td>
 			</tr>
@@ -465,7 +465,7 @@ class Option extends Rule
 						<option value="yes" <?php echo ($this->rule['reassemble'] == 'yes' ? 'selected' : ''); ?>>yes</option>
 						<option value="no" <?php echo ($this->rule['reassemble'] == 'no' ? 'selected' : ''); ?>>no</option>
 					</select>
-					<?php $this->PrintHelp('reassemble') ?>
+					<?php $this->editHelp('reassemble') ?>
 					<input type="checkbox" id="no-df" name="no-df" value="no-df" <?php echo ($this->rule['no-df'] ? 'checked' : ''); ?> />
 					<label for="no-df">no-df</label>
 				</td>

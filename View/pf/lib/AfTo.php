@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: AfTo.php,v 1.5 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -156,7 +156,7 @@ class AfTo extends Filter
 					<option value="inet" label="inet" <?php echo ($this->rule['rediraf'] == 'inet' ? 'selected' : ''); ?>>inet</option>
 					<option value="inet6" label="inet6" <?php echo ($this->rule['rediraf'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
 				</select>			
-				<?php $this->PrintHelp('address-family') ?>
+				<?php $this->editHelp('address-family') ?>
 			</td>
 		</tr>
 		<?php

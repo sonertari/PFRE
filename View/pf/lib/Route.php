@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Route.php,v 1.5 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -147,7 +147,7 @@ class Route extends NatBase
 					<option value="reply-to" <?php echo ($this->rule['type'] == 'reply-to' ? 'selected' : ''); ?>>reply-to</option>
 					<option value="route-to" <?php echo ($this->rule['type'] == 'route-to' ? 'selected' : ''); ?>>route-to</option>
 				</select>
-				<?php $this->PrintHelp($this->rule['type']) ?>
+				<?php $this->editHelp($this->rule['type']) ?>
 			</td>
 		</tr>
 		<?php

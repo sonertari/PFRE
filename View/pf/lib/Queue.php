@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Queue.php,v 1.10 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -198,7 +198,7 @@ class Queue extends Rule
 						<td class="ifs">
 							<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" size="15" value="<?php echo $this->rule[$key]; ?>" placeholder="number[(K|M|G)]" />
 						</td>
-						<td class="optitle"><?php echo $key ?><?php $this->PrintHelp('bandwidth') ?></td>
+						<td class="optitle"><?php echo $key ?><?php $this->editHelp('bandwidth') ?></td>
 					</tr>
 					<tr>
 						<td class="ifs">

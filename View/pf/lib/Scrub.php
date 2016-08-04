@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.9 2016/08/02 20:54:44 soner Exp $ */
+/* $pfre: Scrub.php,v 1.10 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -180,15 +180,15 @@ class Scrub extends Filter
 			<td>
 				<input type="checkbox" id="no-df" name="no-df" value="no-df" <?php echo ($this->rule['no-df'] ? 'checked' : '')?> />
 				<label for="no-df">no-df</label>
-				<?php $this->PrintHelp('no-df') ?>
+				<?php $this->editHelp('no-df') ?>
 				<br>
 				<input type="checkbox" id="random-id" name="random-id" value="random-id" <?php echo ($this->rule['random-id'] ? 'checked' : '')?> />
 				<label for="random-id">random-id</label>
-				<?php $this->PrintHelp('random-id') ?>
+				<?php $this->editHelp('random-id') ?>
 				<br>
 				<input type="checkbox" id="reassemble" name="reassemble" value="tcp" <?php echo ($this->rule['reassemble'] == 'tcp' ? 'checked' : '')?> />
 				<label for="reassemble">reassemble tcp</label>
-				<?php $this->PrintHelp('reassemble-tcp') ?>
+				<?php $this->editHelp('reassemble-tcp') ?>
 			</td>
 		</tr>
 		<?php
