@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Table.php,v 1.2 2016/08/04 16:44:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -83,9 +83,9 @@ class Table extends Rule
 			$this->rule['file']= $filename;
 		} else {
 			if (!is_array($this->rule['file'])) {
-				$_temp= $this->rule['file'];
+				$tmp= $this->rule['file'];
 				unset($this->rule['file']);
-				$this->rule['file'][]= $_temp;
+				$this->rule['file'][]= $tmp;
 			}
 			$this->rule['file'][]= $filename;
 		}
