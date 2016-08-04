@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Macro.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -56,15 +56,13 @@ class Macro extends Rule
 
 	function sanitize()
 	{
-		$this->str= preg_replace("/{/", " { ", $this->str);
-		$this->str= preg_replace("/}/", " } ", $this->str);
-		$this->str= preg_replace("/\(/", " \( ", $this->str);
-		$this->str= preg_replace("/\)/", " \) ", $this->str);
-		$this->str= preg_replace("/,/", " , ", $this->str);
-		$this->str= preg_replace("/\"/", " \" ", $this->str);
-		
-		$this->str= preg_replace("/=/", " = ", $this->str);
-		$this->str= preg_replace("/\"/", "", $this->str);
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' ( ', $this->str);
+		$this->str= preg_replace('/\)/', ' ) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+		$this->str= preg_replace('/=/', ' = ', $this->str);
+		$this->str= preg_replace('/"/', '', $this->str);
 	}
 
 	function generate()

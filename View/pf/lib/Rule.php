@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.20 2016/08/03 19:50:21 soner Exp $ */
+/* $pfre: Rule.php,v 1.21 2016/08/04 01:19:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -128,8 +128,8 @@ class Rule
 		$this->str= preg_replace('/! +/', '!', $this->str);
 		$this->str= preg_replace('/{/', ' { ', $this->str);
 		$this->str= preg_replace('/}/', ' } ', $this->str);
-		$this->str= preg_replace('/\(/', ' \( ', $this->str);
-		$this->str= preg_replace('/\)/', ' \) ', $this->str);
+		$this->str= preg_replace('/\(/', ' ( ', $this->str);
+		$this->str= preg_replace('/\)/', ' ) ', $this->str);
 		$this->str= preg_replace('/,/', ' , ', $this->str);
 		$this->str= preg_replace('/"/', ' " ', $this->str);
 	}
@@ -186,8 +186,8 @@ class Rule
 
 	function parseParenthesized()
 	{
-		if ($this->words[$this->index] == '\(') {
-			while ($this->words[++$this->index] != '\)') {
+		if ($this->words[$this->index] == '(') {
+			while ($this->words[++$this->index] != ')') {
 				$items[]= $this->words[$this->index];
 			}
 			return '(' . implode(' ', $items) . ')';
@@ -277,8 +277,8 @@ class Rule
 
 	function parseLog()
 	{
-		if ($this->words[$this->index + 1] == '\(') {
-			$opts= $this->parseItem('\(', '\)');
+		if ($this->words[$this->index + 1] == '(') {
+			$opts= $this->parseItem('(', ')');
 			$this->rule['log']= array();
 			for ($i= 0; $i < count($opts); $i++) {
 				if ($opts[$i] == 'to') {

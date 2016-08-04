@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.9 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.10 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -152,7 +152,7 @@ class FilterBase extends State
 			),
 		'queue' => array(
 			'method' => 'parseItems',
-			'params' => array('queue', '\(', '\)'),
+			'params' => array('queue', '(', ')'),
 			),
 		'rtable' => array(
 			'method' => 'parseNextValue',
@@ -168,7 +168,7 @@ class FilterBase extends State
 			),
 		'received-on' => array(
 			'method' => 'parseItems',
-			'params' => array('received-on', '\(', '\)'),
+			'params' => array('received-on', '(', ')'),
 			),
 		'!received-on' => array(
 			'method' => 'parseNotReceivedOn',
@@ -199,7 +199,7 @@ class FilterBase extends State
 	{
 		if ($this->words[$this->index + 1] === 'prio') {
 			$this->index++;
-			$this->parseItems('set-prio', '\(', '\)');
+			$this->parseItems('set-prio', '(', ')');
 		} elseif ($this->words[$this->index + 1] === 'tos') {
 			$this->index++;
 			$this->parseNextNVP('set-tos');
@@ -214,7 +214,7 @@ class FilterBase extends State
 
 	function parseNotReceivedOn()
 	{
-		$this->parseItems('received-on', '\(', '\)');
+		$this->parseItems('received-on', '(', ')');
 		$this->rule['not-received-on']= TRUE;
 	}
 
