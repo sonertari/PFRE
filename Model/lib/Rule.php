@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.23 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Rule.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -97,10 +97,10 @@ class Rule
 				if (is_callable($method, TRUE)) {
 					call_user_method_array($method, $this, $this->keywords[$key]['params']);
 				} else {
-					$this->rule[]= $method;
+					pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parser method '$method' is not callable");
 				}
 			} else {
-				$this->rule[]= $key;
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Word '$key' not in keywords");
 			}
 		}
 	}
@@ -133,6 +133,11 @@ class Rule
 	function split()
 	{
 		$this->words= preg_split('/[\s,\t]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
+	}
+
+	function isEndOfWords()
+	{
+		return $this->index >= count($this->words);
 	}
 
 	function parseNVP($key)
@@ -169,7 +174,7 @@ class Rule
 	{
 		$this->index++;
 		if (($this->words[$this->index] == $delimPre)) {
-			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != $delimPost) {
+			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != $delimPost && !$this->isEndOfWords()) {
 				$value[]= $this->parseParenthesized();
 			}
 		} else {
@@ -183,7 +188,7 @@ class Rule
 	function parseParenthesized()
 	{
 		if ($this->words[$this->index] == '(') {
-			while ($this->words[++$this->index] != ')') {
+			while ($this->words[++$this->index] != ')' && !$this->isEndOfWords()) {
 				$items[]= $this->words[$this->index];
 			}
 			return '(' . implode(' ', $items) . ')';
@@ -196,7 +201,7 @@ class Rule
 	{
 		$this->index++;
 		if ($this->words[$this->index] == '{') {
-			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
+			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}' && !$this->isEndOfWords()) {
 				$this->words[$this->index]= preg_replace('/[\s,]+/', '', $this->words[$this->index]);
 				$value[]= $this->parsePort();
 			}
@@ -230,7 +235,7 @@ class Rule
 	function parseString($delimPre= '"', $delimPost= '"')
 	{
 		if ($this->words[$this->index] == $delimPre) {
-			while ($this->words[++$this->index] != $delimPost) {
+			while ($this->words[++$this->index] != $delimPost && !$this->isEndOfWords()) {
 				$value.= ' ' . $this->words[$this->index];
 			}
 		} else {
@@ -263,7 +268,7 @@ class Rule
 	{
 		$this->index++;
 		if ($this->words[$this->index] == '{') {
-			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
+			while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}' && !$this->isEndOfWords()) {
 				$this->rule['os'][]= $this->parseString();		
 			}
 		} else {

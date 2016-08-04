@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.10 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Table.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -93,7 +93,7 @@ class Table extends Rule
 
 	function parseData()
 	{
-		while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
+		while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}' && !$this->isEndOfWords()) {
 			$this->rule['data'][]= $this->words[$this->index];
 		}
 	}

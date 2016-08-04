@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Macro.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -48,7 +48,7 @@ class Macro extends Rule
 		if ($this->words[++$this->index] != '{') {
 			$this->rule['value']= $this->words[$this->index];
 		} else {
-			while (preg_replace('/,/', '', $this->words[++$this->index]) != '}') {
+			while (preg_replace('/,/', '', $this->words[++$this->index]) != '}' && !$this->isEndOfWords()) {
 				$this->rule['value'][]= $this->words[$this->index];
 			}
 		}
