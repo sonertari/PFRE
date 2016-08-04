@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.13 2016/08/03 19:02:48 soner Exp $ */
+/* $pfre: rules.php,v 1.14 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -103,9 +103,15 @@ if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_G
 	}
 }
 
+$show= 'all';
+if (isset($_SESSION['show'])) {
+	$show= $_SESSION['show'];
+}
+
 if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '') {
 	if (filter_has_var(INPUT_POST, 'add')) {
 		$edit= filter_input(INPUT_POST, 'category');
+		$edit= $edit == 'all' ? 'filter' : $edit;
 		$rulenumber= filter_input(INPUT_POST, 'rulenumber');
 		$action= 'add';
 	} elseif (filter_has_var(INPUT_POST, 'edit')) {
@@ -115,8 +121,12 @@ if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenu
 		} else {
 			// Will add a new rule of category $edit otherwise
 			$edit= filter_input(INPUT_POST, 'category');
+			$edit= $edit == 'all' ? 'filter' : $edit;
 		}
 		$action= 'edit';
+	} elseif (filter_has_var(INPUT_POST, 'show')) {
+		$show= filter_input(INPUT_POST, 'category');
+		$_SESSION['show']= $show;
 	}
 }
 
@@ -166,25 +176,25 @@ require_once($VIEW_PATH.'/header.php');
 <div id="main">
     <fieldset>
         <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
-            <label for="category">Add new</label>
+            <input type="submit" name="show" value="Show" />
             <select id="category" name="category">
+				<option value="all">All</option>
                 <?php
                 foreach ($ruleCategoryNames as $category => $name) {
                     ?>
-                    <option value="<?php echo $category; ?>" label="<?php echo $category; ?>" <?php echo (filter_input(INPUT_POST, 'category') == $category ? 'selected' : ''); ?>><?php echo $name; ?></option>
+                    <option value="<?php echo $category; ?>" label="<?php echo $category; ?>" <?php echo (filter_input(INPUT_POST, 'category') == $category || $show == $category ? 'selected' : ''); ?>><?php echo $name; ?></option>
                     <?php
                 }
                 ?>
             </select>
-            <label for="rulenumber">rule as rule number:</label>
-            <input type="text" name="rulenumber" id="rulenumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" placeholder="number" />
             <input type="submit" name="add" value="Add" />
+            <label for="rulenumber">as rule number:</label>
+            <input type="text" name="rulenumber" id="rulenumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" placeholder="number" />
             <input type="submit" name="edit" value="Edit" />
             <input type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure you want to delete the rule?')"/>
             <input type="text" name="moveto" id="moveto" size="5" value="<?php echo filter_input(INPUT_POST, 'moveto') ?>" placeholder="move to" />
             <input type="submit" name="move" value="Move" />
 			<input type="submit" id="delete-all" name="delete-all" value="Delete All" onclick="return confirm('Are you sure you want to delete the entire rulebase?')"/>
-			<label for="delete-all">Delete current working rulebase</label><br />
         </form>
     </fieldset>
 	<?php
@@ -203,7 +213,10 @@ require_once($VIEW_PATH.'/header.php');
         $rulenumber = 0;
         $count = count($View->RuleSet->rules) - 1;
         foreach ($View->RuleSet->rules as $rule) {
-            $rule->display($rulenumber++, $count);
+			if ($show == 'all' || $ruleType2Class[$show] == $rule->cat) {
+				$rule->display($rulenumber, $count);
+			}
+			$rulenumber++;
         }
         ?>
     </table>
