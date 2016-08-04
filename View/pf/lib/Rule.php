@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.19 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: Rule.php,v 1.20 2016/08/03 19:50:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -89,7 +89,7 @@ class Rule
 	function parse($str)
 	{
 		$this->str= $str;
-		$this->deleteRules();
+		$this->init();
 		$this->parseComment();
 		$this->sanitize();
 		$this->split();
@@ -109,7 +109,7 @@ class Rule
 		}
 	}
 
-	function deleteRules()
+	function init()
 	{
 		$this->rule= array();
 	}

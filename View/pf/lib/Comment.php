@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.6 2016/07/31 14:19:13 soner Exp $ */
+/* $pfre: Comment.php,v 1.7 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,7 +36,7 @@ class Comment extends Rule
 {
 	function parse($str)
 	{
-		$this->deleteRules();
+		$this->init();
 		$this->rule['comment']= $str;
 	}
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.15 2016/08/03 19:02:48 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.16 2016/08/03 19:50:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -53,7 +53,6 @@ class RuleSet
 		}
 		
 		if ($retval !== FALSE) {
-			$this->deleteRules();
 			$this->filename= $filename;
 			$this->parse($ruleset);
 			return TRUE;
@@ -61,92 +60,9 @@ class RuleSet
 		return FALSE;
 	}
 	
-	function deleteRules()
-	{
-		$this->rules= array();
-	}
-	
-	function up($rulenumber)
-	{
-		if (isset($this->rules[$rulenumber - 1])) {
-			$tmp= $this->rules[$rulenumber - 1];
-			$this->rules[$rulenumber - 1]= $this->rules[$rulenumber];
-			$this->rules[$rulenumber]= $tmp;
-		}
-	}
-	
-	function down($rulenumber)
-	{
-		if (isset($this->rules[$rulenumber + 1])) {
-			$tmp= $this->rules[$rulenumber + 1];
-			$this->rules[$rulenumber + 1]= $this->rules[$rulenumber];
-			$this->rules[$rulenumber]= $tmp;
-		}
-	}
-	
-	function del($rulenumber)
-	{
-		/// @todo No need for a separate function now
-		unset($this->rules[$rulenumber]);
-		// Fake slice to update the keys
-		$this->rules= array_slice($this->rules, 0);
-	}
-	
-	function move($rulenumber, $moveto)
-	{
-		if ($rulenumber < 0 || $rulenumber >= count($this->rules)) {
-			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid rule number $rulenumber", 'auto', 'ERROR');
-			return;
-		}
-		if ($moveto < 0 || $moveto >= count($this->rules) || $rulenumber == $moveto) {
-			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid destination rule number: $moveto", 'auto', 'ERROR');
-			return;
-		}
-
-		$rule= $this->rules[$rulenumber];
-		unset($this->rules[$rulenumber]);
-		// array_slice() takes care of possible off-by-one error due to unset above
-		$head= array_slice($this->rules, 0, $moveto);
-		$tail= array_slice($this->rules, $moveto);
-		$this->rules= array_merge($head, array($rule), $tail);
-	}
-	
-	function addRule($rulenumber= 0)
-	{
-		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {
-			// Add the first rule or append a new one to the end
-			array_push($this->rules, array());
-			return $this->nextRuleNumber();
-		} else {
-			// Preserve the keys for diff
-			$tail= array_slice($this->rules, $rulenumber, NULL, TRUE);
-			$head= array_diff_key($this->rules, $tail);
-
-			// Insert a new rule in the middle
-			array_push($head, array());
-			$this->rules= array_merge($head, $tail);
-			return $rulenumber;
-		}
-	}
-	
-	function computeNewRuleNumber($rulenumber= 0)
-	{
-		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {
-			// Add the first rule or append a new one to the end
-			return $this->nextRuleNumber();
-		} else {
-			// Insert a new rule in the middle
-			return $rulenumber;
-		}
-	}
-		
-	function nextRuleNumber()
-	{
-		return count($this->rules);
-	}
-	
 	function parse($text)
 	{
+		$this->deleteRules();
 		$rulebase= array();
 
 		$text= preg_replace("/\n#/", "\n# ", $text);
@@ -273,6 +189,11 @@ class RuleSet
         /// @attention Do not append accumulated blank lines to the end
 	}
 
+	function deleteRules()
+	{
+		$this->rules= array();
+	}
+	
 	function parseInlineRules($rulebase, &$str, &$order)
 	{
 		if (preg_match('/^(.*){\s*$/', $str, $match)) {
@@ -338,6 +259,85 @@ class RuleSet
 			$str= $s;
 		}
 		return $str;
+	}
+	
+	function up($rulenumber)
+	{
+		if (isset($this->rules[$rulenumber - 1])) {
+			$tmp= $this->rules[$rulenumber - 1];
+			$this->rules[$rulenumber - 1]= $this->rules[$rulenumber];
+			$this->rules[$rulenumber]= $tmp;
+		}
+	}
+	
+	function down($rulenumber)
+	{
+		if (isset($this->rules[$rulenumber + 1])) {
+			$tmp= $this->rules[$rulenumber + 1];
+			$this->rules[$rulenumber + 1]= $this->rules[$rulenumber];
+			$this->rules[$rulenumber]= $tmp;
+		}
+	}
+	
+	function del($rulenumber)
+	{
+		/// @todo No need for a separate function now
+		unset($this->rules[$rulenumber]);
+		// Fake slice to update the keys
+		$this->rules= array_slice($this->rules, 0);
+	}
+	
+	function move($rulenumber, $moveto)
+	{
+		if ($rulenumber < 0 || $rulenumber >= count($this->rules)) {
+			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid rule number $rulenumber", 'auto', 'ERROR');
+			return;
+		}
+		if ($moveto < 0 || $moveto >= count($this->rules) || $rulenumber == $moveto) {
+			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid destination rule number: $moveto", 'auto', 'ERROR');
+			return;
+		}
+
+		$rule= $this->rules[$rulenumber];
+		unset($this->rules[$rulenumber]);
+		// array_slice() takes care of possible off-by-one error due to unset above
+		$head= array_slice($this->rules, 0, $moveto);
+		$tail= array_slice($this->rules, $moveto);
+		$this->rules= array_merge($head, array($rule), $tail);
+	}
+	
+	function addRule($rulenumber= 0)
+	{
+		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {
+			// Add the first rule or append a new one to the end
+			array_push($this->rules, array());
+			return $this->nextRuleNumber();
+		} else {
+			// Preserve the keys for diff
+			$tail= array_slice($this->rules, $rulenumber, NULL, TRUE);
+			$head= array_diff_key($this->rules, $tail);
+
+			// Insert a new rule in the middle
+			array_push($head, array());
+			$this->rules= array_merge($head, $tail);
+			return $rulenumber;
+		}
+	}
+	
+	function computeNewRuleNumber($rulenumber= 0)
+	{
+		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {
+			// Add the first rule or append a new one to the end
+			return $this->nextRuleNumber();
+		} else {
+			// Insert a new rule in the middle
+			return $rulenumber;
+		}
+	}
+		
+	function nextRuleNumber()
+	{
+		return count($this->rules);
 	}
 	
 	function SetupEditSession($cat, &$action, &$rulenumber)
