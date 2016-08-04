@@ -1,5 +1,5 @@
-<?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+<?php 
+/* $pfre: LoadAnchor.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,30 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class LoadAnchor extends Rule
 {
-	function display($rulenumber, $count)
+	function parse($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
-
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		$this->str= $str;
+		$this->init();
+		$this->parseComment();
+		
+		// load anchor spam from "/etc/pf-spam.conf" # Comment
+		// load anchor spam from /etc/pf-spam.conf # Comment
+		if ((preg_match('/^\s*load\s+anchor\s+(\S+)\s+from\s+"([^"]+)"\s*$/', $this->str, $match)) ||
+			(preg_match('/^\s*load\s+anchor\s+(\S+)\s+from\s+(\S+)\s*$/', $this->str, $match))) {
+			$this->rule['anchor']= $match[1];
+			$this->rule['file']= $match[2];
+		}
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function generate()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
-
-		$this->editHead($modified);
-
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
-
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->str= 'load anchor ' . $this->rule['anchor'] . ' from "' . $this->rule['file'] . '"';
+		
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

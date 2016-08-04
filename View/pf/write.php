@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.9 2016/07/27 15:08:56 soner Exp $ */
+/* $pfre: write.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -40,13 +40,10 @@ if (count($_POST) && !filter_has_var(INPUT_POST, 'lines')) {
 	$lines= FALSE;
 }
 
-$rulesStr= $View->RuleSet->generate();
-$serialRulesArray= serialize(explode('\n', $rulesStr));
-$testResult= $View->Controller($Output, 'TestPfRules', $serialRulesArray);
-
+$testResult= $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules));
 if ($testResult) {
 	if (filter_has_var(INPUT_POST, 'install') && filter_input(INPUT_POST, 'install') == "Install") {
-		if ($View->Controller($Output, 'InstallPfRules', $serialRulesArray)) {
+		if ($View->Controller($Output, 'InstallPfRules', json_encode($View->RuleSet->rules))) {
 			PrintHelpWindow("Installed successfully");
 		} else {
 			PrintHelpWindow("<br>There was an error while installing", NULL, 'ERROR');
@@ -75,7 +72,10 @@ echo _('Rule file') . ': ' . ($printFileName ? $View->RuleSet->filename : '');
 
 <pre>
 <?php
-echo htmlentities($View->RuleSet->generate($lines ? TRUE : NULL));
+/// @todo Check why we cannot pass FALSE as lines param
+if ($View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), $lines ? 1 : 0)) {
+	echo htmlentities(implode("\n", $Output));
+}
 ?>
 </pre>
 <?php

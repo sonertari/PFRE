@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.3 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: NatBase.php,v 1.4 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,93 +35,6 @@
 
 class NatBase extends Filter
 {
-	function __construct($str)
-	{
-		$this->keywords = array_merge(
-			$this->keywords,
-			array(
-				'bitmask' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'least-states' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'round-robin' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'random' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'source-hash' => array(
-					'method' => 'parseSourceHash',
-					'params' => array(),
-					),
-				'sticky-address' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				)
-			);
-
-		parent::__construct($str);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace("/! +/", "!", $this->str);
-		$this->str= preg_replace("/{/", " { ", $this->str);
-		$this->str= preg_replace("/}/", " } ", $this->str);
-		$this->str= preg_replace("/\"/", " \" ", $this->str);
-	}
-
-	function parseSourceHash()
-	{
-		$this->parseBool();
-
-		/// @attention No pattern for hash key or string, so check keywords instead
-		/// This is one of the benefits of using keyword lists instead of switch/case structs while parsing
-		//if (preg_match('/[a-f\d]{16,}/', $this->words[$this->index + 1])) {
-		if (!in_array($this->words[$this->index + 1], $this->keywords)) {
-			$this->rule['source-hash-key']= $this->words[++$this->index];
-		}
-	}
-
-	function generate()
-	{
-		$this->genAction();
-
-		$this->genFilterHead();
-		$this->genFilterOpts();
-
-		$this->genValue('type');
-		$this->genValue('redirhost');
-		$this->genValue('redirport', 'port ');
-		$this->genPoolType();
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-
-	function genPoolType()
-	{
-		$this->genKey('bitmask');
-		$this->genKey('least-states');
-		$this->genKey('random');
-		$this->genKey('round-robin');
-
-		$this->genKey('source-hash');
-		if (isset($this->rule['source-hash'])) {
-			$this->genValue('source-hash-key');
-		}
-
-		$this->genKey('sticky-address');
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->displayNat($rulenumber, $count);

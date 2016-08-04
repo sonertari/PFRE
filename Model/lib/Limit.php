@@ -1,5 +1,5 @@
-<?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+<?php 
+/* $pfre: Limit.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,74 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class Limit extends Rule
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
+		$this->keywords = array(
+			'states' => array(
+				'method' => 'parseLimit',
+				'params' => array(),
+				),
+			'frags' => array(
+				'method' => 'parseLimit',
+				'params' => array(),
+				),
+			'src-nodes' => array(
+				'method' => 'parseLimit',
+				'params' => array(),
+				),
+			'tables' => array(
+				'method' => 'parseLimit',
+				'params' => array(),
+				),
+			'table-entries' => array(
+				'method' => 'parseLimit',
+				'params' => array(),
+				),
+			);
+
+		parent::__construct($str);
 	}
-	
-	function input()
+
+	function sanitize()
 	{
-		$this->inputLog();
-		$this->inputBool('quick');
-
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' ( ', $this->str);
+		$this->str= preg_replace('/\)/', ' ) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+		$this->str= preg_replace('/"/', ' " ', $this->str);
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function parseLimit()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$this->rule['limit'][$this->words[$this->index]]= $this->words[++$this->index];
+	}
 
-		$this->editHead($modified);
+	function generate()
+	{
+		$this->str= '';
 
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		if (count($this->rule['limit'])) {
+			reset($this->rule['limit']);
 
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
+			if (count($this->rule['limit']) == 1) {
+				list($key, $val)= each($this->rule['limit']);
+				$this->str.= "set limit $key $val";
+			} else {
+				$this->str= 'set limit {';
+				while (list($key, $val)= each($this->rule['limit'])) {
+					$this->str.= " $key $val,";
+				}
+				$this->str= rtrim($this->str, ',');
+				$this->str.= ' }';
+			}
+		}
 
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

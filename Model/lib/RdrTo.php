@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: RdrTo.php,v 1.3 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class RdrTo extends NatBase
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->keywords = array(
+			'rdr-to' => array(
+				'method' => 'parseRedirHostPort',
+				'params' => array(),
+				),
+			);
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
-	}
-
-	function edit($rulenumber, $modified, $testResult, $action)
-	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
-
-		$this->editHead($modified);
-
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
-
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		parent::__construct($str);
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.14 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: Option.php,v 1.15 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,132 +35,6 @@
 
 class Option extends Rule
 {
-	private $type= NULL;
-
-	function __construct($str)
-	{
-		/// @todo Support set state-defaults state-option, ...
-		$this->keywords = array(
-			'loginterface' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'block-policy' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'state-policy' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'optimization' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'ruleset-optimization' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'debug' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'hostid' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'skip' => array(
-				'method' => 'parseSkip',
-				'params' => array(),
-				),
-			'fingerprints' => array(
-				'method' => 'parseFingerprints',
-				'params' => array(),
-				),
-			'reassemble' => array(
-				'method' => 'parseReassemble',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
-
-	function parseOption()
-	{
-		$this->type= $this->words[$this->index];
-		$this->rule[$this->words[$this->index]]= $this->words[++$this->index];
-	}
-
-	function parseSkip()
-	{
-		$this->type= 'skip';
-		$this->index++;
-		$this->rule['skip']= $this->parseItem();
-	}
-
-	function parseFingerprints()
-	{
-		$this->type= 'fingerprints';
-		// File name is in quotes
-		$this->parseDelimitedStr('fingerprints');
-	}
-
-	function parseReassemble()
-	{
-		$this->parseOption();
-		if ($this->words[$this->index + 1] === 'no-df') {
-			$this->index++;
-			$this->parseBool();
-		}
-	}
-
-	function generate()
-	{
-		$this->str= '';
-
-		$this->genOption('block-policy');
-		$this->genOption('debug');
-		$this->genOption('fingerprints', '"', '"');
-		$this->genOption('hostid');
-		$this->genOption('loginterface');
-		$this->genOption('optimization');
-		$this->genOption('ruleset-optimization');
-		$this->genOption('state-policy');
-		$this->genSkip();
-		$this->genReassemble();
-		
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-
-	function genOption($key, $head= '', $tail= '')
-	{
-		if (isset($this->rule[$key])) {
-			$this->str.= "set $key " . $head . preg_replace('/"/', '', $this->rule[$key]) . $tail;
-		}
-	}
-
-	function genSkip()
-	{
-		if (isset($this->rule['skip'])) {
-			if (!is_array($this->rule['skip'])) {
-				$this->genOption('skip', 'on ');
-			} else {
-				$this->str.= 'set skip on { ' . implode(' ', $this->rule['skip']) . ' }';
-			}
-		}
-	}
-
-	function genReassemble()
-	{
-		if (isset($this->rule['reassemble'])) {
-			$this->genOption('reassemble');
-			$this->genKey('no-df');
-		}
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);
@@ -173,10 +47,10 @@ class Option extends Rule
 		?>
 		<td title="Option" colspan="12">
 			<?php
-			$value= $this->rule[$this->type];
-			if (in_array($this->type, array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints', 'hostid'))) {
-				echo "$this->type: $value";
-			} elseif ($this->type == 'skip') {
+			$value= $this->rule[$this->rule['type']];
+			if (in_array($this->rule['type'], array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints', 'hostid'))) {
+				echo $this->rule['type'] . ": $value";
+			} elseif ($this->rule['type'] == 'skip') {
 				if (!is_array($value)) {
 					echo "skip on $value";
 				} else {
@@ -184,8 +58,8 @@ class Option extends Rule
 						echo "skip on $skip<br>";
 					}
 				}
-			} elseif ($this->type == 'reassemble') {
-				echo "$this->type: $value";
+			} elseif ($this->rule['type'] == 'reassemble') {
+				echo $this->rule['type'] . ": $value";
 				if (isset($this->rule['no-df'])) {
 					echo ' no-df';
 				}
@@ -222,10 +96,10 @@ class Option extends Rule
 		$this->editHead($modified);
 
 		if (filter_has_var(INPUT_POST, 'state') && filter_has_var(INPUT_POST, 'type')) {
-			$this->type= filter_input(INPUT_POST, 'type');
+			$this->rule['type']= filter_input(INPUT_POST, 'type');
 		}
 
-		if (!isset($this->type)) {
+		if (!isset($this->rule['type'])) {
 			$this->editSelectOption();
 		}
 
@@ -240,7 +114,7 @@ class Option extends Rule
 		$this->editSkip();
 		$this->editReassemble();
 
-		if (isset($this->type)) {
+		if (isset($this->rule['type'])) {
 			$this->editComment();
 		}
 		$this->editTail($modified, $testResult, $action);
@@ -255,16 +129,16 @@ class Option extends Rule
 			</td>
 			<td>
 				<select id="type" name="type">
-					<option value="block-policy" <?php echo ($this->type == 'block-policy' ? 'selected' : ''); ?>>block-policy</option>
-					<option value="optimization" <?php echo ($this->type == 'optimization' ? 'selected' : ''); ?>>optimization</option>
-					<option value="ruleset-optimization" <?php echo ($this->type == 'ruleset-optimization' ? 'selected' : ''); ?>>ruleset-optimization</option>
-					<option value="state-policy" <?php echo ($this->type == 'state-policy' ? 'selected' : ''); ?>>state-policy</option>
-					<option value="fingerprints" <?php echo ($this->type == 'fingerprints' ? 'selected' : ''); ?>>fingerprints</option>
-					<option value="hostid" <?php echo ($this->type == 'hostid' ? 'selected' : ''); ?>>hostid</option>
-					<option value="loginterface" <?php echo ($this->type == 'loginterface' ? 'selected' : ''); ?>>loginterface</option>
-					<option value="debug" <?php echo ($this->type == 'debug' ? 'selected' : ''); ?>>debug</option>
-					<option value="skip" <?php echo ($this->type == 'skip' ? 'selected' : ''); ?>>skip</option>
-					<option value="reassemble" <?php echo ($this->type == 'reassemble' ? 'selected' : ''); ?>>reassemble</option>
+					<option value="block-policy" <?php echo ($this->rule['type'] == 'block-policy' ? 'selected' : ''); ?>>block-policy</option>
+					<option value="optimization" <?php echo ($this->rule['type'] == 'optimization' ? 'selected' : ''); ?>>optimization</option>
+					<option value="ruleset-optimization" <?php echo ($this->rule['type'] == 'ruleset-optimization' ? 'selected' : ''); ?>>ruleset-optimization</option>
+					<option value="state-policy" <?php echo ($this->rule['type'] == 'state-policy' ? 'selected' : ''); ?>>state-policy</option>
+					<option value="fingerprints" <?php echo ($this->rule['type'] == 'fingerprints' ? 'selected' : ''); ?>>fingerprints</option>
+					<option value="hostid" <?php echo ($this->rule['type'] == 'hostid' ? 'selected' : ''); ?>>hostid</option>
+					<option value="loginterface" <?php echo ($this->rule['type'] == 'loginterface' ? 'selected' : ''); ?>>loginterface</option>
+					<option value="debug" <?php echo ($this->rule['type'] == 'debug' ? 'selected' : ''); ?>>debug</option>
+					<option value="skip" <?php echo ($this->rule['type'] == 'skip' ? 'selected' : ''); ?>>skip</option>
+					<option value="reassemble" <?php echo ($this->rule['type'] == 'reassemble' ? 'selected' : ''); ?>>reassemble</option>
 				</select>
 			</td>
 		</tr>
@@ -273,7 +147,7 @@ class Option extends Rule
 
 	function editBlockPolicy()
 	{
-		if ($this->type == 'block-policy') {
+		if ($this->rule['type'] == 'block-policy') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -293,7 +167,7 @@ class Option extends Rule
 
 	function editOptimization()
 	{
-		if ($this->type == 'optimization') {
+		if ($this->rule['type'] == 'optimization') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -316,7 +190,7 @@ class Option extends Rule
 
 	function editRulesetOptimization()
 	{
-		if ($this->type == 'ruleset-optimization') {
+		if ($this->rule['type'] == 'ruleset-optimization') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -337,7 +211,7 @@ class Option extends Rule
 
 	function editStatePolicy()
 	{
-		if ($this->type == 'state-policy') {
+		if ($this->rule['type'] == 'state-policy') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -357,7 +231,7 @@ class Option extends Rule
 
 	function editFingerprints()
 	{
-		if ($this->type == 'fingerprints') {
+		if ($this->rule['type'] == 'fingerprints') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -374,7 +248,7 @@ class Option extends Rule
 
 	function editHostid()
 	{
-		if ($this->type == 'hostid') {
+		if ($this->rule['type'] == 'hostid') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -391,7 +265,7 @@ class Option extends Rule
 
 	function editLogInterface()
 	{
-		if ($this->type == 'loginterface') {
+		if ($this->rule['type'] == 'loginterface') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -408,7 +282,7 @@ class Option extends Rule
 
 	function editDebug()
 	{
-		if ($this->type == 'debug') {
+		if ($this->rule['type'] == 'debug') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -434,7 +308,7 @@ class Option extends Rule
 
 	function editSkip()
 	{
-		if ($this->type == 'skip') {
+		if ($this->rule['type'] == 'skip') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -454,7 +328,7 @@ class Option extends Rule
 
 	function editReassemble()
 	{
-		if ($this->type == 'reassemble') {
+		if ($this->rule['type'] == 'reassemble') {
 			?>
 			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">

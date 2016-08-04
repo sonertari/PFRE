@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.23 2016/07/26 07:00:37 soner Exp $ */
+/* $pfre: lib.php,v 1.2 2016/07/29 06:42:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,10 +79,10 @@ define('NONE',			1);
 define('FILEPATH',		2);
 define('NAME',			4);
 define('NUM',			8);
-define('SERIALARRAY',	16);
-define('SHA1STR',		32);
-define('BOOL',			64);
-define('SAVEFILEPATH',	128);
+define('SHA1STR',		16);
+define('BOOL',			32);
+define('SAVEFILEPATH',	64);
+define('JSON',			128);
 
 /** Functions and info strings used in shell arg control.
  *
@@ -102,10 +102,6 @@ $ArgTypes= array(
 		'func'	=> 'IsNumber',
 		'desc'	=> _('Number wrong'),
 		),
-	SERIALARRAY	=>	array(
-		'func'	=> 'IsSerializedArray',
-		'desc'	=> _('Not serialized array'),
-		),
 	SHA1STR	=>	array(
 		'func'	=> 'IsSha1Str',
 		'desc'	=> _('Not sha1 encrypted string'),
@@ -118,11 +114,15 @@ $ArgTypes= array(
 		'func'	=> 'IsFilePath',
 		'desc'	=> _('Filepath wrong'),
 		),
+	JSON	=>	array(
+		'func'	=> 'IsJson',
+		'desc'	=> _('Not JSON encoded string'),
+		),
 );
 
 function IsFilePath($filepath)
 {
-	global $PF_CONFIG_PATH;
+	global $PF_CONFIG_PATH, $TMP_PATH;
 
 	return
 		// For CVS Tag displayed in the footer
@@ -130,7 +130,7 @@ function IsFilePath($filepath)
 		// pf configuration files
 		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $filepath)
 		// Uploaded tmp files
-		|| preg_match("|^/tmp/\w[\w.\-_]*$|", $filepath);
+		|| preg_match("|^$TMP_PATH/\w[\w.\-_]*$|", $filepath);
 }
 
 function IsNumber($num)
@@ -143,11 +143,9 @@ function IsName($name)
 	return preg_match('/^\w[\w_.\-]{0,50}$/', $name);
 }
 
-function IsSerializedArray($str)
+function IsJson($str)
 {
-	// Serialized arrays passed to Model are small enough to warrant this unserialize() and array check
-	// Otherwise, this is not true for return values of Model, especially logs and statistics
-	return is_array(unserialize($str));
+	return json_decode($str) !== NULL;
 }
 
 function IsSha1Str($str)

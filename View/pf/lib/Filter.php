@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.11 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Filter.php,v 1.12 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,115 +35,6 @@
 
 class Filter extends FilterBase
 {
-	protected $keyAction= array(
-		'pass' => array(
-			'method' => 'parseNVP',
-			'params' => array('action'),
-			),
-		'match' => array(
-			'method' => 'parseNVP',
-			'params' => array('action'),
-			),
-		'block' => array(
-			'method' => 'parseNVP',
-			'params' => array('action'),
-			),
-		'drop' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return-rst' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return-icmp' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		'return-icmp6' => array(
-			'method' => 'parseNVP',
-			'params' => array('blockoption'),
-			),
-		);
-
-	protected $keyInterface= array(
-		'on' => array(
-			'method' => 'parseInterface',
-			'params' => array(),
-			),
-		);
-
-	function __construct($str)
-	{
-		$this->keywords= array_merge(
-			$this->keywords,
-			$this->keyAction,
-			$this->keyLog,
-			$this->keyQuick
-			);
-
-		parent::__construct($str);
-	}
-
-	function parseInterface()
-	{
-		if ($this->words[$this->index + 1] == 'rdomain') {
-			$this->index++;
-			$this->rule['rdomain']= $this->words[++$this->index];
-		} else {
-			$this->parseItems('interface');
-		}
-	}
-
-	/// @todo Insert a new class between Filter and Nat/Redirect classes, move this func there?
-	function parseRedirHostPort()
-	{
-		$this->parseNVP('type');
-
-		/// @todo Fix these off-by-N errors
-		if ($this->words[$this->index + 1] != 'port') {
-			$this->rule['redirhost']= $this->words[++$this->index];
-		}
-		// @attention Do not use else here
-		if ($this->words[$this->index + 1] == 'port') {
-			$this->index+= 2;
-			$this->rule['redirport']= $this->words[$this->index];
-		}
-	}
-
-	function generate()
-	{
-		$this->genAction();
-
-		$this->genFilterHead();
-		$this->genFilterOpts();
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-
-	function genAction()
-	{
-		$this->str= $this->rule['action'];
-		if ($this->rule['action'] == 'block') {
-			$this->genValue('blockoption');
-		}
-	}
-
-	function genInterface()
-	{
-		if (isset($this->rule['interface'])) {
-			$this->genItems('interface', 'on');
-		} else {
-			$this->genValue('rdomain', 'on rdomain ');
-		}
-	}
-
 	function dispInterface()
 	{
 		?>

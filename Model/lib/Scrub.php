@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Scrub.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,71 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class Scrub extends Filter
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
+		$this->keywords = array(
+			'min-ttl' => array(
+				'method' => 'parseNextValue',
+				'params' => array(),
+				),
+			'max-mss' => array(
+				'method' => 'parseNextValue',
+				'params' => array(),
+				),
+			'no-df' => array(
+				'method' => 'parseBool',
+				'params' => array(),
+				),
+			'random-id' => array(
+				'method' => 'parseBool',
+				'params' => array(),
+				),
+			'reassemble' => array(
+				'method' => 'parseNextValue',
+				'params' => array(),
+				),
+			);
+
+		parent::__construct($str);
 	}
-	
-	function input()
+
+	function generate()
 	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->genAction();
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
+		$this->genFilterHead();
+		$this->genScrub();
+		$this->genFilterOpts();
 
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function genScrub()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
-
-		$this->editHead($modified);
-
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
-
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->str.= ' scrub';
+		$opt= '';
+		if (isset($this->rule['no-df'])) {
+			$opt.= 'no-df';
+		}
+		if (isset($this->rule['min-ttl'])) {
+			$opt.= ', min-ttl ' . $this->rule['min-ttl'];
+		}
+		if (isset($this->rule['max-mss'])) {
+			$opt.= ', max-mss ' . $this->rule['max-mss'];
+		}
+		if (isset($this->rule['random-id'])) {
+			$opt.= ', random-id';
+		}
+		if (isset($this->rule['reassemble'])) {
+			$opt.= ', reassemble ' . $this->rule['reassemble'];
+		}
+		if ($opt !== '') {
+			$this->str.= ' (' . trim($opt, ' ,') . ')';
+		}
 	}
 }
 ?>

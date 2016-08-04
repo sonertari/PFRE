@@ -70,6 +70,14 @@ function Escape($str, $chars, $no_double_escapes= TRUE)
  	return $str;
 }
 
+function FlattenArray(&$array)
+{
+	if (count($array) == 1) {
+		/// @attention Don't use 0 as key to fetch the last value
+		$array= $array[key($array)];
+	}
+}
+
 /** Sets or updates $ViewError with the given message.
  *
  * Error strings are accumulated in global $ViewError and returned to View.

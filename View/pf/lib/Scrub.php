@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.10 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Scrub.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,71 +35,6 @@
 
 class Scrub extends Filter
 {
-	function __construct($str)
-	{
-		$this->keywords = array(
-			'min-ttl' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'max-mss' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'no-df' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'random-id' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'reassemble' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
-
-	function generate()
-	{
-		$this->genAction();
-
-		$this->genFilterHead();
-		$this->genScrub();
-		$this->genFilterOpts();
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-
-	function genScrub()
-	{
-		$this->str.= ' scrub';
-		$opt= '';
-		if (isset($this->rule['no-df'])) {
-			$opt.= 'no-df';
-		}
-		if (isset($this->rule['min-ttl'])) {
-			$opt.= ', min-ttl ' . $this->rule['min-ttl'];
-		}
-		if (isset($this->rule['max-mss'])) {
-			$opt.= ', max-mss ' . $this->rule['max-mss'];
-		}
-		if (isset($this->rule['random-id'])) {
-			$opt.= ', random-id';
-		}
-		if (isset($this->rule['reassemble'])) {
-			$opt.= ', reassemble ' . $this->rule['reassemble'];
-		}
-		if ($opt !== '') {
-			$this->str.= ' (' . trim($opt, ' ,') . ')';
-		}
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

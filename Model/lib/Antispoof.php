@@ -35,46 +35,40 @@
 
 class Antispoof extends Rule
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->keywords= array_merge(
+			$this->keyLog,
+			$this->keyQuick,
+			$this->keyAf,
+			array(
+				'for' => array(
+					'method' => 'parseItems',
+					'params' => array('interface'),
+					),
+				'label' => array(
+					'method' => 'parseDelimitedStr',
+					'params' => array('label'),
+					),
+				)
+			);
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		parent::__construct($str);
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function generate()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$this->str= 'antispoof';
 
-		$this->editHead($modified);
+		$this->genLog();
+		$this->genKey('quick');
+		$this->genItems('interface', 'for');
+		$this->genValue('af');
+		$this->genValue('label', 'label "', '"');
 
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
-
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

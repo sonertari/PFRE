@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.8 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Include.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,31 +32,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 class _Include extends Rule
 {
-	function parse($str)
-	{
-		$this->str= $str;
-		$this->init();
-		$this->parseComment();
-
-		// include "/etc/pf/sub.filter.conf" # Comment
-		// include /etc/pf/sub.filter.conf # Comment
-		if ((preg_match('/^\s*include\s+"([^"]+)"\s*$/', $this->str, $match)) ||
-			(preg_match('/^\s*include\s+(\S+)\s*$/', $this->str, $match))){
-				$this->rule['file']= $match[1];
-		}
-	}
-
-	function generate()
-	{
-		$this->str= 'include "' . $this->rule['file'] . '"';
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-	
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

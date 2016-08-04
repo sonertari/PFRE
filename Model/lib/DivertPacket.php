@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.3 2016/08/03 01:12:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,44 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class DivertPacket extends Filter
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->keywords = array(
+			'divert-packet' => array(
+				'method' => 'parseRedirPort',
+				'params' => array(),
+				),
+			);
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		parent::__construct($str);
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function parseRedirPort()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$this->parseNVP('type');
 
-		$this->editHead($modified);
+		if ($this->words[$this->index + 1] == 'port') {
+			$this->index+= 2;
+			$this->rule['redirport']= $this->words[$this->index];
+		}
+	}
 
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+	function generate()
+	{
+		$this->genAction();
 
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
+		$this->genFilterHead();
+		$this->genFilterOpts();
 
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->genValue('type');
+		/// @todo This is not redirport, but port
+		$this->genValue('redirport', 'port ');
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

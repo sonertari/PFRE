@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.6 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: Blank.php,v 1.7 2016/08/04 01:19:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,19 +32,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 class Blank extends Rule
 {
-	function parse($str)
-	{
-		$this->init();
-		$this->rule['blank']= $str;
-	}
-
-	function generate($singleLine= FALSE)
-	{
-		return $singleLine ? "\n" : $this->rule['blank'];
-	}
-	
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

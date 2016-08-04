@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.12 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: rules.php,v 1.13 2016/08/03 19:02:48 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 require_once ('include.php');
 
 $ruleCategoryNames = array(
@@ -158,8 +159,7 @@ if (filter_has_var(INPUT_POST, 'delete-all')) {
 }
 
 /// @attention Reduce multiline comments to single line, so that reported and actual rule numbers match
-$rulesStr= $View->RuleSet->generate(FALSE, NULL, TRUE, TRUE);
-$View->Controller($Output, 'TestPfRules', serialize(explode('\n', $rulesStr)));
+$View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules));
 
 require_once($VIEW_PATH.'/header.php');
 ?>

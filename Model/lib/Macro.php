@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Macro.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,52 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class Macro extends Rule
 {
-	function display($rulenumber, $count)
+	function parse($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->str= $str;
+		$this->init();
+		$this->parseComment();
+		$this->sanitize();
+		$this->split();
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
-	}
-
-	function edit($rulenumber, $modified, $testResult, $action)
-	{
 		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$this->rule['identifier']= $this->words[$this->index++];
+		if ($this->words[++$this->index] != '{') {
+			$this->rule['value']= $this->words[$this->index];
+		} else {
+			while (preg_replace('/,/', '', $this->words[++$this->index]) != '}') {
+				$this->rule['value'][]= $this->words[$this->index];
+			}
+		}
+	}
 
-		$this->editHead($modified);
+	function sanitize()
+	{
+		$this->str= preg_replace('/{/', ' { ', $this->str);
+		$this->str= preg_replace('/}/', ' } ', $this->str);
+		$this->str= preg_replace('/\(/', ' ( ', $this->str);
+		$this->str= preg_replace('/\)/', ' ) ', $this->str);
+		$this->str= preg_replace('/,/', ' , ', $this->str);
+		$this->str= preg_replace('/=/', ' = ', $this->str);
+		$this->str= preg_replace('/"/', '', $this->str);
+	}
 
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+	function generate()
+	{
+		$this->str= $this->rule['identifier'] . ' = "';
 
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		if (!is_array($this->rule['value'])) {
+			$this->str.= $this->rule['value'];
+		} else {
+			$this->str.= '{ ' . implode(', ', $this->rule['value']) . ' }';
+		}
+		$this->str.= '"';
+		
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: NatTo.php,v 1.2 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,43 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class NatTo extends NatBase
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->keywords = array_merge(
+			$this->keywords,
+			array(
+				'nat-to' => array(
+					'method' => 'parseRedirHostPort',
+					'params' => array(),
+					),
+				'static-port' => array(
+					'method' => 'parseBool',
+					'params' => array(),
+					),
+				)
+			);
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		parent::__construct($str);
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function generate()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$this->genAction();
 
-		$this->editHead($modified);
+		$this->genFilterHead();
+		$this->genFilterOpts();
 
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->genValue('type');
+		$this->genValue('redirhost');
+		$this->genValue('redirport', 'port ');
+		$this->genPoolType();
+		$this->genKey('static-port');
 
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

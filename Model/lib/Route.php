@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Route.php,v 1.6 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,48 +33,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Antispoof extends Rule
+class Route extends NatBase
 {
-	function display($rulenumber, $count)
+	function __construct($str)
 	{
-		$this->dispHead($rulenumber);
-		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
-		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
-		$this->dispTail($rulenumber, $count);
-	}
-	
-	function input()
-	{
-		$this->inputLog();
-		$this->inputBool('quick');
+		$this->keywords = array(
+			'route-to' => array(
+				'method' => 'parseRoute',
+				'params' => array(),
+				),
+			'reply-to' => array(
+				'method' => 'parseRoute',
+				'params' => array(),
+				),
+			'dup-to' => array(
+				'method' => 'parseRoute',
+				'params' => array(),
+				),
+			);
 
-		$this->inputInterface();
-		$this->inputKey('af');
-		$this->inputKey('label');
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
+		parent::__construct($str);
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function parseRoute()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$this->rule['type']= $this->words[$this->index];
+		// @todo routehost not redirhost
+		$this->parseItems('redirhost');
+	}
 
-		$this->editHead($modified);
+	function generate()
+	{
+		$this->genAction();
 
-		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->genFilterHead();
+		$this->genFilterOpts();
 
-		$this->editInterface();
-		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
+		$this->genValue('type');
+		$this->genItems('redirhost');
+		$this->genPoolType();
 
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.10 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Queue.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,92 +35,6 @@
 
 class Queue extends Rule
 {
-	function __construct($str)
-	{
-		$this->keywords= array_merge(
-			$this->keyInterface,
-			array(
-				'queue' => array(
-					'method' => 'parseNextNVP',
-					'params' => array('name'),
-					),
-				'parent' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'bandwidth' => array(
-					'method' => 'parseBandwidth',
-					'params' => array('bw-burst', 'bw-time'),
-					),
-				'min' => array(
-					'method' => 'parseBandwidth',
-					'params' => array('min-burst', 'min-time'),
-					),
-				'max' => array(
-					'method' => 'parseBandwidth',
-					'params' => array('max-burst', 'max-time'),
-					),
-				'qlimit' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'default' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				)
-			);
-
-		parent::__construct($str);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace('/{/', ' { ', $this->str);
-		$this->str= preg_replace('/}/', ' } ', $this->str);
-		$this->str= preg_replace('/\(/', ' ( ', $this->str);
-		$this->str= preg_replace('/\)/', ' ) ', $this->str);
-		$this->str= preg_replace('/,/', ' , ', $this->str);
-	}
-
-	function parseBandwidth($burst, $time)
-	{
-		$this->parseNextValue();
-
-		/// @todo Fix this possible off-by-N errors
-		if ($this->words[$this->index + 1] == 'burst') {
-			$this->index+= 2;
-			$this->rule[$burst]= $this->words[$this->index];
-		}
-		if ($this->words[$this->index + 1] == 'for') {
-			$this->index+= 2;
-			$this->rule[$time]= $this->words[$this->index];
-		}
-	}
-
-	function generate()
-	{
-		$this->str= 'queue ' . $this->rule['name'];
-		$this->genInterface();
-		$this->genValue('parent', 'parent ');
-		$this->genBandwidth('bandwidth', 'bw');
-		$this->genBandwidth('min', 'min');
-		$this->genBandwidth('max', 'max');
-		$this->genValue('qlimit', 'qlimit ');
-		$this->genKey('default');
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-	
-	function genBandwidth($key, $pre)
-	{
-		if (isset($this->rule[$key])) {
-			$this->str.= " $key " . $this->rule[$key] . ($this->rule["$pre-burst"] ? ' burst ' . $this->rule["$pre-burst"] : '') . ($this->rule["$pre-time"] ? ' for ' . $this->rule["$pre-time"] : '');
-		}
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

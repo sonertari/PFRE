@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RdrTo.php,v 1.2 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: RdrTo.php,v 1.3 2016/08/02 12:01:08 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,16 +35,5 @@
 
 class RdrTo extends NatBase
 {
-	function __construct($str)
-	{
-		$this->keywords = array(
-			'rdr-to' => array(
-				'method' => 'parseRedirHostPort',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
 }
 ?>

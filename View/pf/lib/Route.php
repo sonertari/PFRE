@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.5 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Route.php,v 1.6 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,49 +35,6 @@
 
 class Route extends NatBase
 {
-	function __construct($str)
-	{
-		$this->keywords = array(
-			'route-to' => array(
-				'method' => 'parseRoute',
-				'params' => array(),
-				),
-			'reply-to' => array(
-				'method' => 'parseRoute',
-				'params' => array(),
-				),
-			'dup-to' => array(
-				'method' => 'parseRoute',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
-
-	function parseRoute()
-	{
-		$this->rule['type']= $this->words[$this->index];
-		// @todo routehost not redirhost
-		$this->parseItems('redirhost');
-	}
-
-	function generate()
-	{
-		$this->genAction();
-
-		$this->genFilterHead();
-		$this->genFilterOpts();
-
-		$this->genValue('type');
-		$this->genItems('redirhost');
-		$this->genPoolType();
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

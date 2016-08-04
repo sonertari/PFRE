@@ -35,69 +35,89 @@
 
 class Anchor extends FilterBase
 {	
-	function dispAction()
+	function __construct($str)
 	{
-		?>
-		<td title="Id" nowrap="nowrap">
-			<?php echo $this->rule['identifier']; ?>
-		</td>
-		<?php
+		$this->keywords = array(
+			// identifier can be empty, but "anchors without explicit rules must specify a name"
+			'anchor' => array(
+				'method' => 'parseDelimitedStr',
+				'params' => array('identifier'),
+				),
+			'inline' => array(
+				'method' => 'parseNextNVP',
+				'params' => array('inline'),
+				),
+			);
+
+		parent::__construct($str);
 	}
 
-	function input()
+	function sanitize()
 	{
-		$this->inputKey('identifier');
+		$inline= '';
+		$pos= strpos($this->str, 'inline');
+		if ($pos) {
+			// Do not sanitize inline rules
+			$inline= trim(substr($this->str, $pos));
+			$this->str= substr($this->str, 0, $pos);
+		}
 
-		$this->inputFilterHead();
+		parent::sanitize();
 
-		$this->inputInline();
-
-		$this->inputFilterOpts();
-
-		$this->inputKey('comment');
-		$this->inputDelEmpty();
-	}
-
-	function inputInline()
-	{
-		// inputKey() trims, hence this new method
-		if (filter_has_var(INPUT_POST, 'state')) {
-			$this->rule['inline']= filter_input(INPUT_POST, 'inline');
+		if ($inline !== '') {
+			$this->str.= $inline;
 		}
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function split()
 	{
-		$this->index= 0;
-		$this->rulenumber= $rulenumber;
+		$inline= '';
+		$pos= strpos($this->str, 'inline');
+		if ($pos) {
+			// Do not split inline rules
+			// Skip inline keyword
+			$inline= substr($this->str, $pos + strlen('inline') + 1);
+			$this->str= substr($this->str, 0, $pos);
+		}
 
-		$this->editHead($modified);
+		parent::split();
 
-		$this->editText('identifier', 'Identifier', 'anchor-id', NULL, 'name, may be nested');
-
-		$this->editFilterHead();
-
-		$this->editInlineRules();
-
-		$this->editFilterOpts();
-
-		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		if ($inline !== '') {
+			$this->words[]= 'inline';
+			$this->words[]= $inline;
+		}
 	}
 
-	function editInlineRules()
+	function generate()
 	{
-		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
-			<td class="title">
-				<?php echo _TITLE('Inline Rules').':' ?>
-			</td>
-			<td>
-				<textarea cols="80" rows="5" id="inline" name="inline" placeholder="Enter inline rules here"><?php echo $this->rule['inline']; ?></textarea>
-				<?php $this->editHelp('inline') ?>
-			</td>
-		</tr>
-		<?php
+		$this->str= 'anchor';
+		$this->genValue('identifier', '"', '"');
+
+		$this->genValue('direction');
+		$this->genInterface();
+		$this->genValue('af');
+		$this->genItems('proto', 'proto');
+		$this->genSrcDest();
+
+		$this->genFilterOpts();
+
+		// Inline rules should come last
+		$this->genInline();
+
+		$this->genComment();
+		$this->str.= "\n";
+		return $this->str;
+	}
+
+	function genInline()
+	{
+		if (isset($this->rule['inline'])) {
+			// textarea inserts \r\n instead of just \n, which pfctl complains about
+			// Inline rules should start on a new line
+			// Ending brace should be on its own line
+			/// @todo Untaint inline rules, parse before passing to pfctl?
+			$this->str.= " {\n" . preg_replace('/\r/', '', $this->rule['inline']) . "\n}";
+		}
 	}
 }
 ?>

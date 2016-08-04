@@ -60,4 +60,5 @@ $USER= array('user');
 $ALL_USERS= array_merge($ADMIN, $USER);
 
 $PF_CONFIG_PATH= '/etc/pfre';
+$TMP_PATH= '/tmp';
 ?>

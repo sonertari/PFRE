@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.5 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: AfTo.php,v 1.6 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,56 +35,6 @@
 
 class AfTo extends Filter
 {
-	function __construct($str)
-	{
-		$this->keywords = array(
-			'af-to' => array(
-				'method' => 'parseAfto',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
-
-	function parseAfto()
-	{
-		$this->rule['rediraf']= $this->words[++$this->index];
-
-		if ($this->words[$this->index + 1] === 'from') {
-			$this->index+= 2;
-			$this->rule['redirhost']= $this->words[$this->index];
-
-			if ($this->words[$this->index + 1] === 'to') {
-				$this->index+= 2;
-				$this->rule['toredirhost']= $this->words[$this->index];
-			}
-		}
-	}
-
-	function generate()
-	{
-		$this->genAction();
-
-		$this->genFilterHead();
-		$this->genFilterOpts();
-
-		$this->genAfto();
-		// @todo Can we have pooltype with af-to? BNF says no, but pfctl does not complain about it
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-	
-	function genAfto()
-	{
-		$this->str.= ' af-to';
-		$this->genValue('rediraf');
-		$this->genValue('redirhost', 'from ');
-		$this->genValue('toredirhost', 'to ');
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

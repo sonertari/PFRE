@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.9 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: Table.php,v 1.10 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,109 +35,6 @@
 
 class Table extends Rule
 {
-	function __construct($str)
-	{
-		$this->keywords = array(
-			'table' => array(
-				'method' => 'parseDelimitedStr',
-				'params' => array('identifier', '<', '>'),
-				),
-			'persist' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'const' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'counters' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'file' => array(
-				'method' => 'parseFile',
-				'params' => array(),
-				),
-			'{' => array(
-				'method' => 'parseData',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace('/{/', ' { ', $this->str);
-		$this->str= preg_replace('/}/', ' } ', $this->str);
-		$this->str= preg_replace('/</', ' < ', $this->str);
-		$this->str= preg_replace('/>/', ' > ', $this->str);
-		$this->str= preg_replace('/,/', ' , ', $this->str);
-	}
-
-	function parseFile()
-	{
-		$filename= preg_replace('/"/', '', $this->words[++$this->index]);
-		if (!$this->rule['file']) {
-			$this->rule['file']= $filename;
-		} else {
-			if (!is_array($this->rule['file'])) {
-				$_temp= $this->rule['file'];
-				unset($this->rule['file']);
-				$this->rule['file'][]= $_temp;
-			}
-			$this->rule['file'][]= $filename;
-		}
-	}
-
-	function parseData()
-	{
-		while (preg_replace('/[\s,]+/', '', $this->words[++$this->index]) != '}') {
-			$this->rule['data'][]= $this->words[$this->index];
-		}
-	}
-
-	function generate()
-	{
-		$this->str= 'table <' . $this->rule['identifier'] . '>';
-		$this->genKey('persist');
-		$this->genKey('const');
-		$this->genKey('counters');
-		$this->genFiles();
-		$this->genData();
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-	
-	function genFiles()
-	{
-		if (isset($this->rule['file'])) {
-			if (!is_array($this->rule['file'])) {
-				$this->str.= ' file "' . $this->rule['file'] . '"';
-			} else {
-				foreach ($this->rule['file'] as $file) {
-					$this->str.= ' file "' . $file . '"';
-				}
-			}
-		}
-	}
-
-	function genData()
-	{
-		if (isset($this->rule['data'])) {
-			$this->str.= ' { ';
-			if (!is_array($this->rule['data'])) {
-				$this->str.= $this->rule['data'];
-			} else {
-				$this->str.= implode(', ', $this->rule['data']);
-			}
-			$this->str.= ' }';
-		}
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

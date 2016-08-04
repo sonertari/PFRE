@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.10 2016/08/04 01:32:37 soner Exp $ */
+/* $pfre: Limit.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,74 +35,6 @@
 
 class Limit extends Rule
 {
-	function __construct($str)
-	{
-		$this->keywords = array(
-			'states' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'frags' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'src-nodes' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'tables' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'table-entries' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			);
-
-		parent::__construct($str);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace('/{/', ' { ', $this->str);
-		$this->str= preg_replace('/}/', ' } ', $this->str);
-		$this->str= preg_replace('/\(/', ' ( ', $this->str);
-		$this->str= preg_replace('/\)/', ' ) ', $this->str);
-		$this->str= preg_replace('/,/', ' , ', $this->str);
-		$this->str= preg_replace('/"/', ' " ', $this->str);
-	}
-
-	function parseLimit()
-	{
-		$this->rule['limit'][$this->words[$this->index]]= $this->words[++$this->index];
-	}
-
-	function generate()
-	{
-		$this->str= '';
-
-		if (count($this->rule['limit'])) {
-			reset($this->rule['limit']);
-
-			if (count($this->rule['limit']) == 1) {
-				list($key, $val)= each($this->rule['limit']);
-				$this->str.= "set limit $key $val";
-			} else {
-				$this->str= 'set limit {';
-				while (list($key, $val)= each($this->rule['limit'])) {
-					$this->str.= " $key $val,";
-				}
-				$this->str= rtrim($this->str, ',');
-				$this->str.= ' }';
-			}
-		}
-
-		$this->genComment();
-		$this->str.= "\n";
-		return $this->str;
-	}
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);

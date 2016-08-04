@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.5 2016/07/29 07:07:23 soner Exp $ */
+/* $pfre: pf.php,v 1.6 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -45,7 +45,7 @@ class Pf extends Model
 			$this->Commands,
 			array(
 				'GetPfRules'=>	array(
-					'argv'	=>	array(FILEPATH|NONE),
+					'argv'	=>	array(FILEPATH|NONE, BOOL|NONE),
 					'desc'	=>	_('Get pf rules'),
 					),
 				
@@ -58,23 +58,33 @@ class Pf extends Model
 					'argv'	=>	array(FILEPATH),
 					'desc'	=>	_('Delete pf rule file'),
 					),
-				
+
 				'InstallPfRules'=>	array(
-					'argv'	=>	array(SERIALARRAY, SAVEFILEPATH|NONE, BOOL|NONE),
+					'argv'	=>	array(JSON, SAVEFILEPATH|NONE, BOOL|NONE),
 					'desc'	=>	_('Install pf rules'),
 					),
 				
+				'GeneratePfRule'=>	array(
+					'argv'	=>	array(JSON),
+					'desc'	=>	_('Generate pf rule'),
+					),
+
+				'GeneratePfRules'=>	array(
+					'argv'	=>	array(JSON, BOOL|NONE),
+					'desc'	=>	_('Generate pf rules'),
+					),
+
 				'TestPfRules'=>	array(
-					'argv'	=>	array(SERIALARRAY),
+					'argv'	=>	array(JSON),
 					'desc'	=>	_('Test pf rules'),
 					),
 				)
 			);
 	}
 
-	function GetPfRules($filename= NULL)
+	function GetPfRules($filename= NULL, $tmp= FALSE)
 	{
-		global $PF_CONFIG_PATH;
+		global $PF_CONFIG_PATH, $TMP_PATH;
 
 		if ($filename == NULL) {
 			$filename= '/etc/pf.conf';
@@ -82,9 +92,24 @@ class Pf extends Model
 			if (!$this->ValidateFilename($filename)) {
 				return FALSE;
 			}
-			$filename= "$PF_CONFIG_PATH/$filename";
+			if ($tmp == FALSE) {
+				$filename= "$PF_CONFIG_PATH/$filename";
+			} else {
+				$filename= "$TMP_PATH/$filename";
+			}
 		}
-		return $this->GetFile($filename);
+
+		$ruleStr= $this->GetFile($filename);
+
+		/// @todo Check if we need to unlink tmp file
+		//if ($tmp != FALSE) {
+		//	unlink($filename);
+		//}
+
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($ruleStr);
+
+		return json_encode($ruleSet);
 	}
 
 	function GetPfRuleFiles()
@@ -117,8 +142,10 @@ class Pf extends Model
 			$filename= "$PF_CONFIG_PATH/$filename";
 		}
 				
-		$rules= unserialize($rules)[0];
-		
+		$rulesArray= json_decode($rules, TRUE);
+		$ruleSet= new RuleSet($rulesArray);
+		$rules= $ruleSet->generate();
+
 		$logLevel= LOG_ERR;
 		$output= array();
 		
@@ -169,11 +196,30 @@ class Pf extends Model
 		return TRUE;
 	}
 
+	function GeneratePfRule($rule)
+	{
+		$ruleDef= json_decode($rule, TRUE);
+		$class= $ruleDef['cat'];
+		$ruleObj= new $class('');
+		$ruleObj->rule= $ruleDef['rule'];
+		return $ruleObj->generate();
+	}
+
+	function GeneratePfRules($rules, $lines= FALSE)
+	{
+		$rulesArray= json_decode($rules, TRUE);
+		$ruleSet= new RuleSet($rulesArray);
+		return $ruleSet->generate($lines);
+	}
+
 	function TestPfRules($rules)
 	{
-		$rules= unserialize($rules)[0];
-		$cmd= "/bin/echo '$rules' | /sbin/pfctl -nf - 2>&1";
-		
+		$rulesArray= json_decode($rules, TRUE);
+		$ruleSet= new RuleSet($rulesArray);
+		$rulesStr= $ruleSet->generate(FALSE, NULL, TRUE, TRUE);
+
+		$cmd= "/bin/echo '$rulesStr' | /sbin/pfctl -nf - 2>&1";
+
 		/// @bug pfctl gets stuck
 		/// @todo pfctl takes a long time to return on some errors
 		// Example 1: A macro using an unknown interface: int_if = "a1",
@@ -190,8 +236,8 @@ class Pf extends Model
 		if ($retval === 0) {
 			return TRUE;
 		}
-		
-		$rulesArray= explode("\n", $rules);
+
+		$rules= explode("\n", $rulesStr);
 
 		foreach ($output as $o) {
 			if (preg_match('/^([^:]+):(\d+):\s*(.*)$/', $o, $match)) {
@@ -203,7 +249,7 @@ class Pf extends Model
 				$line--;
 				
 				if ($src == 'stdin') {
-					$rule= $rulesArray[$line];
+					$rule= $rules[$line];
 					ViewError("$line: $err:\n<code>	" . htmlentities($rule) . '</code>');
 				} else {
 					// Rule numbers in include files need an extra decrement
