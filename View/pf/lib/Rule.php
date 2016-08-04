@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.23 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Rule.php,v 1.24 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -405,7 +405,8 @@ class Rule
 		global $View;
 		
 		$View->Controller($output, 'GeneratePfRule', json_encode($this));
-		$ruleStr= $output[0];
+		/// @attention Inline anchor rules are multi-line, hence implode
+		$ruleStr= implode("\n", $output);
 		?>
 		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
 		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", str_replace("\n", '<br>', htmlentities($ruleStr))); ?></h4>
