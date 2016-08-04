@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.1 2016/08/03 17:23:19 soner Exp $ */
+/* $pfre: State.php,v 1.2 2016/08/04 02:16:13 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -176,7 +176,7 @@ class State extends Timeout
 		}
 	}
 
-	function genOverload($html= FALSE)
+	function genOverload()
 	{
 		if (isset($this->rule['overload'])) {
 			$str= 'overload ' . $this->rule['overload'];
@@ -186,7 +186,7 @@ class State extends Timeout
 					$str.= ' global';
 				}
 			}
-			$this->arr[]= $html ? htmlentities($str) : $str;
+			$this->arr[]= $str;
 		}
 	}
 	
@@ -228,8 +228,8 @@ class State extends Timeout
 			$this->dispBool('if-bound');
 			$this->dispBool('floating');
 
-			$this->genOverload(TRUE);
-			$this->genSourceTrack();
+			$this->dispOverload();
+			$this->dispSourceTrack();
 
 			$this->dispTimeoutOpts();
 
@@ -250,6 +250,31 @@ class State extends Timeout
 	{
 		if (isset($this->rule[$key])) {
 			$this->arr[]= $key;
+		}
+	}
+	
+	function dispOverload()
+	{
+		if (isset($this->rule['overload'])) {
+			$str= 'overload ' . $this->rule['overload'];
+			if (isset($this->rule['flush'])) {
+				$str.= ' flush';
+				if (isset($this->rule['global'])) {
+					$str.= ' global';
+				}
+			}
+			$this->arr[]= htmlentities($str);
+		}
+	}
+	
+	function dispSourceTrack()
+	{
+		if (isset($this->rule['source-track'])) {
+			$str= 'source-track';
+			if (isset($this->rule['source-track-option'])) {
+				$str.= ' ' . $this->rule['source-track-option'];
+			}
+			$this->arr[]= $str;
 		}
 	}
 	
