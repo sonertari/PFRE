@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.15 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Option.php,v 1.16 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -54,9 +54,7 @@ class Option extends Rule
 				if (!is_array($value)) {
 					echo "skip on $value";
 				} else {
-					foreach ($value as $skip) {
-						echo "skip on $skip<br>";
-					}
+					echo 'skip on ' . implode(', ', $value);
 				}
 			} elseif ($this->rule['type'] == 'reassemble') {
 				echo $this->rule['type'] . ": $value";

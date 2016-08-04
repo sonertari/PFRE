@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Timeout.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,8 +35,6 @@
 
 class Timeout extends Rule
 {
-	protected $arr= array();
-
 	function display($rulenumber, $count)
 	{
 		$this->dispHead($rulenumber);
@@ -51,7 +49,7 @@ class Timeout extends Rule
 			<?php
 			$this->arr= array();
 			$this->dispTimeoutOpts();
-			echo implode('<br>', $this->arr);
+			echo implode(', ', $this->arr);
 			?>
 		</td>
 		<?php

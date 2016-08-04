@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Limit.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,12 +47,14 @@ class Limit extends Rule
 		?>
 		<td title="Limit" colspan="12">
 			<?php
+			$this->arr= array();
 			if (count($this->rule['limit'])) {
 				reset($this->rule['limit']);
 				while (list($key, $val)= each($this->rule['limit'])) {
-					echo "$key: $val<br>";
+					$this->arr[]= "$key: $val";
 				}
 			}
+			echo implode(', ', $this->arr);
 			?>
 		</td>
 		<?php

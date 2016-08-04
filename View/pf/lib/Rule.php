@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.24 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Rule.php,v 1.25 2016/08/04 17:05:44 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -41,6 +41,8 @@ class Rule
 	protected $href= '';
 	protected $rulenumber= 0;
 	
+	protected $arr= array();
+
 	function __construct()
 	{
 		$this->cat= get_called_class();
