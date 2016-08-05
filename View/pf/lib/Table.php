@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.10 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Table.php,v 1.11 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -84,7 +84,7 @@ class Table extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -100,7 +100,7 @@ class Table extends Rule
 	function editFlags()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Flags').':' ?>
 			</td>
@@ -124,7 +124,7 @@ class Table extends Rule
 	function editValues()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Values').':' ?>
 			</td>

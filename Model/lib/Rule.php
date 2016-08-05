@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Rule.php,v 1.2 2016/08/04 16:44:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -44,6 +44,8 @@ class Rule
 
 	protected $keywords = array();
 	
+	protected $rulenumber= 0;
+
 	protected $keyInterface= array(
 		'on' => array(
 			'method' => 'parseItems',
@@ -76,10 +78,156 @@ class Rule
 			),
 		);
 
+	protected $typedef= array();
+
+	protected $typeInterface= array(
+		'interface' => array(
+			'multi' => TRUE,
+			'regex' => '^(\w|\$|!)[\w_.\/\-*]{0,50}$',
+			),
+		);
+
+	protected $typeAf= array(
+		'af' => array(
+			'regex' => '^(inet|inet6)$',
+			),
+		);
+
+	protected $typeLog= array(
+		'log' => array(
+			/// @attention log can be of type either bool or array of values
+			// Validate functions can handle multi-type values like this, no problem
+			'func' => 'IsBool',
+			'values' => array(
+				'all' => array(
+					'func' => 'IsBool',
+					),
+				'matches' => array(
+					'func' => 'IsBool',
+					),
+				'user' => array(
+					'func' => 'IsBool',
+					),
+				'to' => array(
+					'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+					),
+				),
+			),
+		);
+
+	protected $typeQuick= array(
+		'quick' => array(
+			'func' => 'IsBool',
+			),
+		);
+
+	protected $typeComment= array(
+		'comment' => array(
+			'regex' => '^[^$`]{0,100}$',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->cat= get_called_class();
-		$this->parse($str);
+
+		if ($str != '') {
+			$this->parse($str);
+		}
+	}
+
+	function load($arr, $rulenumber= 0)
+	{
+		$this->rulenumber= $rulenumber;
+
+		if ($this->validate($arr)) {
+			$this->rule= $arr;
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+	function validate($ruleArray)
+	{
+		$arr= $ruleArray;
+		foreach ($this->typedef as $key => $def) {
+			if (!$this->validateKeyDef($arr, $key, $def, '')) {
+				return FALSE;
+			}
+		}
+
+		if (count($arr) > 0) {
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Unexpected elements: " . implode(', ', array_keys($arr))));
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	function validateKeyDef(&$arr, $key, $def, $parent)
+	{
+		if (array_key_exists($key, $arr)) {
+			if (is_array($arr[$key])) {
+				if (!$this->validateArrayValues($arr[$key], $key, $def, $parent)) {
+					return FALSE;
+				}
+			} elseif (!$this->validateValue($key, $arr[$key], $def, $parent)) {
+				return FALSE;
+			}
+			unset($arr[$key]);
+		} elseif ($def['require']) {
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	function validateArrayValues(&$arr, $key, $def, $parent)
+	{
+		if ($def['multi']) {
+			foreach ($arr as $v) {
+				if (!$this->validateValue($key, $v, $def, $parent)) {
+					return FALSE;
+				}
+			}
+		} elseif ($def['values']) {
+			foreach ($def['values'] as $k => $d) {
+				if (!$this->validateKeyDef($arr, $k, $d, $key)) {
+					return FALSE;
+				}
+			}
+
+			if (count($arr) > 0) {
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Unexpected elements: " . ltrim("$parent.$key", '.') . ' ' . implode(', ', array_keys($arr))));
+				return FALSE;
+			}
+		} else {
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Multiple values not allowed for " . ltrim("$parent.$key", '.')));
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	function validateValue($key, $value, $def, $parent)
+	{
+		if ($def['regex']) {
+			$rxfn= $def['regex'];
+			$result= preg_match("/$rxfn/", $value);
+		} elseif ($def['func']) {
+			$rxfn= $def['func'];
+			$result= $rxfn($value);
+		} else {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: No regex or func def for: " . ltrim("$parent.$key", '.')));
+			return FALSE;
+		}
+
+		if (!$result) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': $value"));
+			return FALSE;
+		} else {
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "$this->rulenumber: Valid value for '" . ltrim("$parent.$key", '.') . "': $value, $rxfn");
+		}
+		return TRUE;
 	}
 
 	function parse($str)
@@ -97,7 +245,7 @@ class Rule
 				if (is_callable($method, TRUE)) {
 					call_user_method_array($method, $this, $this->keywords[$key]['params']);
 				} else {
-					pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parser method '$method' is not callable");
+					pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parser method '$method' not callable");
 				}
 			} else {
 				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Word '$key' not in keywords");

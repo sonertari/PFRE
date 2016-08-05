@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.4 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: NatBase.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,36 +35,67 @@
 
 class NatBase extends Filter
 {
+	protected $keyNatBase= array(
+		'bitmask' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'least-states' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'round-robin' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'random' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'source-hash' => array(
+			'method' => 'parseSourceHash',
+			'params' => array(),
+			),
+		'sticky-address' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		);
+
+	protected $typeNatBase= array(
+		'bitmask' => array(
+			'func' => 'IsBool',
+			),
+		'least-states' => array(
+			'func' => 'IsBool',
+			),
+		'round-robin' => array(
+			'func' => 'IsBool',
+			),
+		'random' => array(
+			'func' => 'IsBool',
+			),
+		'source-hash' => array(
+			'func' => 'IsBool',
+			),
+		'source-hash-key' => array(
+			'regex' => '^\w{16,}$',
+			),
+		'sticky-address' => array(
+			'func' => 'IsBool',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords = array_merge(
 			$this->keywords,
-			array(
-				'bitmask' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'least-states' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'round-robin' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'random' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'source-hash' => array(
-					'method' => 'parseSourceHash',
-					'params' => array(),
-					),
-				'sticky-address' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				)
+			$this->keyNatBase
+			);
+
+		$this->typedef= array_merge(
+			$this->typedef,
+			$this->typeNatBase
 			);
 
 		parent::__construct($str);
@@ -84,7 +115,7 @@ class NatBase extends Filter
 
 		/// @attention No pattern for hash key or string, so check keywords instead
 		/// This is one of the benefits of using keyword lists instead of switch/case structs while parsing
-		//if (preg_match('/[a-f\d]{16,}/', $this->words[$this->index + 1])) {
+		//if (preg_match('/^[a-f\d]{16,}$/', $this->words[$this->index + 1])) {
 		if (!in_array($this->words[$this->index + 1], $this->keywords)) {
 			$this->rule['source-hash-key']= $this->words[++$this->index];
 		}

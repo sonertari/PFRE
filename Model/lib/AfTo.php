@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.6 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: AfTo.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,15 @@
 
 class AfTo extends Filter
 {
+	protected $typeNatBase= array(
+		'rediraf' => array(
+			'regex' => '^(inet|inet6)$',
+			),
+		'toredirhost' => array(
+			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords = array(
@@ -43,6 +52,8 @@ class AfTo extends Filter
 				'params' => array(),
 				),
 			);
+
+		$this->typedef= $this->typeNatBase;
 
 		parent::__construct($str);
 	}

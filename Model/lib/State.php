@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.3 2016/08/04 02:42:21 soner Exp $ */
+/* $pfre: State.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,60 +35,116 @@
 
 class State extends Timeout
 {
+	protected $keyState= array(
+		'max' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'max-src-states' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'max-src-nodes' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'max-src-conn' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'max-src-conn-rate' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'sloppy' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'no-sync' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'pflow' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'if-bound' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'floating' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'overload' => array(
+			'method' => 'parseOverload',
+			'params' => array(),
+			),
+		'source-track' => array(
+			'method' => 'parseSourceTrack',
+			'params' => array(),
+			),
+		);
+
+	protected $typeState= array(
+		'max' => array(
+			'func' => 'IsNumber',
+			),
+		'max-src-states' => array(
+			'func' => 'IsNumber',
+			),
+		'max-src-nodes' => array(
+			'func' => 'IsNumber',
+			),
+		'max-src-conn' => array(
+			'func' => 'IsNumber',
+			),
+		'max-src-conn-rate' => array(
+			'regex' => '^\d{1,20}\/\d{1,20}$',
+			),
+		'sloppy' => array(
+			'func' => 'IsBool',
+			),
+		'no-sync' => array(
+			'func' => 'IsBool',
+			),
+		'pflow' => array(
+			'func' => 'IsBool',
+			),
+		'if-bound' => array(
+			'func' => 'IsBool',
+			),
+		'floating' => array(
+			'func' => 'IsBool',
+			),
+		/// @todo Do not require < and >, fix the parser/generator first
+		'overload' => array(
+			'regex' => '^<\w[\w_.\-]{0,50}>$',
+			),
+		'flush' => array(
+			'func' => 'IsBool',
+			),
+		'global' => array(
+			'func' => 'IsBool',
+			),
+		'source-track' => array(
+			'func' => 'IsBool',
+			),
+ 		'source-track-option' => array(
+			'regex' => '^(rule|global)$',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords = array_merge(
 			$this->keywords,
-			array(
-				'max' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'max-src-states' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'max-src-nodes' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'max-src-conn' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'max-src-conn-rate' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'sloppy' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'no-sync' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'pflow' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'if-bound' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'floating' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				'overload' => array(
-					'method' => 'parseOverload',
-					'params' => array(),
-					),
-				'source-track' => array(
-					'method' => 'parseSourceTrack',
-					'params' => array(),
-					),
-				)
+			$this->keyState
+			);
+
+		$this->typedef = array_merge(
+			$this->typedef,
+			$this->typeState
 			);
 
 		parent::__construct($str);

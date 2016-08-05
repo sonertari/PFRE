@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.17 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.18 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,10 +37,12 @@ class RuleSet
 {
 	public $filename= '';
 	public $rules= array();
-	
-	function __construct($View, $filename= '/etc/pf.conf', $tmp= 0) {
-		$retval= TRUE;
+			
+	function load($filename= '/etc/pf.conf', $tmp= 0)
+	{
+		global $View;
 
+		$retval= TRUE;
 		if ($filename == '/etc/pf.conf') {
 			$retval= $View->Controller($Output, 'GetPfRules');
 		} else {
@@ -49,16 +51,11 @@ class RuleSet
 
 		if ($retval !== FALSE) {
 			$this->filename= $filename;
-
 			$rulesArray= json_decode($Output[0], TRUE)['rules'];
-			$this->load($rulesArray);
-			return TRUE;
+		} else {
+			return FALSE;
 		}
-		return FALSE;
-	}
-	
-	function load($rulesArray)
-	{
+
 		$this->deleteRules();
 		foreach ($rulesArray as $ruleDef) {
 			$class= $ruleDef['cat'];
@@ -66,6 +63,7 @@ class RuleSet
 			$ruleObj->rule= $ruleDef['rule'];
 			$this->rules[]= $ruleObj;
 		}
+		return TRUE;
 	}
 	
 	function deleteRules()

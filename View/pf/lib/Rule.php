@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.25 2016/08/04 17:05:44 soner Exp $ */
+/* $pfre: Rule.php,v 1.26 2016/08/04 20:00:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,6 +42,7 @@ class Rule
 	protected $rulenumber= 0;
 	
 	protected $arr= array();
+	protected $editIndex= 0;
 
 	function __construct()
 	{
@@ -330,12 +331,12 @@ class Rule
 			} elseif (is_array($value)) {
 				/// @todo Is there a better way? Passing $flatten=FALSE down from Timeout and Limit objects does not work, Filter objects need TRUE
 				/// @attention Do not flatten timeout and limit options
-				$array[$key]= $this->inputDelEmptyRecursive($value, in_array($key, array('timeout', 'limit')) ? FALSE : $flatten);
+				$array[$key]= $this->inputDelEmptyRecursive($value, in_array($key, array('timeout', 'limit', 'log')) ? FALSE : $flatten);
 
 				if (count($array[$key]) == 0) {
 					// Array is empty, delete it
 					unset($array[$key]);
-				} elseif (count($array[$key]) == 1 && $flatten && !in_array($key, array('timeout', 'limit'))) {
+				} elseif (count($array[$key]) == 1 && $flatten && !in_array($key, array('timeout', 'limit', 'log'))) {
 					// Array has only one element, convert from array to simple NVP
 					list($k, $v)= each($array[$key]);
 					unset($array[$key]);
@@ -349,7 +350,7 @@ class Rule
 	function editCheckbox($key, $title)
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo $title.':' ?>
 			</td>
@@ -365,7 +366,7 @@ class Rule
 	{
 		$help= $help === NULL ? $key : $help;
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo $title.':' ?>
 			</td>
@@ -385,7 +386,7 @@ class Rule
 	{
 		$help= $help === NULL ? $key : $help;
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo $title.':' ?>
 			</td>
@@ -404,11 +405,7 @@ class Rule
 
 	function editHead($modified)
 	{
-		global $View;
-		
-		$View->Controller($output, 'GeneratePfRule', json_encode($this));
-		/// @attention Inline anchor rules are multi-line, hence implode
-		$ruleStr= implode("\n", $output);
+		global $ruleStr;
 		?>
 		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
 		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", str_replace("\n", '<br>', htmlentities($ruleStr))); ?></h4>
@@ -441,7 +438,7 @@ class Rule
 	function editAf()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Address Family').':' ?>
 			</td>
@@ -460,7 +457,7 @@ class Rule
 	function editLog()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Logging').':' ?>
 			</td>
@@ -487,7 +484,7 @@ class Rule
 	function editComment()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Comment').':' ?>
 			</td>

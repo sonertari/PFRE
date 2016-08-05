@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.17 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,19 +37,23 @@ class RuleSet
 {
 	public $rules= array();
 	
-	function __construct($rulesArray= array()) {
-		$this->load($rulesArray);
-	}
-
 	function load($rulesArray)
 	{
 		$this->deleteRules();
+	
+		$retval= TRUE;
+		$rulenumber= 0;
 		foreach ($rulesArray as $ruleDef) {
 			$class= $ruleDef['cat'];
 			$ruleObj= new $class('');
-			$ruleObj->rule= $ruleDef['rule'];
+			if (!$ruleObj->load($ruleDef['rule'], $rulenumber)) {
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$rulenumber: Load Error: Rule loaded partially"));
+				$retval= FALSE;
+			}
 			$this->rules[]= $ruleObj;
+			$rulenumber++;
 		}
+		return $retval;
 	}
 	
 	function deleteRules()
@@ -184,6 +188,19 @@ class RuleSet
             $this->rules[]= new Comment($comment);
         }
         /// @attention Do not append accumulated blank lines to the end
+		
+		return $this->validate();
+	}
+
+	function validate()
+	{
+		// Reload for validation
+		$rulesArray= json_decode(json_encode($this->rules), TRUE);
+		if (!$this->load($rulesArray)) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError('Load Error: Ruleset contains errors'));
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	function parseInlineRules($rulebase, &$str, &$order)

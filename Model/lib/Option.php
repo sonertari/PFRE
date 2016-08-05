@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.15 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Option.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,50 +35,97 @@
 
 class Option extends Rule
 {
+	protected $keyOption = array(
+		'loginterface' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'block-policy' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'state-policy' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'optimization' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'ruleset-optimization' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'debug' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'hostid' => array(
+			'method' => 'parseOption',
+			'params' => array(),
+			),
+		'skip' => array(
+			'method' => 'parseSkip',
+			'params' => array(),
+			),
+		'fingerprints' => array(
+			'method' => 'parseFingerprints',
+			'params' => array(),
+			),
+		'reassemble' => array(
+			'method' => 'parseReassemble',
+			'params' => array(),
+			),
+		);
+
+	protected $typeOption= array(
+		'type' => array(
+			/// @todo Actually we can enum the types below
+			'regex' => '^[a-z-]{0,30}$',
+			),
+		'loginterface' => array(
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		'block-policy' => array(
+			'regex' => '^(drop|return)$',
+			),
+		'state-policy' => array(
+			'regex' => '^(if-bound|floating)$',
+			),
+		'optimization' => array(
+			'regex' => '^(normal|high-latency|satellite|aggressive|conservative)$',
+			),
+		'ruleset-optimization' => array(
+			'regex' => '^(none|basic|profile)$',
+			),
+		'debug' => array(
+			'regex' => '^(emerg|alert|crit|err|warning|notice|info|debug)$',
+			),
+		'hostid' => array(
+			'func' => 'IsNumber',
+			),
+		'skip' => array(
+			'multi' => TRUE,
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		'fingerprints' => array(
+			'func' => 'IsFilePath',
+			),
+		'reassemble' => array(
+			'regex' => '^(yes|no)$',
+			),
+		'no-df' => array(
+			'func' => 'IsBool',
+			),
+		);
+
 	function __construct($str)
 	{
-		/// @todo Support set state-defaults state-option, ...
-		$this->keywords = array(
-			'loginterface' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'block-policy' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'state-policy' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'optimization' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'ruleset-optimization' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'debug' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'hostid' => array(
-				'method' => 'parseOption',
-				'params' => array(),
-				),
-			'skip' => array(
-				'method' => 'parseSkip',
-				'params' => array(),
-				),
-			'fingerprints' => array(
-				'method' => 'parseFingerprints',
-				'params' => array(),
-				),
-			'reassemble' => array(
-				'method' => 'parseReassemble',
-				'params' => array(),
-				),
+		$this->keywords= $this->keyOption;
+
+		$this->typedef = array_merge(
+			$this->typeOption,
+			$this->typeComment
 			);
 
 		parent::__construct($str);
@@ -146,7 +193,7 @@ class Option extends Rule
 			if (!is_array($this->rule['skip'])) {
 				$this->genOption('skip', 'on ');
 			} else {
-				$this->str.= 'set skip on { ' . implode(' ', $this->rule['skip']) . ' }';
+				$this->str.= 'set skip on { ' . implode(', ', $this->rule['skip']) . ' }';
 			}
 		}
 	}

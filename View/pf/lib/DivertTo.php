@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertTo.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: DivertTo.php,v 1.5 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,7 +60,7 @@ class DivertTo extends Filter
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);

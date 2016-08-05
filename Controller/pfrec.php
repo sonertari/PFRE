@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.3 2016/07/29 06:42:08 soner Exp $ */
+/* $pfre: pfrec.php,v 1.4 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -128,8 +128,10 @@ else {
 	pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Method does not exist: $ErrorStr");
 }
 
-if ($retval === 1 && isset($ViewError)) {
-	echo $ViewError;
+if (isset($ViewError)) {
+	/// @attention Output all view error messages, success or fail
+	// Tag view errors with <ViewError>: on success, so the caller can split to get output and error messages
+	echo $retval === 1 ? $ViewError : "\n<ViewError>:$ViewError";
 }
 exit($retval);
 ?>

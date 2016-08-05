@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Limit.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,29 +35,58 @@
 
 class Limit extends Rule
 {
+	protected $keyLimit= array(
+		'states' => array(
+			'method' => 'parseLimit',
+			'params' => array(),
+			),
+		'frags' => array(
+			'method' => 'parseLimit',
+			'params' => array(),
+			),
+		'src-nodes' => array(
+			'method' => 'parseLimit',
+			'params' => array(),
+			),
+		'tables' => array(
+			'method' => 'parseLimit',
+			'params' => array(),
+			),
+		'table-entries' => array(
+			'method' => 'parseLimit',
+			'params' => array(),
+			),
+		);
+
+	protected $typeLimit= array(
+		'limit' => array(
+			'values' => array(
+				'states' => array(
+					'func' => 'IsNumber',
+					),
+				'frags' => array(
+					'func' => 'IsNumber',
+					),
+				'src-nodes' => array(
+					'func' => 'IsNumber',
+					),
+				'tables' => array(
+					'func' => 'IsNumber',
+					),
+				'table-entries' => array(
+					'func' => 'IsNumber',
+					),
+				),
+			),
+		);
+
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'states' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'frags' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'src-nodes' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'tables' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
-			'table-entries' => array(
-				'method' => 'parseLimit',
-				'params' => array(),
-				),
+		$this->keywords= $this->keyLimit;
+
+		$this->typedef = array_merge(
+			$this->typeLimit,
+			$this->typeComment
 			);
 
 		parent::__construct($str);

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Timeout.php,v 1.13 2016/08/04 20:00:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -114,7 +114,7 @@ class Timeout extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -141,7 +141,7 @@ class Timeout extends Rule
 	function editFragment()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Fragment').':' ?>
 			</td>
@@ -156,7 +156,7 @@ class Timeout extends Rule
 	function editInterval()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Interval').':' ?>
 			</td>
@@ -171,7 +171,7 @@ class Timeout extends Rule
 	function editSrcTrack()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Source track timeout').':' ?>
 			</td>
@@ -186,7 +186,7 @@ class Timeout extends Rule
 	function editTcpTimeouts()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php $this->editHelp('tcp_timeout') ?><?php echo _TITLE('TCP timeouts').':' ?>
 			</td>
@@ -209,7 +209,7 @@ class Timeout extends Rule
 	function editUdpTimeouts()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php $this->editHelp('udp_timeout') ?><?php echo _TITLE('UDP timeouts').':' ?>
 			</td>
@@ -229,7 +229,7 @@ class Timeout extends Rule
 	function editIcmpTimeouts()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php $this->editHelp('icmp_timeout') ?><?php echo _TITLE('ICMP timeouts').':' ?>
 			</td>
@@ -248,7 +248,7 @@ class Timeout extends Rule
 	function editOtherTimeouts()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php $this->editHelp('other_timeout') ?><?php echo _TITLE('Other timeouts').':' ?>
 			</td>
@@ -268,7 +268,7 @@ class Timeout extends Rule
 	function editAdaptiveTimeouts()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php $this->editHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive timeouts').':' ?>
 			</td>

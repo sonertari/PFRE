@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.12 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Filter.php,v 1.13 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -86,7 +86,7 @@ class Filter extends FilterBase
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -107,7 +107,7 @@ class Filter extends FilterBase
 	function editAction()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Action').':' ?>
 			</td>
@@ -131,7 +131,7 @@ class Filter extends FilterBase
 	function editBlockOption()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Block Option').':' ?>
 			</td>
@@ -153,7 +153,7 @@ class Filter extends FilterBase
 	function editInterface()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Interface').':' ?>
 			</td>

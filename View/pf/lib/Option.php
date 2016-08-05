@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.16 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Option.php,v 1.17 2016/08/04 20:00:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -88,7 +88,7 @@ class Option extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -147,7 +147,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'block-policy') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Block Policy').':' ?>
 				</td>
@@ -167,7 +167,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'optimization') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Optimization').':' ?>
 				</td>
@@ -190,7 +190,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'ruleset-optimization') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Ruleset Optimization').':' ?>
 				</td>
@@ -211,7 +211,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'state-policy') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('State Policy').':' ?>
 				</td>
@@ -231,7 +231,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'fingerprints') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Fingerprints File').':' ?>
 				</td>
@@ -248,7 +248,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'hostid') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Host Id').':' ?>
 				</td>
@@ -265,7 +265,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'loginterface') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Log Interface').':' ?>
 				</td>
@@ -282,7 +282,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'debug') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Debug').':' ?>
 				</td>
@@ -308,7 +308,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'skip') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Skip Interfaces').':' ?>
 				</td>
@@ -328,7 +328,7 @@ class Option extends Rule
 	{
 		if ($this->rule['type'] == 'reassemble') {
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('Reassemble').':' ?>
 				</td>

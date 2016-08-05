@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.3 2016/08/04 02:42:21 soner Exp $ */
+/* $pfre: State.php,v 1.4 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -149,7 +149,7 @@ class State extends Timeout
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -179,7 +179,7 @@ class State extends Timeout
 	function editIfBinding()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Interface binding').':' ?>
 			</td>
@@ -197,7 +197,7 @@ class State extends Timeout
 	function editOverload()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Overload').':' ?>
 			</td>
@@ -216,7 +216,7 @@ class State extends Timeout
 	function editSourceTrack()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Enable source track').':' ?>
 			</td>

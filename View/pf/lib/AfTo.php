@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.6 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: AfTo.php,v 1.7 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -71,7 +71,7 @@ class AfTo extends Filter
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -96,7 +96,7 @@ class AfTo extends Filter
 	function editRedirAf()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Redirect Address Family').':' ?>
 			</td>

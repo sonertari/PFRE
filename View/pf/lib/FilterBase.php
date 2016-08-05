@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.12 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.13 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -227,7 +227,7 @@ class FilterBase extends State
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -283,7 +283,7 @@ class FilterBase extends State
 	function editDirection()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Direction').':' ?>
 			</td>
@@ -302,7 +302,7 @@ class FilterBase extends State
 	function editStateFilter()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Stateful Filtering').':' ?>
 			</td>
@@ -328,7 +328,7 @@ class FilterBase extends State
 		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp' || is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto']))) {
 			$this->editValues('icmp-type', 'ICMP Type', 'dropicmptype', 'addicmptype', 'number, name or macro');
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('ICMP Code').':' ?>
 				</td>
@@ -345,7 +345,7 @@ class FilterBase extends State
 		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp6' || is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto']))) {
 			$this->editValues('icmp6-type', 'ICMP6 Type', 'dropicmp6type', 'addicmp6type', 'number, name or macro');
 			?>
-			<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
 					<?php echo _TITLE('ICMP6 Code').':' ?>
 				</td>
@@ -363,7 +363,7 @@ class FilterBase extends State
 		
 		$queueNames= $View->RuleSet->getQueueNames();
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Queue').':' ?>
 			</td>
@@ -423,7 +423,7 @@ class FilterBase extends State
 	function editTagged()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo 'Match Tagged:' ?>
 			</td>
@@ -440,7 +440,7 @@ class FilterBase extends State
 	function editReceivedOn()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo 'Received on Interface:' ?>
 			</td>

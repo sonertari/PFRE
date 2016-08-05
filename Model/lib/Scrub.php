@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Scrub.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,30 +35,52 @@
 
 class Scrub extends Filter
 {
+	protected $keyScrub= array(
+		'min-ttl' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'max-mss' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'no-df' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'random-id' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'reassemble' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		);
+
+	protected $typeScrub= array(
+		'min-ttl' => array(
+			'func' => 'IsNumber',
+			),
+		'max-mss' => array(
+			'func' => 'IsNumber',
+			),
+		'no-df' => array(
+			'func' => 'IsBool',
+			),
+		'random-id' => array(
+			'func' => 'IsBool',
+			),
+		'reassemble' => array(
+			'regex' => '^tcp$',
+			),
+		);
+
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'min-ttl' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'max-mss' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			'no-df' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'random-id' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'reassemble' => array(
-				'method' => 'parseNextValue',
-				'params' => array(),
-				),
-			);
+		$this->keywords= $this->keyScrub;
+
+		$this->typedef= $this->typeScrub;
 
 		parent::__construct($str);
 	}

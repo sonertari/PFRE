@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Include.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,23 @@
 
 class _Include extends Rule
 {
+	protected $typeInclude= array(
+		'file' => array(
+			'require' => TRUE,
+			'func' => 'IsFilePath',
+			),
+		);
+
+	function __construct($str)
+	{
+		$this->typedef = array_merge(
+			$this->typeInclude,
+			$this->typeComment
+			);
+
+		parent::__construct($str);
+	}
+
 	function parse($str)
 	{
 		$this->str= $str;

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LoadAnchor.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: LoadAnchor.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,27 @@
 
 class LoadAnchor extends Rule
 {
+	protected $typeLoadAnchor= array(
+		'anchor' => array(
+			'require' => TRUE,
+			'regex' => '^[\w_\/\-*]{0,50}$',
+			),
+		'file' => array(
+			'require' => TRUE,
+			'func' => 'IsFilePath',
+			),
+		);
+
+	function __construct($str)
+	{
+		$this->typedef = array_merge(
+			$this->typeLoadAnchor,
+			$this->typeComment
+			);
+
+		parent::__construct($str);
+	}
+
 	function parse($str)
 	{
 		$this->str= $str;

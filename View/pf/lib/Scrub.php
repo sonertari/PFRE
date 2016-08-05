@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Scrub.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -83,7 +83,7 @@ class Scrub extends Filter
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -108,7 +108,7 @@ class Scrub extends Filter
 	function editScrubOptions()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Scrub Options').':' ?>
 			</td>

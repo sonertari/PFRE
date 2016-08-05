@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.6 2016/07/30 00:23:57 soner Exp $ */
+/* $pfre: pf.php,v 1.7 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,17 +60,17 @@ class Pf extends Model
 					),
 
 				'InstallPfRules'=>	array(
-					'argv'	=>	array(JSON, SAVEFILEPATH|NONE, BOOL|NONE),
+					'argv'	=>	array(JSON, SAVEFILEPATH|NONE, BOOL|NONE, BOOL|NONE),
 					'desc'	=>	_('Install pf rules'),
 					),
 				
 				'GeneratePfRule'=>	array(
-					'argv'	=>	array(JSON),
+					'argv'	=>	array(JSON, NUM),
 					'desc'	=>	_('Generate pf rule'),
 					),
 
 				'GeneratePfRules'=>	array(
-					'argv'	=>	array(JSON, BOOL|NONE),
+					'argv'	=>	array(JSON, BOOL|NONE, BOOL|NONE),
 					'desc'	=>	_('Generate pf rules'),
 					),
 
@@ -123,13 +123,13 @@ class Pf extends Model
 	{
 		global $PF_CONFIG_PATH;
 
-		if (!$this->ValidateFilename($filename)) {
-			return FALSE;
+		if ($this->ValidateFilename($filename)) {
+			return $this->DeleteFile("$PF_CONFIG_PATH/$filename");
 		}
-		return $this->DeleteFile("$PF_CONFIG_PATH/$filename");
+		return FALSE;
 	}
 	
-	function InstallPfRules($rules, $filename= NULL, $load= TRUE)
+	function InstallPfRules($rulesJson, $filename= NULL, $load= TRUE, $force= FALSE)
 	{
 		global $PF_CONFIG_PATH;
 
@@ -142,8 +142,14 @@ class Pf extends Model
 			$filename= "$PF_CONFIG_PATH/$filename";
 		}
 				
-		$rulesArray= json_decode($rules, TRUE);
-		$ruleSet= new RuleSet($rulesArray);
+		$rulesArray= json_decode($rulesJson, TRUE);
+
+		$ruleSet= new RuleSet();
+		if (!$ruleSet->load($rulesArray) && !$force) {
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
+			return FALSE;
+		}
+
 		$rules= $ruleSet->generate();
 
 		$logLevel= LOG_ERR;
@@ -187,35 +193,51 @@ class Pf extends Model
 	function ValidateFilename(&$filename)
 	{
 		$filename= basename($filename);
-		if (!preg_match('/[\w.-_]+/', $filename)) {
-			$err= "Filename not accepted: $filename";
-			ViewError($err . "\n" . implode("\n", $output));
-			pfrec_syslog($logLevel, __FILE__, __FUNCTION__, __LINE__, $err);
-			return FALSE;
+		if (preg_match('/[\w.-_]+/', $filename)) {
+			return TRUE;
 		}
-		return TRUE;
+
+		$err= "Filename not accepted: $filename";
+		ViewError($err . "\n" . implode("\n", $output));
+		pfrec_syslog($logLevel, __FILE__, __FUNCTION__, __LINE__, $err);
+		return FALSE;
 	}
 
-	function GeneratePfRule($rule)
+	function GeneratePfRule($ruleJson, $rulenumber)
 	{
-		$ruleDef= json_decode($rule, TRUE);
+		$ruleDef= json_decode($ruleJson, TRUE);
 		$class= $ruleDef['cat'];
 		$ruleObj= new $class('');
-		$ruleObj->rule= $ruleDef['rule'];
-		return $ruleObj->generate();
+		if ($ruleObj->load($ruleDef['rule'], $rulenumber)) {
+			return $ruleObj->generate();
+		}
+
+		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
+		return FALSE;
 	}
 
-	function GeneratePfRules($rules, $lines= FALSE)
+	function GeneratePfRules($rulesJson, $lines= FALSE, $force= FALSE)
 	{
-		$rulesArray= json_decode($rules, TRUE);
-		$ruleSet= new RuleSet($rulesArray);
-		return $ruleSet->generate($lines);
+		$rulesArray= json_decode($rulesJson, TRUE);
+		$ruleSet= new RuleSet();
+		if ($ruleSet->load($rulesArray) || $force) {
+			return $ruleSet->generate($lines);
+		}
+
+		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
+		return FALSE;
 	}
 
-	function TestPfRules($rules)
+	function TestPfRules($rulesJson)
 	{
-		$rulesArray= json_decode($rules, TRUE);
-		$ruleSet= new RuleSet($rulesArray);
+		$rulesArray= json_decode($rulesJson, TRUE);
+
+		$ruleSet= new RuleSet();
+		if (!$ruleSet->load($rulesArray)) {
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate/test rules with errors');
+			return FALSE;
+		}
+
 		$rulesStr= $ruleSet->generate(FALSE, NULL, TRUE, TRUE);
 
 		$cmd= "/bin/echo '$rulesStr' | /sbin/pfctl -nf - 2>&1";

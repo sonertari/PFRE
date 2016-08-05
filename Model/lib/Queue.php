@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.11 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Queue.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,40 +35,90 @@
 
 class Queue extends Rule
 {
+	protected $keyQueue= array(
+		'queue' => array(
+			'method' => 'parseNextNVP',
+			'params' => array('name'),
+			),
+		'parent' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'bandwidth' => array(
+			'method' => 'parseBandwidth',
+			'params' => array('bw-burst', 'bw-time'),
+			),
+		'min' => array(
+			'method' => 'parseBandwidth',
+			'params' => array('min-burst', 'min-time'),
+			),
+		'max' => array(
+			'method' => 'parseBandwidth',
+			'params' => array('max-burst', 'max-time'),
+			),
+		'qlimit' => array(
+			'method' => 'parseNextValue',
+			'params' => array(),
+			),
+		'default' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		);
+
+	protected $typeQueue= array(
+		'name' => array(
+			'func' => 'IsName',
+			),
+		'parent' => array(
+			'func' => 'IsName',
+			),
+		'bandwidth' => array(
+			'regex' => '^\w{1,16}(|K|M|G)$',
+			),
+		'bw-burst' => array(
+			'regex' => '^\w{1,16}(|K|M|G)$',
+			),
+		'bw-time' => array(
+			'regex' => '^\w{1,16}ms$',
+			),
+		'min' => array(
+			'regex' => '^\w{1,16}(|K|M|G)$',
+			),
+		'min-burst' => array(
+			'regex' => '^\w{1,16}(|K|M|G)$',
+			),
+		'min-time' => array(
+			'regex' => '^\w{1,16}ms$',
+			),
+		'max' => array(
+			'regex' => '^\w{1,16}(|K|M|G)$',
+			),
+		'max-burst' => array(
+			'regex' => '^\w{1,16}(|K|M|G)$',
+			),
+		'max-time' => array(
+			'regex' => '^\w{1,16}ms$',
+			),
+		'qlimit' => array(
+			'func' => 'IsNumber',
+			),
+		'default' => array(
+			'func' => 'IsBool',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
 			$this->keyInterface,
-			array(
-				'queue' => array(
-					'method' => 'parseNextNVP',
-					'params' => array('name'),
-					),
-				'parent' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'bandwidth' => array(
-					'method' => 'parseBandwidth',
-					'params' => array('bw-burst', 'bw-time'),
-					),
-				'min' => array(
-					'method' => 'parseBandwidth',
-					'params' => array('min-burst', 'min-time'),
-					),
-				'max' => array(
-					'method' => 'parseBandwidth',
-					'params' => array('max-burst', 'max-time'),
-					),
-				'qlimit' => array(
-					'method' => 'parseNextValue',
-					'params' => array(),
-					),
-				'default' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				)
+			$this->keyQueue
+			);
+
+		$this->typedef = array_merge(
+			$this->typeInterface,
+			$this->typeQueue,
+			$this->typeComment
 			);
 
 		parent::__construct($str);

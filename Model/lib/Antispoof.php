@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,22 +35,39 @@
 
 class Antispoof extends Rule
 {
+	protected $keyAntispoof= array(
+		'for' => array(
+			'method' => 'parseItems',
+			'params' => array('interface'),
+			),
+		'label' => array(
+			'method' => 'parseDelimitedStr',
+			'params' => array('label'),
+			),
+		);
+
+	protected $typeLabel= array(
+		'label' => array(
+			'func' => 'IsName',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
 			$this->keyLog,
 			$this->keyQuick,
 			$this->keyAf,
-			array(
-				'for' => array(
-					'method' => 'parseItems',
-					'params' => array('interface'),
-					),
-				'label' => array(
-					'method' => 'parseDelimitedStr',
-					'params' => array('label'),
-					),
-				)
+			$this->keyAntispoof
+			);
+
+		$this->typedef= array_merge(
+			$this->typeLog,
+			$this->typeQuick,
+			$this->typeAf,
+			$this->typeInterface,
+			$this->typeLabel,
+			$this->typeComment
 			);
 
 		parent::__construct($str);

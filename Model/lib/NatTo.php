@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatTo.php,v 1.2 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: NatTo.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,21 +35,28 @@
 
 class NatTo extends NatBase
 {
+	protected $keyNatTo= array(
+		'nat-to' => array(
+			'method' => 'parseRedirHostPort',
+			'params' => array(),
+			),
+		'static-port' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		);
+
+	protected $typeNatTo= array(
+		'static-port' => array(
+			'func' => 'IsBool',
+			),
+		);
+
 	function __construct($str)
 	{
-		$this->keywords = array_merge(
-			$this->keywords,
-			array(
-				'nat-to' => array(
-					'method' => 'parseRedirHostPort',
-					'params' => array(),
-					),
-				'static-port' => array(
-					'method' => 'parseBool',
-					'params' => array(),
-					),
-				)
-			);
+		$this->keywords= $this->keyNatTo;
+
+		$this->typedef= $this->typeNatTo;
 
 		parent::__construct($str);
 	}

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.2 2016/07/29 06:42:08 soner Exp $ */
+/* $pfre: lib.php,v 1.3 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -129,6 +129,7 @@ function IsFilePath($filepath)
 		preg_match('|^/var/www/htdocs/pfre/View/\w[\w./\-_]*$|', $filepath)
 		// pf configuration files
 		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $filepath)
+		|| preg_match("|^/etc/\w[\w.\-_]*$|", $filepath)
 		// Uploaded tmp files
 		|| preg_match("|^$TMP_PATH/\w[\w.\-_]*$|", $filepath);
 }

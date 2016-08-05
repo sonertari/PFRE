@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.4 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: files.php,v 1.5 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,10 +36,12 @@
 require_once ('include.php');
 
 if (filter_has_var(INPUT_POST, 'reload')) {
-	$ruleSet= new RuleSet($View);
-	if ($ruleSet) {
+	$ruleSet= new RuleSet();
+	if ($ruleSet->load()) {
 		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Main pf rules reloaded successfully: ' . $View->RuleSet->filename);
+		PrintHelpWindow('Main pf rules reloaded: ' . $View->RuleSet->filename);
+	} else {
+		PrintHelpWindow('<br>Error loading main pf rules', NULL, 'ERROR');
 	}
 }
 
@@ -49,10 +51,12 @@ if (filter_has_var(INPUT_POST, 'load')) {
 	$loadfile= basename(filter_input(INPUT_POST, 'filename'));
 	$filepath= "$PF_CONFIG_PATH/$loadfile";
 	
-	$ruleSet= new RuleSet($View, $filepath);
-	if ($ruleSet) {
+	$ruleSet= new RuleSet();
+	if ($ruleSet->load($filepath)) {
 		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded successfully: ' . $View->RuleSet->filename);
+		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
+	} else {
+		PrintHelpWindow("<br>Error loading: $filepath", NULL, 'ERROR');
 	}
 }
 
@@ -69,17 +73,22 @@ if (filter_has_var(INPUT_POST, 'remove')) {
 
 $savefile= '';
 if (filter_has_var(INPUT_POST, 'save')) {
-	if ($View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules))) {
+	$force= 0;
+	if (filter_has_var(INPUT_POST, 'forcesave')) {
+		$force= 1;
+	}
+
+	if ($force || $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules))) {
 		// Accept only file names, no paths
 		$savefile= basename(filter_input(INPUT_POST, 'filename'));
 		$filepath= "$PF_CONFIG_PATH/$savefile";
 
-		/// @attention Use 1, not FALSE for boolean here, otherwise arg type check fails
-		if ($View->Controller($Output, 'InstallPfRules', json_encode($View->RuleSet->rules), $filepath, 1)) {
+		/// @attention Use 0, not FALSE for boolean here, otherwise arg type check fails
+		if ($View->Controller($Output, 'InstallPfRules', json_encode($View->RuleSet->rules), $filepath, 0, $force)) {
 			$View->RuleSet->filename= $filepath;
-			PrintHelpWindow("Saved successfully: $filepath");
+			PrintHelpWindow("Saved: $filepath");
 		} else {
-			PrintHelpWindow("<br>There was an error while saving: $filepath", NULL, 'ERROR');
+			PrintHelpWindow("<br>Error saving: $filepath", NULL, 'ERROR');
 		}
 	} else {
 		PrintHelpWindow('<br>Ruleset has errors', NULL, 'ERROR');
@@ -88,11 +97,13 @@ if (filter_has_var(INPUT_POST, 'save')) {
 
 if (filter_has_var(INPUT_POST, 'upload')) {
 	if ($_FILES['file']['error'] == 0) {
-		$ruleSet= new RuleSet($View, $_FILES['file']['tmp_name'], TRUE);
-		if ($ruleSet) {
+		$ruleSet= new RuleSet();
+		if ($ruleSet->load($_FILES['file']['tmp_name'], TRUE)) {
 			$View->RuleSet= $ruleSet;
 			/// @todo Unlink the tmp file?
-			PrintHelpWindow('File uploaded successfully: ' . $_FILES['file']['name']);
+			PrintHelpWindow('File uploaded: ' . $_FILES['file']['name']);
+		} else {
+			PrintHelpWindow('<br>Error uploading: ' . $_FILES['file']['name'], NULL, 'ERROR');
 		}
 	} else {
 		PrintHelpWindow('File upload failed: ' . $_FILES['file']['tmp_name'], NULL, 'ERROR');
@@ -100,7 +111,12 @@ if (filter_has_var(INPUT_POST, 'upload')) {
 }
 
 if (filter_has_var(INPUT_POST, 'download')) {
-	if ($View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules))) {
+	$force= 0;
+	if (filter_has_var(INPUT_POST, 'forcedownload')) {
+		$force= 1;
+	}
+
+	if ($View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), 0, $force)) {
 		if (filter_has_var(INPUT_SERVER, 'HTTP_USER_AGENT') && preg_match("/MSIE/", filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'))) {
 			// For IE
 			ini_set('zlib.output_compression', 'Off');
@@ -149,6 +165,8 @@ require_once($VIEW_PATH.'/header.php');
 	<input type="text" name="filename" id="filename" value="<?php echo $savefile; ?>" />
 	<input type="submit" id="save" name="save" value="Save" />
 	<label for="save">Save current working rules to file</label>
+	<input type="checkbox" id="forcesave" name="forcesave" <?php echo filter_has_var(INPUT_POST, 'forcesave') ? 'checked' : ''; ?> />
+	<label for="forcesave">Save with errors</label>
 </form>
 
 <p>&nbsp;</p>
@@ -187,6 +205,8 @@ require_once($VIEW_PATH.'/header.php');
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="submit" id="download" name="download" value="Download" />
 	<label for="download">Download current working rulebase</label>
+	<input type="checkbox" id="forcedownload" name="forcedownload" <?php echo filter_has_var(INPUT_POST, 'forcedownload') ? 'checked' : ''; ?> />
+	<label for="forcedownload">Download with errors</label>
 </form>
 <?php
 require_once($VIEW_PATH.'/footer.php');

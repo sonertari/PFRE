@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Limit.php,v 1.13 2016/08/04 20:00:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -74,7 +74,7 @@ class Limit extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -88,7 +88,7 @@ class Limit extends Rule
 	function editLimit()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('States').':' ?>
 			</td>
@@ -97,7 +97,7 @@ class Limit extends Rule
 				<?php $this->editHelp('states') ?>
 			</td>
 		</tr>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Frags').':' ?>
 			</td>
@@ -106,7 +106,7 @@ class Limit extends Rule
 				<?php $this->editHelp('frags') ?>
 			</td>
 		</tr>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Src Nodes').':' ?>
 			</td>
@@ -115,7 +115,7 @@ class Limit extends Rule
 				<?php $this->editHelp('src-nodes') ?>
 			</td>
 		</tr>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Tables').':' ?>
 			</td>
@@ -124,7 +124,7 @@ class Limit extends Rule
 				<?php $this->editHelp('tables') ?>
 			</td>
 		</tr>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Table Entries').':' ?>
 			</td>

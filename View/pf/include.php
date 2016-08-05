@@ -1,5 +1,5 @@
 <?php
-/* $pfre: include.php,v 1.33 2016/07/27 15:08:56 soner Exp $ */
+/* $pfre: include.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,7 +42,7 @@ class Pf extends View
 	function __construct()
 	{
 		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet($this);
+			$_SESSION['pf']['ruleset']= new RuleSet();
 		}
 		$this->RuleSet= &$_SESSION['pf']['ruleset'];
 	}

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.6 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: edit.php,v 1.7 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,6 +47,13 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	$View->RuleSet->cancel();
 	$View->RuleSet->save($action, $rulenumber, $ruleObj, $testResult);
 	$modified= $View->RuleSet->isModified($action, $rulenumber, $ruleObj);
+
+	if ($View->Controller($Output, 'GeneratePfRule', json_encode($ruleObj), $rulenumber)) {
+		/// @attention Inline anchor rules are multi-line, hence implode
+		$ruleStr= implode("\n", $Output);
+	} else {
+		$ruleStr= 'ERROR: Cannot generate rule';
+	}
 
 	require_once($VIEW_PATH.'/header.php');
 	$ruleObj->edit($rulenumber, $modified, $testResult, $action);

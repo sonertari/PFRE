@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.12 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -180,6 +180,127 @@ class FilterBase extends State
 			),
 		);
 
+	protected $typeDirection= array(
+		'direction' => array(
+			'regex' => '^(in|out)$',
+			),
+		);
+
+	protected $typeProto= array(
+		'proto' => array(
+			'multi' => TRUE,
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		);
+
+	protected $typeSrcDest= array(
+		'all' => array(
+			'func' => 'IsBool',
+			),
+		'from' => array(
+			'multi' => TRUE,
+			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			),
+		'fromport' => array(
+			'multi' => TRUE,
+			'regex' => '^[\w_.\/\-*$<>!=\s:]{0,50}$',
+			),
+		'to' => array(
+			'multi' => TRUE,
+			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			),
+		'port' => array(
+			'multi' => TRUE,
+			'regex' => '^[\w_.\/\-*$<>!=\s:]{0,50}$',
+			),
+		);
+
+	protected $typeFilterOpts= array(
+		'user' => array(
+			'multi' => TRUE,
+			'func' => 'IsName',
+			),
+		'group' => array(
+			'multi' => TRUE,
+			'func' => 'IsName',
+			),
+		'flags' => array(
+			'regex' => '^[\w\/]{0,20}$',
+			),
+		'icmp-type' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'icmp-code' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'icmp6-type' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'icmp6-code' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'tos' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'state-filter' => array(
+			'regex' => '^(no|keep|modulate|synproxy)$',
+			),
+		'fragment' => array(
+			'func' => 'IsBool',
+			),
+		'allow-opts' => array(
+			'func' => 'IsBool',
+			),
+		'once' => array(
+			'func' => 'IsBool',
+			),
+		'divert-reply' => array(
+			'func' => 'IsBool',
+			),
+		'label' => array(
+			'func' => 'IsName',
+			),
+		'tag' => array(
+			'func' => 'IsName',
+			),
+		'tagged' => array(
+			'func' => 'IsName',
+			),
+		'not-tagged' => array(
+			'func' => 'IsBool',
+			),
+		'set-prio' => array(
+			'multi' => TRUE,
+			'regex' => '^\w{1,10}$',
+			),
+		'set-tos' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'queue' => array(
+			'multi' => TRUE,
+			'func' => 'IsName',
+			),
+		'rtable' => array(
+			'func' => 'IsNumber',
+			),
+		'probability' => array(
+			'regex' => '^[\d.%]{1,10}$',
+			),
+		'prio' => array(
+			'regex' => '^\w{1,10}$',
+			),
+		'received-on' => array(
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		'not-received-on' => array(
+			'func' => 'IsBool',
+			),
+		'os' => array(
+			'multi' => TRUE,
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
@@ -190,6 +311,16 @@ class FilterBase extends State
 			$this->keySrcDest,
 			$this->keyFilterOpts,
 			$this->keywords
+			);
+
+		$this->typedef= array_merge(
+			$this->typedef,
+			$this->typeDirection,
+			$this->typeInterface,
+			$this->typeAf,
+			$this->typeProto,
+			$this->typeSrcDest,
+			$this->typeFilterOpts
 			);
 
 		parent::__construct($str);

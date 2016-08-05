@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.13 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Anchor.php,v 1.14 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -68,7 +68,7 @@ class Anchor extends FilterBase
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -88,7 +88,7 @@ class Anchor extends FilterBase
 	function editInlineRules()
 	{
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('Inline Rules').':' ?>
 			</td>

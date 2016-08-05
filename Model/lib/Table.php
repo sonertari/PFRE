@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.2 2016/08/04 16:44:37 soner Exp $ */
+/* $pfre: Table.php,v 1.3 2016/08/04 16:59:15 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,33 +35,65 @@
 
 class Table extends Rule
 {
+	protected $keyTable= array(
+		'table' => array(
+			'method' => 'parseDelimitedStr',
+			'params' => array('identifier', '<', '>'),
+			),
+		'persist' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'const' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'counters' => array(
+			'method' => 'parseBool',
+			'params' => array(),
+			),
+		'file' => array(
+			'method' => 'parseFile',
+			'params' => array(),
+			),
+		'{' => array(
+			'method' => 'parseData',
+			'params' => array(),
+			),
+		);
+
+	protected $typeTable= array(
+		'identifier' => array(
+			'require' => TRUE,
+			'regex' => '^\w[\w_.\/\-*]{0,50}$',
+			),
+		'persist' => array(
+			'func' => 'IsBool',
+			),
+		'const' => array(
+			'func' => 'IsBool',
+			),
+		'counters' => array(
+			'func' => 'IsBool',
+			),
+		'file' => array(
+			'multi' => TRUE,
+			'func' => 'IsFilePath',
+			),
+		'data' => array(
+			'multi' => TRUE,
+			/// @todo What is a possible regex?
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		);
+
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'table' => array(
-				'method' => 'parseDelimitedStr',
-				'params' => array('identifier', '<', '>'),
-				),
-			'persist' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'const' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'counters' => array(
-				'method' => 'parseBool',
-				'params' => array(),
-				),
-			'file' => array(
-				'method' => 'parseFile',
-				'params' => array(),
-				),
-			'{' => array(
-				'method' => 'parseData',
-				'params' => array(),
-				),
+		$this->keywords= $this->keyTable;
+
+		$this->typedef = array_merge(
+			$this->typeTable,
+			$this->typeComment
 			);
 
 		parent::__construct($str);

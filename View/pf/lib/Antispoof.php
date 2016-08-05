@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.6 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.7 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,7 +61,7 @@ class Antispoof extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);

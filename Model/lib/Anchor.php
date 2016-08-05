@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.13 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Anchor.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,19 +35,33 @@
 
 class Anchor extends FilterBase
 {	
+	protected $keyAnchor= array(
+		// identifier can be empty, but "anchors without explicit rules must specify a name"
+		'anchor' => array(
+			'method' => 'parseDelimitedStr',
+			'params' => array('identifier'),
+			),
+		'inline' => array(
+			'method' => 'parseNextNVP',
+			'params' => array('inline'),
+			),
+		);
+
+	protected $typeAnchor= array(
+		'identifier' => array(
+			'regex' => '^[\w_\/\-*]{0,50}$',
+			),
+		'inline' => array(
+			/// @todo Parse and validate inline anchor rules
+			'regex' => '^[\s\S]{0,1000}$',
+			),
+		);
+
 	function __construct($str)
 	{
-		$this->keywords = array(
-			// identifier can be empty, but "anchors without explicit rules must specify a name"
-			'anchor' => array(
-				'method' => 'parseDelimitedStr',
-				'params' => array('identifier'),
-				),
-			'inline' => array(
-				'method' => 'parseNextNVP',
-				'params' => array('inline'),
-				),
-			);
+		$this->keywords= $this->keyAnchor;
+
+		$this->typedef= $this->typeAnchor;
 
 		parent::__construct($str);
 	}

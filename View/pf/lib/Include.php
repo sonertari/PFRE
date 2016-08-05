@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Include.php,v 1.10 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -64,7 +64,7 @@ class _Include extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);
@@ -81,12 +81,13 @@ class _Include extends Rule
 
 		$View->Controller($ruleFiles, 'GetPfRuleFiles');
 		?>
-		<tr class="<?php echo ($this->index++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
 				<?php echo _TITLE('File').':' ?>
 			</td>
 			<td>
 				<select id="file" name="file">
+					<option value=""></option>
 					<?php
 					foreach ($ruleFiles as $file) {
 						$file= "$PF_CONFIG_PATH/$file";

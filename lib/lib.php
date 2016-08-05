@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.9 2016/07/11 17:31:40 soner Exp $ */
+/* $pfre: lib.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -94,6 +94,8 @@ function ViewError($msg)
 	else {
 		$ViewError.= "\n".$msg;
 	}
+	// For transparent use of this function
+	return $msg;
 }
 
 /// For classifying gettext strings into files.

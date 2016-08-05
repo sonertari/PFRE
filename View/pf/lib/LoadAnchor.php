@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LoadAnchor.php,v 1.9 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: LoadAnchor.php,v 1.10 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,7 +65,7 @@ class LoadAnchor extends Rule
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);

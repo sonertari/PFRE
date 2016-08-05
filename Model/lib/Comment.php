@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.8 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Comment.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,13 @@
 
 class Comment extends Rule
 {
+	protected $typedef= array(
+		'comment' => array(
+			'require' => TRUE,
+			'regex' => '^[\s\S]{0,1000}$',
+			),
+		);
+
 	function parse($str)
 	{
 		$this->init();

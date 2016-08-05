@@ -51,6 +51,7 @@ class View
 	{
 		global $ROOT;
 
+		$return= FALSE;
 		try {
 			$pfrec= $ROOT.'/Controller/pfrec.php';
 
@@ -66,18 +67,31 @@ class View
 				/// @bug http://bugs.php.net/bug.php?id=49847, fixed/closed in SVN on 141009
 				exec($cmdline, $output, $retval);
 
+				$errorStr= '';
+
 				// (exit status 0 in shell) == (TRUE in php)
 				if ($retval === 0) {
-					return TRUE;
+					// Check if there are errors to display
+					$outputStr= implode("\n", $output);
+					if (preg_match('/<ViewError>:/ms', $outputStr)) {
+						// Head contains output, tail error
+						list($outputStr, $errorStr)= explode("<ViewError>:", $outputStr);
+
+						$output= explode("\n", $outputStr);
+						$error= explode("\n", $errorStr);
+					}
+					$return= TRUE;
 				}
 				else {
-					$reason= implode(', ', $output);
-					pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: ($reason), ($cmdline)");
-					
-					// Show $reason if any
-					if ($reason !== '') {
-						PrintHelpWindow(_NOTICE('FAILED').': '.implode('<br />', $output), 'auto', 'ERROR');
-					}
+					// All is error
+					$errorStr= implode("\n", $output);
+					$error= $output;
+				}
+
+				// Show $error if any
+				if ($errorStr !== '') {
+					pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: (" . implode(', ', $error) . "), ($cmdline)");
+					PrintHelpWindow(_NOTICE('FAILED').': ' . implode('<br>', $error), 'auto', 'ERROR');
 				}
 			}
 		}
@@ -85,7 +99,7 @@ class View
 			echo 'Exception: '.__FILE__.' '.__FUNCTION__.' ('.__LINE__.'): '.$e->getMessage()."\n";
 			pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Exception: '.$e->getMessage());
 		}
-		return FALSE;
+		return $return;
 	}
 	
 	/** Escapes the arguments passed to Controller() and builds the command line.

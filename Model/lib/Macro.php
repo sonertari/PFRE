@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Macro.php,v 1.2 2016/08/04 16:44:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,28 @@
 
 class Macro extends Rule
 {
+	protected $typeMacro= array(
+		'identifier' => array(
+			'require' => TRUE,
+			'regex' => '^\w[\w_.\/\-*]{0,50}$',
+			),
+		'value' => array(
+			'require' => TRUE,
+			'multi' => TRUE,
+			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			),
+		);
+
+	function __construct($str)
+	{
+		$this->typedef = array_merge(
+			$this->typeMacro,
+			$this->typeComment
+			);
+
+		parent::__construct($str);
+	}
+
 	function parse($str)
 	{
 		$this->str= $str;

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: write.php,v 1.3 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -53,12 +53,24 @@ if ($testResult) {
 	PrintHelpWindow("<br>Ruleset has errors", NULL, 'ERROR');
 }
 
+$force= 0;
+if (filter_has_var(INPUT_POST, 'forcedisplay')) {
+	$force= 1;
+}
+
+if ($testResult || $force) {
+	/// @todo Check why we cannot pass FALSE as lines param
+	$generated= $View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), $lines ? 1 : 0, $force);
+}
+
 require_once($VIEW_PATH.'/header.php');
 ?>
 <fieldset>
 	<form id="installform" name="installform" action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
-		<label for="lines">Display line numbers</label>
 		<input type="checkbox" id="lines" name="lines" <?php echo $lines ? 'checked' : '' ?> onclick="document.installform.apply.click()" />
+		<label for="lines">Display line numbers</label>
+		<input type="checkbox" id="forcedisplay" name="forcedisplay" <?php echo filter_has_var(INPUT_POST, 'forcedisplay') ? 'checked' : ''; ?> <?php echo $testResult ? 'disabled' : ''; ?> onclick="document.installform.apply.click()" />
+		<label for="forcedisplay">Display with errors</label>
 		<input type="submit" id="apply" name="apply" value="Apply" />
 		<input type="submit" id="install" name="install" value="Install" <?php echo $testResult ? '' : 'disabled' ?> />
 		<label for="install">Install as main rulebase: /etc/pf.conf</label>
@@ -72,8 +84,7 @@ echo _('Rule file') . ': ' . ($printFileName ? $View->RuleSet->filename : '');
 
 <pre>
 <?php
-/// @todo Check why we cannot pass FALSE as lines param
-if ($View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), $lines ? 1 : 0)) {
+if ($generated) {
 	echo htmlentities(implode("\n", $Output));
 }
 ?>

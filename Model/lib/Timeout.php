@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Timeout.php,v 1.2 2016/08/04 16:59:15 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,44 +37,140 @@ class Timeout extends Rule
 {
 	protected $arr= array();
 
+	protected $keyTimeout= array(
+		'frag' => array(
+			'method' => 'parseAll',
+			'params' => array(),
+			),
+		'interval' => array(
+			'method' => 'parseAll',
+			'params' => array(),
+			),
+		'src' => array(
+			'method' => 'parseSrcTrack',
+			'params' => array(),
+			),
+		'tcp' => array(
+			'method' => 'parseTimeout',
+			'params' => array(),
+			),
+		'udp' => array(
+			'method' => 'parseTimeout',
+			'params' => array(),
+			),
+		'icmp' => array(
+			'method' => 'parseTimeout',
+			'params' => array(),
+			),
+		'other' => array(
+			'method' => 'parseTimeout',
+			'params' => array(),
+			),
+		'adaptive' => array(
+			'method' => 'parseTimeout',
+			'params' => array(),
+			),
+		);
+
+	protected $typeTimeout= array(
+		'timeout' => array(
+			'values' => array(
+				'all' => array(
+					'values' => array(
+						'frag' => array(
+							'func' => 'IsNumber',
+							),
+						'interval' => array(
+							'func' => 'IsNumber',
+							),
+						'src.track' => array(
+							'func' => 'IsNumber',
+							),
+						),
+					),
+				'tcp' => array(
+					'values' => array(
+						'first' => array(
+							'func' => 'IsNumber',
+							),
+						'opening' => array(
+							'func' => 'IsNumber',
+							),
+						'established' => array(
+							'func' => 'IsNumber',
+							),
+						'closing' => array(
+							'func' => 'IsNumber',
+							),
+						'finwait' => array(
+							'func' => 'IsNumber',
+							),
+						'closed' => array(
+							'func' => 'IsNumber',
+							),
+						),
+					),
+				'udp' => array(
+					'values' => array(
+						'first' => array(
+							'func' => 'IsNumber',
+							),
+						'single' => array(
+							'func' => 'IsNumber',
+							),
+						'multiple' => array(
+							'func' => 'IsNumber',
+							),
+						),
+					),
+				'icmp' => array(
+					'values' => array(
+						'first' => array(
+							'func' => 'IsNumber',
+							),
+						'error' => array(
+							'func' => 'IsNumber',
+							),
+						),
+					),
+				'other' => array(
+					'values' => array(
+						'first' => array(
+							'func' => 'IsNumber',
+							),
+						'single' => array(
+							'func' => 'IsNumber',
+							),
+						'multiple' => array(
+							'func' => 'IsNumber',
+							),
+						),
+					),
+				'adaptive' => array(
+					'values' => array(
+						'start' => array(
+							'func' => 'IsNumber',
+							),
+						'end' => array(
+							'func' => 'IsNumber',
+							),
+						),
+					),
+				),
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords = array_merge(
 			$this->keywords,
-			array(
-				'frag' => array(
-					'method' => 'parseAll',
-					'params' => array(),
-					),
-				'interval' => array(
-					'method' => 'parseAll',
-					'params' => array(),
-					),
-				'src' => array(
-					'method' => 'parseSrcTrack',
-					'params' => array(),
-					),
-				'tcp' => array(
-					'method' => 'parseTimeout',
-					'params' => array(),
-					),
-				'udp' => array(
-					'method' => 'parseTimeout',
-					'params' => array(),
-					),
-				'icmp' => array(
-					'method' => 'parseTimeout',
-					'params' => array(),
-					),
-				'other' => array(
-					'method' => 'parseTimeout',
-					'params' => array(),
-					),
-				'adaptive' => array(
-					'method' => 'parseTimeout',
-					'params' => array(),
-					),
-				)
+			$this->keyTimeout
+			);
+
+		$this->typedef = array_merge(
+			$this->typedef,
+			$this->typeTimeout,
+			$this->typeComment
 			);
 
 		parent::__construct($str);

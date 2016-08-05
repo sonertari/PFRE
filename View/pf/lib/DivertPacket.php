@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.3 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.4 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -68,7 +68,7 @@ class DivertPacket extends Filter
 
 	function edit($rulenumber, $modified, $testResult, $action)
 	{
-		$this->index= 0;
+		$this->editIndex= 0;
 		$this->rulenumber= $rulenumber;
 
 		$this->editHead($modified);

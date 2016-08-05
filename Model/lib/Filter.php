@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.12 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Filter.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -77,6 +77,41 @@ class Filter extends FilterBase
 			),
 		);
 
+	protected $typeAction= array(
+		'action' => array(
+			'regex' => '^(pass|match|block)$'
+			),
+		'blockoption' => array(
+			'regex' => '^(drop|return|return-rst|return-icmp|return-icmp6)$'
+			),
+		);
+
+	protected $typeType= array(
+		'type' => array(
+			/// @todo Enum types instead
+			'regex' => '^[a-z-]{0,20}$',
+			),
+		);
+
+	protected $typeRedirHostPort= array(
+		'redirhost' => array(
+			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			),
+		'redirport' => array(
+			'regex' => '^[\w_.\/\-*$<>!=\s:]{0,50}$',
+			),
+		);
+
+	protected $typeInterface= array(
+		'interface' => array(
+			'multi' => TRUE,
+			'regex' => '^(\w|\$|!)[\w_.\/\-*]{0,50}$',
+			),
+		'rdomain' => array(
+			'func' => 'IsNumber',
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords= array_merge(
@@ -84,6 +119,15 @@ class Filter extends FilterBase
 			$this->keyAction,
 			$this->keyLog,
 			$this->keyQuick
+			);
+
+		$this->typedef= array_merge(
+			$this->typedef,
+			$this->typeAction,
+			$this->typeLog,
+			$this->typeQuick,
+			$this->typeType,
+			$this->typeRedirHostPort
 			);
 
 		parent::__construct($str);
