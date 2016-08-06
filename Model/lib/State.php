@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: State.php,v 1.3 2016/08/06 02:50:38 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -88,50 +88,49 @@ class State extends Timeout
 
 	protected $typeState= array(
 		'max' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'max-src-states' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'max-src-nodes' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'max-src-conn' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'max-src-conn-rate' => array(
-			'regex' => '^\d{1,20}\/\d{1,20}$',
+			'regex' => RE_CONNRATE,
 			),
 		'sloppy' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'no-sync' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'pflow' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'if-bound' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'floating' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
-		/// @todo Do not require < and >, fix the parser/generator first
 		'overload' => array(
-			'regex' => '^\w[\w_.\-]{0,50}$',
+			'regex' => RE_ID,
 			),
 		'flush' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'global' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'source-track' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
  		'source-track-option' => array(
-			'regex' => '^(rule|global)$',
+			'regex' => RE_SOURCETRACKOPTION,
 			),
 		);
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.3 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: lib.php,v 1.4 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -72,6 +72,99 @@ function pfrec_syslog($prio, $file, $func, $line, $msg)
 	}
 }
 
+define('RE_BOOL', '^[01]$');
+define('RE_NAME', '^[\w_.-]{0,50}$');
+define('RE_NUM', '^\d{1,20}$');
+define('RE_SHA1', '^[a-f\d]+$');
+
+// "Macro names must start with a letter, digit, or underscore, and may contain any of those characters"
+$RE_ID= '[\w_-]{1,50}';
+define('RE_ID', "^$RE_ID$");
+
+$RE_MACRO_VAR= '\$' . $RE_ID;
+
+/// @todo What are possible macro values?
+define('RE_MACRO_VALUE', '^(\w|\$)[\w_.\/\-*]{0,50}$');
+
+$RE_IF_NAME= '\w{1,20}';
+$RE_IF= "($RE_IF_NAME|$RE_MACRO_VAR)(|:\w+)";
+define('RE_IF', "^$RE_IF$");
+
+$RE_IF_PAREN= "\($RE_IF\)";
+define('RE_IFSPEC', "^(|!)($RE_IF|$RE_IF_PAREN)$");
+
+$RE_PROTO= '[\w-]{1,50}';
+define('RE_PROTOSPEC', "^($RE_PROTO|$RE_MACRO_VAR)$");
+
+define('RE_AF', '^(inet|inet6)$');
+define('RE_DIRECTION', '^(in|out)$');
+
+$RE_IP= '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
+$RE_IP6= '[\w:.\/]+';
+
+$RE_HOSTNAME= '[\w.\/_-]{1,100}';
+
+$RE_ADDRESS= "($RE_IF_NAME|$RE_IF_PAREN|$RE_HOSTNAME|$RE_IP|$RE_IP6|$RE_MACRO_VAR)";
+$RE_ADDRESS_NET= "$RE_ADDRESS\/\d{1,2}";
+
+$RE_TABLE_VAR= "<$RE_ID>";
+
+$RE_TABLE_ADDRESS= "($RE_HOSTNAME|$RE_IF_NAME|$RE_IP|$RE_IP6|$RE_MACRO_VAR)";
+$RE_TABLE_ADDRESS_NET= "$RE_TABLE_ADDRESS\/\d{1,2}";
+define('RE_TABLE_ADDRESS', "^(|!)($RE_TABLE_ADDRESS|$RE_TABLE_ADDRESS_NET)$");
+
+define('RE_HOST', "^(|!)($RE_ADDRESS|$RE_ADDRESS_NET|$RE_TABLE_VAR)$");
+define('RE_REDIRHOST', "^($RE_ADDRESS|$RE_ADDRESS_NET)$");
+
+$RE_PORT= '[\w<>=!:\s-]{1,50}';
+define('RE_PORT', "^($RE_PORT|$RE_MACRO_VAR)$");
+
+$RE_PORTSPEC= '[\w*:\s-]{1,50}';
+define('RE_PORTSPEC', "^($RE_PORTSPEC|$RE_MACRO_VAR)$");
+
+$RE_FLAGS= '[FSRPAUEWany\/]{1,10}';
+define('RE_FLAGS', "^($RE_FLAGS|$RE_MACRO_VAR)$");
+
+$RE_W_1_10= '^\w{1,10}$';
+define('RE_W_1_10', "^($RE_W_1_10|$RE_MACRO_VAR)$");
+
+define('RE_STATE', '^(no|keep|modulate|synproxy)$');
+define('RE_PROBABILITY', '^[\d.]{1,10}(|%)$');
+
+$RE_OS= '[\w.*:\/_\s-]{1,50}';
+define('RE_OS', "^($RE_OS|$RE_MACRO_VAR)$");
+
+define('RE_ANCHOR_ID', '^[\w_\/*-]{1,100}$');
+
+define('RE_BLANK', "^\n{0,10}$");
+/// @todo Should we disallow $ and ` chars in comments?
+//define('RE_COMMENT_INLINE', '^[^$`]{0,100}$');
+define('RE_COMMENT_INLINE', '^[\s\S]{0,100}$');
+define('RE_COMMENT', '^[\s\S]{0,1000}$');
+
+define('RE_ACTION', '^(pass|match|block)$');
+define('RE_BLOCKOPTION', '^(drop|return|return-rst|return-icmp|return-icmp6)$');
+
+/// @todo Enum types instead
+define('RE_TYPE', '^[a-z-]{0,30}$');
+
+define('RE_SOURCE_HASH_KEY', '^\w{16,}$');
+
+define('RE_BLOCKPOLICY', '^(drop|return)$');
+define('RE_STATEPOLICY', '^(if-bound|floating)$');
+define('RE_OPTIMIZATION', '^(normal|high-latency|satellite|aggressive|conservative)$');
+define('RE_RULESETOPTIMIZATION', '^(none|basic|profile)$');
+define('RE_DEBUG', '^(emerg|alert|crit|err|warning|notice|info|debug)$');
+define('RE_REASSEMBLE', '^(yes|no)$');
+
+define('RE_BANDWIDTH', '^\w{1,16}(|K|M|G)$');
+define('RE_BWTIME', '^\w{1,16}ms$');
+
+define('RE_REASSEMBLE_TCP', '^tcp$');
+
+define('RE_CONNRATE', '^\d{1,20}\/\d{1,20}$');
+define('RE_SOURCETRACKOPTION', '^(rule|global)$');
+
 /// @attention PHP is not compiled, otherwise would use bindec()
 /// @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!
 /// Shell command argument types
@@ -120,28 +213,28 @@ $ArgTypes= array(
 		),
 );
 
-function IsFilePath($filepath)
+function IsFilePath($str)
 {
 	global $PF_CONFIG_PATH, $TMP_PATH;
 
 	return
 		// For CVS Tag displayed in the footer
-		preg_match('|^/var/www/htdocs/pfre/View/\w[\w./\-_]*$|', $filepath)
+		preg_match('|^/var/www/htdocs/pfre/View/\w[\w./\-_]*$|', $str)
 		// pf configuration files
-		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $filepath)
-		|| preg_match("|^/etc/\w[\w.\-_]*$|", $filepath)
+		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $str)
+		|| preg_match("|^/etc/\w[\w.\-_]*$|", $str)
 		// Uploaded tmp files
-		|| preg_match("|^$TMP_PATH/\w[\w.\-_]*$|", $filepath);
+		|| preg_match("|^$TMP_PATH/\w[\w.\-_]*$|", $str);
 }
 
-function IsNumber($num)
+function IsNumber($str)
 {
-	return preg_match('/^\d{1,20}$/', $num);
+	return preg_match('/' . RE_NUM . '/', $str);
 }
 
-function IsName($name)
+function IsName($str)
 {
-	return preg_match('/^\w[\w_.\-]{0,50}$/', $name);
+	return preg_match('/' . RE_NAME . '/', $str);
 }
 
 function IsJson($str)
@@ -151,7 +244,7 @@ function IsJson($str)
 
 function IsSha1Str($str)
 {
-	return preg_match('/^[a-f\d]+$/', $str);
+	return preg_match('/' . RE_SHA1 . '/', $str);
 }
 
 function IsEmpty($str)
@@ -159,9 +252,9 @@ function IsEmpty($str)
 	return empty($str);
 }
 
-function IsBool($bool)
+function IsBool($str)
 {
-	return preg_match('/^[01]$/', $bool);
+	return preg_match('/' . RE_BOOL . '/', $str);
 }
 
 /** Compute and fill arg count variables.

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Scrub.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,19 +60,19 @@ class Scrub extends Filter
 
 	protected $typeScrub= array(
 		'min-ttl' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'max-mss' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'no-df' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'random-id' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'reassemble' => array(
-			'regex' => '^tcp$',
+			'regex' => RE_REASSEMBLE_TCP,
 			),
 		);
 

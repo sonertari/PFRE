@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -48,7 +48,7 @@ class Antispoof extends Rule
 
 	protected $typeLabel= array(
 		'label' => array(
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		);
 

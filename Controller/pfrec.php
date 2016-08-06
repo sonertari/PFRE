@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.4 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: pfrec.php,v 1.5 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -130,7 +130,8 @@ else {
 
 if (isset($ViewError)) {
 	/// @attention Output all view error messages, success or fail
-	// Tag view errors with <ViewError>: on success, so the caller can split to get output and error messages
+	// Tag view errors with '<ViewError>:' on success, so that the caller can split the output to separate data and error messages
+	/// @todo Is it better to always output a serialized array with data and error elements in it?
 	echo $retval === 1 ? $ViewError : "\n<ViewError>:$ViewError";
 }
 exit($retval);

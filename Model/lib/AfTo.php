@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
+/* $pfre: AfTo.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,10 +37,10 @@ class AfTo extends Filter
 {
 	protected $typeNatBase= array(
 		'rediraf' => array(
-			'regex' => '^(inet|inet6)$',
+			'regex' => RE_AF,
 			),
 		'toredirhost' => array(
-			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			'regex' => RE_REDIRHOST,
 			),
 		);
 

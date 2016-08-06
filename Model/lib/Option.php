@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Option.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -80,42 +80,41 @@ class Option extends Rule
 
 	protected $typeOption= array(
 		'type' => array(
-			/// @todo Actually we can enum the types below
-			'regex' => '^[a-z-]{0,30}$',
+			'regex' => RE_TYPE,
 			),
 		'loginterface' => array(
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_IF,
 			),
 		'block-policy' => array(
-			'regex' => '^(drop|return)$',
+			'regex' => RE_BLOCKPOLICY,
 			),
 		'state-policy' => array(
-			'regex' => '^(if-bound|floating)$',
+			'regex' => RE_STATEPOLICY,
 			),
 		'optimization' => array(
-			'regex' => '^(normal|high-latency|satellite|aggressive|conservative)$',
+			'regex' => RE_OPTIMIZATION,
 			),
 		'ruleset-optimization' => array(
-			'regex' => '^(none|basic|profile)$',
+			'regex' => RE_RULEOPTIMIZATION,
 			),
 		'debug' => array(
-			'regex' => '^(emerg|alert|crit|err|warning|notice|info|debug)$',
+			'regex' => RE_DEBUG,
 			),
 		'hostid' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'skip' => array(
 			'multi' => TRUE,
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_IF,
 			),
 		'fingerprints' => array(
 			'func' => 'IsFilePath',
 			),
 		'reassemble' => array(
-			'regex' => '^(yes|no)$',
+			'regex' => RE_REASSEMBLE,
 			),
 		'no-df' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		);
 

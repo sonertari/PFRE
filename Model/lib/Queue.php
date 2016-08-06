@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Queue.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -68,43 +68,43 @@ class Queue extends Rule
 
 	protected $typeQueue= array(
 		'name' => array(
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'parent' => array(
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'bandwidth' => array(
-			'regex' => '^\w{1,16}(|K|M|G)$',
+			'regex' => RE_BANDWIDTH,
 			),
 		'bw-burst' => array(
-			'regex' => '^\w{1,16}(|K|M|G)$',
+			'regex' => RE_BANDWIDTH,
 			),
 		'bw-time' => array(
-			'regex' => '^\w{1,16}ms$',
+			'regex' => RE_BWTIME,
 			),
 		'min' => array(
-			'regex' => '^\w{1,16}(|K|M|G)$',
+			'regex' => RE_BANDWIDTH,
 			),
 		'min-burst' => array(
-			'regex' => '^\w{1,16}(|K|M|G)$',
+			'regex' => RE_BANDWIDTH,
 			),
 		'min-time' => array(
-			'regex' => '^\w{1,16}ms$',
+			'regex' => RE_BWTIME,
 			),
 		'max' => array(
-			'regex' => '^\w{1,16}(|K|M|G)$',
+			'regex' => RE_BANDWIDTH,
 			),
 		'max-burst' => array(
-			'regex' => '^\w{1,16}(|K|M|G)$',
+			'regex' => RE_BANDWIDTH,
 			),
 		'max-time' => array(
-			'regex' => '^\w{1,16}ms$',
+			'regex' => RE_BWTIME,
 			),
 		'qlimit' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'default' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		);
 

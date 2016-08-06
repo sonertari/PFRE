@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.2 2016/08/04 16:59:15 soner Exp $ */
+/* $pfre: Timeout.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -78,81 +78,81 @@ class Timeout extends Rule
 				'all' => array(
 					'values' => array(
 						'frag' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'interval' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'src.track' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						),
 					),
 				'tcp' => array(
 					'values' => array(
 						'first' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'opening' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'established' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'closing' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'finwait' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'closed' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						),
 					),
 				'udp' => array(
 					'values' => array(
 						'first' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'single' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'multiple' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						),
 					),
 				'icmp' => array(
 					'values' => array(
 						'first' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'error' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						),
 					),
 				'other' => array(
 					'values' => array(
 						'first' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'single' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'multiple' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						),
 					),
 				'adaptive' => array(
 					'values' => array(
 						'start' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						'end' => array(
-							'func' => 'IsNumber',
+							'regex' => RE_NUM,
 							),
 						),
 					),

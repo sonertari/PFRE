@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.3 2016/08/04 16:59:15 soner Exp $ */
+/* $pfre: Table.php,v 1.4 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,16 +65,16 @@ class Table extends Rule
 	protected $typeTable= array(
 		'identifier' => array(
 			'require' => TRUE,
-			'regex' => '^\w[\w_.\/\-*]{0,50}$',
+			'regex' => RE_ID,
 			),
 		'persist' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'const' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'counters' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'file' => array(
 			'multi' => TRUE,
@@ -82,8 +82,7 @@ class Table extends Rule
 			),
 		'data' => array(
 			'multi' => TRUE,
-			/// @todo What is a possible regex?
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_TABLE_ADDRESS,
 			),
 		);
 

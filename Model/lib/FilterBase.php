@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.3 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -182,122 +182,122 @@ class FilterBase extends State
 
 	protected $typeDirection= array(
 		'direction' => array(
-			'regex' => '^(in|out)$',
+			'regex' => RE_DIRECTION,
 			),
 		);
 
 	protected $typeProto= array(
 		'proto' => array(
 			'multi' => TRUE,
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_PROTOSPEC,
 			),
 		);
 
 	protected $typeSrcDest= array(
 		'all' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'from' => array(
 			'multi' => TRUE,
-			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			'regex' => RE_HOST,
 			),
 		'fromport' => array(
 			'multi' => TRUE,
-			'regex' => '^[\w_.\/\-*$<>!=\s:]{0,50}$',
+			'regex' => RE_PORT,
 			),
 		'to' => array(
 			'multi' => TRUE,
-			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
+			'regex' => RE_HOST,
 			),
 		'toport' => array(
 			'multi' => TRUE,
-			'regex' => '^[\w_.\/\-*$<>!=\s:]{0,50}$',
+			'regex' => RE_PORT,
 			),
 		);
 
 	protected $typeFilterOpts= array(
 		'user' => array(
 			'multi' => TRUE,
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'group' => array(
 			'multi' => TRUE,
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'flags' => array(
-			'regex' => '^[\w\/]{0,20}$',
+			'regex' => RE_FLAGS,
 			),
 		'icmp-type' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'icmp-code' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'icmp6-type' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'icmp6-code' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'tos' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'state-filter' => array(
-			'regex' => '^(no|keep|modulate|synproxy)$',
+			'regex' => RE_STATE,
 			),
 		'fragment' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'allow-opts' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'once' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'divert-reply' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'label' => array(
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'tag' => array(
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'tagged' => array(
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'not-tagged' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'set-prio' => array(
 			'multi' => TRUE,
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'set-tos' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'queue' => array(
 			'multi' => TRUE,
-			'func' => 'IsName',
+			'regex' => RE_NAME,
 			),
 		'rtable' => array(
-			'func' => 'IsNumber',
+			'regex' => RE_NUM,
 			),
 		'probability' => array(
-			'regex' => '^[\d.%]{1,10}$',
+			'regex' => RE_PROBABILITY,
 			),
 		'prio' => array(
-			'regex' => '^\w{1,10}$',
+			'regex' => RE_W_1_10,
 			),
 		'received-on' => array(
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_IF,
 			),
 		'not-received-on' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'os' => array(
 			'multi' => TRUE,
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_OS,
 			),
 		);
 

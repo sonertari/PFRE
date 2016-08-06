@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: NatBase.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -64,25 +64,25 @@ class NatBase extends Filter
 
 	protected $typeNatBase= array(
 		'bitmask' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'least-states' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'round-robin' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'random' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'source-hash' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		'source-hash-key' => array(
-			'regex' => '^\w{16,}$',
+			'regex' => RE_SOURCE_HASH_KEY,
 			),
 		'sticky-address' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		);
 

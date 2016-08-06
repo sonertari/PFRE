@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.2 2016/08/04 16:44:37 soner Exp $ */
+/* $pfre: Macro.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,12 +38,12 @@ class Macro extends Rule
 	protected $typeMacro= array(
 		'identifier' => array(
 			'require' => TRUE,
-			'regex' => '^\w[\w_.\/\-*]{0,50}$',
+			'regex' => RE_ID,
 			),
 		'value' => array(
 			'require' => TRUE,
 			'multi' => TRUE,
-			'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_MACRO_VALUE,
 			),
 		);
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: Rule.php,v 1.4 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -83,13 +83,13 @@ class Rule
 	protected $typeInterface= array(
 		'interface' => array(
 			'multi' => TRUE,
-			'regex' => '^(\w|\$|!)[\w_.\/\-*]{0,50}$',
+			'regex' => RE_IFSPEC,
 			),
 		);
 
 	protected $typeAf= array(
 		'af' => array(
-			'regex' => '^(inet|inet6)$',
+			'regex' => RE_AF,
 			),
 		);
 
@@ -97,19 +97,19 @@ class Rule
 		'log' => array(
 			/// @attention log can be of type either bool or array of values
 			// Validate functions can handle multi-type values like this, no problem
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			'values' => array(
 				'all' => array(
-					'func' => 'IsBool',
+					'regex' => RE_BOOL,
 					),
 				'matches' => array(
-					'func' => 'IsBool',
+					'regex' => RE_BOOL,
 					),
 				'user' => array(
-					'func' => 'IsBool',
+					'regex' => RE_BOOL,
 					),
 				'to' => array(
-					'regex' => '^(\w|\$)[\w_.\/\-*]{0,50}$',
+					'regex' => RE_IF,
 					),
 				),
 			),
@@ -117,13 +117,13 @@ class Rule
 
 	protected $typeQuick= array(
 		'quick' => array(
-			'func' => 'IsBool',
+			'regex' => RE_BOOL,
 			),
 		);
 
 	protected $typeComment= array(
 		'comment' => array(
-			'regex' => '^[^$`]{0,100}$',
+			'regex' => RE_COMMENT_INLINE,
 			),
 		);
 
