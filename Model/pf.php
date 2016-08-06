@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.10 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: pf.php,v 1.11 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -207,6 +207,7 @@ class Pf extends Model
 	function GeneratePfRule($json, $ruleNumber)
 	{
 		$ruleDef= json_decode($json, TRUE);
+
 		$class= $ruleDef['cat'];
 		$ruleObj= new $class('');
 		if ($ruleObj->load($ruleDef['rule'], $ruleNumber)) {
@@ -214,21 +215,23 @@ class Pf extends Model
 			return TRUE;
 		}
 
-		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
+		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rule with errors');
 		return FALSE;
 	}
 
 	function GeneratePfRules($json, $lines= FALSE, $force= FALSE)
 	{
 		$rulesArray= json_decode($json, TRUE);
+
 		$ruleSet= new RuleSet();
-		if ($ruleSet->load($rulesArray, $force) || $force) {
+		$retval= $ruleSet->load($rulesArray, $force);
+		if ($retval || $force) {
 			Output($ruleSet->generate($lines));
-			return TRUE;
+		} else {
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
 		}
 
-		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
-		return FALSE;
+		return $retval;
 	}
 
 	function TestPfRules($json)

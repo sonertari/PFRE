@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.3 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: write.php,v 1.4 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -84,7 +84,7 @@ echo _('Rule file') . ': ' . ($printFileName ? $View->RuleSet->filename : '');
 
 <pre>
 <?php
-if ($generated) {
+if ($generated || $force) {
 	echo htmlentities(implode("\n", $Output));
 }
 ?>

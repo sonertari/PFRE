@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.8 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: files.php,v 1.9 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -134,7 +134,7 @@ if (filter_has_var(INPUT_POST, 'download')) {
 		$force= 1;
 	}
 
-	if ($View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), 0, $force)) {
+	if ($View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), 0, $force) || $force) {
 		if (filter_has_var(INPUT_SERVER, 'HTTP_USER_AGENT') && preg_match("/MSIE/", filter_input(INPUT_SERVER, 'HTTP_USER_AGENT'))) {
 			// For IE
 			ini_set('zlib.output_compression', 'Off');
