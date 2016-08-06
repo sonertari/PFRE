@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.3 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.4 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,7 +47,12 @@ class RuleSet
 			$class= $ruleDef['cat'];
 			$ruleObj= new $class('');
 			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber, $force)) {
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$ruleNumber: Load Error: Rule loaded partially"));
+				if (!$force) {
+					$msg= 'Load Error: Rule loaded partially';
+				} else {
+					$msg= 'Load Error: Rule load forced';
+				}
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$ruleNumber: $msg"));
 				$retval= FALSE;
 			}
 			$this->rules[]= $ruleObj;
