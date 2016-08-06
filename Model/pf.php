@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.8 2016/08/05 22:30:07 soner Exp $ */
+/* $pfre: pf.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -45,7 +45,7 @@ class Pf extends Model
 			$this->Commands,
 			array(
 				'GetPfRules'=>	array(
-					'argv'	=>	array(FILEPATH|NONE, BOOL|NONE),
+					'argv'	=>	array(FILEPATH, BOOL|NONE, BOOL|NONE),
 					'desc'	=>	_('Get pf rules'),
 					),
 				
@@ -82,13 +82,11 @@ class Pf extends Model
 			);
 	}
 
-	function GetPfRules($file= NULL, $tmp= FALSE)
+	function GetPfRules($file, $tmp= FALSE, $force= FALSE)
 	{
 		global $PF_CONFIG_PATH, $TMP_PATH;
 
-		if ($file == NULL) {
-			$file= '/etc/pf.conf';
-		} else {
+		if ($file !== '/etc/pf.conf') {
 			if (!$this->ValidateFilename($file)) {
 				return FALSE;
 			}
@@ -107,7 +105,7 @@ class Pf extends Model
 		//}
 
 		$ruleSet= new RuleSet();
-		$ruleSet->parse($ruleStr);
+		$ruleSet->parse($ruleStr, $force);
 
 		return json_encode($ruleSet);
 	}
@@ -145,7 +143,7 @@ class Pf extends Model
 		$rulesArray= json_decode($json, TRUE);
 
 		$ruleSet= new RuleSet();
-		if (!$ruleSet->load($rulesArray) && !$force) {
+		if (!$ruleSet->load($rulesArray, $force) && !$force) {
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
 			return FALSE;
 		}
@@ -219,7 +217,7 @@ class Pf extends Model
 	{
 		$rulesArray= json_decode($json, TRUE);
 		$ruleSet= new RuleSet();
-		if ($ruleSet->load($rulesArray) || $force) {
+		if ($ruleSet->load($rulesArray, $force) || $force) {
 			return $ruleSet->generate($lines);
 		}
 

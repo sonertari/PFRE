@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.4 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: Rule.php,v 1.5 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -136,11 +136,11 @@ class Rule
 		}
 	}
 
-	function load($arr, $ruleNumber= 0)
+	function load($arr, $ruleNumber= 0, $force= FALSE)
 	{
 		$this->ruleNumber= $ruleNumber;
 
-		if ($this->validate($arr)) {
+		if ($this->validate($arr) || $force) {
 			$this->rule= $arr;
 			return TRUE;
 		}
@@ -224,10 +224,11 @@ class Rule
 		}
 
 		if (!$result) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': $value"));
+			ViewError("$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': <pre>" . print_r($value, TRUE) . '</pre>');
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE));
 			return FALSE;
 		} else {
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Valid value for '" . ltrim("$parent.$key", '.') . "': $value, $rxfn");
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Valid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE) . ", $rxfn");
 		}
 		return TRUE;
 	}

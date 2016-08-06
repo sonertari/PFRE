@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.6 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: files.php,v 1.7 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,8 +36,13 @@
 require_once ('include.php');
 
 if (filter_has_var(INPUT_POST, 'reload')) {
+	$force= 0;
+	if (filter_has_var(INPUT_POST, 'forceload')) {
+		$force= 1;
+	}
+
 	$ruleSet= new RuleSet();
-	if ($ruleSet->load()) {
+	if ($ruleSet->load('/etc/pf.conf', NULL, $force)) {
 		$View->RuleSet= $ruleSet;
 		PrintHelpWindow('Main pf rules reloaded: ' . $View->RuleSet->filename);
 	} else {
@@ -47,12 +52,17 @@ if (filter_has_var(INPUT_POST, 'reload')) {
 
 $loadfile= '';
 if (filter_has_var(INPUT_POST, 'load')) {
+	$force= 0;
+	if (filter_has_var(INPUT_POST, 'forceload')) {
+		$force= 1;
+	}
+
 	// Accept only file names, no paths
 	$loadfile= basename(filter_input(INPUT_POST, 'filename'));
 	$filepath= "$PF_CONFIG_PATH/$loadfile";
 	
 	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath)) {
+	if ($ruleSet->load($filepath, 0, $force)) {
 		$View->RuleSet= $ruleSet;
 		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
 	} else {
@@ -96,9 +106,14 @@ if (filter_has_var(INPUT_POST, 'save')) {
 }
 
 if (filter_has_var(INPUT_POST, 'upload')) {
+	$force= 0;
+	if (filter_has_var(INPUT_POST, 'forceupload')) {
+		$force= 1;
+	}
+
 	if ($_FILES['file']['error'] == 0) {
 		$ruleSet= new RuleSet();
-		if ($ruleSet->load($_FILES['file']['tmp_name'], TRUE)) {
+		if ($ruleSet->load($_FILES['file']['tmp_name'], TRUE, $force)) {
 			$View->RuleSet= $ruleSet;
 			/// @todo Unlink the tmp file?
 			PrintHelpWindow('File uploaded: ' . $_FILES['file']['name']);
@@ -140,9 +155,7 @@ require_once($VIEW_PATH.'/header.php');
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="submit" id="reload" name="reload" value="Reload" />
 	<label for="reload">Reload main rulebase</label>
-</form>
-<br />
-<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
+	<br />
 	<select id="filename" name="filename">
 		<option value="" label=""></option>
 		<?php
@@ -155,6 +168,8 @@ require_once($VIEW_PATH.'/header.php');
 	</select>
 	<input type="submit" id="load" name="load" value="Load" />
 	<label for="load">Load rules from file</label>
+	<input type="checkbox" id="forceload" name="forceload" <?php echo filter_has_var(INPUT_POST, 'forceload') ? 'checked' : ''; ?> />
+	<label for="forceload">Load with errors</label>
 </form>
 
 <p>&nbsp;</p>
@@ -196,6 +211,8 @@ require_once($VIEW_PATH.'/header.php');
     <input type="submit" id="upload" name="upload" value="Upload" />
     <input type="hidden" name="max_file_size" value="300000" />
     Upload file: <input name="file" type="file" />
+	<input type="checkbox" id="forceupload" name="forceupload" <?php echo filter_has_var(INPUT_POST, 'forceupload') ? 'checked' : ''; ?> />
+	<label for="forceupload">Upload with errors</label>
 </form>
 
 <p>&nbsp;</p>

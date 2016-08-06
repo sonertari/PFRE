@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: Anchor.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -52,8 +52,7 @@ class Anchor extends FilterBase
 			'regex' => RE_ANCHOR_ID,
 			),
 		'inline' => array(
-			/// @todo Parse and validate inline anchor rules
-			'regex' => '^[\s\S]{0,1000}$',
+			'func' => 'IsInlineAnchor',
 			),
 		);
 

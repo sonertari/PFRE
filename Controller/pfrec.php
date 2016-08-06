@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.5 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: pfrec.php,v 1.6 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -63,6 +63,8 @@ require_once('lib.php');
 
 unset($ViewError);
 $retval= 1;
+
+$Nesting= 0;
 
 require_once($MODEL_PATH.'/pf.php');
 $Model= new Pf();

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.2 2016/07/29 06:42:08 soner Exp $ */
+/* $pfre: model.php,v 1.3 2016/08/04 14:42:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,33 +36,6 @@
 /** @file
  * Base class for models.
  */
-
-require_once($MODEL_PATH.'/lib/RuleSet.php');
-require_once($MODEL_PATH.'/lib/Rule.php');
-require_once($MODEL_PATH.'/lib/Timeout.php');
-require_once($MODEL_PATH.'/lib/State.php');
-require_once($MODEL_PATH.'/lib/FilterBase.php');
-require_once($MODEL_PATH.'/lib/Filter.php');
-require_once($MODEL_PATH.'/lib/Antispoof.php');
-require_once($MODEL_PATH.'/lib/Anchor.php');
-require_once($MODEL_PATH.'/lib/NatBase.php');
-require_once($MODEL_PATH.'/lib/NatTo.php');
-require_once($MODEL_PATH.'/lib/BinatTo.php');
-require_once($MODEL_PATH.'/lib/RdrTo.php');
-require_once($MODEL_PATH.'/lib/AfTo.php');
-require_once($MODEL_PATH.'/lib/DivertTo.php');
-require_once($MODEL_PATH.'/lib/DivertPacket.php');
-require_once($MODEL_PATH.'/lib/Route.php');
-require_once($MODEL_PATH.'/lib/Macro.php');
-require_once($MODEL_PATH.'/lib/Table.php');
-require_once($MODEL_PATH.'/lib/Queue.php');
-require_once($MODEL_PATH.'/lib/Scrub.php');
-require_once($MODEL_PATH.'/lib/Option.php');
-require_once($MODEL_PATH.'/lib/Limit.php');
-require_once($MODEL_PATH.'/lib/LoadAnchor.php');
-require_once($MODEL_PATH.'/lib/Include.php');
-require_once($MODEL_PATH.'/lib/Comment.php');
-require_once($MODEL_PATH.'/lib/Blank.php');
 
 class Model
 {

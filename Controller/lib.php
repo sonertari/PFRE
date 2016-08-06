@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.4 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: lib.php,v 1.5 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -255,6 +255,56 @@ function IsEmpty($str)
 function IsBool($str)
 {
 	return preg_match('/' . RE_BOOL . '/', $str);
+}
+
+require_once($MODEL_PATH.'/lib/RuleSet.php');
+require_once($MODEL_PATH.'/lib/Rule.php');
+require_once($MODEL_PATH.'/lib/Timeout.php');
+require_once($MODEL_PATH.'/lib/State.php');
+require_once($MODEL_PATH.'/lib/FilterBase.php');
+require_once($MODEL_PATH.'/lib/Filter.php');
+require_once($MODEL_PATH.'/lib/Antispoof.php');
+require_once($MODEL_PATH.'/lib/Anchor.php');
+require_once($MODEL_PATH.'/lib/NatBase.php');
+require_once($MODEL_PATH.'/lib/NatTo.php');
+require_once($MODEL_PATH.'/lib/BinatTo.php');
+require_once($MODEL_PATH.'/lib/RdrTo.php');
+require_once($MODEL_PATH.'/lib/AfTo.php');
+require_once($MODEL_PATH.'/lib/DivertTo.php');
+require_once($MODEL_PATH.'/lib/DivertPacket.php');
+require_once($MODEL_PATH.'/lib/Route.php');
+require_once($MODEL_PATH.'/lib/Macro.php');
+require_once($MODEL_PATH.'/lib/Table.php');
+require_once($MODEL_PATH.'/lib/Queue.php');
+require_once($MODEL_PATH.'/lib/Scrub.php');
+require_once($MODEL_PATH.'/lib/Option.php');
+require_once($MODEL_PATH.'/lib/Limit.php');
+require_once($MODEL_PATH.'/lib/LoadAnchor.php');
+require_once($MODEL_PATH.'/lib/Include.php');
+require_once($MODEL_PATH.'/lib/Comment.php');
+require_once($MODEL_PATH.'/lib/Blank.php');
+
+function IsInlineAnchor($str)
+{
+	global $LOG_LEVEL, $Nesting;
+
+	$result= FALSE;
+	if ($Nesting + 1 <= 2) {
+		$Nesting++;
+		$ruleSet= new RuleSet();
+		$result= $ruleSet->parse($str);
+		if (!$result) {
+			if (LOG_DEBUG <= $LOG_LEVEL) {
+				ViewError('Validation Error: Invalid inline rules, parser output: <pre>' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE) . '</pre>');
+			}
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Validation Error: Invalid inline rules: ' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE));
+		}
+		$Nesting--;
+	} else {
+		ViewError("Validation Error: Reached max nesting for inline anchors: <pre>" . print_r($str, TRUE) . '</pre>');
+		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Validation Error: Reached max nesting for inline anchors: $str");
+	}
+	return $result;
 }
 
 /** Compute and fill arg count variables.

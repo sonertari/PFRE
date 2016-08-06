@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.3 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ class RuleSet
 {
 	public $rules= array();
 	
-	function load($rulesArray)
+	function load($rulesArray, $force= FALSE)
 	{
 		$this->deleteRules();
 	
@@ -46,7 +46,7 @@ class RuleSet
 		foreach ($rulesArray as $ruleDef) {
 			$class= $ruleDef['cat'];
 			$ruleObj= new $class('');
-			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber)) {
+			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber, $force)) {
 				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$ruleNumber: Load Error: Rule loaded partially"));
 				$retval= FALSE;
 			}
@@ -61,7 +61,7 @@ class RuleSet
 		$this->rules= array();
 	}
 	
-	function parse($text)
+	function parse($text, $force= FALSE)
 	{
 		$this->deleteRules();
 		$rulebase= array();
@@ -94,7 +94,7 @@ class RuleSet
 			}
 
 			if ($type === 'anchor' && preg_match('/^.*{\s*$/', $str)) {
-				$this->parseInlineRules($rulebase, $str, $order);
+				$this->parseInlineRules($rulebase, $str, $order, $force);
 			}
 
 			switch ($type) {
@@ -189,21 +189,21 @@ class RuleSet
         }
         /// @attention Do not append accumulated blank lines to the end
 		
-		return $this->validate();
+		return $this->validate($force);
 	}
 
-	function validate()
+	function validate($force= FALSE)
 	{
 		// Reload for validation
 		$rulesArray= json_decode(json_encode($this->rules), TRUE);
-		if (!$this->load($rulesArray)) {
+		if (!$this->load($rulesArray, $force)) {
 			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError('Load Error: Ruleset contains errors'));
 			return FALSE;
 		}
 		return TRUE;
 	}
 
-	function parseInlineRules($rulebase, &$str, &$order)
+	function parseInlineRules($rulebase, &$str, &$order, $force= FALSE)
 	{
 		if (preg_match('/^(.*){\s*$/', $str, $match)) {
 			$str= $match[1] . ' inline ';
@@ -220,7 +220,11 @@ class RuleSet
 					if (preg_match('/^.*{\s*$/', $line)) {
 						// Do not allow more than 2 nested inline rules
 						if (++$nesting > 2) {
-							break;
+							ViewError("Parse Error: Reached max nesting for inline anchors: <pre>" . print_r($line, TRUE) . '</pre>');
+							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parse Error: Reached max nesting for inline anchors: $line");
+							if (!$force) {
+								break;
+							}
 						}
 					}
 				} else {

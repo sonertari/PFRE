@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.19 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.20 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,15 +38,15 @@ class RuleSet
 	public $filename= '';
 	public $rules= array();
 			
-	function load($filename= '/etc/pf.conf', $tmp= 0)
+	function load($filename, $tmp= 0, $force= 0)
 	{
 		global $View;
 
 		$retval= TRUE;
 		if ($filename == '/etc/pf.conf') {
-			$retval= $View->Controller($Output, 'GetPfRules');
+			$retval= $View->Controller($Output, 'GetPfRules', $filename, 0, $force);
 		} else {
-			$retval= $View->Controller($Output, 'GetPfRules', $filename, $tmp);
+			$retval= $View->Controller($Output, 'GetPfRules', $filename, $tmp, $force);
 		}
 
 		if ($retval !== FALSE) {
