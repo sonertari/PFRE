@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.26 2016/08/04 20:00:41 soner Exp $ */
+/* $pfre: Rule.php,v 1.27 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class Rule
 	public $rule= array();
 
 	protected $href= '';
-	protected $rulenumber= 0;
+	protected $ruleNumber= 0;
 	
 	protected $arr= array();
 	protected $editIndex= 0;
@@ -50,12 +50,12 @@ class Rule
 		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&amp;rulenumber=';
 	}
 
-	function dispHead($rulenumber)
+	function dispHead($ruleNumber)
 	{
 		?>
-		<tr title="<?php echo ltrim($this->cat, '_'); ?> rule"<?php echo ($rulenumber % 2 ? ' class="oddline"' : ''); ?>>
+		<tr title="<?php echo ltrim($this->cat, '_'); ?> rule"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : ''); ?>>
 			<td class="center">
-				<?php echo $rulenumber; ?>
+				<?php echo $ruleNumber; ?>
 			</td>
 			<td title="Category" class="category">
 				<?php echo ltrim($this->cat, '_'); ?>
@@ -63,49 +63,49 @@ class Rule
 		<?php
 	}
 
-	function dispTail($rulenumber, $count)
+	function dispTail($ruleNumber, $count)
 	{
 		?>
 		<td class="comment">
 			<?php echo stripslashes($this->rule['comment']); ?>
 		</td>
 		<?php
-		$this->dispTailEditLinks($rulenumber, $count);
+		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 
-	function dispTailEditLinks($rulenumber, $count)
+	function dispTailEditLinks($ruleNumber, $count)
 	{
 		?>
 			<td class="edit">
 				<?php
-				$this->dispEditLinks($rulenumber, $count);
+				$this->dispEditLinks($ruleNumber, $count);
 				?>
 			</td>
 		</tr>
 		<?php
 	}
 
-	function dispEditLinks($rulenumber, $count, $up= 'up', $down= 'down', $del= 'del')
+	function dispEditLinks($ruleNumber, $count, $up= 'up', $down= 'down', $del= 'del')
 	{
 		?>
-		<a href="<?php echo $this->href . $rulenumber; ?>" title="Edit">e</a>
+		<a href="<?php echo $this->href . $ruleNumber; ?>" title="Edit">e</a>
 		<?php
-		if ($rulenumber > 0) {
+		if ($ruleNumber > 0) {
 			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $up; ?>=<?php echo $rulenumber; ?>" title="Move up">u</a>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $up; ?>=<?php echo $ruleNumber; ?>" title="Move up">u</a>
 			<?php
 		} else {
 			echo ' u ';
 		}
-		if ($rulenumber < $count) {
+		if ($ruleNumber < $count) {
 			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $down; ?>=<?php echo $rulenumber; ?>" title="Move down">d</a>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $down; ?>=<?php echo $ruleNumber; ?>" title="Move down">d</a>
 			<?php
 		} else {
 			echo ' d ';
 		}
 		?>
-		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $rulenumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $rulenumber; ?>?')">x</a>
+		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $ruleNumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $ruleNumber; ?>?')">x</a>
 		<?php
 	}
 
@@ -287,8 +287,8 @@ class Rule
 
 	function inputInterface()
 	{
-		$this->inputDel('interface', 'dropinterface');
-		$this->inputAdd('interface', 'addinterface');
+		$this->inputDel('interface', 'delInterface');
+		$this->inputAdd('interface', 'addInterface');
 	}
 
 	function inputLog()
@@ -382,7 +382,7 @@ class Rule
 		<?php
 	}
 
-	function editValues($key, $title, $dropname, $addname, $hint, $help= NULL, $size= 0, $disabled= FALSE)
+	function editValues($key, $title, $delName, $addName, $hint, $help= NULL, $size= 0, $disabled= FALSE)
 	{
 		$help= $help === NULL ? $key : $help;
 		?>
@@ -392,8 +392,8 @@ class Rule
 			</td>
 			<td>
 				<?php
-				$this->editDeleteValueLinks($this->rule[$key], $dropname);
-				$this->editAddValueBox($addname, NULL, $hint, $size, $disabled);
+				$this->editDeleteValueLinks($this->rule[$key], $delName);
+				$this->editAddValueBox($addName, NULL, $hint, $size, $disabled);
 				if ($help !== FALSE) {
 					$this->editHelp($help);
 				}
@@ -407,9 +407,9 @@ class Rule
 	{
 		global $ruleStr;
 		?>
-		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->rulenumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
+		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->ruleNumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
 		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", str_replace("\n", '<br>', htmlentities($ruleStr))); ?></h4>
-		<form id="theform" name="theform" action="<?php echo $this->href . $this->rulenumber; ?>" method="post">
+		<form id="theform" name="theform" action="<?php echo $this->href . $this->ruleNumber; ?>" method="post">
 			<table id="nvp">
 			<?php
 	}
@@ -432,7 +432,7 @@ class Rule
 
 	function editInterface()
 	{
-		$this->editValues('interface', 'Interface', 'dropinterface', 'addinterface', 'if or macro', NULL, 10);
+		$this->editValues('interface', 'Interface', 'delInterface', 'addInterface', 'if or macro', NULL, 10);
 	}
 
 	function editAf()
@@ -503,14 +503,14 @@ class Rule
 					$v= htmlentities($v);
 					echo "$prefix$v$postfix";
 					?>
-					<a href="<?php echo $this->href . $this->rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
+					<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
 					<?php
 				}
 			} else {
 				$value= htmlentities($value);
 				echo "$prefix$value$postfix";
 				?>
-				<a href="<?php echo $this->href . $this->rulenumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
+				<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
 				<?php
 			}
 			?>

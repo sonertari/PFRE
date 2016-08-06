@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatTo.php,v 1.3 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: NatTo.php,v 1.4 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -53,10 +53,10 @@ class NatTo extends NatBase
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.2 2016/08/04 16:44:37 soner Exp $ */
+/* $pfre: Rule.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -44,7 +44,7 @@ class Rule
 
 	protected $keywords = array();
 	
-	protected $rulenumber= 0;
+	protected $ruleNumber= 0;
 
 	protected $keyInterface= array(
 		'on' => array(
@@ -136,9 +136,9 @@ class Rule
 		}
 	}
 
-	function load($arr, $rulenumber= 0)
+	function load($arr, $ruleNumber= 0)
 	{
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		if ($this->validate($arr)) {
 			$this->rule= $arr;
@@ -157,7 +157,7 @@ class Rule
 		}
 
 		if (count($arr) > 0) {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Unexpected elements: " . implode(', ', array_keys($arr))));
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Unexpected elements: " . implode(', ', array_keys($arr))));
 			return FALSE;
 		}
 		return TRUE;
@@ -167,6 +167,7 @@ class Rule
 	{
 		if (array_key_exists($key, $arr)) {
 			if (is_array($arr[$key])) {
+				// Recursion
 				if (!$this->validateArrayValues($arr[$key], $key, $def, $parent)) {
 					return FALSE;
 				}
@@ -175,7 +176,7 @@ class Rule
 			}
 			unset($arr[$key]);
 		} elseif ($def['require']) {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
 
@@ -192,17 +193,18 @@ class Rule
 			}
 		} elseif ($def['values']) {
 			foreach ($def['values'] as $k => $d) {
+				// Recursion
 				if (!$this->validateKeyDef($arr, $k, $d, $key)) {
 					return FALSE;
 				}
 			}
 
 			if (count($arr) > 0) {
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Unexpected elements: " . ltrim("$parent.$key", '.') . ' ' . implode(', ', array_keys($arr))));
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Unexpected elements: " . ltrim("$parent.$key", '.') . ' ' . implode(', ', array_keys($arr))));
 				return FALSE;
 			}
 		} else {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Multiple values not allowed for " . ltrim("$parent.$key", '.')));
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Multiple values not allowed for " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
 		return TRUE;
@@ -217,15 +219,15 @@ class Rule
 			$rxfn= $def['func'];
 			$result= $rxfn($value);
 		} else {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: No regex or func def for: " . ltrim("$parent.$key", '.')));
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: No regex or func def for: " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
 
 		if (!$result) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->rulenumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': $value"));
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': $value"));
 			return FALSE;
 		} else {
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "$this->rulenumber: Valid value for '" . ltrim("$parent.$key", '.') . "': $value, $rxfn");
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Valid value for '" . ltrim("$parent.$key", '.') . "': $value, $rxfn");
 		}
 		return TRUE;
 	}

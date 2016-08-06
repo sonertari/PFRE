@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.7 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: pf.php,v 1.8 2016/08/05 22:30:07 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -82,28 +82,28 @@ class Pf extends Model
 			);
 	}
 
-	function GetPfRules($filename= NULL, $tmp= FALSE)
+	function GetPfRules($file= NULL, $tmp= FALSE)
 	{
 		global $PF_CONFIG_PATH, $TMP_PATH;
 
-		if ($filename == NULL) {
-			$filename= '/etc/pf.conf';
+		if ($file == NULL) {
+			$file= '/etc/pf.conf';
 		} else {
-			if (!$this->ValidateFilename($filename)) {
+			if (!$this->ValidateFilename($file)) {
 				return FALSE;
 			}
 			if ($tmp == FALSE) {
-				$filename= "$PF_CONFIG_PATH/$filename";
+				$file= "$PF_CONFIG_PATH/$file";
 			} else {
-				$filename= "$TMP_PATH/$filename";
+				$file= "$TMP_PATH/$file";
 			}
 		}
 
-		$ruleStr= $this->GetFile($filename);
+		$ruleStr= $this->GetFile($file);
 
 		/// @todo Check if we need to unlink tmp file
 		//if ($tmp != FALSE) {
-		//	unlink($filename);
+		//	unlink($file);
 		//}
 
 		$ruleSet= new RuleSet();
@@ -119,30 +119,30 @@ class Pf extends Model
 		return $this->GetFiles($PF_CONFIG_PATH);
 	}
 	
-	function DeletePfRuleFile($filename)
+	function DeletePfRuleFile($file)
 	{
 		global $PF_CONFIG_PATH;
 
-		if ($this->ValidateFilename($filename)) {
-			return $this->DeleteFile("$PF_CONFIG_PATH/$filename");
+		if ($this->ValidateFilename($file)) {
+			return $this->DeleteFile("$PF_CONFIG_PATH/$file");
 		}
 		return FALSE;
 	}
 	
-	function InstallPfRules($rulesJson, $filename= NULL, $load= TRUE, $force= FALSE)
+	function InstallPfRules($json, $file= NULL, $load= TRUE, $force= FALSE)
 	{
 		global $PF_CONFIG_PATH;
 
-		if ($filename == NULL) {
-			$filename= '/etc/pf.conf';
+		if ($file == NULL) {
+			$file= '/etc/pf.conf';
 		} else {
-			if (!$this->ValidateFilename($filename)) {
+			if (!$this->ValidateFilename($file)) {
 				return FALSE;
 			}
-			$filename= "$PF_CONFIG_PATH/$filename";
+			$file= "$PF_CONFIG_PATH/$file";
 		}
 				
-		$rulesArray= json_decode($rulesJson, TRUE);
+		$rulesArray= json_decode($json, TRUE);
 
 		$ruleSet= new RuleSet();
 		if (!$ruleSet->load($rulesArray) && !$force) {
@@ -152,26 +152,25 @@ class Pf extends Model
 
 		$rules= $ruleSet->generate();
 
-		$logLevel= LOG_ERR;
 		$output= array();
 		
-		$tempFile= tempnam('/tmp', 'pf.conf.');
-		if ($this->PutFile($tempFile, $rules) !== FALSE) {
-			exec("/usr/bin/install -o root -m 0600 -D -b -B '.orig' '$tempFile' $filename 2>&1", $output, $retval);
+		$tmpFile= tempnam('/tmp', 'pf.conf.');
+		if ($this->PutFile($tmpFile, $rules) !== FALSE) {
+			exec("/usr/bin/install -o root -m 0600 -D -b -B '.orig' '$tmpFile' $file 2>&1", $output, $retval);
 			if ($retval === 0) {
 				if ($load === TRUE) {
-					exec("/sbin/pfctl -f $filename 2>&1", $output, $retval);
+					exec("/sbin/pfctl -f $file 2>&1", $output, $retval);
 					if ($retval !== 0) {
 						$err= 'Cannot load pf rules';
 					}
 				}
 			} else {
-				$err= "Cannot install pf rule file: $filename";
+				$err= "Cannot install pf rule file: $file";
 			}
 
-			exec("/bin/rm '$tempFile' 2>&1", $output2, $retval);
+			exec("/bin/rm '$tmpFile' 2>&1", $output2, $retval);
 			if ($retval !== 0) {
-				$err2= "Cannot remove temp pf file: $tempFile";
+				$err2= "Cannot remove temp pf file: $tmpFile";
 				ViewError($err2 . "\n" . implode("\n", $output2));
 				pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, $err2);
 			}
@@ -180,35 +179,35 @@ class Pf extends Model
 				return TRUE;
 			}
 		} else {
-			$err= "Cannot write to temp pf file: $tempFile";
+			$err= "Cannot write to tmp pf file: $tmpFile";
 		}
 		
 		if (isset($err)) {
 			ViewError($err . "\n" . implode("\n", $output));
-			pfrec_syslog($logLevel, __FILE__, __FUNCTION__, __LINE__, $err);
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $err);
 		}
 		return FALSE;
 	}
 
-	function ValidateFilename(&$filename)
+	function ValidateFilename(&$file)
 	{
-		$filename= basename($filename);
-		if (preg_match('/[\w.-_]+/', $filename)) {
+		$file= basename($file);
+		if (preg_match('/[\w.-_]+/', $file)) {
 			return TRUE;
 		}
 
-		$err= "Filename not accepted: $filename";
+		$err= "Filename not accepted: $file";
 		ViewError($err . "\n" . implode("\n", $output));
-		pfrec_syslog($logLevel, __FILE__, __FUNCTION__, __LINE__, $err);
+		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $err);
 		return FALSE;
 	}
 
-	function GeneratePfRule($ruleJson, $rulenumber)
+	function GeneratePfRule($json, $ruleNumber)
 	{
-		$ruleDef= json_decode($ruleJson, TRUE);
+		$ruleDef= json_decode($json, TRUE);
 		$class= $ruleDef['cat'];
 		$ruleObj= new $class('');
-		if ($ruleObj->load($ruleDef['rule'], $rulenumber)) {
+		if ($ruleObj->load($ruleDef['rule'], $ruleNumber)) {
 			return $ruleObj->generate();
 		}
 
@@ -216,9 +215,9 @@ class Pf extends Model
 		return FALSE;
 	}
 
-	function GeneratePfRules($rulesJson, $lines= FALSE, $force= FALSE)
+	function GeneratePfRules($json, $lines= FALSE, $force= FALSE)
 	{
-		$rulesArray= json_decode($rulesJson, TRUE);
+		$rulesArray= json_decode($json, TRUE);
 		$ruleSet= new RuleSet();
 		if ($ruleSet->load($rulesArray) || $force) {
 			return $ruleSet->generate($lines);
@@ -228,9 +227,9 @@ class Pf extends Model
 		return FALSE;
 	}
 
-	function TestPfRules($rulesJson)
+	function TestPfRules($json)
 	{
-		$rulesArray= json_decode($rulesJson, TRUE);
+		$rulesArray= json_decode($json, TRUE);
 
 		$ruleSet= new RuleSet();
 		if (!$ruleSet->load($rulesArray)) {

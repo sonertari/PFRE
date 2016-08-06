@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.13 2016/08/04 20:00:41 soner Exp $ */
+/* $pfre: Timeout.php,v 1.14 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,11 +35,11 @@
 
 class Timeout extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispTimeout();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function dispTimeout()
@@ -112,10 +112,10 @@ class Timeout extends Rule
 		}
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

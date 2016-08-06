@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.7 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Route.php,v 1.8 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 class Route extends NatBase
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispInterface();
@@ -47,7 +47,7 @@ class Route extends NatBase
 		$this->dispSrcDest();
 		$this->dispValue('type', 'Type');
 		$this->dispValue('redirhost', 'Redirect Host');
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 
 	function input()
@@ -68,10 +68,10 @@ class Route extends NatBase
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

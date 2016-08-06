@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.13 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.14 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 class FilterBase extends State
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispInterface();
@@ -47,12 +47,12 @@ class FilterBase extends State
 		$this->dispSrcDest();
 		$this->dispValue('state-filter', 'State');
 		$this->dispQueue();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
-	function displayNat($rulenumber, $count)
+	function displayNat($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispInterface();
@@ -62,7 +62,7 @@ class FilterBase extends State
 		$this->dispSrcDest();
 		$this->dispValue('redirhost', 'Redirect Host');
 		$this->dispValue('redirport', 'Redirect Port');
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function dispAction()
@@ -94,7 +94,7 @@ class FilterBase extends State
 				<?php $this->printHostPort($this->rule['to']); ?>
 			</td>
 			<td title="Destination Port">
-				<?php $this->printHostPort($this->rule['port']); ?>
+				<?php $this->printHostPort($this->rule['toport']); ?>
 			</td>
 			<?php
 		}
@@ -126,26 +126,26 @@ class FilterBase extends State
 
 		$this->inputKey('af');
 
-		$this->inputDel('proto', 'dropproto');
-		$this->inputAdd('proto', 'addproto');
+		$this->inputDel('proto', 'delProto');
+		$this->inputAdd('proto', 'addProto');
 
-		$this->inputDel('from', 'dropfrom');
-		$this->inputAdd('from', 'addfrom');
+		$this->inputDel('from', 'delFrom');
+		$this->inputAdd('from', 'addFrom');
 
-		$this->inputDel('fromport', 'dropfromport');
-		$this->inputAdd('fromport', 'addfromport');
+		$this->inputDel('fromport', 'delFromPort');
+		$this->inputAdd('fromport', 'addFromPort');
 
-		$this->inputDel('to', 'dropto');
-		$this->inputAdd('to', 'addto');
+		$this->inputDel('to', 'delTo');
+		$this->inputAdd('to', 'addTo');
 
-		$this->inputDel('port', 'dropport');
-		$this->inputAdd('port', 'addport');
+		$this->inputDel('toport', 'delToPort');
+		$this->inputAdd('toport', 'addToPort');
 
 		/// @attention process all after src and dest
 		$this->inputAll();
 
-		$this->inputDel('os', 'dropos');
-		$this->inputAdd('os', 'addos');
+		$this->inputDel('os', 'delOs');
+		$this->inputAdd('os', 'addOs');
 	}
 
 	function inputFilterOpts()
@@ -156,12 +156,12 @@ class FilterBase extends State
 		$this->inputKey('flags');
 		$this->inputQueue();
 
-		$this->inputDel('icmp-type', 'dropicmptype');
-		$this->inputAdd('icmp-type', 'addicmptype');
+		$this->inputDel('icmp-type', 'delIcmpType');
+		$this->inputAdd('icmp-type', 'addIcmpType');
 		$this->inputKeyIfHasVar('icmp-code', 'icmp-type');
 
-		$this->inputDel('icmp6-type', 'dropicmp6type');
-		$this->inputAdd('icmp6-type', 'addicmp6type');
+		$this->inputDel('icmp6-type', 'delIcmp6Type');
+		$this->inputAdd('icmp6-type', 'addIcmp6Type');
 		$this->inputKeyIfHasVar('icmp6-code', 'icmp6-type');
 		
 		$this->inputBool('fragment');
@@ -169,11 +169,11 @@ class FilterBase extends State
 		$this->inputBool('once');
 		$this->inputBool('divert-reply');
 		
-		$this->inputDel('user', 'dropuser');
-		$this->inputAdd('user', 'adduser');
+		$this->inputDel('user', 'delUser');
+		$this->inputAdd('user', 'addUser');
 
-		$this->inputDel('group', 'dropgroup');
-		$this->inputAdd('group', 'addgroup');
+		$this->inputDel('group', 'delGroup');
+		$this->inputAdd('group', 'addGroup');
 
 		$this->inputKey('label');
 		$this->inputKey('tag');
@@ -184,8 +184,8 @@ class FilterBase extends State
 		$this->inputKey('set-tos');
 		$this->inputKey('prio');
 
-		$this->inputDel('set-prio', 'dropprio');
-		$this->inputAdd('set-prio', 'addprio');
+		$this->inputDel('set-prio', 'delPrio');
+		$this->inputAdd('set-prio', 'addPrio');
 
 		$this->inputKey('probability');
 
@@ -197,13 +197,13 @@ class FilterBase extends State
 	function inputQueue()
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			if (filter_has_var(INPUT_POST, 'queue-pri') && filter_input(INPUT_POST, 'queue-pri') !== '' &&
-				filter_has_var(INPUT_POST, 'queue-sec') && filter_input(INPUT_POST, 'queue-sec') !== '') {
+			if (filter_has_var(INPUT_POST, 'queuePri') && filter_input(INPUT_POST, 'queuePri') !== '' &&
+				filter_has_var(INPUT_POST, 'queueSec') && filter_input(INPUT_POST, 'queueSec') !== '') {
 				$this->rule['queue']= array();
-				$this->rule['queue'][0]= filter_input(INPUT_POST, 'queue-pri');
-				$this->rule['queue'][1]= filter_input(INPUT_POST, 'queue-sec');
-			} elseif (filter_has_var(INPUT_POST, 'queue-pri') && filter_input(INPUT_POST, 'queue-pri') !== '') {
-				$this->rule['queue']= filter_input(INPUT_POST, 'queue-pri');
+				$this->rule['queue'][0]= filter_input(INPUT_POST, 'queuePri');
+				$this->rule['queue'][1]= filter_input(INPUT_POST, 'queueSec');
+			} elseif (filter_has_var(INPUT_POST, 'queuePri') && filter_input(INPUT_POST, 'queuePri') !== '') {
+				$this->rule['queue']= filter_input(INPUT_POST, 'queuePri');
 			} else {
 				unset($this->rule['queue']);
 			}
@@ -218,17 +218,17 @@ class FilterBase extends State
 				unset($this->rule['from']);
 				unset($this->rule['fromport']);
 				unset($this->rule['to']);
-				unset($this->rule['port']);
+				unset($this->rule['toport']);
 			} else {
 				unset($this->rule['all']);
 			}
 		}
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 
@@ -244,13 +244,13 @@ class FilterBase extends State
 		$this->editDirection();
 		$this->editInterface();
 		$this->editAf();
-		$this->editValues('proto', 'Protocol', 'dropproto', 'addproto', 'protocol', NULL, 10);
+		$this->editValues('proto', 'Protocol', 'delProto', 'addProto', 'protocol', NULL, 10);
 		$this->editCheckbox('all', 'Match All');
-		$this->editValues('from', 'Source', 'dropfrom', 'addfrom', 'ip, host, table or macro', 'src-dst', NULL, isset($this->rule['all']));
-		$this->editValues('fromport', 'Source Port', 'dropfromport', 'addfromport', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editValues('to', 'Destination', 'dropto', 'addto', 'ip, host, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editValues('port', 'Destination Port', 'dropport', 'addport', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editValues('os', 'OS', 'dropos', 'addos', 'os name or macro');
+		$this->editValues('from', 'Source', 'delFrom', 'addFrom', 'ip, host, table or macro', 'src-dst', NULL, isset($this->rule['all']));
+		$this->editValues('fromport', 'Source Port', 'delFromPort', 'addFromPort', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('to', 'Destination', 'delTo', 'addTo', 'ip, host, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('toport', 'Destination Port', 'delToPort', 'addToPort', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('os', 'OS', 'delOs', 'addOs', 'os name or macro');
 	}
 
 	function editFilterOpts()
@@ -266,15 +266,15 @@ class FilterBase extends State
 		$this->editCheckbox('once', 'Once');
 		$this->editCheckbox('divert-reply', 'Divert Reply');
 		
-		$this->editValues('user', 'User', 'dropuser', 'adduser', 'username or userid');
-		$this->editValues('group', 'Group', 'dropgroup', 'addgroup', 'groupname or groupid');
+		$this->editValues('user', 'User', 'delUser', 'addUser', 'username or userid');
+		$this->editValues('group', 'Group', 'delGroup', 'addGroup', 'groupname or groupid');
 		$this->editText('label', 'Label', NULL, NULL, 'string');
 		$this->editTagged();
 		$this->editText('tag', 'Assign Tag', NULL, NULL, 'string');
 		$this->editText('tos', 'Match TOS', NULL, NULL, 'string or number');
 		$this->editText('set-tos', 'Enforce TOS', NULL, NULL, 'string or number');
 		$this->editText('prio', 'Match Priority', NULL, 10, 'number 0-7');
-		$this->editValues('set-prio', 'Assign Priority', 'dropprio', 'addprio', 'number 0-7', NULL, 10);
+		$this->editValues('set-prio', 'Assign Priority', 'delPrio', 'addPrio', 'number 0-7', NULL, 10);
 		$this->editText('probability', 'Probability', NULL, 10, '0-100% or 0-1');
 		$this->editText('rtable', 'Routing Table', NULL, 10, 'number');
 		$this->editReceivedOn();
@@ -326,7 +326,7 @@ class FilterBase extends State
 	function editIcmpType()
 	{
 		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp' || is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto']))) {
-			$this->editValues('icmp-type', 'ICMP Type', 'dropicmptype', 'addicmptype', 'number, name or macro');
+			$this->editValues('icmp-type', 'ICMP Type', 'delIcmpType', 'addIcmpType', 'number, name or macro');
 			?>
 			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -343,7 +343,7 @@ class FilterBase extends State
 	function editIcmp6Type()
 	{
 		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp6' || is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto']))) {
-			$this->editValues('icmp6-type', 'ICMP6 Type', 'dropicmp6type', 'addicmp6type', 'number, name or macro');
+			$this->editValues('icmp6-type', 'ICMP6 Type', 'delIcmp6Type', 'addIcmp6Type', 'number, name or macro');
 			?>
 			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
@@ -368,7 +368,7 @@ class FilterBase extends State
 				<?php echo _TITLE('Queue').':' ?>
 			</td>
 			<td>
-				<select id="queue-pri" name="queue-pri">
+				<select id="queuePri" name="queuePri">
 				<?php
 				if (count($queueNames) == 0) {
 					?>
@@ -379,13 +379,13 @@ class FilterBase extends State
 					<option value="">none</option>
 					<?php
 					if (!is_array($this->rule['queue'])) {
-						$queuepri= $this->rule['queue'];
+						$queuePri= $this->rule['queue'];
 					} else {
-						$queuepri= $this->rule['queue'][0];
+						$queuePri= $this->rule['queue'][0];
 					}
 					foreach ($queueNames as $queue) {
 						?>
-						<option value="<?php echo $queue; ?>" <?php echo $queuepri == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
+						<option value="<?php echo $queue; ?>" <?php echo $queuePri == $queue ? 'selected' : ''; ?>><?php echo $queue; ?></option>
 						<?php
 					}
 				}
@@ -393,7 +393,7 @@ class FilterBase extends State
 				</select>
 				<?php echo _TITLE('primary') ?>
 
-				<select id="queue-sec" name="queue-sec">
+				<select id="queueSec" name="queueSec">
 				<?php
 				if (count($queueNames) == 0) {
 					?>

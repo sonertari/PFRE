@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.4 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.5 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 class DivertPacket extends Filter
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispInterface();
@@ -46,7 +46,7 @@ class DivertPacket extends Filter
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
 		$this->dispValue('redirport', 'Redirect Port');
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function input()
@@ -66,10 +66,10 @@ class DivertPacket extends Filter
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.13 2016/08/04 20:00:41 soner Exp $ */
+/* $pfre: Limit.php,v 1.14 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,11 +35,11 @@
 
 class Limit extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispLimit();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function dispLimit()
@@ -72,10 +72,10 @@ class Limit extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

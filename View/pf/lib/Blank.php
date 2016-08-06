@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.7 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Blank.php,v 1.8 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,11 +35,11 @@
 
 class Blank extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispBlank();
-		$this->dispTailEditLinks($rulenumber, $count);
+		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 	
 	function dispBlank()
@@ -65,12 +65,12 @@ class Blank extends Rule
 		$this->inputDelEmpty();
 	}
 	
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$count= count(explode("\n", $this->rule['blank'])) - 1;
 		?>
-		<h2>Edit Blank <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
+		<h2>Edit Blank <?php echo $ruleNumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<form id="theform" action="<?php echo $this->href . $ruleNumber; ?>" method="post">
 			<?php echo _('Number of lines') . ': ' . $count; ?><br>
 			<textarea cols="80" rows="5" id="blank" name="blank" placeholder="Enter blank lines here"><?php echo $this->rule['blank']; ?></textarea>
 			<div class="buttons">

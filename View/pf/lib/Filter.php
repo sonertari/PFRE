@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.13 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Filter.php,v 1.14 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,15 +79,15 @@ class Filter extends FilterBase
 
 	function inputInterface()
 	{
-		$this->inputDel('interface', 'dropinterface');
-		$this->inputAdd('interface', 'addinterface');
+		$this->inputDel('interface', 'delInterface');
+		$this->inputAdd('interface', 'addInterface');
 		$this->inputKey('rdomain');
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 
@@ -159,8 +159,8 @@ class Filter extends FilterBase
 			</td>
 			<td>
 				<?php
-				$this->editDeleteValueLinks($this->rule['interface'], 'dropinterface');
-				$this->editAddValueBox('addinterface', NULL, 'if or macro', 10, isset($this->rule['rdomain']));
+				$this->editDeleteValueLinks($this->rule['interface'], 'delInterface');
+				$this->editAddValueBox('addInterface', NULL, 'if or macro', 10, isset($this->rule['rdomain']));
 				$this->editHelp('interface');
 				?>
 				<input type="text" name="rdomain" id="rdomain" value="<?php echo $this->rule['rdomain']; ?>" size="10" placeholder="number" <?php echo isset($this->rule['interface']) ? 'disabled' : '' ?> />

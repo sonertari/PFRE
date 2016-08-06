@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.8 2016/08/04 01:19:31 soner Exp $ */
+/* $pfre: Comment.php,v 1.9 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,11 +35,11 @@
 
 class Comment extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispComment();
-		$this->dispTailEditLinks($rulenumber, $count);
+		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 	
 	function dispComment()
@@ -60,11 +60,11 @@ class Comment extends Rule
 		$this->inputDelEmpty();
 	}
 	
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		?>
-		<h2>Edit Comment <?php echo $rulenumber . ($modified ? ' (modified)' : ''); ?></h2>
-		<form id="theform" action="<?php echo $this->href . $rulenumber; ?>" method="post">
+		<h2>Edit Comment <?php echo $ruleNumber . ($modified ? ' (modified)' : ''); ?></h2>
+		<form id="theform" action="<?php echo $this->href . $ruleNumber; ?>" method="post">
 			<textarea cols="80" rows="5" id="comment" name="comment" placeholder="Enter comment here"><?php echo stripslashes($this->rule['comment']); ?></textarea>
 			<div class="buttons">
 				<input type="submit" id="apply" name="apply" value="Apply" />

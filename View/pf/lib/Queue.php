@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Queue.php,v 1.13 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 class Queue extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispValue('name', 'Name');
 		$this->dispInterface();
 		$this->dispValue('parent', 'Parent');
@@ -46,7 +46,7 @@ class Queue extends Rule
 		$this->dispBandwidth('max', 'max', 'Max', 2);
 		$this->dispValue('qlimit', 'Qlimit');
 		$this->dispKey('default', 'Default');
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function dispBandwidth($key, $pre, $title, $colspan)
@@ -79,10 +79,10 @@ class Queue extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

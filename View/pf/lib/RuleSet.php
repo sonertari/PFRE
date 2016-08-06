@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.18 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.19 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -71,77 +71,77 @@ class RuleSet
 		$this->rules= array();
 	}
 	
-	function up($rulenumber)
+	function up($ruleNumber)
 	{
-		if (isset($this->rules[$rulenumber - 1])) {
-			$tmp= $this->rules[$rulenumber - 1];
-			$this->rules[$rulenumber - 1]= $this->rules[$rulenumber];
-			$this->rules[$rulenumber]= $tmp;
+		if (isset($this->rules[$ruleNumber - 1])) {
+			$tmp= $this->rules[$ruleNumber - 1];
+			$this->rules[$ruleNumber - 1]= $this->rules[$ruleNumber];
+			$this->rules[$ruleNumber]= $tmp;
 		}
 	}
 	
-	function down($rulenumber)
+	function down($ruleNumber)
 	{
-		if (isset($this->rules[$rulenumber + 1])) {
-			$tmp= $this->rules[$rulenumber + 1];
-			$this->rules[$rulenumber + 1]= $this->rules[$rulenumber];
-			$this->rules[$rulenumber]= $tmp;
+		if (isset($this->rules[$ruleNumber + 1])) {
+			$tmp= $this->rules[$ruleNumber + 1];
+			$this->rules[$ruleNumber + 1]= $this->rules[$ruleNumber];
+			$this->rules[$ruleNumber]= $tmp;
 		}
 	}
 	
-	function del($rulenumber)
+	function del($ruleNumber)
 	{
 		/// @todo No need for a separate function now
-		unset($this->rules[$rulenumber]);
+		unset($this->rules[$ruleNumber]);
 		// Fake slice to update the keys
 		$this->rules= array_slice($this->rules, 0);
 	}
 	
-	function move($rulenumber, $moveto)
+	function move($ruleNumber, $moveTo)
 	{
-		if ($rulenumber < 0 || $rulenumber >= count($this->rules)) {
-			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid rule number $rulenumber", 'auto', 'ERROR');
+		if ($ruleNumber < 0 || $ruleNumber >= count($this->rules)) {
+			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid rule number $ruleNumber", 'auto', 'ERROR');
 			return;
 		}
-		if ($moveto < 0 || $moveto >= count($this->rules) || $rulenumber == $moveto) {
-			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid destination rule number: $moveto", 'auto', 'ERROR');
+		if ($moveTo < 0 || $moveTo >= count($this->rules) || $ruleNumber == $moveTo) {
+			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid destination rule number: $moveTo", 'auto', 'ERROR');
 			return;
 		}
 
-		$rule= $this->rules[$rulenumber];
-		unset($this->rules[$rulenumber]);
+		$rule= $this->rules[$ruleNumber];
+		unset($this->rules[$ruleNumber]);
 		// array_slice() takes care of possible off-by-one error due to unset above
-		$head= array_slice($this->rules, 0, $moveto);
-		$tail= array_slice($this->rules, $moveto);
+		$head= array_slice($this->rules, 0, $moveTo);
+		$tail= array_slice($this->rules, $moveTo);
 		$this->rules= array_merge($head, array($rule), $tail);
 	}
 	
-	function add($rulenumber= 0)
+	function add($ruleNumber= 0)
 	{
-		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {
+		if (count($this->rules) == 0 || ($ruleNumber >= $this->nextRuleNumber())) {
 			// Add the first rule or append a new one to the end
 			array_push($this->rules, array());
 			return $this->nextRuleNumber();
 		} else {
 			// Preserve the keys for diff
-			$tail= array_slice($this->rules, $rulenumber, NULL, TRUE);
+			$tail= array_slice($this->rules, $ruleNumber, NULL, TRUE);
 			$head= array_diff_key($this->rules, $tail);
 
 			// Insert a new rule in the middle
 			array_push($head, array());
 			$this->rules= array_merge($head, $tail);
-			return $rulenumber;
+			return $ruleNumber;
 		}
 	}
 	
-	function computeNewRuleNumber($rulenumber= 0)
+	function computeNewRuleNumber($ruleNumber= 0)
 	{
-		if (count($this->rules) == 0 || ($rulenumber >= $this->nextRuleNumber())) {
+		if (count($this->rules) == 0 || ($ruleNumber >= $this->nextRuleNumber())) {
 			// Add the first rule or append a new one to the end
 			return $this->nextRuleNumber();
 		} else {
 			// Insert a new rule in the middle
-			return $rulenumber;
+			return $ruleNumber;
 		}
 	}
 		
@@ -150,7 +150,7 @@ class RuleSet
 		return count($this->rules);
 	}
 	
-	function setupEditSession($cat, &$action, &$rulenumber)
+	function setupEditSession($cat, &$action, &$ruleNumber)
 	{
 		if ($action == 'add') {
 			// Create a new rule and setup a new edit session
@@ -158,23 +158,23 @@ class RuleSet
 			$action= 'create';
 			unset($_SESSION['edit']);
 			$_SESSION['edit']['type']= $cat;
-			$rulenumber= $this->computeNewRuleNumber($rulenumber);
-			$_SESSION['edit']['rulenumber']= $rulenumber;
+			$ruleNumber= $this->computeNewRuleNumber($ruleNumber);
+			$_SESSION['edit']['ruleNumber']= $ruleNumber;
 			$_SESSION['edit']['object']= new $cat('');
-		} elseif (!isset($_SESSION['edit']['type']) || $_SESSION['edit']['type'] != $cat || $_SESSION['edit']['rulenumber'] != $rulenumber) {
+		} elseif (!isset($_SESSION['edit']['type']) || $_SESSION['edit']['type'] != $cat || $_SESSION['edit']['ruleNumber'] != $ruleNumber) {
 			// Rule changed, setup a new edit session
 			unset($_SESSION['edit']);
 			$_SESSION['edit']['type']= $cat;
-			$_SESSION['edit']['rulenumber']= $rulenumber;
-			$_SESSION['edit']['object']= clone $this->rules[$rulenumber];
+			$_SESSION['edit']['ruleNumber']= $ruleNumber;
+			$_SESSION['edit']['object']= clone $this->rules[$ruleNumber];
 		}
 	}
 
-	function test($rulenumber, $ruleObj)
+	function test($ruleNumber, $ruleObj)
 	{
 		global $View;
 		
-		$rulesArray= array_slice(json_decode(json_encode($this), TRUE)['rules'], 0, $rulenumber);
+		$rulesArray= array_slice(json_decode(json_encode($this), TRUE)['rules'], 0, $ruleNumber);
 		$rulesArray[]= json_decode(json_encode($ruleObj), TRUE);
 
 		return $View->Controller($Output, 'TestPfRules', json_encode($rulesArray));
@@ -189,14 +189,14 @@ class RuleSet
 		}
 	}
 	
-	function save($action, $rulenumber, $ruleObj, $testResult)
+	function save($action, $ruleNumber, $ruleObj, $testResult)
 	{
 		if (filter_has_var(INPUT_POST, 'save') && filter_input(INPUT_POST, 'save') == 'Save') {
 			if ($testResult || filter_input(INPUT_POST, 'forcesave')) {
 				if ($action == 'create') {
-					$this->add($rulenumber);
+					$this->add($ruleNumber);
 				}
-				$this->rules[$rulenumber]= $ruleObj;
+				$this->rules[$ruleNumber]= $ruleObj;
 				unset($_SESSION['edit']);
 				header('Location: conf.php');
 				exit;
@@ -204,7 +204,7 @@ class RuleSet
 		}
 	}
 	
-	function isModified($action, $rulenumber, $ruleObj)
+	function isModified($action, $ruleNumber, $ruleObj)
 	{
 		$modified= TRUE;
 		if ($action != 'create') {
@@ -212,7 +212,7 @@ class RuleSet
 			$newRule= $ruleObj->rule;
 			ksort($newRule);
 
-			$origRule= $this->rules[$rulenumber]->rule;
+			$origRule= $this->rules[$ruleNumber]->rule;
 			ksort($origRule);
 
 			if (serialize($newRule) === serialize($origRule)) {

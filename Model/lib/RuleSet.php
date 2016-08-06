@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,16 +42,16 @@ class RuleSet
 		$this->deleteRules();
 	
 		$retval= TRUE;
-		$rulenumber= 0;
+		$ruleNumber= 0;
 		foreach ($rulesArray as $ruleDef) {
 			$class= $ruleDef['cat'];
 			$ruleObj= new $class('');
-			if (!$ruleObj->load($ruleDef['rule'], $rulenumber)) {
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$rulenumber: Load Error: Rule loaded partially"));
+			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber)) {
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$ruleNumber: Load Error: Rule loaded partially"));
 				$retval= FALSE;
 			}
 			$this->rules[]= $ruleObj;
-			$rulenumber++;
+			$ruleNumber++;
 		}
 		return $retval;
 	}

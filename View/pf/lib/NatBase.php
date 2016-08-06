@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.5 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: NatBase.php,v 1.6 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 class NatBase extends Filter
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->displayNat($rulenumber, $count);
+		$this->displayNat($ruleNumber, $count);
 	}
 	
 	function input()
@@ -75,10 +75,10 @@ class NatBase extends Filter
 		$this->inputBool('sticky-address');
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

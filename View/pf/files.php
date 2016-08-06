@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.5 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: files.php,v 1.6 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,11 +60,11 @@ if (filter_has_var(INPUT_POST, 'load')) {
 	}
 }
 
-$deletefile= '';
+$deleteFile= '';
 if (filter_has_var(INPUT_POST, 'remove')) {
 	// Accept only file names, no paths
-	$deletefile= basename(filter_input(INPUT_POST, 'deletefilename'));
-	$filepath= "$PF_CONFIG_PATH/$deletefile";
+	$deleteFile= basename(filter_input(INPUT_POST, 'deleteFilename'));
+	$filepath= "$PF_CONFIG_PATH/$deleteFile";
 	
 	if ($View->Controller($Output, 'DeletePfRuleFile', $filepath)) {
 		PrintHelpWindow("Rules file deleted: $filepath");
@@ -174,12 +174,12 @@ require_once($VIEW_PATH.'/header.php');
 <h2>Delete rulebase</h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
-	<select id="deletefilename" name="deletefilename">
+	<select id="deleteFilename" name="deleteFilename">
 		<option value="" label=""></option>
 		<?php
 		foreach ($ruleFiles as $file) {
 			?>
-			<option value="<?php echo $file; ?>" label="<?php echo $file; ?>" <?php echo ($deletefile == $file ? 'selected' : ''); ?>><?php echo $file; ?></option>
+			<option value="<?php echo $file; ?>" label="<?php echo $file; ?>" <?php echo ($deleteFile == $file ? 'selected' : ''); ?>><?php echo $file; ?></option>
 			<?php
 		}
 		?>

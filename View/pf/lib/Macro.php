@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Macro.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Macro.php,v 1.13 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,11 +35,11 @@
 
 class Macro extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispMacro();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function dispMacro()
@@ -55,22 +55,22 @@ class Macro extends Rule
 	function input()
 	{
 		$this->inputKey('identifier');
-		$this->inputDel('value', 'dropvalue');
-		$this->inputAdd('value', 'addvalue');
+		$this->inputDel('value', 'delValue');
+		$this->inputAdd('value', 'addValue');
 
 		$this->inputKey('comment');
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 
 		$this->editText('identifier', 'Identifier', FALSE, NULL, 'valid string');
-		$this->editValues('value', 'Value', 'dropvalue', 'addvalue', 'add value', NULL, 30);
+		$this->editValues('value', 'Value', 'delValue', 'addValue', 'add value', NULL, 30);
 
 		$this->editComment();
 		$this->editTail($modified, $testResult, $action);

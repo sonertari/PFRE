@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.7 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: edit.php,v 1.8 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,17 +38,17 @@ require_once ('include.php');
 if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	$cat= $ruleType2Class[$edit];
 
-	$View->RuleSet->setupEditSession($cat, $action, $rulenumber);
+	$View->RuleSet->setupEditSession($cat, $action, $ruleNumber);
 
 	$ruleObj= &$_SESSION['edit']['object'];
 	$ruleObj->input();
 
-	$testResult= $View->RuleSet->test($rulenumber, $ruleObj);
+	$testResult= $View->RuleSet->test($ruleNumber, $ruleObj);
 	$View->RuleSet->cancel();
-	$View->RuleSet->save($action, $rulenumber, $ruleObj, $testResult);
-	$modified= $View->RuleSet->isModified($action, $rulenumber, $ruleObj);
+	$View->RuleSet->save($action, $ruleNumber, $ruleObj, $testResult);
+	$modified= $View->RuleSet->isModified($action, $ruleNumber, $ruleObj);
 
-	if ($View->Controller($Output, 'GeneratePfRule', json_encode($ruleObj), $rulenumber)) {
+	if ($View->Controller($Output, 'GeneratePfRule', json_encode($ruleObj), $ruleNumber)) {
 		/// @attention Inline anchor rules are multi-line, hence implode
 		$ruleStr= implode("\n", $Output);
 	} else {
@@ -56,7 +56,7 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	}
 
 	require_once($VIEW_PATH.'/header.php');
-	$ruleObj->edit($rulenumber, $modified, $testResult, $action);
+	$ruleObj->edit($ruleNumber, $modified, $testResult, $action);
 	require_once($VIEW_PATH.'/footer.php');
 }
 ?>

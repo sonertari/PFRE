@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.11 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Table.php,v 1.12 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,15 +35,15 @@
 
 class Table extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispId();
 		$this->dispKey('const', 'Flag');
 		$this->dispKey('persist', 'Flag');
 		$this->dispKey('counters', 'Flag');
 		$this->dispValues();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 
 	function dispId()
@@ -73,19 +73,19 @@ class Table extends Rule
 		$this->inputBool('const');
 		$this->inputBool('persist');
 		$this->inputBool('counters');
-		$this->inputDel('data', 'dropvalue');
-		$this->inputAdd('data', 'addvalue');
-		$this->inputDel('file', 'dropfile');
-		$this->inputAdd('file', 'addfile');
+		$this->inputDel('data', 'delValue');
+		$this->inputAdd('data', 'addValue');
+		$this->inputDel('file', 'delFile');
+		$this->inputAdd('file', 'addFile');
 
 		$this->inputKey('comment');
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 
@@ -130,11 +130,11 @@ class Table extends Rule
 			</td>
 			<td>
 				<?php
-				$this->editDeleteValueLinks($this->rule['data'], 'dropvalue');
-				$this->editDeleteValueLinks($this->rule['file'], 'dropfile', 'file "', '"');
-				$this->editAddValueBox('addvalue', 'add host or network', 'host or network', 30);
+				$this->editDeleteValueLinks($this->rule['data'], 'delValue');
+				$this->editDeleteValueLinks($this->rule['file'], 'delFile', 'file "', '"');
+				$this->editAddValueBox('addValue', 'add host or network', 'host or network', 30);
 				echo '<br />';
-				$this->editAddValueBox('addfile', 'add file', 'filename', 30);
+				$this->editAddValueBox('addFile', 'add file', 'filename', 30);
 				?>
 			</td>
 		</tr>

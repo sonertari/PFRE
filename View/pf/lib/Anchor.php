@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.14 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Anchor.php,v 1.15 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -66,10 +66,10 @@ class Anchor extends FilterBase
 		}
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

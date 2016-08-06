@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.17 2016/08/04 20:00:41 soner Exp $ */
+/* $pfre: Option.php,v 1.18 2016/08/05 22:30:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,11 +35,11 @@
 
 class Option extends Rule
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispOption();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function dispOption()
@@ -77,8 +77,8 @@ class Option extends Rule
 		$this->inputKey('hostid');
 		$this->inputKey('loginterface');
 		$this->inputKey('debug');
-		$this->inputDel('skip', 'dropskip');
-		$this->inputAdd('skip', 'addskip');
+		$this->inputDel('skip', 'delSkip');
+		$this->inputAdd('skip', 'addSkip');
 		$this->inputKey('reassemble');
 		$this->inputBool('no-df');
 
@@ -86,10 +86,10 @@ class Option extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 
@@ -314,8 +314,8 @@ class Option extends Rule
 				</td>
 				<td>
 					<?php
-					$this->editDeleteValueLinks($this->rule['skip'], 'dropskip');
-					$this->editAddValueBox('addskip', NULL, 'if or macro', 40);
+					$this->editDeleteValueLinks($this->rule['skip'], 'delSkip');
+					$this->editAddValueBox('addSkip', NULL, 'if or macro', 40);
 					$this->editHelp('skip');
 					?>
 				</td>

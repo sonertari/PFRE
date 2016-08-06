@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Scrub.php,v 1.12 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Scrub.php,v 1.13 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 class Scrub extends Filter
 {
-	function display($rulenumber, $count)
+	function display($ruleNumber, $count)
 	{
-		$this->dispHead($rulenumber);
+		$this->dispHead($ruleNumber);
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispInterface();
@@ -47,7 +47,7 @@ class Scrub extends Filter
 		$this->dispValue('min-ttl', 'Min-ttl');
 		$this->dispValue('max-mss', 'Max-mss');
 		$this->dispScrubOpts();
-		$this->dispTail($rulenumber, $count);
+		$this->dispTail($ruleNumber, $count);
 	}
 
 	function dispScrubOpts()
@@ -81,10 +81,10 @@ class Scrub extends Filter
 		$this->inputDelEmpty();
 	}
 
-	function edit($rulenumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $action)
 	{
 		$this->editIndex= 0;
-		$this->rulenumber= $rulenumber;
+		$this->ruleNumber= $ruleNumber;
 
 		$this->editHead($modified);
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -68,7 +68,7 @@ class FilterBase extends State
 			),
 		'to' => array(
 			'method' => 'parseSrcDest',
-			'params' => array('port'),
+			'params' => array('toport'),
 			),
 		);
 
@@ -209,7 +209,7 @@ class FilterBase extends State
 			'multi' => TRUE,
 			'regex' => '^[\w_.\/\-*:$<>!()]{0,50}$',
 			),
-		'port' => array(
+		'toport' => array(
 			'multi' => TRUE,
 			'regex' => '^[\w_.\/\-*$<>!=\s:]{0,50}$',
 			),
@@ -401,10 +401,10 @@ class FilterBase extends State
 				$this->genItems('os', 'os');
 			}
 			
-			if (isset($this->rule['to']) || isset($this->rule['port'])) {
+			if (isset($this->rule['to']) || isset($this->rule['toport'])) {
 				$this->str.= ' to';
 				$this->genItems('to');
-				$this->genItems('port', 'port');
+				$this->genItems('toport', 'port');
 			}
 		}
 	}

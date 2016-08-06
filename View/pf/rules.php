@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.14 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: rules.php,v 1.15 2016/08/04 17:56:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -87,7 +87,7 @@ $ruleType2Class= array(
 
 if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_GET, 'sender'), $ruleCategoryNames)) {
     $edit= filter_input(INPUT_GET, 'sender');
-	$rulenumber= filter_input(INPUT_GET, 'rulenumber');
+	$ruleNumber= filter_input(INPUT_GET, 'rulenumber');
 	
 	if (filter_has_var(INPUT_GET, 'action') && filter_input(INPUT_GET, 'action') == 'add') {
 		// Get action has precedence
@@ -108,16 +108,16 @@ if (isset($_SESSION['show'])) {
 	$show= $_SESSION['show'];
 }
 
-if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '') {
+if (filter_has_var(INPUT_POST, 'ruleNumber') && filter_input(INPUT_POST, 'ruleNumber') !== '') {
 	if (filter_has_var(INPUT_POST, 'add')) {
 		$edit= filter_input(INPUT_POST, 'category');
 		$edit= $edit == 'all' ? 'filter' : $edit;
-		$rulenumber= filter_input(INPUT_POST, 'rulenumber');
+		$ruleNumber= filter_input(INPUT_POST, 'ruleNumber');
 		$action= 'add';
 	} elseif (filter_has_var(INPUT_POST, 'edit')) {
-		$rulenumber= filter_input(INPUT_POST, 'rulenumber');
-		if (array_key_exists($rulenumber, $View->RuleSet->rules)) {
-			$edit= array_search($View->RuleSet->rules[$rulenumber]->cat, $ruleType2Class);
+		$ruleNumber= filter_input(INPUT_POST, 'ruleNumber');
+		if (array_key_exists($ruleNumber, $View->RuleSet->rules)) {
+			$edit= array_search($View->RuleSet->rules[$ruleNumber]->cat, $ruleType2Class);
 		} else {
 			// Will add a new rule of category $edit otherwise
 			$edit= filter_input(INPUT_POST, 'category');
@@ -132,7 +132,7 @@ if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenu
 
 if (isset($edit)) {
 	// Assume a new rule requested, if the page is submitted on the address line with a non-existing rule number
-	if ($action == 'edit' && !array_key_exists($rulenumber, $View->RuleSet->rules)) {
+	if ($action == 'edit' && !array_key_exists($ruleNumber, $View->RuleSet->rules)) {
 		$action= 'add';
 	}
 
@@ -153,17 +153,17 @@ if (filter_has_var(INPUT_GET, 'del')) {
 }
 
 if (filter_has_var(INPUT_POST, 'move')) {
-	if (filter_has_var(INPUT_POST, 'rulenumber') && filter_input(INPUT_POST, 'rulenumber') !== '' &&
-		filter_has_var(INPUT_POST, 'moveto') && filter_input(INPUT_POST, 'moveto') !== '') {
-		$View->RuleSet->move(filter_input(INPUT_POST, 'rulenumber'), filter_input(INPUT_POST, 'moveto'));
+	if (filter_has_var(INPUT_POST, 'ruleNumber') && filter_input(INPUT_POST, 'ruleNumber') !== '' &&
+		filter_has_var(INPUT_POST, 'moveTo') && filter_input(INPUT_POST, 'moveTo') !== '') {
+		$View->RuleSet->move(filter_input(INPUT_POST, 'ruleNumber'), filter_input(INPUT_POST, 'moveTo'));
 	}
 }
 
 if (filter_has_var(INPUT_POST, 'delete')) {
-    $View->RuleSet->del(filter_input(INPUT_POST, 'rulenumber'));
+    $View->RuleSet->del(filter_input(INPUT_POST, 'ruleNumber'));
 }
 
-if (filter_has_var(INPUT_POST, 'delete-all')) {
+if (filter_has_var(INPUT_POST, 'deleteAll')) {
 	$View->RuleSet->deleteRules();
 	PrintHelpWindow('Rulebase deleted');
 }
@@ -188,13 +188,13 @@ require_once($VIEW_PATH.'/header.php');
                 ?>
             </select>
             <input type="submit" name="add" value="Add" />
-            <label for="rulenumber">as rule number:</label>
-            <input type="text" name="rulenumber" id="rulenumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" placeholder="number" />
+            <label for="ruleNumber">as rule number:</label>
+            <input type="text" name="ruleNumber" id="ruleNumber" size="5" value="<?php echo $View->RuleSet->nextRuleNumber(); ?>" placeholder="number" />
             <input type="submit" name="edit" value="Edit" />
             <input type="submit" name="delete" value="Delete" onclick="return confirm('Are you sure you want to delete the rule?')"/>
-            <input type="text" name="moveto" id="moveto" size="5" value="<?php echo filter_input(INPUT_POST, 'moveto') ?>" placeholder="move to" />
+            <input type="text" name="moveTo" id="moveTo" size="5" value="<?php echo filter_input(INPUT_POST, 'moveTo') ?>" placeholder="move to" />
             <input type="submit" name="move" value="Move" />
-			<input type="submit" id="delete-all" name="delete-all" value="Delete All" onclick="return confirm('Are you sure you want to delete the entire rulebase?')"/>
+			<input type="submit" id="deleteAll" name="deleteAll" value="Delete All" onclick="return confirm('Are you sure you want to delete the entire rulebase?')"/>
         </form>
     </fieldset>
 	<?php
@@ -210,13 +210,13 @@ require_once($VIEW_PATH.'/header.php');
             <th>Edit</th>
         </tr>
         <?php
-        $rulenumber = 0;
+        $ruleNumber = 0;
         $count = count($View->RuleSet->rules) - 1;
         foreach ($View->RuleSet->rules as $rule) {
 			if ($show == 'all' || $ruleType2Class[$show] == $rule->cat) {
-				$rule->display($rulenumber, $count);
+				$rule->display($ruleNumber, $count);
 			}
-			$rulenumber++;
+			$ruleNumber++;
         }
         ?>
     </table>
