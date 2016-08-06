@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.5 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: Rule.php,v 1.6 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -140,18 +140,18 @@ class Rule
 	{
 		$this->ruleNumber= $ruleNumber;
 
-		if ($this->validate($arr) || $force) {
+		$retval= $this->validate($arr, $force);
+		if ($retval || $force) {
 			$this->rule= $arr;
-			return TRUE;
 		}
-		return FALSE;
+		return $retval;
 	}
 
-	function validate($ruleArray)
+	function validate($ruleArray, $force= FALSE)
 	{
 		$arr= $ruleArray;
 		foreach ($this->typedef as $key => $def) {
-			if (!$this->validateKeyDef($arr, $key, $def, '')) {
+			if (!$this->validateKeyDef($arr, $key, $def, '', $force)) {
 				return FALSE;
 			}
 		}
@@ -163,15 +163,15 @@ class Rule
 		return TRUE;
 	}
 
-	function validateKeyDef(&$arr, $key, $def, $parent)
+	function validateKeyDef(&$arr, $key, $def, $parent, $force= FALSE)
 	{
 		if (array_key_exists($key, $arr)) {
 			if (is_array($arr[$key])) {
 				// Recursion
-				if (!$this->validateArrayValues($arr[$key], $key, $def, $parent)) {
+				if (!$this->validateArrayValues($arr[$key], $key, $def, $parent, $force)) {
 					return FALSE;
 				}
-			} elseif (!$this->validateValue($key, $arr[$key], $def, $parent)) {
+			} elseif (!$this->validateValue($key, $arr[$key], $def, $parent, $force)) {
 				return FALSE;
 			}
 			unset($arr[$key]);
@@ -179,22 +179,21 @@ class Rule
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
-
 		return TRUE;
 	}
 
-	function validateArrayValues(&$arr, $key, $def, $parent)
+	function validateArrayValues(&$arr, $key, $def, $parent, $force= FALSE)
 	{
 		if ($def['multi']) {
 			foreach ($arr as $v) {
-				if (!$this->validateValue($key, $v, $def, $parent)) {
+				if (!$this->validateValue($key, $v, $def, $parent, $force)) {
 					return FALSE;
 				}
 			}
 		} elseif ($def['values']) {
 			foreach ($def['values'] as $k => $d) {
 				// Recursion
-				if (!$this->validateKeyDef($arr, $k, $d, $key)) {
+				if (!$this->validateKeyDef($arr, $k, $d, $key, $force)) {
 					return FALSE;
 				}
 			}
@@ -210,14 +209,18 @@ class Rule
 		return TRUE;
 	}
 
-	function validateValue($key, $value, $def, $parent)
+	function validateValue($key, $value, $def, $parent, $force= FALSE)
 	{
 		if ($def['regex']) {
 			$rxfn= $def['regex'];
 			$result= preg_match("/$rxfn/", $value);
 		} elseif ($def['func']) {
 			$rxfn= $def['func'];
-			$result= $rxfn($value);
+			if ($def['force']) {
+				$result= $rxfn($value, $force);
+			} else {
+				$result= $rxfn($value);
+			}
 		} else {
 			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError("$this->ruleNumber: Validation Error: No regex or func def for: " . ltrim("$parent.$key", '.')));
 			return FALSE;

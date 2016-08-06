@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: Anchor.php,v 1.4 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -53,6 +53,7 @@ class Anchor extends FilterBase
 			),
 		'inline' => array(
 			'func' => 'IsInlineAnchor',
+			'force' => TRUE,
 			),
 		);
 
