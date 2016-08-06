@@ -1,5 +1,5 @@
 <?php
-/* $pfre: view.php,v 1.2 2016/08/05 22:30:07 soner Exp $ */
+/* $pfre: view.php,v 1.3 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -63,30 +63,34 @@ class View
 				$cmdline= "/usr/bin/doas $pfrec $cmdline";
 				
 				// Init command output
-				$output= array();
+				$outputArray= array();
 				/// @bug http://bugs.php.net/bug.php?id=49847, fixed/closed in SVN on 141009
-				exec($cmdline, $output, $retval);
+				exec($cmdline, $outputArray, $retval);
 
 				// (exit status 0 in shell) == (TRUE in php)
 				if ($retval === 0) {
 					$return= TRUE;
 				}
 
-				// Check if there are errors to display
+				$output= array();
 				$errorStr= '';
-				$outputStr= implode("\n", $output);
-				if (preg_match('/<Error>:/ms', $outputStr)) {
-					// Head contains output, tail error
-					list($outputStr, $errorStr)= explode("<Error>:", $outputStr);
 
-					$output= explode("\n", $outputStr);
-					$error= explode("\n", $errorStr);
+				$decode= json_decode($outputArray[0]);
+				if ($decode !== NULL && is_array($decode)) {
+					$output= explode("\n", $decode[0]);
+					$errorStr= $decode[1];
+				} else {
+					$msg= "Failed decoding output: $outputArray[0]";
+					pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
+					PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
 				}
 
-				// Show $error if any
+				// Show error, if any
 				if ($errorStr !== '') {
+					$error= explode("\n", $errorStr);
+
 					pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: (" . implode(', ', $error) . "), ($cmdline)");
-					PrintHelpWindow(_NOTICE('FAILED').': ' . implode('<br>', $error), 'auto', 'ERROR');
+					PrintHelpWindow(_NOTICE('FAILED') . ':<br>' . implode('<br>', $error), 'auto', 'ERROR');
 				}
 			}
 		}

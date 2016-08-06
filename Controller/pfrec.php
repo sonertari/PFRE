@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.7 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: pfrec.php,v 1.8 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -127,16 +127,9 @@ else {
 	pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Method does not exist: $ErrorStr");
 }
 
-if ($Output !== '') {
-	echo $Output;
-}
-
-if ($Error !== '') {
-	/// @attention Output all view error messages, success or fail
-	// Tag view errors with '<Error>:', so that the caller can split the output to separate data and error messages
-	/// @todo Is it better to always output a serialized array with data and error elements in it?
-	echo "\n<Error>:$Error";
-}
+/// @attention Always return errors, success or fail
+// Return an encoded array, so that the caller can easily separate output and error messages
+echo json_encode(array($Output, $Error));
 
 exit($retval);
 ?>
