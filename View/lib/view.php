@@ -1,5 +1,5 @@
 <?php
-/* $pfre: view.php,v 1.24 2016/07/27 04:16:03 soner Exp $ */
+/* $pfre: view.php,v 1.2 2016/08/05 22:30:07 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -67,25 +67,20 @@ class View
 				/// @bug http://bugs.php.net/bug.php?id=49847, fixed/closed in SVN on 141009
 				exec($cmdline, $output, $retval);
 
-				$errorStr= '';
-
 				// (exit status 0 in shell) == (TRUE in php)
 				if ($retval === 0) {
-					// Check if there are errors to display
-					$outputStr= implode("\n", $output);
-					if (preg_match('/<ViewError>:/ms', $outputStr)) {
-						// Head contains output, tail error
-						list($outputStr, $errorStr)= explode("<ViewError>:", $outputStr);
-
-						$output= explode("\n", $outputStr);
-						$error= explode("\n", $errorStr);
-					}
 					$return= TRUE;
 				}
-				else {
-					// All is error
-					$errorStr= implode("\n", $output);
-					$error= $output;
+
+				// Check if there are errors to display
+				$errorStr= '';
+				$outputStr= implode("\n", $output);
+				if (preg_match('/<Error>:/ms', $outputStr)) {
+					// Head contains output, tail error
+					list($outputStr, $errorStr)= explode("<Error>:", $outputStr);
+
+					$output= explode("\n", $outputStr);
+					$error= explode("\n", $errorStr);
 				}
 
 				// Show $error if any

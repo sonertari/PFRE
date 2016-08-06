@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.20 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.21 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -49,7 +49,7 @@ class RuleSet
 			$retval= $View->Controller($Output, 'GetPfRules', $filename, $tmp, $force);
 		}
 
-		if ($retval !== FALSE) {
+		if ($retval !== FALSE || $force) {
 			$this->filename= $filename;
 			$rulesArray= json_decode($Output[0], TRUE)['rules'];
 		} else {

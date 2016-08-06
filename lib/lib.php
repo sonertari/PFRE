@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: lib.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -78,21 +78,35 @@ function FlattenArray(&$array)
 	}
 }
 
-/** Sets or updates $ViewError with the given message.
+function Output($msg)
+{
+	global $Output;
+
+	if ($Output === '') {
+		$Output= $msg;
+	}
+	else {
+		$Output.= "\n".$msg;
+	}
+	// For transparent use of this function
+	return $msg;
+}
+
+/** Sets or updates $Error with the given message.
  *
- * Error strings are accumulated in global $ViewError and returned to View.
+ * Error strings are accumulated in global $Error and returned to View.
  * 
  * @param[in]	$msg	string Error message.
  */
-function ViewError($msg)
+function Error($msg)
 {
-	global $ViewError;
+	global $Error;
 
-	if ($ViewError === '') {
-		$ViewError= $msg;
+	if ($Error === '') {
+		$Error= $msg;
 	}
 	else {
-		$ViewError.= "\n".$msg;
+		$Error.= "\n".$msg;
 	}
 	// For transparent use of this function
 	return $msg;

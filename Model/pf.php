@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: pf.php,v 1.10 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -100,21 +100,24 @@ class Pf extends Model
 		$ruleStr= $this->GetFile($file);
 
 		/// @todo Check if we need to unlink tmp file
-		//if ($tmp != FALSE) {
+		//if ($tmp !== FALSE) {
 		//	unlink($file);
 		//}
 
 		$ruleSet= new RuleSet();
-		$ruleSet->parse($ruleStr, $force);
+		$retval= $ruleSet->parse($ruleStr, $force);
 
-		return json_encode($ruleSet);
+		// Output ruleset, success or fail
+		Output(json_encode($ruleSet));
+		return $retval;
 	}
 
 	function GetPfRuleFiles()
 	{
 		global $PF_CONFIG_PATH;
 
-		return $this->GetFiles($PF_CONFIG_PATH);
+		Output($this->GetFiles($PF_CONFIG_PATH));
+		return TRUE;
 	}
 	
 	function DeletePfRuleFile($file)
@@ -122,7 +125,8 @@ class Pf extends Model
 		global $PF_CONFIG_PATH;
 
 		if ($this->ValidateFilename($file)) {
-			return $this->DeleteFile("$PF_CONFIG_PATH/$file");
+			Output($this->DeleteFile("$PF_CONFIG_PATH/$file"));
+			return TRUE;
 		}
 		return FALSE;
 	}
@@ -169,7 +173,7 @@ class Pf extends Model
 			exec("/bin/rm '$tmpFile' 2>&1", $output2, $retval);
 			if ($retval !== 0) {
 				$err2= "Cannot remove temp pf file: $tmpFile";
-				ViewError($err2 . "\n" . implode("\n", $output2));
+				Error($err2 . "\n" . implode("\n", $output2));
 				pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, $err2);
 			}
 			
@@ -181,7 +185,7 @@ class Pf extends Model
 		}
 		
 		if (isset($err)) {
-			ViewError($err . "\n" . implode("\n", $output));
+			Error($err . "\n" . implode("\n", $output));
 			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $err);
 		}
 		return FALSE;
@@ -195,7 +199,7 @@ class Pf extends Model
 		}
 
 		$err= "Filename not accepted: $file";
-		ViewError($err . "\n" . implode("\n", $output));
+		Error($err . "\n" . implode("\n", $output));
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $err);
 		return FALSE;
 	}
@@ -206,7 +210,8 @@ class Pf extends Model
 		$class= $ruleDef['cat'];
 		$ruleObj= new $class('');
 		if ($ruleObj->load($ruleDef['rule'], $ruleNumber)) {
-			return $ruleObj->generate();
+			Output($ruleObj->generate());
+			return TRUE;
 		}
 
 		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
@@ -218,7 +223,8 @@ class Pf extends Model
 		$rulesArray= json_decode($json, TRUE);
 		$ruleSet= new RuleSet();
 		if ($ruleSet->load($rulesArray, $force) || $force) {
-			return $ruleSet->generate($lines);
+			Output($ruleSet->generate($lines));
+			return TRUE;
 		}
 
 		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
@@ -269,14 +275,14 @@ class Pf extends Model
 				
 				if ($src == 'stdin') {
 					$rule= $rules[$line];
-					ViewError("$line: $err:\n<code>	" . htmlentities($rule) . '</code>');
+					Error("$line: $err:\n<code>	" . htmlentities($rule) . '</code>');
 				} else {
 					// Rule numbers in include files need an extra decrement
 					$line--;
-					ViewError("Error in include file: $src\n$line: $err");
+					Error("Error in include file: $src\n$line: $err");
 				}
 			} else {
-				ViewError($o);
+				Error($o);
 			}
 		}
 		return FALSE;

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.7 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: files.php,v 1.8 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,6 +37,7 @@ require_once ('include.php');
 
 if (filter_has_var(INPUT_POST, 'reload')) {
 	$force= 0;
+	/// @attention Need separate force* vars for each form, otherwise they all are checked
 	if (filter_has_var(INPUT_POST, 'forceload')) {
 		$force= 1;
 	}
@@ -46,7 +47,7 @@ if (filter_has_var(INPUT_POST, 'reload')) {
 		$View->RuleSet= $ruleSet;
 		PrintHelpWindow('Main pf rules reloaded: ' . $View->RuleSet->filename);
 	} else {
-		PrintHelpWindow('<br>Error loading main pf rules', NULL, 'ERROR');
+		PrintHelpWindow('<br>Failed loading main pf rules', NULL, 'ERROR');
 	}
 }
 
@@ -66,7 +67,7 @@ if (filter_has_var(INPUT_POST, 'load')) {
 		$View->RuleSet= $ruleSet;
 		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
 	} else {
-		PrintHelpWindow("<br>Error loading: $filepath", NULL, 'ERROR');
+		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
 	}
 }
 
@@ -78,6 +79,8 @@ if (filter_has_var(INPUT_POST, 'remove')) {
 	
 	if ($View->Controller($Output, 'DeletePfRuleFile', $filepath)) {
 		PrintHelpWindow("Rules file deleted: $filepath");
+	} else {
+		PrintHelpWindow("<br>Failed deleting: $filepath", NULL, 'ERROR');
 	}
 }
 
@@ -88,20 +91,20 @@ if (filter_has_var(INPUT_POST, 'save')) {
 		$force= 1;
 	}
 
-	if ($force || $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules))) {
-		// Accept only file names, no paths
-		$savefile= basename(filter_input(INPUT_POST, 'filename'));
-		$filepath= "$PF_CONFIG_PATH/$savefile";
+	// Accept only file names, no paths
+	$savefile= basename(filter_input(INPUT_POST, 'filename'));
+	$filepath= "$PF_CONFIG_PATH/$savefile";
 
+	if ($force || $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules))) {
 		/// @attention Use 0, not FALSE for boolean here, otherwise arg type check fails
 		if ($View->Controller($Output, 'InstallPfRules', json_encode($View->RuleSet->rules), $filepath, 0, $force)) {
 			$View->RuleSet->filename= $filepath;
 			PrintHelpWindow("Saved: $filepath");
 		} else {
-			PrintHelpWindow("<br>Error saving: $filepath", NULL, 'ERROR');
+			PrintHelpWindow("<br>Failed saving: $filepath", NULL, 'ERROR');
 		}
 	} else {
-		PrintHelpWindow('<br>Ruleset has errors', NULL, 'ERROR');
+		PrintHelpWindow("<br>Failed saving: $filepath, ruleset has errors", NULL, 'ERROR');
 	}
 }
 
@@ -118,10 +121,10 @@ if (filter_has_var(INPUT_POST, 'upload')) {
 			/// @todo Unlink the tmp file?
 			PrintHelpWindow('File uploaded: ' . $_FILES['file']['name']);
 		} else {
-			PrintHelpWindow('<br>Error uploading: ' . $_FILES['file']['name'], NULL, 'ERROR');
+			PrintHelpWindow('<br>Failed uploading: ' . $_FILES['file']['name'], NULL, 'ERROR');
 		}
 	} else {
-		PrintHelpWindow('File upload failed: ' . $_FILES['file']['tmp_name'], NULL, 'ERROR');
+		PrintHelpWindow('Failed uploading: ' . $_FILES['file']['tmp_name'], NULL, 'ERROR');
 	}
 }
 
@@ -141,7 +144,7 @@ if (filter_has_var(INPUT_POST, 'download')) {
 		echo implode("\n", $Output);
 		exit;
 	} else {
-		PrintHelpWindow('<br>Cannot generate pf rules', NULL, 'ERROR');
+		PrintHelpWindow('<br>Failed downloading, cannot generate pf rules', NULL, 'ERROR');
 	}
 }
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.4 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.5 2016/08/06 17:00:04 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -48,11 +48,11 @@ class RuleSet
 			$ruleObj= new $class('');
 			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber, $force)) {
 				if (!$force) {
-					$msg= 'Load Error: Rule loaded partially';
+					$msg= 'Error loading, rule loaded partially';
 				} else {
-					$msg= 'Load Error: Rule load forced';
+					$msg= 'Error loading, rule load forced';
 				}
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, ViewError("$ruleNumber: $msg"));
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$ruleNumber: $msg"));
 				$retval= FALSE;
 			}
 			$this->rules[]= $ruleObj;
@@ -202,7 +202,7 @@ class RuleSet
 		// Reload for validation
 		$rulesArray= json_decode(json_encode($this->rules), TRUE);
 		if (!$this->load($rulesArray, $force)) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, ViewError('Load Error: Ruleset contains errors'));
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Load Error: Ruleset contains errors'));
 			return FALSE;
 		}
 		return TRUE;
@@ -225,7 +225,7 @@ class RuleSet
 					if (preg_match('/^.*{\s*$/', $line)) {
 						// Do not allow more than 2 nested inline rules
 						if (++$nesting > 2) {
-							ViewError("Parse Error: Reached max nesting for inline anchors: <pre>" . print_r($line, TRUE) . '</pre>');
+							Error("Parse Error: Reached max nesting for inline anchors: <pre>" . print_r($line, TRUE) . '</pre>');
 							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parse Error: Reached max nesting for inline anchors: $line");
 							if (!$force) {
 								break;

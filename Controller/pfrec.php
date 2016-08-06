@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.6 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: pfrec.php,v 1.7 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,7 +61,8 @@ if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {
 require_once($ROOT.'/lib/lib.php');
 require_once('lib.php');
 
-unset($ViewError);
+$Output= '';
+$Error= '';
 $retval= 1;
 
 $Nesting= 0;
@@ -90,7 +91,7 @@ if (method_exists($Model, $Command)) {
 		}
 		else {
 			$ErrorStr= "[$AcceptableArgC]: $ActualArgC";
-			ViewError(_('Not enough args')." $ErrorStr");
+			Error(_('Not enough args')." $ErrorStr");
 			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Not enough args $ErrorStr");
 		}
 
@@ -101,40 +102,41 @@ if (method_exists($Model, $Command)) {
 				// Drop extra arguments before passing to the function
 				$ArgV= array_slice($ArgV, 0, $ExpectedArgC);
 
-				ViewError(_('Too many args, truncating')." $ErrorStr");
+				Error(_('Too many args, truncating')." $ErrorStr");
 				pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Too many args, truncating $ErrorStr");
 			}
 
-			if (($Output= call_user_func_array(array($Model, $Command), $ArgV)) !== FALSE) {
-				if ($Output !== TRUE) {
-					// If func retval is not boolean, it is data, return it
-					echo $Output;
-				}
+			if (call_user_func_array(array($Model, $Command), $ArgV)) {
 				$retval= 0;
 			}
 		}
 		else {
-			ViewError(_('Not running command').": $Command");
+			Error(_('Not running command').": $Command");
 			pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Not running command: $Command");
 		}
 	}
 	else {
-		ViewError(_('Unsupported command').": $Command");
+		Error(_('Unsupported command').": $Command");
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Unsupported command: $Command");
 	}
 }
 else {
 	
 	$ErrorStr= "Pf->$Command()";
-	ViewError(_('Method does not exist').": $ErrorStr");
+	Error(_('Method does not exist').": $ErrorStr");
 	pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Method does not exist: $ErrorStr");
 }
 
-if (isset($ViewError)) {
-	/// @attention Output all view error messages, success or fail
-	// Tag view errors with '<ViewError>:' on success, so that the caller can split the output to separate data and error messages
-	/// @todo Is it better to always output a serialized array with data and error elements in it?
-	echo $retval === 1 ? $ViewError : "\n<ViewError>:$ViewError";
+if ($Output !== '') {
+	echo $Output;
 }
+
+if ($Error !== '') {
+	/// @attention Output all view error messages, success or fail
+	// Tag view errors with '<Error>:', so that the caller can split the output to separate data and error messages
+	/// @todo Is it better to always output a serialized array with data and error elements in it?
+	echo "\n<Error>:$Error";
+}
+
 exit($retval);
 ?>

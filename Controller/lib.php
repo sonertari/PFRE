@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.6 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: lib.php,v 1.7 2016/08/06 16:43:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -292,7 +292,7 @@ function IsInlineAnchor($str, $force= FALSE)
 	
 	$max= $Nesting + 1 > 2;
 	if ($max) {
-		ViewError("Validation Error: Reached max nesting for inline anchors: <pre>" . print_r($str, TRUE) . '</pre>');
+		Error("Validation Error: Reached max nesting for inline anchors: <pre>" . print_r($str, TRUE) . '</pre>');
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Validation Error: Reached max nesting for inline anchors: $str");
 	}
 
@@ -302,7 +302,7 @@ function IsInlineAnchor($str, $force= FALSE)
 		$result= $ruleSet->parse($str, $force);
 		if (!$result) {
 			if (LOG_DEBUG <= $LOG_LEVEL) {
-				ViewError('Validation Error: Invalid inline rules, parser output: <pre>' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE) . '</pre>');
+				Error('Validation Error: Invalid inline rules, parser output: <pre>' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE) . '</pre>');
 			}
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Validation Error: Invalid inline rules: ' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE));
 		}
@@ -378,7 +378,7 @@ function ValidateArgs($commands, $command, $argv, $check)
 							$valid= FALSE;
 
 							$errormsg= "$command: $arg";
-							ViewError(_('No such file').": $errormsg");
+							Error(_('No such file').": $errormsg");
 							pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, "No such file: $errormsg");
 						}
 					}
@@ -405,7 +405,7 @@ function ValidateArgs($commands, $command, $argv, $check)
 	}
 	
 	if (!$valid) {
-		ViewError(_('Arg type check failed').": $helpmsg");
+		Error(_('Arg type check failed').": $helpmsg");
 		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, "Arg type check failed: $logmsg");
 	}
 	return $valid;

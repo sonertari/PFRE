@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.4 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: Anchor.php,v 1.5 2016/08/06 16:43:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -129,7 +129,7 @@ class Anchor extends FilterBase
 			// textarea inserts \r\n instead of just \n, which pfctl complains about
 			// Inline rules should start on a new line
 			// Ending brace should be on its own line
-			/// @todo Untaint inline rules, parse before passing to pfctl?
+			/// @attention Inline rules are parsed and untainted in the Model before passing to pfctl
 			$this->str.= " {\n" . preg_replace('/\r/', '', $this->rule['inline']) . "\n}";
 		}
 	}

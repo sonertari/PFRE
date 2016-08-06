@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.3 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: model.php,v 1.4 2016/08/06 14:15:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -97,37 +97,6 @@ class Model
 			);
 	}
 
-	/** Runs given shell command and returns its output as string.
-	 *
-	 * @todo Fix return value checks in some references, RunShellCommand() does not return FALSE
-	 *
-	 * @param[in]	$cmd	Command line to run.
-	 * @return Command result in a string.
-	 */
-	function RunShellCommand($cmd)
-	{
-		/// @attention Do not use shell_exec() here, because it is disabled when PHP is running in safe_mode
-		/// @warning Not all shell commands return 0 on success, such as grep, date...
-		/// Hence, do not check return value
-		exec($cmd, $output);
-		if (is_array($output)) {
-			return implode("\n", $output);
-		}
-		return '';
-	}
-
-	/** Returns files with the given filepath pattern.
-	 *
-	 * $filepath does not have to be just directory path, and may contain wildcards.
-	 *
-	 * @param[in]	$filepath	string Pattern
-	 * @return List of file names, without path
-	 */
-	function GetFiles($filepath)
-	{
-		return $this->RunShellCommand("ls -1 $filepath");
-	}
-
 	/** Checks user's password supplied against the one in htpasswd file.
 	 *
 	 * @param[in]	$user	User name.
@@ -160,7 +129,7 @@ class Model
 				return TRUE;
 			}
 		}
-		ViewError('Authentication failed');
+		Error('Authentication failed');
 		return FALSE;
 	}
 
@@ -174,57 +143,9 @@ class Model
 			/// @warning Don't add $ to tag, otherwise CVS changes $re during commit
 			$re= '/pfre:\s+(.*\.php,v\s+\d+\.\d+\s+\d+\/\d+\/\d+\s+\d+:\d+:\d+)\s+\S+\s+Exp\s+\$/';
 			if (preg_match($re, $contents, $match)) {
-				return $match[1];
-			}
-		}
-		return FALSE;
-	}
-
-	/** Reads file contents.
-	 *
-	 * @param[in]	$file	Config file
-	 * @return File contents
-	 */
-	function GetFile($file)
-	{
-		if (file_exists($file)) {
-			return file_get_contents($file);
-		}
-		return FALSE;
-	}
-
-	/** Deletes file or dir.
-	 *
-	 * @param[in]	$path	string File or dir.
-	 */
-	function DeleteFile($path)
-	{
-		if (file_exists($path)) {
-			exec("/bin/rm -rf $path 2>&1", $output, $retval);
-			if ($retval === 0) {
+				Output($match[1]);
 				return TRUE;
 			}
-			else {
-				$errout= implode("\n", $output);
-				ViewError($errout);
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Failed deleting: $path, $errout");
-			}
-		}
-		else {
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "File path does not exist: $path");
-		}
-		return FALSE;
-	}
-
-	/** Writes contents to file.
-	 *
-	 * @param[in]	$file		Config file.
-	 * @param[in]	$contents	Contents to write.
-	 */
-	function PutFile($file, $contents)
-	{
-		if (file_exists($file)) {
-			return file_put_contents($file, $contents, LOCK_EX);
 		}
 		return FALSE;
 	}
@@ -239,7 +160,7 @@ class Model
 			return TRUE;
 		}
 		$errout= implode("\n", $output);
-		ViewError($errout);
+		Error($errout);
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Set password failed: $errout");
 		return FALSE;
 	}
@@ -280,6 +201,85 @@ class Model
 		return $this->SetNVP($ROOT.'/lib/setup.php', '\$ForceHTTPs', $bool.';');
 	}
 	
+	/** Runs given shell command and returns its output as string.
+	 *
+	 * @todo Fix return value checks in some references, RunShellCommand() does not return FALSE
+	 *
+	 * @param[in]	$cmd	Command line to run.
+	 * @return Command result in a string.
+	 */
+	function RunShellCommand($cmd)
+	{
+		/// @attention Do not use shell_exec() here, because it is disabled when PHP is running in safe_mode
+		/// @warning Not all shell commands return 0 on success, such as grep, date...
+		/// Hence, do not check return value
+		exec($cmd, $output);
+		if (is_array($output)) {
+			return implode("\n", $output);
+		}
+		return '';
+	}
+
+	/** Returns files with the given filepath pattern.
+	 *
+	 * $filepath does not have to be just directory path, and may contain wildcards.
+	 *
+	 * @param[in]	$filepath	string Pattern
+	 * @return List of file names, without path
+	 */
+	function GetFiles($filepath)
+	{
+		return $this->RunShellCommand("ls -1 $filepath");
+	}
+
+	/** Reads file contents.
+	 *
+	 * @param[in]	$file	Config file
+	 * @return File contents
+	 */
+	function GetFile($file)
+	{
+		if (file_exists($file)) {
+			return file_get_contents($file);
+		}
+		return FALSE;
+	}
+
+	/** Deletes file or dir.
+	 *
+	 * @param[in]	$path	string File or dir.
+	 */
+	function DeleteFile($path)
+	{
+		if (file_exists($path)) {
+			exec("/bin/rm -rf $path 2>&1", $output, $retval);
+			if ($retval === 0) {
+				return TRUE;
+			}
+			else {
+				$errout= implode("\n", $output);
+				Error($errout);
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Failed deleting: $path, $errout");
+			}
+		}
+		else {
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "File path does not exist: $path");
+		}
+		return FALSE;
+	}
+
+	/** Writes contents to file.
+	 *
+	 * @param[in]	$file		Config file.
+	 * @param[in]	$contents	Contents to write.
+	 */
+	function PutFile($file, $contents)
+	{
+		if (file_exists($file)) {
+			return file_put_contents($file, $contents, LOCK_EX);
+		}
+		return FALSE;
+	}
 
 	/** Changes value of NVP.
 	 *
