@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
+/* $pfre: State.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -119,7 +119,7 @@ class State extends Timeout
 			),
 		/// @todo Do not require < and >, fix the parser/generator first
 		'overload' => array(
-			'regex' => '^<\w[\w_.\-]{0,50}>$',
+			'regex' => '^\w[\w_.\-]{0,50}$',
 			),
 		'flush' => array(
 			'func' => 'IsBool',
@@ -155,7 +155,7 @@ class State extends Timeout
 
 	function parseOverload()
 	{
-		$this->rule['overload']= $this->words[++$this->index];
+		$this->rule['overload']= rtrim(ltrim($this->words[++$this->index], '<'), '>');
 
 		if ($this->words[$this->index + 1] == 'flush') {
 			$this->index++;
@@ -235,7 +235,7 @@ class State extends Timeout
 	function genOverload()
 	{
 		if (isset($this->rule['overload'])) {
-			$str= 'overload ' . $this->rule['overload'];
+			$str= 'overload <' . $this->rule['overload'] . '>';
 			if (isset($this->rule['flush'])) {
 				$str.= ' flush';
 				if (isset($this->rule['global'])) {

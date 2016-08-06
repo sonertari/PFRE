@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.5 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: State.php,v 1.6 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -90,7 +90,7 @@ class State extends Timeout
 	function dispOverload()
 	{
 		if (isset($this->rule['overload'])) {
-			$str= 'overload ' . $this->rule['overload'];
+			$str= 'overload: <' . $this->rule['overload'] . '>';
 			if (isset($this->rule['flush'])) {
 				$str.= ' flush';
 				if (isset($this->rule['global'])) {
@@ -202,7 +202,7 @@ class State extends Timeout
 				<?php echo _TITLE('Overload').':' ?>
 			</td>
 			<td>
-				<input type="text" size="20" id="overload" name="overload" value="<?php echo $this->rule['overload']; ?>"  placeholder="<string>"/>
+				<input type="text" size="20" id="overload" name="overload" value="<?php echo $this->rule['overload']; ?>"  placeholder="string"/>
 				<input type="checkbox" id="flush" name="flush" value="flush" <?php echo ($this->rule['flush'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['overload']) ? 'disabled' : ''); ?> />
 				<label for="flush">flush</label>
 				<input type="checkbox" id="global" name="global" value="global" <?php echo ($this->rule['global'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['flush']) ? 'disabled' : ''); ?> />
