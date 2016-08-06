@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.8 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Blank.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,7 +65,7 @@ class Blank extends Rule
 		$this->inputDelEmpty();
 	}
 	
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$count= count(explode("\n", $this->rule['blank'])) - 1;
 		?>

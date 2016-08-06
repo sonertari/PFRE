@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.15 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Anchor.php,v 1.16 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -62,11 +62,12 @@ class Anchor extends FilterBase
 	{
 		// inputKey() trims, hence this new method
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$this->rule['inline']= filter_input(INPUT_POST, 'inline');
+			// textarea inserts \r\n instead of just \n, which pfctl complains about, so delete \r chars
+			$this->rule['inline']= preg_replace('/\r/', '', filter_input(INPUT_POST, 'inline'));
 		}
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -82,7 +83,7 @@ class Anchor extends FilterBase
 		$this->editFilterOpts();
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
 	function editInlineRules()

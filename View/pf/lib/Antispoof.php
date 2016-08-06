@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Antispoof.php,v 1.8 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Antispoof.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -59,7 +59,7 @@ class Antispoof extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -74,7 +74,7 @@ class Antispoof extends Rule
 		$this->editText('label', 'Label', NULL, NULL, 'string');
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 }
 ?>

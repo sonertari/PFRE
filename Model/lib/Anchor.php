@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.5 2016/08/06 16:43:36 soner Exp $ */
+/* $pfre: Anchor.php,v 1.6 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -126,11 +126,10 @@ class Anchor extends FilterBase
 	function genInline()
 	{
 		if (isset($this->rule['inline'])) {
-			// textarea inserts \r\n instead of just \n, which pfctl complains about
 			// Inline rules should start on a new line
-			// Ending brace should be on its own line
+			// Ending brace (anchor-close) should be at the start of a new line
 			/// @attention Inline rules are parsed and untainted in the Model before passing to pfctl
-			$this->str.= " {\n" . preg_replace('/\r/', '', $this->rule['inline']) . "\n}";
+			$this->str.= " {\n" . $this->rule['inline'] . "\n}";
 		}
 	}
 }

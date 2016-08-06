@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.18 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Option.php,v 1.19 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -86,7 +86,7 @@ class Option extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -115,7 +115,7 @@ class Option extends Rule
 		if (isset($this->rule['type'])) {
 			$this->editComment();
 		}
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
 	function editSelectOption()

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.13 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Queue.php,v 1.14 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,7 +79,7 @@ class Queue extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -96,7 +96,7 @@ class Queue extends Rule
 		$this->editCheckbox('default', 'Default');
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
 	function editBandwidth($key, $pre, $title)

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.6 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: State.php,v 1.7 2016/08/06 02:50:38 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -147,7 +147,7 @@ class State extends Timeout
 		$this->inputTimeout();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -157,7 +157,7 @@ class State extends Timeout
 		$this->editState();
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
 	function editState()

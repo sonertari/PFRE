@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.11 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Include.php,v 1.12 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -62,7 +62,7 @@ class _Include extends Rule
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -72,7 +72,7 @@ class _Include extends Rule
 		$this->editInclude();
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
 	function editInclude()

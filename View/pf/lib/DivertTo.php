@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertTo.php,v 1.6 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: DivertTo.php,v 1.7 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -58,7 +58,7 @@ class DivertTo extends Filter
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -78,7 +78,7 @@ class DivertTo extends Filter
 		$this->editFilterOpts();
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 }
 ?>

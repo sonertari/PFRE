@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.8 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: edit.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -48,7 +48,13 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	$View->RuleSet->save($action, $ruleNumber, $ruleObj, $testResult);
 	$modified= $View->RuleSet->isModified($action, $ruleNumber, $ruleObj);
 
-	if ($View->Controller($Output, 'GeneratePfRule', json_encode($ruleObj), $ruleNumber)) {
+	$force= 0;
+	if (filter_has_var(INPUT_POST, 'forcegenerate')) {
+		$force= 1;
+	}
+
+	$generateResult= $View->Controller($Output, 'GeneratePfRule', json_encode($ruleObj), $ruleNumber, $force);
+	if ($generateResult || $force) {
 		/// @attention Inline anchor rules are multi-line, hence implode
 		$ruleStr= implode("\n", $Output);
 	} else {
@@ -56,7 +62,7 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	}
 
 	require_once($VIEW_PATH.'/header.php');
-	$ruleObj->edit($ruleNumber, $modified, $testResult, $action);
+	$ruleObj->edit($ruleNumber, $modified, $testResult, $generateResult, $action);
 	require_once($VIEW_PATH.'/footer.php');
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.27 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Rule.php,v 1.28 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -414,7 +414,7 @@ class Rule
 			<?php
 	}
 
-	function editTail($modified, $testResult, $action)
+	function editTail($modified, $testResult, $generateResult, $action)
 	{
 			?>
 			</table>
@@ -424,6 +424,8 @@ class Rule
 				<input type="submit" id="cancel" name="cancel" value="Cancel" />
 				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
 				<label for="forcesave">Save with errors</label>
+				<input type="checkbox" id="forcegenerate" name="forcegenerate" <?php echo !$generateResult ? '' : 'disabled'; ?> <?php echo filter_has_var(INPUT_POST, 'forcegenerate') ? 'checked' : ''; ?> />
+				<label for="forcegenerate">Generate with errors</label>
 				<input type="hidden" name="state" value="<?php echo $action; ?>" />
 			</div>
 		</form>

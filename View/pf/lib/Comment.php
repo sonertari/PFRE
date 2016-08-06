@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.9 2016/08/04 14:42:52 soner Exp $ */
+/* $pfre: Comment.php,v 1.10 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,7 +60,7 @@ class Comment extends Rule
 		$this->inputDelEmpty();
 	}
 	
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		?>
 		<h2>Edit Comment <?php echo $ruleNumber . ($modified ? ' (modified)' : ''); ?></h2>

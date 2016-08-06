@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.5 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.6 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -66,7 +66,7 @@ class DivertPacket extends Filter
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -85,7 +85,7 @@ class DivertPacket extends Filter
 		$this->editFilterOpts();
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 }
 ?>

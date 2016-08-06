@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.8 2016/08/05 22:30:05 soner Exp $ */
+/* $pfre: Route.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -68,7 +68,7 @@ class Route extends NatBase
 		$this->inputDelEmpty();
 	}
 
-	function edit($ruleNumber, $modified, $testResult, $action)
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
@@ -88,7 +88,7 @@ class Route extends NatBase
 		$this->editFilterOpts();
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $action);
+		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
 	function editRouteOption()
