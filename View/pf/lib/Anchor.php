@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.16 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: Anchor.php,v 1.17 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -49,10 +49,9 @@ class Anchor extends FilterBase
 		$this->inputKey('identifier');
 
 		$this->inputFilterHead();
+		$this->inputFilterOpts();
 
 		$this->inputInline();
-
-		$this->inputFilterOpts();
 
 		$this->inputKey('comment');
 		$this->inputDelEmpty();
@@ -77,10 +76,9 @@ class Anchor extends FilterBase
 		$this->editText('identifier', 'Identifier', 'anchor-id', NULL, 'name, may be nested');
 
 		$this->editFilterHead();
+		$this->editFilterOpts();
 
 		$this->editInlineRules();
-
-		$this->editFilterOpts();
 
 		$this->editComment();
 		$this->editTail($modified, $testResult, $generateResult, $action);
