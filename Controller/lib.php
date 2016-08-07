@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.7 2016/08/06 16:43:36 soner Exp $ */
+/* $pfre: lib.php,v 1.8 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -292,7 +292,7 @@ function IsInlineAnchor($str, $force= FALSE)
 	
 	$max= $Nesting + 1 > 2;
 	if ($max) {
-		Error("Validation Error: Reached max nesting for inline anchors: <pre>" . print_r($str, TRUE) . '</pre>');
+		Error("Validation Error: Reached max nesting for inline anchors: <pre>" . htmlentities(print_r($str, TRUE)) . '</pre>');
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Validation Error: Reached max nesting for inline anchors: $str");
 	}
 
@@ -302,7 +302,7 @@ function IsInlineAnchor($str, $force= FALSE)
 		$result= $ruleSet->parse($str, $force);
 		if (!$result) {
 			if (LOG_DEBUG <= $LOG_LEVEL) {
-				Error('Validation Error: Invalid inline rules, parser output: <pre>' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE) . '</pre>');
+				Error('Validation Error: Invalid inline rules, parser output: <pre>' . htmlentities(print_r(json_decode(json_encode($ruleSet), TRUE), TRUE)) . '</pre>');
 			}
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Validation Error: Invalid inline rules: ' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE));
 		}

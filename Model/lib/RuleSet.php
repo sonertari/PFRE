@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.5 2016/08/06 17:00:04 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.6 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -225,7 +225,7 @@ class RuleSet
 					if (preg_match('/^.*{\s*$/', $line)) {
 						// Do not allow more than 2 nested inline rules
 						if (++$nesting > 2) {
-							Error("Parse Error: Reached max nesting for inline anchors: <pre>" . print_r($line, TRUE) . '</pre>');
+							Error("Parse Error: Reached max nesting for inline anchors: <pre>" . htmlentities(print_r($line, TRUE)) . '</pre>');
 							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parse Error: Reached max nesting for inline anchors: $line");
 							if (!$force) {
 								break;
