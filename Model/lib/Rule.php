@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.7 2016/08/06 16:43:36 soner Exp $ */
+/* $pfre: Rule.php,v 1.8 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -227,7 +227,7 @@ class Rule
 		}
 
 		if (!$result) {
-			Error("$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': <pre>" . print_r($value, TRUE) . '</pre>');
+			Error("$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': <pre>" . htmlentities(print_r($value, TRUE)) . '</pre>');
 			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE));
 			return FALSE;
 		} else {
