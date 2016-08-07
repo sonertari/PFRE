@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.9 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: files.php,v 1.10 2016/08/06 22:47:33 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -49,6 +49,8 @@ if (filter_has_var(INPUT_POST, 'reload')) {
 	} else {
 		PrintHelpWindow('<br>Failed loading main pf rules', NULL, 'ERROR');
 	}
+	/// @attention Remove the session, otherwise the existing session confuses the user if s/he edits the same rule number in the session
+	unset($_SESSION['edit']);
 }
 
 $loadfile= '';
@@ -69,19 +71,7 @@ if (filter_has_var(INPUT_POST, 'load')) {
 	} else {
 		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
 	}
-}
-
-$deleteFile= '';
-if (filter_has_var(INPUT_POST, 'remove')) {
-	// Accept only file names, no paths
-	$deleteFile= basename(filter_input(INPUT_POST, 'deleteFilename'));
-	$filepath= "$PF_CONFIG_PATH/$deleteFile";
-	
-	if ($View->Controller($Output, 'DeletePfRuleFile', $filepath)) {
-		PrintHelpWindow("Rules file deleted: $filepath");
-	} else {
-		PrintHelpWindow("<br>Failed deleting: $filepath", NULL, 'ERROR');
-	}
+	unset($_SESSION['edit']);
 }
 
 $savefile= '';
@@ -108,6 +98,19 @@ if (filter_has_var(INPUT_POST, 'save')) {
 	}
 }
 
+$deleteFile= '';
+if (filter_has_var(INPUT_POST, 'remove')) {
+	// Accept only file names, no paths
+	$deleteFile= basename(filter_input(INPUT_POST, 'deleteFilename'));
+	$filepath= "$PF_CONFIG_PATH/$deleteFile";
+	
+	if ($View->Controller($Output, 'DeletePfRuleFile', $filepath)) {
+		PrintHelpWindow("Rules file deleted: $filepath");
+	} else {
+		PrintHelpWindow("<br>Failed deleting: $filepath", NULL, 'ERROR');
+	}
+}
+
 if (filter_has_var(INPUT_POST, 'upload')) {
 	$force= 0;
 	if (filter_has_var(INPUT_POST, 'forceupload')) {
@@ -126,6 +129,7 @@ if (filter_has_var(INPUT_POST, 'upload')) {
 	} else {
 		PrintHelpWindow('Failed uploading: ' . $_FILES['file']['tmp_name'], NULL, 'ERROR');
 	}
+	unset($_SESSION['edit']);
 }
 
 if (filter_has_var(INPUT_POST, 'download')) {

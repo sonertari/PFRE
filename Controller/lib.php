@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.10 2016/08/07 14:22:37 soner Exp $ */
+/* $pfre: lib.php,v 1.11 2016/08/07 15:09:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -87,7 +87,9 @@ $RE_MACRO_VAR= '\$' . $RE_ID;
 define('RE_MACRO_VALUE', '^(\w|\$)[\w_.\/\-*]{0,50}$');
 
 $RE_IF_NAME= '\w{1,20}';
-$RE_IF= "($RE_IF_NAME|$RE_MACRO_VAR)(|:\w+)";
+$RE_IF_MODIF= '(|:(0|broadcast|network|peer))';
+
+$RE_IF= "($RE_IF_NAME|$RE_MACRO_VAR)$RE_IF_MODIF";
 define('RE_IF', "^$RE_IF$");
 
 $RE_IF_PAREN= "\($RE_IF\)";
@@ -100,6 +102,7 @@ define('RE_AF', '^(inet|inet6)$');
 define('RE_DIRECTION', '^(in|out)$');
 
 $RE_IP= '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
+// pfctl get stuck if there are no spaces around the dash -
 $RE_IP_RANGE= "$RE_IP\s+\-\s+$RE_IP";
 $RE_IP6= '[\w:.\/]+';
 
@@ -108,9 +111,11 @@ $RE_HOSTNAME= '[\w.\/_]{1,100}';
 
 $RE_ADDRESS_KEYWORDS= '(any|no\-route|self|urpf\-failed)';
 
+$RE_WEIGHT= '(|\s+weight\s+\d{1,5})';
+
 $RE_ADDRESS_BASE= "($RE_IF|$RE_IF_PAREN|$RE_HOSTNAME|$RE_ADDRESS_KEYWORDS|$RE_IP|$RE_IP_RANGE|$RE_IP6|$RE_MACRO_VAR)";
-$RE_ADDRESS= "($RE_IF|$RE_IF_PAREN|$RE_HOSTNAME|$RE_ADDRESS_KEYWORDS|$RE_IP|$RE_IP_RANGE|$RE_IP6|$RE_MACRO_VAR)(|\s+weight\s+\d+)";
-$RE_ADDRESS_NET= "$RE_ADDRESS_BASE\s*\/\s*\d{1,2}(|\s+weight\s+\d+)";
+$RE_ADDRESS= "($RE_IF|$RE_IF_PAREN|$RE_HOSTNAME|$RE_ADDRESS_KEYWORDS|$RE_IP|$RE_IP_RANGE|$RE_IP6|$RE_MACRO_VAR)$RE_WEIGHT";
+$RE_ADDRESS_NET= "$RE_ADDRESS_BASE\s*\/\s*\d{1,2}$RE_WEIGHT";
 
 $RE_TABLE_VAR= "<$RE_ID>";
 
@@ -134,7 +139,7 @@ define('RE_PORT', "^($RE_PORT|$RE_MACRO_VAR)$");
 $RE_PORTSPEC= '[\w*:\s-]{1,50}';
 define('RE_PORTSPEC', "^($RE_PORTSPEC|$RE_MACRO_VAR)$");
 
-$RE_FLAGS= '[FSRPAUEWany\/]{1,10}';
+$RE_FLAGS= '([FSRPAUEW\/]{1,10}|any)';
 define('RE_FLAGS', "^($RE_FLAGS|$RE_MACRO_VAR)$");
 
 $RE_W_1_10= '^\w{1,10}$';
