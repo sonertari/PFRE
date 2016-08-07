@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.13 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: pf.php,v 1.14 2016/08/07 00:45:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -161,7 +161,13 @@ class Pf extends Model
 			exec("/usr/bin/install -o root -m 0600 -D -b -B '.orig' '$tmpFile' $file 2>&1", $output, $retval);
 			if ($retval === 0) {
 				if ($load === TRUE) {
-					exec("/sbin/pfctl -f $file 2>&1", $output, $retval);
+					$cmd= "/sbin/pfctl -f $file 2>&1";
+
+					if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
+						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Failed loading pf rules: $file"));
+						return FALSE;
+					}
+
 					if ($retval !== 0) {
 						$err= 'Cannot load pf rules';
 					}
@@ -172,7 +178,7 @@ class Pf extends Model
 
 			exec("/bin/rm '$tmpFile' 2>&1", $output2, $retval);
 			if ($retval !== 0) {
-				$err2= "Cannot remove temp pf file: $tmpFile";
+				$err2= "Cannot remove tmp pf file: $tmpFile";
 				Error($err2 . "\n" . implode("\n", $output2));
 				pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, $err2);
 			}
@@ -186,7 +192,7 @@ class Pf extends Model
 		
 		if (isset($err)) {
 			Error($err . "\n" . implode("\n", $output));
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $err);
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error($err));
 		}
 		return FALSE;
 	}
@@ -249,18 +255,10 @@ class Pf extends Model
 
 		$cmd= "/bin/echo '$rulesStr' | /sbin/pfctl -nf - 2>&1";
 
-		/// @bug pfctl gets stuck
-		/// @todo pfctl takes a long time to return on some errors
-		// Example 1: A macro using an unknown interface: int_if = "a1",
-		// pfctl tries to look up for its IP address, which takes a long time before failing with:
-		// > no IP address found for a1
-		// > could not parse host specification
-		// Example 2: A table with an entry for which no DNS record can be found
-		// pfctl waits for name service lookup, which takes too long:
-		// > no IP address found for test
-		// > could not parse host specification
-		// Therefore, need to use an exec function which returns with timeout
-		exec($cmd, $output, $retval);
+		if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed testing pf rules'));
+			return FALSE;
+		}
 
 		if ($retval === 0) {
 			return TRUE;
@@ -290,6 +288,104 @@ class Pf extends Model
 			}
 		}
 		return FALSE;
+	}
+
+	/** Daemonizes to run the given pfctl command.
+	 */
+	function RunPfctlCmd($cmd, &$output, &$retval)
+	{
+		/// @bug pfctl gets stuck, or takes a long time to return on some errors
+		// Example 1: A macro using an unknown interface: int_if = "a1",
+		// pfctl tries to look up for its IP address, which takes a long time before failing with:
+		// > no IP address found for a1
+		// > could not parse host specification
+		// Example 2: A table with an entry for which no DNS record can be found
+		// pfctl waits for name service lookup, which takes too long:
+		// > no IP address found for test
+		// > could not parse host specification
+		// Therefore, need to use a function which returns upon timeout, hence this method
+		/// @todo Find a better/faster solution than using files
+
+		$retval= 0;
+		$output= array();
+
+		$tmpFile= '/tmp/pfre_pfctl.out';
+
+		/// @attention Make sure the file is really removed before continuing
+		// Try to delete for 3 seconds
+		$count= 0;
+		while (file_exists($tmpFile) && $count++ < 30) {
+			unlink($tmpFile);
+
+			exec('/bin/sleep .1');
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Unlink wait count: $count");
+		}
+		
+		if (file_exists($tmpFile)) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Cannot delete tmp file: $tmpFile"));
+			return FALSE;
+		}
+
+		$pid= pcntl_fork();
+		if ($pid == -1) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Cannot fork');
+		}
+		else if ($pid) {
+			// This is the parent!
+
+			// Parent should wait for output for 10 seconds
+			$count= 0;
+			while ($count++ < 100) {
+				$contents= $this->GetFile($tmpFile);
+
+				if ($contents !== FALSE) {
+					$decode= json_decode($contents, TRUE);
+
+					if ($decode !== NULL && is_array($decode) && array_key_exists('retval', $decode) && array_key_exists('output', $decode)) {
+						$retval= $decode['retval'];
+						$output= $decode['output'];
+
+						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Success getting pfctl output: $contents");
+
+						unlink($tmpFile);
+						return TRUE;
+					} else {
+						pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Failed decoding pfctl output: $contents");
+					}
+				} else {
+					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Failed reading tmp file: $tmpFile");
+				}
+
+				exec('/bin/sleep .1');
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Read wait count: $count");
+			}
+
+			/// @attention Make sure the child is dead, otherwise the parent gets stuck too
+			exec("/bin/kill -KILL $pid");
+
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Timed out running pfctl command'));
+
+			unlink($tmpFile);
+			// Parent survives
+			return FALSE;
+		}
+		else {
+			// This is the child!
+
+			// Child should run the command and save the result in $tmpFile
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Running pfctl command');
+			exec($cmd, $output, $retval);
+			$contents= array(
+				'retval' => $retval,
+				'output' => $output
+				);
+
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Saving pfctl output: $tmpFile");
+			file_put_contents($tmpFile, json_encode($contents), LOCK_EX);
+
+			// Child exits
+			exit;
+		}
 	}
 }
 ?>
