@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertTo.php,v 1.4 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: DivertTo.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,13 +35,24 @@
 
 class DivertTo extends Filter
 {
+	protected $typeDivertHost= array(
+		'diverthost' => array(
+			'regex' => RE_HOST,
+			),
+		);
+
 	function __construct($str)
 	{
 		$this->keywords = array(
 			'divert-to' => array(
 				'method' => 'parseRedirHostPort',
-				'params' => array(),
+				'params' => array('diverthost', 'divertport'),
 				),
+			);
+
+		$this->typedef= array_merge(
+			$this->typeDivertHost,
+			$this->typeDivertPort
 			);
 
 		parent::__construct($str);
@@ -55,9 +66,8 @@ class DivertTo extends Filter
 		$this->genFilterOpts();
 
 		$this->genValue('type');
-		/// @todo This is not redirhost, but host and port
-		$this->genValue('redirhost');
-		$this->genValue('redirport', 'port ');
+		$this->genValue('diverthost');
+		$this->genValue('divertport', 'port ');
 
 		$this->genComment();
 		$this->str.= "\n";

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.15 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.16 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -50,21 +50,6 @@ class FilterBase extends State
 		$this->dispTail($ruleNumber, $count);
 	}
 	
-	function displayNat($ruleNumber, $count)
-	{
-		$this->dispHead($ruleNumber);
-		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
-		$this->dispInterface();
-		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('proto', 'Proto');
-		$this->dispSrcDest();
-		$this->dispValue('redirhost', 'Redirect Host');
-		$this->dispValue('redirport', 'Redirect Port');
-		$this->dispTail($ruleNumber, $count);
-	}
-	
 	function dispAction()
 	{
 		?>
@@ -85,13 +70,25 @@ class FilterBase extends State
 		} else {
 			?>
 			<td title="Source">
-				<?php $this->printHostPort($this->rule['from']); ?>
+				<?php
+				if (isset($this->rule['from'])) {
+					$this->printHostPort($this->rule['from']);
+				} elseif (isset($this->rule['fromroute'])) {
+					echo 'route ' . $this->rule['fromroute'];
+				}
+				?>
 			</td>
 			<td title="Source Port">
 				<?php $this->printHostPort($this->rule['fromport']); ?>
 			</td>
 			<td title="Destination">
-				<?php $this->printHostPort($this->rule['to']); ?>
+				<?php
+				if (isset($this->rule['to'])) {
+					$this->printHostPort($this->rule['to']);
+				} elseif (isset($this->rule['toroute'])) {
+					echo 'route ' . $this->rule['toroute'];
+				}
+				?>
 			</td>
 			<td title="Destination Port">
 				<?php $this->printHostPort($this->rule['toport']); ?>
@@ -132,11 +129,19 @@ class FilterBase extends State
 		$this->inputDel('from', 'delFrom');
 		$this->inputAdd('from', 'addFrom');
 
+		if (!$this->rule['from']) {
+			$this->inputKey('fromroute');
+		}
+
 		$this->inputDel('fromport', 'delFromPort');
 		$this->inputAdd('fromport', 'addFromPort');
 
 		$this->inputDel('to', 'delTo');
 		$this->inputAdd('to', 'addTo');
+
+		if (!$this->rule['to']) {
+			$this->inputKey('toroute');
+		}
 
 		$this->inputDel('toport', 'delToPort');
 		$this->inputAdd('toport', 'addToPort');
@@ -216,8 +221,10 @@ class FilterBase extends State
 			if (filter_has_var(INPUT_POST, 'all')) {
 				$this->rule['all']= TRUE;
 				unset($this->rule['from']);
+				unset($this->rule['fromroute']);
 				unset($this->rule['fromport']);
 				unset($this->rule['to']);
+				unset($this->rule['toroute']);
 				unset($this->rule['toport']);
 			} else {
 				unset($this->rule['all']);
@@ -246,9 +253,9 @@ class FilterBase extends State
 		$this->editAf();
 		$this->editValues('proto', 'Protocol', 'delProto', 'addProto', 'protocol', NULL, 10);
 		$this->editCheckbox('all', 'Match All');
-		$this->editValues('from', 'Source', 'delFrom', 'addFrom', 'ip, host, table or macro', 'src-dst', NULL, isset($this->rule['all']));
+		$this->editHost('from', 'Source', 'delFrom', 'addFrom', 'ip, host, table or macro', 'src-dst', NULL, isset($this->rule['all']));
 		$this->editValues('fromport', 'Source Port', 'delFromPort', 'addFromPort', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editValues('to', 'Destination', 'delTo', 'addTo', 'ip, host, table or macro', FALSE, NULL, isset($this->rule['all']));
+		$this->editHost('to', 'Destination', 'delTo', 'addTo', 'ip, host, table or macro', FALSE, NULL, isset($this->rule['all']));
 		$this->editValues('toport', 'Destination Port', 'delToPort', 'addToPort', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
 		$this->editValues('os', 'OS', 'delOs', 'addOs', 'os name or macro');
 	}
@@ -294,6 +301,31 @@ class FilterBase extends State
 					<option value="out" label="out" <?php echo ($this->rule['direction'] == 'out' ? 'selected' : ''); ?>>out</option>
 				</select>
 				<?php $this->editHelp('direction') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editHost($key, $title, $delName, $addName, $hint, $help= NULL, $size= 0, $disabled= FALSE)
+	{
+		$help= $help === NULL ? $key : $help;
+		?>
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo $title.':' ?>
+			</td>
+			<td>
+				<?php
+				$this->editDeleteValueLinks($this->rule[$key], $delName);
+				$this->editAddValueBox($addName, NULL, $hint, $size, $disabled || isset($this->rule[$key . 'route']));
+				?>
+				<input type="text" id="<?php echo $key . 'route' ?>" name="<?php echo $key . 'route' ?>" value="<?php echo $this->rule[$key . 'route']; ?>" size="20" placeholder="label" <?php echo $disabled || isset($this->rule[$key]) ? 'disabled' : ''; ?> />
+				<label for="<?php echo $key . 'route' ?>">route</label>
+				<?php
+				if ($help !== FALSE) {
+					$this->editHelp($help);
+				}
+				?>
 			</td>
 		</tr>
 		<?php

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.8 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: lib.php,v 1.9 2016/08/07 00:45:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -100,21 +100,33 @@ define('RE_AF', '^(inet|inet6)$');
 define('RE_DIRECTION', '^(in|out)$');
 
 $RE_IP= '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
+$RE_IP_RANGE= "$RE_IP\s+\-\s+$RE_IP";
 $RE_IP6= '[\w:.\/]+';
 
-$RE_HOSTNAME= '[\w.\/_-]{1,100}';
+/// @todo Is dash - possible in hostnames?
+$RE_HOSTNAME= '[\w.\/_]{1,100}';
 
-$RE_ADDRESS= "($RE_IF_NAME|$RE_IF_PAREN|$RE_HOSTNAME|$RE_IP|$RE_IP6|$RE_MACRO_VAR)";
-$RE_ADDRESS_NET= "$RE_ADDRESS\/\d{1,2}";
+$RE_ADDRESS_KEYWORDS= '(any|no\-route|self|urpf\-failed)';
+
+$RE_ADDRESS_BASE= "($RE_IF_NAME|$RE_IF_PAREN|$RE_HOSTNAME|$RE_ADDRESS_KEYWORDS|$RE_IP|$RE_IP_RANGE|$RE_IP6|$RE_MACRO_VAR)";
+$RE_ADDRESS= "($RE_IF_NAME|$RE_IF_PAREN|$RE_HOSTNAME|$RE_ADDRESS_KEYWORDS|$RE_IP|$RE_IP_RANGE|$RE_IP6|$RE_MACRO_VAR)(|\s+weight\s+\d+)";
+$RE_ADDRESS_NET= "$RE_ADDRESS_BASE\s*\/\s*\d{1,2}(|\s+weight\s+\d+)";
 
 $RE_TABLE_VAR= "<$RE_ID>";
 
-$RE_TABLE_ADDRESS= "($RE_HOSTNAME|$RE_IF_NAME|$RE_IP|$RE_IP6|$RE_MACRO_VAR)";
-$RE_TABLE_ADDRESS_NET= "$RE_TABLE_ADDRESS\/\d{1,2}";
+$RE_TABLE_ADDRESS= "($RE_HOSTNAME|$RE_IF_NAME|self|$RE_IP|$RE_IP6|$RE_MACRO_VAR)";
+$RE_TABLE_ADDRESS_NET= "$RE_TABLE_ADDRESS\s*\/\s*\d{1,2}";
 define('RE_TABLE_ADDRESS', "^(|!)($RE_TABLE_ADDRESS|$RE_TABLE_ADDRESS_NET)$");
 
-define('RE_HOST', "^(|!)($RE_ADDRESS|$RE_ADDRESS_NET|$RE_TABLE_VAR)$");
+$RE_HOST= "(|!)($RE_ADDRESS|$RE_ADDRESS_NET|$RE_TABLE_VAR)";
+
+define('RE_HOST', "^$RE_HOST$");
 define('RE_REDIRHOST', "^($RE_ADDRESS|$RE_ADDRESS_NET)$");
+
+$RE_HOST_AT_IF= "$RE_HOST\s*@\s*$RE_IF_NAME";
+$RE_IF_ADDRESS_NET= "\($RE_IF_NAME(|\s+$RE_ADDRESS|\s+$RE_ADDRESS_NET)\)$";
+
+define('RE_ROUTEHOST', "^($RE_HOST|$RE_HOST_AT_IF|$RE_IF_ADDRESS_NET)$");
 
 $RE_PORT= '[\w<>=!:\s-]{1,50}';
 define('RE_PORT', "^($RE_PORT|$RE_MACRO_VAR)$");
@@ -164,6 +176,8 @@ define('RE_REASSEMBLE_TCP', '^tcp$');
 
 define('RE_CONNRATE', '^\d{1,20}\/\d{1,20}$');
 define('RE_SOURCETRACKOPTION', '^(rule|global)$');
+
+define('RE_ICMPCODE', '^[\w-]{1,20}$');
 
 /// @attention PHP is not compiled, otherwise would use bindec()
 /// @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!

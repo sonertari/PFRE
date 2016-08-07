@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.6 2016/08/04 02:16:13 soner Exp $ */
+/* $pfre: Route.php,v 1.1 2016/08/04 14:42:53 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,23 +33,40 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Route extends NatBase
+class Route extends Filter
 {
+	protected $keyRoute= array(
+		'route-to' => array(
+			'method' => 'parseRoute',
+			'params' => array(),
+			),
+		'reply-to' => array(
+			'method' => 'parseRoute',
+			'params' => array(),
+			),
+		'dup-to' => array(
+			'method' => 'parseRoute',
+			'params' => array(),
+			),
+		);
+
+	protected $typeRouteHost= array(
+		'routehost' => array(
+			'multi' => TRUE,
+			'regex' => RE_ROUTEHOST,
+			),
+		);
+
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'route-to' => array(
-				'method' => 'parseRoute',
-				'params' => array(),
-				),
-			'reply-to' => array(
-				'method' => 'parseRoute',
-				'params' => array(),
-				),
-			'dup-to' => array(
-				'method' => 'parseRoute',
-				'params' => array(),
-				),
+		$this->keywords = array_merge(
+			$this->keyRoute,
+			$this->keyPoolType
+			);
+
+		$this->typedef= array_merge(
+			$this->typeRouteHost,
+			$this->typePoolType
 			);
 
 		parent::__construct($str);
@@ -58,8 +75,7 @@ class Route extends NatBase
 	function parseRoute()
 	{
 		$this->rule['type']= $this->words[$this->index];
-		// @todo routehost not redirhost
-		$this->parseItems('redirhost');
+		$this->parseItems('routehost');
 	}
 
 	function generate()
@@ -70,7 +86,7 @@ class Route extends NatBase
 		$this->genFilterOpts();
 
 		$this->genValue('type');
-		$this->genItems('redirhost');
+		$this->genItems('routehost');
 		$this->genPoolType();
 
 		$this->genComment();

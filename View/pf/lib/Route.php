@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: Route.php,v 1.10 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class Route extends NatBase
+class Route extends Filter
 {
 	function display($ruleNumber, $count)
 	{
@@ -46,7 +46,7 @@ class Route extends NatBase
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
 		$this->dispValue('type', 'Type');
-		$this->dispValue('redirhost', 'Redirect Host');
+		$this->dispValues('routehost', 'Route Host');
 		$this->dispTail($ruleNumber, $count);
 	}
 
@@ -60,7 +60,9 @@ class Route extends NatBase
 		$this->inputBool('quick');
 
 		$this->inputKey('type');
-		$this->inputKey('redirhost');
+		$this->inputDel('routehost', 'delRouteHost');
+		$this->inputAdd('routehost', 'addRouteHost');
+		$this->inputPoolType();
 
 		$this->inputFilterOpts();
 
@@ -82,8 +84,9 @@ class Route extends NatBase
 		$this->editLog();
 		$this->editCheckbox('quick', 'Quick');
 
-		$this->editRouteOption();
-		$this->editText('redirhost', 'Redirect Host', 'Nat', NULL, 'ip, host, table or macro');
+		$this->editRouteType();
+		$this->editValues('routehost', 'Route Host', 'delRouteHost', 'addRouteHost', 'ip, host, table or macro', 'Nat', NULL);
+		$this->editPoolType();
 
 		$this->editFilterOpts();
 
@@ -91,12 +94,12 @@ class Route extends NatBase
 		$this->editTail($modified, $testResult, $generateResult, $action);
 	}
 
-	function editRouteOption()
+	function editRouteType()
 	{
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo _TITLE('Route Option').':' ?>
+				<?php echo _TITLE('Route Type').':' ?>
 			</td>
 			<td>
 				<select id="type" name="type">

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.3 2016/08/03 01:12:23 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.1 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,21 +39,23 @@ class DivertPacket extends Filter
 	{
 		$this->keywords = array(
 			'divert-packet' => array(
-				'method' => 'parseRedirPort',
+				'method' => 'parseDivertPort',
 				'params' => array(),
 				),
 			);
 
+		$this->typedef= $this->typeDivertPort;
+
 		parent::__construct($str);
 	}
 
-	function parseRedirPort()
+	function parseDivertPort()
 	{
 		$this->parseNVP('type');
 
 		if ($this->words[$this->index + 1] == 'port') {
 			$this->index+= 2;
-			$this->rule['redirport']= $this->words[$this->index];
+			$this->rule['divertport']= $this->words[$this->index];
 		}
 	}
 
@@ -65,8 +67,7 @@ class DivertPacket extends Filter
 		$this->genFilterOpts();
 
 		$this->genValue('type');
-		/// @todo This is not redirport, but port
-		$this->genValue('redirport', 'port ');
+		$this->genValue('divertport', 'port ');
 
 		$this->genComment();
 		$this->str.= "\n";

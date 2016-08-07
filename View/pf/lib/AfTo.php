@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: AfTo.php,v 1.10 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -45,8 +45,8 @@ class AfTo extends Filter
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
 		$this->dispValue('rediraf', 'Redirect Address Family');
-		$this->dispValue('redirhost', 'From Redirect Host');
-		$this->dispValue('toredirhost', 'To Redirect Host');
+		$this->dispValues('redirhost', 'From Redirect Host');
+		$this->dispValues('toredirhost', 'To Redirect Host');
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -60,8 +60,12 @@ class AfTo extends Filter
 		$this->inputBool('quick');
 
 		$this->inputKey('rediraf');
-		$this->inputKey('redirhost');
-		$this->inputKey('toredirhost');
+		$this->inputDel('redirhost', 'delRedirHost');
+		$this->inputAdd('redirhost', 'addRedirHost');
+		$this->inputDel('toredirhost', 'delToRedirHost');
+		$this->inputAdd('toredirhost', 'addToRedirHost');
+
+		$this->inputPoolType();
 
 		$this->inputFilterOpts();
 
@@ -84,8 +88,10 @@ class AfTo extends Filter
 		$this->editCheckbox('quick', 'Quick');
 
 		$this->editRedirAf();
-		$this->editText('redirhost', 'Redirect Host', 'Nat', NULL, 'ip, host, table or macro');
-		$this->editText('toredirhost', 'To Redirect Host', FALSE, NULL, 'ip, host, table or macro');
+		$this->editValues('redirhost', 'From Redirect Host', 'delRedirHost', 'addRedirHost', 'ip, host, table or macro', 'Nat', NULL);
+		$this->editValues('toredirhost', 'To Redirect Host', 'delToRedirHost', 'addToRedirHost', 'ip, host, table or macro', 'Nat', NULL);
+
+		$this->editPoolType();
 
 		$this->editFilterOpts();
 

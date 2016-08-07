@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: Option.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -140,7 +140,7 @@ class Option extends Rule
 	{
 		$this->rule['type']= 'skip';
 		$this->index++;
-		$this->rule['skip']= $this->parseItem();
+		$this->parseItems('skip');
 	}
 
 	function parseFingerprints()

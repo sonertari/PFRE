@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.7 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: NatBase.php,v 1.8 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,17 @@ class NatBase extends Filter
 {
 	function display($ruleNumber, $count)
 	{
-		$this->displayNat($ruleNumber, $count);
+		$this->dispHead($ruleNumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispInterface();
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValues('redirhost', 'Redirect Host');
+		$this->dispValue('redirport', 'Redirect Port');
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function input()
@@ -59,20 +69,10 @@ class NatBase extends Filter
 
 	function inputNat()
 	{
-		$this->inputKey('redirhost');
+		$this->inputDel('redirhost', 'delRedirHost');
+		$this->inputAdd('redirhost', 'addRedirHost');
 		$this->inputKey('redirport');
-		$this->inputRedirOptions();
-	}
-
-	function inputRedirOptions()
-	{
-		$this->inputBool('bitmask');
-		$this->inputBool('least-states');
-		$this->inputBool('random');
-		$this->inputBool('round-robin');
-		$this->inputBool('source-hash');
-		$this->inputKeyIfHasVar('source-hash-key', 'source-hash');
-		$this->inputBool('sticky-address');
+		$this->inputPoolType();
 	}
 
 	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
@@ -99,42 +99,9 @@ class NatBase extends Filter
 
 	function editNat()
 	{
-		$this->editText('redirhost', 'Redirect Host', 'Nat', NULL, 'ip, host, table or macro');
+		$this->editValues('redirhost', 'Redirect Host', 'delRedirHost', 'addRedirHost', 'ip, host, table or macro', 'Nat', NULL);
 		$this->editText('redirport', 'Redirect Port', 'Nat', NULL, 'number, name, table or macro');
-		$this->editRedirOptions();
-	}
-
-	function editRedirOptions()
-	{
-		?>
-		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
-			<td class="title">
-				<?php echo _TITLE('Redirect Options').':' ?>
-			</td>
-			<td>
-				<input type="checkbox" id="bitmask" name="bitmask" <?php echo ($this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="bitmask" <?php echo ($this->rule['bitmask'] ? 'checked' : ''); ?> />
-				<label for="bitmask">bitmask</label>
-				<br>
-				<input type="checkbox" id="least-states" name="least-states" <?php echo ($this->rule['bitmask'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="least-states" <?php echo ($this->rule['least-states'] ? 'checked' : ''); ?> />
-				<label for="least-states">least-states</label>
-				<br>
-				<input type="checkbox" id="random" name="random" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="random" <?php echo ($this->rule['random'] ? 'checked' : ''); ?> />
-				<label for="random">random</label>
-				<br>
-				<input type="checkbox" id="round-robin" name="round-robin" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="round-robin" <?php echo ($this->rule['round-robin'] ? 'checked' : ''); ?> />
-				<label for="round-robin">round-robin</label>
-				<br>
-				<input type="checkbox" id="source-hash" name="source-hash" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] ? 'disabled' : ''); ?> value="source-hash" <?php echo ($this->rule['source-hash'] ? 'checked' : ''); ?> />
-				<label for="source-hash">source-hash</label>
-				<input type="text" id="source-hash-key" name="source-hash-key" <?php echo ($this->rule['source-hash'] ? '' : 'disabled'); ?> value="<?php echo $this->rule['source-hash-key']; ?>" size="32" />
-				<label for="source-hash-key">key</label>
-				<br>
-				<input type="checkbox" id="sticky-address" name="sticky-address" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? '' : 'disabled'); ?> value="sticky-address" <?php echo ($this->rule['sticky-address'] ? 'checked' : ''); ?> />
-				<label for="sticky-address">sticky-address</label>
-				<?php $this->editHelp('rdr-method') ?>
-			</td>
-		</tr>
-		<?php
+		$this->editPoolType();
 	}
 }
 ?>

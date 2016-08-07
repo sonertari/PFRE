@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertTo.php,v 1.7 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: DivertTo.php,v 1.8 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,17 @@ class DivertTo extends Filter
 {
 	function display($ruleNumber, $count)
 	{
-		$this->displayNat($ruleNumber, $count);
+		$this->dispHead($ruleNumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispInterface();
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispValue('diverthost', 'Divert Host');
+		$this->dispValue('divertport', 'Divert Port');
+		$this->dispTail($ruleNumber, $count);
 	}
 	
 	function input()
@@ -49,8 +59,8 @@ class DivertTo extends Filter
 		$this->inputLog();
 		$this->inputBool('quick');
 
-		$this->inputKey('redirhost');
-		$this->inputKey('redirport');
+		$this->inputKey('diverthost');
+		$this->inputKey('divertport');
 
 		$this->inputFilterOpts();
 
@@ -72,8 +82,8 @@ class DivertTo extends Filter
 		$this->editLog();
 		$this->editCheckbox('quick', 'Quick');
 
-		$this->editText('redirhost', 'Redirect Host', 'Nat', NULL, 'ip, host, table or macro');
-		$this->editText('redirport', 'Redirect Port', 'Nat', NULL, 'number, name, table or macro');
+		$this->editText('diverthost', 'Divert Host', 'Nat', NULL, 'ip, host, table or macro');
+		$this->editText('divertport', 'Divert Port', 'Nat', NULL, 'number, name, table or macro');
 
 		$this->editFilterOpts();
 

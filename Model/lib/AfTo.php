@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: AfTo.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,25 +35,35 @@
 
 class AfTo extends Filter
 {
-	protected $typeNatBase= array(
+	protected $keyAfTo= array(
+		'af-to' => array(
+			'method' => 'parseAfto',
+			'params' => array(),
+			),
+		);
+
+	protected $typeAfTo= array(
 		'rediraf' => array(
 			'regex' => RE_AF,
 			),
 		'toredirhost' => array(
+			'multi' => TRUE,
 			'regex' => RE_REDIRHOST,
 			),
 		);
 
 	function __construct($str)
 	{
-		$this->keywords = array(
-			'af-to' => array(
-				'method' => 'parseAfto',
-				'params' => array(),
-				),
+		$this->keywords = array_merge(
+			$this->keyAfTo,
+			$this->keyPoolType
 			);
 
-		$this->typedef= $this->typeNatBase;
+		$this->typedef= array_merge(
+			$this->typeAfTo,
+			$this->typeRedirHost,
+			$this->typePoolType
+			);
 
 		parent::__construct($str);
 	}
@@ -63,12 +73,12 @@ class AfTo extends Filter
 		$this->rule['rediraf']= $this->words[++$this->index];
 
 		if ($this->words[$this->index + 1] === 'from') {
-			$this->index+= 2;
-			$this->rule['redirhost']= $this->words[$this->index];
+			$this->index++;
+			$this->parseItems('redirhost');
 
 			if ($this->words[$this->index + 1] === 'to') {
-				$this->index+= 2;
-				$this->rule['toredirhost']= $this->words[$this->index];
+				$this->index++;
+				$this->parseItems('toredirhost');
 			}
 		}
 	}
@@ -82,6 +92,7 @@ class AfTo extends Filter
 
 		$this->genAfto();
 		// @todo Can we have pooltype with af-to? BNF says no, but pfctl does not complain about it
+		$this->genPoolType();
 
 		$this->genComment();
 		$this->str.= "\n";
@@ -92,8 +103,8 @@ class AfTo extends Filter
 	{
 		$this->str.= ' af-to';
 		$this->genValue('rediraf');
-		$this->genValue('redirhost', 'from ');
-		$this->genValue('toredirhost', 'to ');
+		$this->genItems('redirhost', 'from ');
+		$this->genItems('toredirhost', 'to ');
 	}
 }
 ?>

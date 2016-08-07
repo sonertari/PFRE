@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatTo.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: NatTo.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -69,7 +69,7 @@ class NatTo extends NatBase
 		$this->genFilterOpts();
 
 		$this->genValue('type');
-		$this->genValue('redirhost');
+		$this->genItems('redirhost');
 		$this->genValue('redirport', 'port ');
 		$this->genPoolType();
 		$this->genKey('static-port');

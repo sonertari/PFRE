@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.3 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.4 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -201,6 +201,9 @@ class FilterBase extends State
 			'multi' => TRUE,
 			'regex' => RE_HOST,
 			),
+		'fromroute' => array(
+			'regex' => RE_ID,
+			),
 		'fromport' => array(
 			'multi' => TRUE,
 			'regex' => RE_PORT,
@@ -208,6 +211,9 @@ class FilterBase extends State
 		'to' => array(
 			'multi' => TRUE,
 			'regex' => RE_HOST,
+			),
+		'toroute' => array(
+			'regex' => RE_ID,
 			),
 		'toport' => array(
 			'multi' => TRUE,
@@ -228,16 +234,16 @@ class FilterBase extends State
 			'regex' => RE_FLAGS,
 			),
 		'icmp-type' => array(
-			'regex' => RE_W_1_10,
+			'regex' => RE_ICMPCODE,
 			),
 		'icmp-code' => array(
-			'regex' => RE_W_1_10,
+			'regex' => RE_ICMPCODE,
 			),
 		'icmp6-type' => array(
-			'regex' => RE_W_1_10,
+			'regex' => RE_ICMPCODE,
 			),
 		'icmp6-code' => array(
-			'regex' => RE_W_1_10,
+			'regex' => RE_ICMPCODE,
 			),
 		'tos' => array(
 			'regex' => RE_W_1_10,
@@ -391,9 +397,10 @@ class FilterBase extends State
 		if (isset($this->rule['all'])) {
 			$this->str.= ' all';
 		} else {
-			if (isset($this->rule['from']) || isset($this->rule['fromport'])) {
+			if (isset($this->rule['from']) || isset($this->rule['fromroute']) || isset($this->rule['fromport'])) {
 				$this->str.= ' from';
 				$this->genItems('from');
+				$this->genValue('fromroute', 'route ');
 				$this->genItems('fromport', 'port');
 			}
 
@@ -401,9 +408,10 @@ class FilterBase extends State
 				$this->genItems('os', 'os');
 			}
 			
-			if (isset($this->rule['to']) || isset($this->rule['toport'])) {
+			if (isset($this->rule['to']) || isset($this->rule['toroute']) || isset($this->rule['toport'])) {
 				$this->str.= ' to';
 				$this->genItems('to');
+				$this->genValue('toroute', 'route ');
 				$this->genItems('toport', 'port');
 			}
 		}

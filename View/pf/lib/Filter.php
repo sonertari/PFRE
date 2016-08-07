@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.15 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: Filter.php,v 1.16 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -71,8 +71,14 @@ class Filter extends FilterBase
 			$this->inputKey('action');
 			if (filter_input(INPUT_POST, 'action') === 'block') {
 				$this->inputKey('blockoption');
+				$this->inputKey('block-ttl');
+				$this->inputKey('block-icmpcode');
+				$this->inputKey('block-icmp6code');
 			} else {
 				unset($this->rule['blockoption']);
+				unset($this->rule['block-ttl']);
+				unset($this->rule['block-icmpcode']);
+				unset($this->rule['block-icmp6code']);
 			}
 		}
 	}
@@ -82,6 +88,17 @@ class Filter extends FilterBase
 		$this->inputDel('interface', 'delInterface');
 		$this->inputAdd('interface', 'addInterface');
 		$this->inputKey('rdomain');
+	}
+
+	function inputPoolType()
+	{
+		$this->inputBool('bitmask');
+		$this->inputBool('least-states');
+		$this->inputBool('random');
+		$this->inputBool('round-robin');
+		$this->inputBool('source-hash');
+		$this->inputKeyIfHasVar('source-hash-key', 'source-hash');
+		$this->inputBool('sticky-address');
 	}
 
 	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
@@ -144,6 +161,12 @@ class Filter extends FilterBase
 					<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
 					<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
 				</select>
+				<input type="text" name="ttl" id="ttl" value="<?php echo $this->rule['block-ttl']; ?>" size="20" placeholder="number" <?php echo $this->rule['blockoption'] == 'return-rst' ? '' : 'disabled' ?> />
+				<label for="ttl">ttl</label>
+				<input type="text" name="icmpcode" id="icmpcode" value="<?php echo $this->rule['block-icmpcode']; ?>" size="20" placeholder="number or abbrev." <?php echo $this->rule['blockoption'] == 'return-icmp' ? '' : 'disabled' ?> />
+				<label for="icmpcode">icmpcode</label>
+				<input type="text" name="icmp6code" id="icmp6code" value="<?php echo $this->rule['block-icmp6code']; ?>" size="20" placeholder="number or abbrev." <?php echo (isset($this->rule['block-icmpcode']) && $this->rule['blockoption'] == 'return-icmp') || $this->rule['blockoption'] == 'return-icmp6' ? '' : 'disabled' ?> />
+				<label for="icmp6code">icmp6code</label>
 				<?php $this->editHelp('block') ?>
 			</td>
 		</tr>
@@ -166,6 +189,39 @@ class Filter extends FilterBase
 				<input type="text" name="rdomain" id="rdomain" value="<?php echo $this->rule['rdomain']; ?>" size="10" placeholder="number" <?php echo isset($this->rule['interface']) ? 'disabled' : '' ?> />
 				<label for="rdomain">routing domain</label>
 				<?php $this->editHelp('rdomain') ?>
+			</td>
+		</tr>
+		<?php
+	}
+
+	function editPoolType()
+	{
+		?>
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
+			<td class="title">
+				<?php echo _TITLE('Redirect Options').':' ?>
+			</td>
+			<td>
+				<input type="checkbox" id="bitmask" name="bitmask" <?php echo ($this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="bitmask" <?php echo ($this->rule['bitmask'] ? 'checked' : ''); ?> />
+				<label for="bitmask">bitmask</label>
+				<br>
+				<input type="checkbox" id="least-states" name="least-states" <?php echo ($this->rule['bitmask'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="least-states" <?php echo ($this->rule['least-states'] ? 'checked' : ''); ?> />
+				<label for="least-states">least-states</label>
+				<br>
+				<input type="checkbox" id="random" name="random" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="random" <?php echo ($this->rule['random'] ? 'checked' : ''); ?> />
+				<label for="random">random</label>
+				<br>
+				<input type="checkbox" id="round-robin" name="round-robin" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['source-hash'] ? 'disabled' : ''); ?> value="round-robin" <?php echo ($this->rule['round-robin'] ? 'checked' : ''); ?> />
+				<label for="round-robin">round-robin</label>
+				<br>
+				<input type="checkbox" id="source-hash" name="source-hash" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] ? 'disabled' : ''); ?> value="source-hash" <?php echo ($this->rule['source-hash'] ? 'checked' : ''); ?> />
+				<label for="source-hash">source-hash</label>
+				<input type="text" id="source-hash-key" name="source-hash-key" <?php echo ($this->rule['source-hash'] ? '' : 'disabled'); ?> value="<?php echo $this->rule['source-hash-key']; ?>" size="32" />
+				<label for="source-hash-key">key</label>
+				<br>
+				<input type="checkbox" id="sticky-address" name="sticky-address" <?php echo ($this->rule['bitmask'] || $this->rule['least-states'] || $this->rule['random'] || $this->rule['round-robin'] || $this->rule['source-hash'] ? '' : 'disabled'); ?> value="sticky-address" <?php echo ($this->rule['sticky-address'] ? 'checked' : ''); ?> />
+				<label for="sticky-address">sticky-address</label>
+				<?php $this->editHelp('rdr-method') ?>
 			</td>
 		</tr>
 		<?php

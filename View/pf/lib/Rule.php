@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.28 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: Rule.php,v 1.29 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -123,6 +123,15 @@ class Rule
 		?>
 		<td title="<?php echo $title; ?>">
 			<?php $this->printValue($this->rule[$key]); ?>
+		</td>
+		<?php
+	}
+
+	function dispValues($key, $title)
+	{
+		?>
+		<td title="<?php echo $title; ?>">
+			<?php $this->printHostPort($this->rule[$key], TRUE); ?>
 		</td>
 		<?php
 	}

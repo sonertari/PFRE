@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: NatBase.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,54 +35,9 @@
 
 class NatBase extends Filter
 {
-	protected $keyNatBase= array(
-		'bitmask' => array(
-			'method' => 'parseBool',
-			'params' => array(),
-			),
-		'least-states' => array(
-			'method' => 'parseBool',
-			'params' => array(),
-			),
-		'round-robin' => array(
-			'method' => 'parseBool',
-			'params' => array(),
-			),
-		'random' => array(
-			'method' => 'parseBool',
-			'params' => array(),
-			),
-		'source-hash' => array(
-			'method' => 'parseSourceHash',
-			'params' => array(),
-			),
-		'sticky-address' => array(
-			'method' => 'parseBool',
-			'params' => array(),
-			),
-		);
-
-	protected $typeNatBase= array(
-		'bitmask' => array(
-			'regex' => RE_BOOL,
-			),
-		'least-states' => array(
-			'regex' => RE_BOOL,
-			),
-		'round-robin' => array(
-			'regex' => RE_BOOL,
-			),
-		'random' => array(
-			'regex' => RE_BOOL,
-			),
-		'source-hash' => array(
-			'regex' => RE_BOOL,
-			),
-		'source-hash-key' => array(
-			'regex' => RE_SOURCE_HASH_KEY,
-			),
-		'sticky-address' => array(
-			'regex' => RE_BOOL,
+	protected $typeRedirPort= array(
+		'redirport' => array(
+			'regex' => RE_PORTSPEC,
 			),
 		);
 
@@ -90,12 +45,14 @@ class NatBase extends Filter
 	{
 		$this->keywords = array_merge(
 			$this->keywords,
-			$this->keyNatBase
+			$this->keyPoolType
 			);
 
 		$this->typedef= array_merge(
 			$this->typedef,
-			$this->typeNatBase
+			$this->typeRedirHost,
+			$this->typeRedirPort,
+			$this->typePoolType
 			);
 
 		parent::__construct($str);
@@ -109,18 +66,6 @@ class NatBase extends Filter
 		$this->str= preg_replace("/\"/", " \" ", $this->str);
 	}
 
-	function parseSourceHash()
-	{
-		$this->parseBool();
-
-		/// @attention No pattern for hash key or string, so check keywords instead
-		/// This is one of the benefits of using keyword lists instead of switch/case structs while parsing
-		//if (preg_match('/^[a-f\d]{16,}$/', $this->words[$this->index + 1])) {
-		if (!in_array($this->words[$this->index + 1], $this->keywords)) {
-			$this->rule['source-hash-key']= $this->words[++$this->index];
-		}
-	}
-
 	function generate()
 	{
 		$this->genAction();
@@ -129,28 +74,13 @@ class NatBase extends Filter
 		$this->genFilterOpts();
 
 		$this->genValue('type');
-		$this->genValue('redirhost');
+		$this->genItems('redirhost');
 		$this->genValue('redirport', 'port ');
 		$this->genPoolType();
 
 		$this->genComment();
 		$this->str.= "\n";
 		return $this->str;
-	}
-
-	function genPoolType()
-	{
-		$this->genKey('bitmask');
-		$this->genKey('least-states');
-		$this->genKey('random');
-		$this->genKey('round-robin');
-
-		$this->genKey('source-hash');
-		if (isset($this->rule['source-hash'])) {
-			$this->genValue('source-hash-key');
-		}
-
-		$this->genKey('sticky-address');
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.8 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: Rule.php,v 1.9 2016/08/07 00:08:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -345,10 +345,24 @@ class Rule
 			while ($this->words[++$this->index] != ')' && !$this->isEndOfWords()) {
 				$items[]= $this->words[$this->index];
 			}
-			return '(' . implode(' ', $items) . ')';
+			$retval= '(' . implode(' ', $items) . ')';
 		} else {
-			return $this->words[$this->index];
+			// IP range, routehost = host "@" interface-name, IP net
+			if ($this->words[$this->index + 1] == '-' || $this->words[$this->index + 1] == '@' || $this->words[$this->index + 1] == '/') {
+				$retval= $this->words[$this->index] . ' ' . $this->words[$this->index + 1] . ' ' . $this->words[$this->index + 2];
+				$this->index+= 2;
+			} else {
+				$retval= $this->words[$this->index];
+			}
 		}
+
+		// address [ "weight" number ] | address [ "/" mask-bits ] [ "weight" number ]
+		if ($this->words[$this->index + 1] == 'weight') {
+			$retval= $this->words[$this->index] . ' ' . $this->words[$this->index + 1] . ' ' . $this->words[$this->index + 2];
+			$this->index+= 2;
+		}
+
+		return $retval;
 	}
 
 	function parsePortItem()
@@ -407,14 +421,20 @@ class Rule
 		}
 	}
 
-	function parseSrcDest($port)
+	function parseSrcDest($portKey)
 	{
 		if ($this->words[$this->index + 1] != 'port') {
-			$this->rule[$this->words[$this->index]]= $this->parseItem();
+			if ($this->words[$this->index + 1] == 'route') {
+				$hostKey= $this->words[$this->index];
+				$this->index+= 2;
+				$this->rule[$hostKey . 'route']= $this->words[$this->index];
+			} else {
+				$this->parseItems($this->words[$this->index]);
+			}
 		}
 		if ($this->words[$this->index + 1] == 'port') {
 			$this->index++;
-			$this->rule[$port]= $this->parsePortItem();
+			$this->rule[$portKey]= $this->parsePortItem();
 		}
 	}
 
@@ -449,10 +469,10 @@ class Rule
 	
 	function parseICMPType($code)
 	{
-		$this->rule[$this->words[$this->index]]= $this->parseItem();
+		$this->parseItems($this->words[$this->index]);
 		if ($this->words[$this->index + 1] == 'code') {
 			$this->index++;
-			$this->rule[$code]= $this->parseItem();
+			$this->parseItems($code);
 		}
 	}
 

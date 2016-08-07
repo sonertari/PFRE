@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.6 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.7 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -45,7 +45,7 @@ class DivertPacket extends Filter
 		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
-		$this->dispValue('redirport', 'Redirect Port');
+		$this->dispValue('divertport', 'Divert Port');
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -58,7 +58,7 @@ class DivertPacket extends Filter
 		$this->inputLog();
 		$this->inputBool('quick');
 
-		$this->inputKey('redirport');
+		$this->inputKey('divertport');
 
 		$this->inputFilterOpts();
 
@@ -80,7 +80,7 @@ class DivertPacket extends Filter
 		$this->editLog();
 		$this->editCheckbox('quick', 'Quick');
 
-		$this->editText('redirport', 'Redirect Port', 'divert-packet', NULL, 'number, name, table or macro');
+		$this->editText('divertport', 'Divert Port', 'divert-packet', NULL, 'number, name, table or macro');
 
 		$this->editFilterOpts();
 
