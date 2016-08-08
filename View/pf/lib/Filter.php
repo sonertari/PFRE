@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.16 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: Filter.php,v 1.17 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -161,12 +161,12 @@ class Filter extends FilterBase
 					<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
 					<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
 				</select>
-				<input type="text" name="ttl" id="ttl" value="<?php echo $this->rule['block-ttl']; ?>" size="20" placeholder="number" <?php echo $this->rule['blockoption'] == 'return-rst' ? '' : 'disabled' ?> />
-				<label for="ttl">ttl</label>
-				<input type="text" name="icmpcode" id="icmpcode" value="<?php echo $this->rule['block-icmpcode']; ?>" size="20" placeholder="number or abbrev." <?php echo $this->rule['blockoption'] == 'return-icmp' ? '' : 'disabled' ?> />
-				<label for="icmpcode">icmpcode</label>
-				<input type="text" name="icmp6code" id="icmp6code" value="<?php echo $this->rule['block-icmp6code']; ?>" size="20" placeholder="number or abbrev." <?php echo (isset($this->rule['block-icmpcode']) && $this->rule['blockoption'] == 'return-icmp') || $this->rule['blockoption'] == 'return-icmp6' ? '' : 'disabled' ?> />
-				<label for="icmp6code">icmp6code</label>
+				<input type="text" name="block-ttl" id="block-ttl" value="<?php echo $this->rule['block-ttl']; ?>" size="20" placeholder="number" <?php echo $this->rule['blockoption'] == 'return-rst' ? '' : 'disabled' ?> />
+				<label for="block-ttl">ttl</label>
+				<input type="text" name="block-icmpcode" id="block-icmpcode" value="<?php echo $this->rule['block-icmpcode']; ?>" size="20" placeholder="number or abbrev." <?php echo $this->rule['blockoption'] == 'return-icmp' ? '' : 'disabled' ?> />
+				<label for="block-icmpcode">icmpcode</label>
+				<input type="text" name="block-icmp6code" id="block-icmp6code" value="<?php echo $this->rule['block-icmp6code']; ?>" size="20" placeholder="number or abbrev." <?php echo (isset($this->rule['block-icmpcode']) && $this->rule['blockoption'] == 'return-icmp') || $this->rule['blockoption'] == 'return-icmp6' ? '' : 'disabled' ?> />
+				<label for="block-icmp6code">icmp6code</label>
 				<?php $this->editHelp('block') ?>
 			</td>
 		</tr>

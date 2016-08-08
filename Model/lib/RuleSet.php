@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.7 2016/08/07 00:45:30 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.8 2016/08/08 08:20:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -249,7 +249,7 @@ class RuleSet
 		}
 	}
 	
-	function generate($lines= FALSE, $uptoRuleNumber= NULL, $includeNonRules= TRUE, $singleLineNonRules= FALSE)
+	function generate($printNumbers= FALSE, $uptoRuleNumber= NULL, $includeNonRules= TRUE, $singleLineNonRules= FALSE)
 	{
 		if ($uptoRuleNumber == NULL) {
 			$uptoRuleNumber= count($this->rules);
@@ -271,10 +271,10 @@ class RuleSet
 		}
         
 		// Do not merge this loop with the generate loop above
-		if ($lines) {
-			$linenumber= 0;
+		if ($printNumbers) {
+			$ruleNumber= 0;
 			foreach (explode("\n", $str) as $line) {
-				$s.= sprintf('% 4d', $linenumber++) . ": $line\n";
+				$s.= sprintf('% 4d', $ruleNumber++) . ": $line\n";
 			}
 			$str= $s;
 		}

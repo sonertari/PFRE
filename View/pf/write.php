@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.6 2016/08/08 04:03:41 soner Exp $ */
+/* $pfre: write.php,v 1.7 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,9 +35,9 @@
 
 require_once ('include.php');
 
-$lines= TRUE;
-if (count($_POST) && !filter_has_var(INPUT_POST, 'lines')) {
-	$lines= FALSE;
+$printNumbers= TRUE;
+if (count($_POST) && !filter_has_var(INPUT_POST, 'numbers')) {
+	$printNumbers= FALSE;
 }
 
 $testResult= $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules));
@@ -59,16 +59,16 @@ if (filter_has_var(INPUT_POST, 'forcedisplay')) {
 }
 
 if ($testResult || $force) {
-	/// @todo Check why we cannot pass FALSE as lines param
-	$generated= $View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), $lines ? 1 : 0, $force);
+	/// @todo Check why we cannot pass FALSE as numbers param
+	$generated= $View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), $printNumbers ? 1 : 0, $force);
 }
 
 require_once($VIEW_PATH.'/header.php');
 ?>
 <fieldset>
 	<form id="installform" name="installform" action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
-		<input type="checkbox" id="lines" name="lines" <?php echo $lines ? 'checked' : '' ?> onclick="document.installform.apply.click()" />
-		<label for="lines">Display line numbers</label>
+		<input type="checkbox" id="numbers" name="numbers" <?php echo $printNumbers ? 'checked' : '' ?> onclick="document.installform.apply.click()" />
+		<label for="numbers">Display line numbers</label>
 		<input type="checkbox" id="forcedisplay" name="forcedisplay" <?php echo filter_has_var(INPUT_POST, 'forcedisplay') ? 'checked' : ''; ?> <?php echo $testResult ? 'disabled' : ''; ?> onclick="document.installform.apply.click()" />
 		<label for="forcedisplay">Display with errors</label>
 		<input type="submit" id="apply" name="apply" value="Apply" />

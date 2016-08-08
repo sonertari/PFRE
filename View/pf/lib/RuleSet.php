@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.25 2016/08/08 15:48:29 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.26 2016/08/08 17:25:04 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -127,13 +127,13 @@ class RuleSet
 			array_push($this->rules, array());
 			return $this->nextRuleNumber();
 		} else {
-			// Preserve the keys for diff
-			$tail= array_slice($this->rules, $ruleNumber, NULL, TRUE);
-			$head= array_diff_key($this->rules, $tail);
-
 			// Insert a new rule in the middle
-			array_push($head, array());
-			$this->rules= array_merge($head, $tail);
+			$head= array_slice($this->rules, 0, $ruleNumber);
+			$tail= array_slice($this->rules, $ruleNumber);
+			/// @attention We cannot simply insert an empty array(), array_merge() discards it
+			// hence insert an array with an empty string element, which will be overwritten by the caller
+			// or we could use array_push($head, array()) instead
+			$this->rules= array_merge($head, array(''), $tail);
 			return $ruleNumber;
 		}
 	}
