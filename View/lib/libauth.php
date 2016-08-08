@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libauth.php,v 1.3 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: libauth.php,v 1.4 2016/08/02 09:54:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -132,7 +132,7 @@ function Authentication($passwd)
 	// Update session timeout now, otherwise in the worst case scenario, vars.php may log user out on very close session timeout
 	$_SESSION['Timeout']= time() + $SessionTimeout;
 	
-	header("Location: /pf/index.php");
+	header('Location: /pf/index.php');
 	exit;
 }
 

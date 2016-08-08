@@ -1,5 +1,5 @@
 <?php
-/* $pfre: login.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: login.php,v 1.3 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -71,17 +71,17 @@ if (filter_has_var(INPUT_POST, 'Login')) {
 	$_SESSION['USER']= filter_input(INPUT_POST, 'UserName');
 	Authentication(filter_input(INPUT_POST, 'Password'));
 }
-else {
-	if ($_SESSION['Timeout']) {
-		// If user was already logged out, do not check timeout, LogUserOut() sets timeout to -1
-		// Otherwise results in a loop
-		if ($_SESSION['Timeout'] > 0) {
-			if ($_SESSION['Timeout'] <= time()) {
-				LogUserOut('Session timed out');
-			} else {
-				header("Location: /pf/index.php");
-				exit;
-			}
+elseif ($_SESSION['Timeout']) {
+	// If user was already logged out, do not check timeout, LogUserOut() sets timeout to -1
+	// Otherwise results in a loop
+	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Session timeout: ' . $_SESSION['Timeout'] . ', time: ' . time());
+
+	if ($_SESSION['Timeout'] > 0) {
+		if ($_SESSION['Timeout'] <= time()) {
+			LogUserOut('Session timed out');
+		} else {
+			header("Location: /pf/index.php");
+			exit;
 		}
 	}
 }
