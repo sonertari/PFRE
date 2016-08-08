@@ -1,5 +1,5 @@
 <?php
-/* $pfre: BinatTo.php,v 1.3 2016/08/02 12:01:08 soner Exp $ */
+/* $pfre: BinatTo.php,v 1.4 2016/08/04 14:42:52 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,5 +35,9 @@
 
 class BinatTo extends NatBase
 {
+	function setType()
+	{
+		$this->rule['type']= 'binat-to';
+	}
 }
 ?>

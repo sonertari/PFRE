@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.7 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.8 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,11 @@
 
 class DivertPacket extends Filter
 {
+	function setType()
+	{
+		$this->rule['type']= 'divert-packet';
+	}
+
 	function display($ruleNumber, $count)
 	{
 		$this->dispHead($ruleNumber);

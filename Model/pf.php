@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.17 2016/08/08 04:03:41 soner Exp $ */
+/* $pfre: pf.php,v 1.18 2016/08/08 10:15:07 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -310,7 +310,7 @@ class Pf extends Model
 		$retval= 0;
 		$output= array();
 
-		/// @todo Check why using 0 as mqid eventually (30-50 access later) fails creating or attaching to the queue
+		/// @todo Check why using 0 as mqid eventually (30-50 accesses later) fails creating or attaching to the queue
 		$mqid= 1;
 
 		// Create or attach to the queue before forking

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatTo.php,v 1.5 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: NatTo.php,v 1.6 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,11 @@
 
 class NatTo extends NatBase
 {
+	function setType()
+	{
+		$this->rule['type']= 'nat-to';
+	}
+
 	function input()
 	{
 		$this->inputAction();

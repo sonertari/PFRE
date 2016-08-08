@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.23 2016/08/08 04:03:41 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.24 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -156,22 +156,43 @@ class RuleSet
 	
 	function setupEditSession($cat, &$action, &$ruleNumber)
 	{
+		global $View;
+
+		// Make sure we deal with possible rule numbers only
+		if (!array_key_exists($ruleNumber, $View->RuleSet->rules)) {
+			$ruleNumber= $this->computeNewRuleNumber($ruleNumber);
+		}
+
+		if ($action == 'edit') {
+			if (!isset($_SESSION['edit']['type']) || $_SESSION['edit']['type'] != $cat || $View->RuleSet->rules[$ruleNumber]->cat != $cat ||
+				$_SESSION['edit']['ruleNumber'] != $ruleNumber) {
+				// The rule being edited has changed, setup a new edit session
+				if (array_key_exists($ruleNumber, $View->RuleSet->rules)) {
+					// Rule exists, so clone from the ruleset
+					unset($_SESSION['edit']);
+					$_SESSION['edit']['type']= $cat;
+					$_SESSION['edit']['ruleNumber']= $ruleNumber;
+					$_SESSION['edit']['object']= clone $this->rules[$ruleNumber];
+				} elseif (!isset($_SESSION['edit'])) {
+					// @attention Add and del operations on multi-valued vars use GET method, so check if there is an active edit session
+					// Rule does not exists, assume add if we are not already editing a new rule
+					// Assume a new rule requested, if the page is submitted on the address line with a non-existing rule number
+					$action= 'add';
+				}
+			}
+		}
+
 		if ($action == 'add') {
 			// Create a new rule and setup a new edit session
 			// Change action state to create, so we don't come back here to reinit session
 			$action= 'create';
 			unset($_SESSION['edit']);
 			$_SESSION['edit']['type']= $cat;
-			$ruleNumber= $this->computeNewRuleNumber($ruleNumber);
 			$_SESSION['edit']['ruleNumber']= $ruleNumber;
 			$_SESSION['edit']['object']= new $cat('');
-		} elseif (!isset($_SESSION['edit']['type']) || $_SESSION['edit']['type'] != $cat || $_SESSION['edit']['ruleNumber'] != $ruleNumber) {
-			// Rule changed, setup a new edit session
-			unset($_SESSION['edit']);
-			$_SESSION['edit']['type']= $cat;
-			$_SESSION['edit']['ruleNumber']= $ruleNumber;
-			$_SESSION['edit']['object']= clone $this->rules[$ruleNumber];
 		}
+
+		// @attention Create action does not need any processing here
 	}
 
 	function test($ruleNumber, $ruleObj)

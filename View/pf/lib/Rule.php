@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.29 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: Rule.php,v 1.30 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -48,6 +48,11 @@ class Rule
 	{
 		$this->cat= get_called_class();
 		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&amp;rulenumber=';
+		$this->setType();
+	}
+
+	function setType()
+	{
 	}
 
 	function dispHead($ruleNumber)
@@ -508,20 +513,22 @@ class Rule
 
 	function editDeleteValueLinks($value, $name, $prefix= '', $postfix= '')
 	{
+		global $action;
+
 		if (isset($value)) {
 			if (is_array($value)) {
 				foreach ($value as $v) {
 					$v= htmlentities($v);
 					echo "$prefix$v$postfix";
 					?>
-					<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>">delete</a><br>
+					<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>&amp;state=<?php echo $action; ?>">delete</a><br>
 					<?php
 				}
 			} else {
 				$value= htmlentities($value);
 				echo "$prefix$value$postfix";
 				?>
-				<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>">delete</a><br>
+				<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>&amp;state=<?php echo $action; ?>">delete</a><br>
 				<?php
 			}
 			?>

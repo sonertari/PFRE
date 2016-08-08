@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.10 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: AfTo.php,v 1.11 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,11 @@
 
 class AfTo extends Filter
 {
+	function setType()
+	{
+		$this->rule['type']= 'af-to';
+	}
+
 	function display($ruleNumber, $count)
 	{
 		$this->dispHead($ruleNumber);

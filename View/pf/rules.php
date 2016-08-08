@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.16 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: rules.php,v 1.17 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -89,10 +89,10 @@ if (filter_has_var(INPUT_GET, 'sender') && array_key_exists(filter_input(INPUT_G
     $edit= filter_input(INPUT_GET, 'sender');
 	$ruleNumber= filter_input(INPUT_GET, 'rulenumber');
 	
-	if (filter_has_var(INPUT_GET, 'action') && filter_input(INPUT_GET, 'action') == 'add') {
+	if (filter_has_var(INPUT_GET, 'state') && filter_input(INPUT_GET, 'state') == 'create') {
 		// Get action has precedence
-		// Accept only add action here
-		$action= 'add';
+		// Accept only create action here
+		$action= 'create';
 	} elseif (filter_has_var(INPUT_POST, 'state') && filter_input(INPUT_POST, 'state') == 'create') {
 		// Post action is used while saving new rules, create is the next state after add
 		// Accept only create action here
@@ -118,12 +118,13 @@ if (filter_has_var(INPUT_POST, 'ruleNumber') && filter_input(INPUT_POST, 'ruleNu
 		$ruleNumber= filter_input(INPUT_POST, 'ruleNumber');
 		if (array_key_exists($ruleNumber, $View->RuleSet->rules)) {
 			$edit= array_search($View->RuleSet->rules[$ruleNumber]->cat, $ruleType2Class);
+			$action= 'edit';
 		} else {
 			// Will add a new rule of category $edit otherwise
 			$edit= filter_input(INPUT_POST, 'category');
 			$edit= $edit == 'all' ? 'filter' : $edit;
+			$action= 'add';
 		}
-		$action= 'edit';
 	} elseif (filter_has_var(INPUT_POST, 'show')) {
 		$show= filter_input(INPUT_POST, 'category');
 		$_SESSION['show']= $show;
@@ -131,13 +132,8 @@ if (filter_has_var(INPUT_POST, 'ruleNumber') && filter_input(INPUT_POST, 'ruleNu
 }
 
 if (isset($edit)) {
-	// Assume a new rule requested, if the page is submitted on the address line with a non-existing rule number
-	if ($action == 'edit' && !array_key_exists($ruleNumber, $View->RuleSet->rules)) {
-		$action= 'add';
-	}
-
     require ('edit.php');
-    exit();
+    exit;
 }
 
 if (filter_has_var(INPUT_GET, 'up')) {

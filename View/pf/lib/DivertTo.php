@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertTo.php,v 1.8 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: DivertTo.php,v 1.9 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,11 @@
 
 class DivertTo extends Filter
 {
+	function setType()
+	{
+		$this->rule['type']= 'divert-to';
+	}
+
 	function display($ruleNumber, $count)
 	{
 		$this->dispHead($ruleNumber);
