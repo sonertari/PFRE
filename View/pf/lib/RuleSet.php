@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.24 2016/08/08 06:55:25 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.25 2016/08/08 15:48:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -161,16 +161,24 @@ class RuleSet
 		// Make sure we deal with possible rule numbers only
 		if (!array_key_exists($ruleNumber, $View->RuleSet->rules)) {
 			$ruleNumber= $this->computeNewRuleNumber($ruleNumber);
+			if ($action == 'edit') {
+				$action= 'add';
+			}
+		}
+
+		if ($action == 'create') {
+			if (!isset($_SESSION['edit']['object']) || $_SESSION['edit']['object']->cat!= $cat || $_SESSION['edit']['ruleNumber'] != $ruleNumber) {
+				$action= 'add';
+			}
 		}
 
 		if ($action == 'edit') {
-			if (!isset($_SESSION['edit']['type']) || $_SESSION['edit']['type'] != $cat || $View->RuleSet->rules[$ruleNumber]->cat != $cat ||
-				$_SESSION['edit']['ruleNumber'] != $ruleNumber) {
+			if (!isset($_SESSION['edit']['object']) || $_SESSION['edit']['object']->cat != $cat || $_SESSION['edit']['ruleNumber'] != $ruleNumber ||
+				$View->RuleSet->rules[$ruleNumber]->cat != $cat) {
 				// The rule being edited has changed, setup a new edit session
 				if (array_key_exists($ruleNumber, $View->RuleSet->rules)) {
 					// Rule exists, so clone from the ruleset
 					unset($_SESSION['edit']);
-					$_SESSION['edit']['type']= $cat;
 					$_SESSION['edit']['ruleNumber']= $ruleNumber;
 					$_SESSION['edit']['object']= clone $this->rules[$ruleNumber];
 				} elseif (!isset($_SESSION['edit'])) {
@@ -187,12 +195,9 @@ class RuleSet
 			// Change action state to create, so we don't come back here to reinit session
 			$action= 'create';
 			unset($_SESSION['edit']);
-			$_SESSION['edit']['type']= $cat;
 			$_SESSION['edit']['ruleNumber']= $ruleNumber;
 			$_SESSION['edit']['object']= new $cat('');
 		}
-
-		// @attention Create action does not need any processing here
 	}
 
 	function test($ruleNumber, $ruleObj)

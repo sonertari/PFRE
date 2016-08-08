@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.5 2016/08/08 08:20:43 soner Exp $ */
+/* $pfre: setup.php,v 1.6 2016/08/08 10:15:07 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -277,9 +277,9 @@ require_once($VIEW_PATH.'/header.php');
 		</td>
 		<td class="none">
 			<?php
-			PrintHelpBox(_HELPBOX('Pfctl commands are executed in a separate process, which sends pfctl output in a message. Parent process times out waiting for an output message after this many seconds. This approach is necessary in case pfctl is stuck or taking too long (and it is on certain cases).
+			PrintHelpBox(_HELPBOX('Pfctl commands are executed in a separate process, which returns pfctl output in a message. Parent process times out waiting for an output message after this many seconds. This approach is necessary in case pfctl is stuck or taking too long (and it is on certain cases).
 
-<b>Setting this timeout to 0 may fail all pfctl execution, effectively disabling rule tests.<b>'));
+<b>Setting this timeout to 0 may fail the execution of all pfctl commands, effectively disabling rule tests.<b>'));
 			?>
 		</td>
 	</tr>
