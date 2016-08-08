@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.5 2016/08/06 22:47:33 soner Exp $ */
+/* $pfre: write.php,v 1.6 2016/08/08 04:03:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -77,8 +77,7 @@ require_once($VIEW_PATH.'/header.php');
 	</form>
 </fieldset>
 <?php
-$printFileName= $View->RuleSet->filename == '/etc/pf.conf' || dirname($View->RuleSet->filename) == '/etc/pfre';
-echo _('Rule file') . ': ' . ($printFileName ? $View->RuleSet->filename : '');
+echo _('Rule file') . ': ' . $View->RuleSet->filename;
 ?>
 <hr style="border: 0; border-bottom: 1px solid gray;" />
 

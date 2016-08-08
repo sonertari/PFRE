@@ -1,5 +1,5 @@
 <?php
-/* $pfre: include.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: include.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -49,4 +49,16 @@ class Pf extends View
 }
 
 $View= new Pf();
+
+// Load the main pf configuration if the ruleset is empty
+if ($View->RuleSet->filename == '') {
+	$filepath= '/etc/pf.conf';
+	$ruleSet= new RuleSet();
+	if ($ruleSet->load($filepath, 0, TRUE)) {
+		$View->RuleSet= $ruleSet;
+		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
+	} else {
+		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+	}
+}
 ?>

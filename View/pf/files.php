@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.10 2016/08/06 22:47:33 soner Exp $ */
+/* $pfre: files.php,v 1.11 2016/08/07 16:01:10 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -119,7 +119,7 @@ if (filter_has_var(INPUT_POST, 'upload')) {
 
 	if ($_FILES['file']['error'] == 0) {
 		$ruleSet= new RuleSet();
-		if ($ruleSet->load($_FILES['file']['tmp_name'], TRUE, $force)) {
+		if ($ruleSet->load($_FILES['file']['tmp_name'], TRUE, $force, $_FILES['file']['name'])) {
 			$View->RuleSet= $ruleSet;
 			/// @todo Unlink the tmp file?
 			PrintHelpWindow('File uploaded: ' . $_FILES['file']['name']);

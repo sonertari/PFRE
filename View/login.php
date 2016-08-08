@@ -1,5 +1,5 @@
 <?php
-/* $pfre: login.php,v 1.3 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: login.php,v 1.4 2016/08/08 05:11:46 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -70,8 +70,7 @@ $View= new View();
 if (filter_has_var(INPUT_POST, 'Login')) {
 	$_SESSION['USER']= filter_input(INPUT_POST, 'UserName');
 	Authentication(filter_input(INPUT_POST, 'Password'));
-}
-elseif ($_SESSION['Timeout']) {
+} elseif ($_SESSION['Timeout']) {
 	// If user was already logged out, do not check timeout, LogUserOut() sets timeout to -1
 	// Otherwise results in a loop
 	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Session timeout: ' . $_SESSION['Timeout'] . ', time: ' . time());

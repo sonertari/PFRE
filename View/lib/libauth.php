@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libauth.php,v 1.4 2016/08/02 09:54:29 soner Exp $ */
+/* $pfre: libauth.php,v 1.5 2016/08/08 05:11:46 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -90,6 +90,10 @@ function pfrewui_syslog($prio, $file, $func, $line, $msg)
 function LogUserOut($reason= 'User logged out')
 {
 	pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, $reason);
+
+	// Save USER to check if the user changes in the next session
+	$_SESSION['PREVIOUS_USER']= $_SESSION['USER'];
+
 	$_SESSION['USER']= 'loggedout';
 	/// @warning Relogin page should not time out
 	$_SESSION['Timeout']= -1;
@@ -131,6 +135,12 @@ function Authentication($passwd)
 
 	// Update session timeout now, otherwise in the worst case scenario, vars.php may log user out on very close session timeout
 	$_SESSION['Timeout']= time() + $SessionTimeout;
+
+	// Reset the pf session if the user changes
+	if (isset($_SESSION['PREVIOUS_USER']) && $_SESSION['PREVIOUS_USER'] !== $_SESSION['USER']) {
+		/// @todo Should we reset everything else, other than USER and Timeout?
+		unset($_SESSION['pf']);
+	}
 	
 	header('Location: /pf/index.php');
 	exit;

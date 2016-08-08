@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.22 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.23 2016/08/08 04:03:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,7 +38,7 @@ class RuleSet
 	public $filename= '';
 	public $rules= array();
 			
-	function load($filename, $tmp= 0, $force= 0)
+	function load($filename, $tmp= 0, $force= 0, $tmpFilename= '')
 	{
 		global $View;
 
@@ -51,6 +51,10 @@ class RuleSet
 
 		if ($retval !== FALSE || $force) {
 			$this->filename= $filename;
+			if ($tmp && $tmpFilename !== '') {
+				// Mark uploaded files
+				$this->filename= "$tmpFilename (uploaded)";
+			}
 			$rulesArray= json_decode($Output[0], TRUE)['rules'];
 		} else {
 			return FALSE;

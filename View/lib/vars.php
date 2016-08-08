@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.12 2016/08/08 04:03:41 soner Exp $ */
+/* $pfre: vars.php,v 1.13 2016/08/08 05:11:46 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -83,7 +83,7 @@ if ($_SESSION['Timeout']) {
 	if ($_SESSION['Timeout'] <= time()) {
 		LogUserOut('Session expired');
 	}
-} elseif (in_array($_SESSION['USER'], $ALL_USERS)) {
+} elseif (isset($_SESSION['USER']) && in_array($_SESSION['USER'], $ALL_USERS)) {
 	$_SESSION['Timeout']= time() + $SessionTimeout;
 }
 
