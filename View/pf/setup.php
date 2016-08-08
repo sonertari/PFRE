@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.3 2016/07/29 03:12:02 soner Exp $ */
+/* $pfre: setup.php,v 1.4 2016/07/30 03:37:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -86,6 +86,13 @@ if (count($_POST)) {
 		if ($View->Controller($Output, 'SetLogLevel', filter_input(INPUT_POST, 'LogLevel'))) {
 			pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'LogLevel set: '.filter_input(INPUT_POST, 'LogLevel'));
 			// Reset $LOG_LEVEL to its new value
+			require($ROOT.'/lib/setup.php');
+		}
+	}
+	else if (filter_has_var(INPUT_POST, 'MaxAnchorNesting')) {
+		if ($View->Controller($Output, 'SetMaxAnchorNesting', filter_input(INPUT_POST, 'MaxAnchorNesting'))) {
+			pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'MaxAnchorNesting set: '.filter_input(INPUT_POST, 'MaxAnchorNesting'));
+			// Reset $MaxAnchorNesting to its new value
 			require($ROOT.'/lib/setup.php');
 		}
 	}
@@ -232,6 +239,22 @@ require_once($VIEW_PATH.'/header.php');
 		<td class="none">
 			<?php
 			PrintHelpBox(_HELPBOX('If enabled, authentication pages are forced to use secure connections. Make sure you have a working SSL setup in the web server configuration, otherwise you cannot even log in to the web user interface.'));
+			?>
+		</td>
+	</tr>
+	<tr class="evenline">
+		<td class="title">
+			<?php echo _TITLE('Max anchor nesting').':' ?>
+		</td>
+		<td>
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
+				<input type="text" name="MaxAnchorNesting" style="width: 50px;" maxlength="2" value="<?php echo $MaxAnchorNesting ?>" />
+				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+			</form>
+		</td>
+		<td class="none">
+			<?php
+			PrintHelpBox(_HELPBOX('Inline anchor rules can be nested. It is advised to limit the number of nesting allowed. Parsing and validation stop at this many number of nesting.'));
 			?>
 		</td>
 	</tr>

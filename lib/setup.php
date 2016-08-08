@@ -43,6 +43,9 @@ $ForceHTTPs= FALSE;
 /// Project-wide log level used in pfrewui_syslog() and pfrec_syslog().
 $LOG_LEVEL= LOG_INFO;
 
+/// Max inline anchors allowed.
+$MaxAnchorNesting= 2;
+
 /// Default locale for both View and Controller.
 $DefaultLocale= 'en_EN';
 ?>

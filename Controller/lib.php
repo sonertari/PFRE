@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.11 2016/08/07 15:09:47 soner Exp $ */
+/* $pfre: lib.php,v 1.12 2016/08/07 16:01:10 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -305,11 +305,12 @@ require_once($MODEL_PATH.'/lib/Blank.php');
 
 function IsInlineAnchor($str, $force= FALSE)
 {
-	global $LOG_LEVEL, $Nesting;
+	global $LOG_LEVEL, $Nesting, $MaxAnchorNesting;
 
 	$result= FALSE;
 	
-	$max= $Nesting + 1 > 2;
+	// Do not allow more than $MaxAnchorNesting count of nested inline rules
+	$max= $Nesting + 1 > $MaxAnchorNesting;
 	if ($max) {
 		Error("Validation Error: Reached max nesting for inline anchors: <pre>" . htmlentities(print_r($str, TRUE)) . '</pre>');
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Validation Error: Reached max nesting for inline anchors: $str");
