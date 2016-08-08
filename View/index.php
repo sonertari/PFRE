@@ -1,5 +1,5 @@
 <?php
-/* $pfre: index.php,v 1.4 2016/07/11 17:31:39 soner Exp $ */
+/* $pfre: index.php,v 1.2 2016/08/08 01:14:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -34,4 +34,5 @@
  */
 
 header('Location: /login.php');
+exit;
 ?>

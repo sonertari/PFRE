@@ -33,5 +33,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-header('Location: conf.php');
+header('Location: /pf/conf.php');
+exit;
 ?>

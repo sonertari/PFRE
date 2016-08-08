@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.15 2016/08/07 21:13:27 soner Exp $ */
+/* $pfre: pf.php,v 1.16 2016/08/08 01:14:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -247,7 +247,7 @@ class Pf extends Model
 
 		$ruleSet= new RuleSet();
 		if (!$ruleSet->load($rulesArray)) {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate/test rules with errors');
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error('Will not test rules with errors'));
 			return FALSE;
 		}
 
@@ -308,11 +308,14 @@ class Pf extends Model
 		$retval= 0;
 		$output= array();
 
-		// Create the queue before forking
-		$queue= msg_get_queue(0);
+		/// @todo Check why using 0 as mqid eventually (30-50 access later) fails creating or attaching to the queue
+		$mqid= 1;
+
+		// Create or attach to the queue before forking
+		$queue= msg_get_queue($mqid);
 		
-		if (!msg_queue_exists(0)) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed creating message queue'));
+		if (!msg_queue_exists($mqid)) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed creating or attaching to message queue'));
 			return FALSE;
 		}
 		
@@ -325,18 +328,18 @@ class Pf extends Model
 
 			$return= FALSE;
 
-			// Parent should wait for output for 10 seconds
+			// Parent should wait for output for 5 seconds
 			$count= 0;
-			while ($count++ < 100) {
+			while ($count++ < 50) {
 				/// @attention Do not wait for a message, loop instead
 				$received= msg_receive($queue, 0, $msgtype, 10000, $msg, FALSE, MSG_NOERROR|MSG_IPC_NOWAIT, $error);
 
 				if ($received && $msgtype == 0) {
-					$decode= json_decode($msg, TRUE);
+					$decoded= json_decode($msg, TRUE);
 
-					if ($decode !== NULL && is_array($decode) && array_key_exists('retval', $decode) && array_key_exists('output', $decode)) {
-						$retval= $decode['retval'];
-						$output= $decode['output'];
+					if ($decoded !== NULL && is_array($decoded) && array_key_exists('retval', $decoded) && array_key_exists('output', $decoded)) {
+						$retval= $decoded['retval'];
+						$output= $decoded['output'];
 
 						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Received pfctl output: $msg");
 
@@ -354,9 +357,6 @@ class Pf extends Model
 				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count");
 			}
 
-			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too
-			exec("/bin/kill -KILL $pid");
-
 			if (!$return) {
 				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Timed out running pfctl command'));
 			}
@@ -366,23 +366,33 @@ class Pf extends Model
 				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed removing message queue'));
 			}
 
+			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too
+			exec("/bin/kill -KILL $pid");
+
 			// Parent survives
 			return $return;
 		} else {
 			// This is the child!
 
-			// Child should run the command and save the result in $tmpFile
+			// Child should run the command and send the result in a message
 			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Running pfctl command');
 			exec($cmd, $output, $retval);
+
 			$msg= array(
 				'retval' => $retval,
 				'output' => $output
 				);
 
-			if (!msg_send($queue, 0, json_encode($msg), FALSE, TRUE, $error)) {
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . json_encode($msg) . ', error: ' . posix_strerror($error));
+			$encoded= json_encode($msg);
+
+			if ($encoded !== NULL) {
+				if (!msg_send($queue, 0, $encoded, FALSE, TRUE, $error)) {
+					pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . $encoded . ', error: ' . posix_strerror($error));
+				} else {
+					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . $encoded);
+				}
 			} else {
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . json_encode($msg));
+				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed encoding pfctl output: ' . print_r($msg, TRUE)));
 			}
 
 			// Child exits

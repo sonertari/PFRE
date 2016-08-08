@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.4 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: write.php,v 1.5 2016/08/06 22:47:33 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -50,7 +50,7 @@ if ($testResult) {
 		}
 	}
 } else {
-	PrintHelpWindow("<br>Ruleset has errors", NULL, 'ERROR');
+	PrintHelpWindow("<br>Failed testing ruleset", NULL, 'ERROR');
 }
 
 $force= 0;

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.10 2016/08/03 12:33:27 soner Exp $ */
+/* $pfre: vars.php,v 1.11 2016/08/03 17:23:19 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -88,7 +88,7 @@ if ($_SESSION['Timeout']) {
 }
 
 if (!isset($_SESSION['USER']) || $_SESSION['USER'] == 'loggedout') {
-	header('Location: http://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').'/index.php');
+	header('Location: /index.php');
 	exit;
 }
 

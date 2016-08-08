@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.8 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: pfrec.php,v 1.9 2016/08/06 21:36:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -129,7 +129,14 @@ else {
 
 /// @attention Always return errors, success or fail
 // Return an encoded array, so that the caller can easily separate output and error messages
-echo json_encode(array($Output, $Error));
+$msg= array($Output, $Error);
+$encoded= json_encode($msg);
+
+if ($encoded !== NULL) {
+	echo $encoded;
+} else {
+	pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed encoding output and error: ' . print_r($msg, TRUE));
+}
 
 exit($retval);
 ?>

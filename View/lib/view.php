@@ -1,5 +1,5 @@
 <?php
-/* $pfre: view.php,v 1.3 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: view.php,v 1.4 2016/08/06 21:36:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -75,10 +75,10 @@ class View
 				$output= array();
 				$errorStr= '';
 
-				$decode= json_decode($outputArray[0]);
-				if ($decode !== NULL && is_array($decode)) {
-					$output= explode("\n", $decode[0]);
-					$errorStr= $decode[1];
+				$decoded= json_decode($outputArray[0]);
+				if ($decoded !== NULL && is_array($decoded)) {
+					$output= explode("\n", $decoded[0]);
+					$errorStr= $decoded[1];
 				} else {
 					$msg= "Failed decoding output: $outputArray[0]";
 					pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");

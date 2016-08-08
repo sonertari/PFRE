@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.21 2016/08/06 14:15:30 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.22 2016/08/06 20:29:32 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -184,7 +184,7 @@ class RuleSet
 	{
 		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == 'Cancel')) {
 			unset($_SESSION['edit']);
-			header('Location: conf.php');
+			header('Location: /pf/conf.php');
 			exit;
 		}
 	}
@@ -198,7 +198,7 @@ class RuleSet
 				}
 				$this->rules[$ruleNumber]= $ruleObj;
 				unset($_SESSION['edit']);
-				header('Location: conf.php');
+				header('Location: /pf/conf.php');
 				exit;
 			}
 		}
