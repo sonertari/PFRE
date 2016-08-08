@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.16 2016/08/08 01:14:30 soner Exp $ */
+/* $pfre: pf.php,v 1.17 2016/08/08 04:03:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -294,6 +294,8 @@ class Pf extends Model
 	 */
 	function RunPfctlCmd($cmd, &$output, &$retval)
 	{
+		global $PfctlTimeout;
+
 		/// @bug pfctl gets stuck, or takes a long time to return on some errors
 		// Example 1: A macro using an unknown interface: int_if = "a1",
 		// pfctl tries to look up for its IP address, which takes a long time before failing with:
@@ -328,10 +330,18 @@ class Pf extends Model
 
 			$return= FALSE;
 
-			// Parent should wait for output for 5 seconds
-			$count= 0;
-			while ($count++ < 50) {
-				/// @attention Do not wait for a message, loop instead
+			// Parent should wait for output for $PfctlTimeout seconds
+			// Wait count starts from 1 due to do..while loop
+			$count= 1;
+
+			// Add 1 to prevent division by zero
+			$interval= $PfctlTimeout/($PfctlTimeout + 1)/10;
+
+			do {
+				exec("/bin/sleep $interval");
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count, sleep interval: $interval");
+
+				/// @attention Do not wait for a message, loop instead: MSG_IPC_NOWAIT
 				$received= msg_receive($queue, 0, $msgtype, 10000, $msg, FALSE, MSG_NOERROR|MSG_IPC_NOWAIT, $error);
 
 				if ($received && $msgtype == 0) {
@@ -353,9 +363,7 @@ class Pf extends Model
 					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Failed receiving pfctl output: ' . posix_strerror($error));
 				}
 
-				exec('/bin/sleep .1');
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count");
-			}
+			} while ($count++ < $PfctlTimeout * 10);
 
 			if (!$return) {
 				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Timed out running pfctl command'));

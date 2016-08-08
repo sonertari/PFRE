@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.4 2016/07/30 03:37:37 soner Exp $ */
+/* $pfre: setup.php,v 1.5 2016/08/08 08:20:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -93,6 +93,13 @@ if (count($_POST)) {
 		if ($View->Controller($Output, 'SetMaxAnchorNesting', filter_input(INPUT_POST, 'MaxAnchorNesting'))) {
 			pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'MaxAnchorNesting set: '.filter_input(INPUT_POST, 'MaxAnchorNesting'));
 			// Reset $MaxAnchorNesting to its new value
+			require($ROOT.'/lib/setup.php');
+		}
+	}
+	else if (filter_has_var(INPUT_POST, 'PfctlTimeout')) {
+		if ($View->Controller($Output, 'SetPfctlTimeout', filter_input(INPUT_POST, 'PfctlTimeout'))) {
+			pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'PfctlTimeout set: '.filter_input(INPUT_POST, 'PfctlTimeout'));
+			// Reset $PfctlTimeout to its new value
 			require($ROOT.'/lib/setup.php');
 		}
 	}
@@ -238,7 +245,7 @@ require_once($VIEW_PATH.'/header.php');
 		</td>
 		<td class="none">
 			<?php
-			PrintHelpBox(_HELPBOX('If enabled, authentication pages are forced to use secure connections. Make sure you have a working SSL setup in the web server configuration, otherwise you cannot even log in to the web user interface.'));
+			PrintHelpBox(_HELPBOX('If enabled, authentication pages are forced to use secure connections. Make sure you have a working SSL setup in the web server configuration, otherwise you cannot even log in to the web user interface. However, passwords are always sent encrypted whether plain or secure HTTP is used.'));
 			?>
 		</td>
 	</tr>
@@ -255,6 +262,24 @@ require_once($VIEW_PATH.'/header.php');
 		<td class="none">
 			<?php
 			PrintHelpBox(_HELPBOX('Inline anchor rules can be nested. It is advised to limit the number of nesting allowed. Parsing and validation stop at this many number of nesting.'));
+			?>
+		</td>
+	</tr>
+	<tr class="oddline">
+		<td class="title">
+			<?php echo _TITLE('Pfctl Timeout').':' ?>
+		</td>
+		<td>
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
+				<input type="text" name="PfctlTimeout" style="width: 50px;" maxlength="2" value="<?php echo $PfctlTimeout ?>" />
+				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+			</form>
+		</td>
+		<td class="none">
+			<?php
+			PrintHelpBox(_HELPBOX('Pfctl commands are executed in a separate process, which sends pfctl output in a message. Parent process times out waiting for an output message after this many seconds. This approach is necessary in case pfctl is stuck or taking too long (and it is on certain cases).
+
+<b>Setting this timeout to 0 may fail all pfctl execution, effectively disabling rule tests.<b>'));
 			?>
 		</td>
 	</tr>

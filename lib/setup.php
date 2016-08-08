@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.6 2016/07/11 17:31:40 soner Exp $ */
+/* $pfre: setup.php,v 1.2 2016/08/08 08:20:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -45,6 +45,9 @@ $LOG_LEVEL= LOG_INFO;
 
 /// Max inline anchors allowed.
 $MaxAnchorNesting= 2;
+
+/// Wait pfctl output for this many seconds before giving up.
+$PfctlTimeout= 5;
 
 /// Default locale for both View and Controller.
 $DefaultLocale= 'en_EN';

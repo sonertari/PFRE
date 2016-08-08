@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.5 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: model.php,v 1.6 2016/08/08 08:20:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -97,6 +97,11 @@ class Model
 				'SetMaxAnchorNesting'=>	array(
 					'argv'	=>	array(NUM),
 					'desc'	=>	_('Set max anchor nesting'),
+					),
+
+				'SetPfctlTimeout'=>	array(
+					'argv'	=>	array(NUM),
+					'desc'	=>	_('Set pfctl timeout'),
 					),
 				)
 			);
@@ -212,6 +217,14 @@ class Model
 		
 		// Append semi-colon to new value, this setting is a PHP line
 		return $this->SetNVP($ROOT.'/lib/setup.php', '\$MaxAnchorNesting', $max.';');
+	}
+
+	function SetPfctlTimeout($timeout)
+	{
+		global $ROOT;
+		
+		// Append semi-colon to new value, this setting is a PHP line
+		return $this->SetNVP($ROOT.'/lib/setup.php', '\$PfctlTimeout', $timeout.';');
 	}
 	
 	/** Runs given shell command and returns its output as string.
