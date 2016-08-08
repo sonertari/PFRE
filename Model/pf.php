@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.14 2016/08/07 00:45:30 soner Exp $ */
+/* $pfre: pf.php,v 1.15 2016/08/07 21:13:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -304,84 +304,86 @@ class Pf extends Model
 		// > no IP address found for test
 		// > could not parse host specification
 		// Therefore, need to use a function which returns upon timeout, hence this method
-		/// @todo Find a better/faster solution than using files
 
 		$retval= 0;
 		$output= array();
 
-		$tmpFile= '/tmp/pfre_pfctl.out';
-
-		/// @attention Make sure the file is really removed before continuing
-		// Try to delete for 3 seconds
-		$count= 0;
-		while (file_exists($tmpFile) && $count++ < 30) {
-			unlink($tmpFile);
-
-			exec('/bin/sleep .1');
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Unlink wait count: $count");
-		}
+		// Create the queue before forking
+		$queue= msg_get_queue(0);
 		
-		if (file_exists($tmpFile)) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Cannot delete tmp file: $tmpFile"));
+		if (!msg_queue_exists(0)) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed creating message queue'));
 			return FALSE;
 		}
-
+		
 		$pid= pcntl_fork();
+
 		if ($pid == -1) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Cannot fork');
-		}
-		else if ($pid) {
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Cannot fork pfctl process'));
+		} elseif ($pid) {
 			// This is the parent!
+
+			$return= FALSE;
 
 			// Parent should wait for output for 10 seconds
 			$count= 0;
 			while ($count++ < 100) {
-				$contents= $this->GetFile($tmpFile);
+				/// @attention Do not wait for a message, loop instead
+				$received= msg_receive($queue, 0, $msgtype, 10000, $msg, FALSE, MSG_NOERROR|MSG_IPC_NOWAIT, $error);
 
-				if ($contents !== FALSE) {
-					$decode= json_decode($contents, TRUE);
+				if ($received && $msgtype == 0) {
+					$decode= json_decode($msg, TRUE);
 
 					if ($decode !== NULL && is_array($decode) && array_key_exists('retval', $decode) && array_key_exists('output', $decode)) {
 						$retval= $decode['retval'];
 						$output= $decode['output'];
 
-						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Success getting pfctl output: $contents");
+						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Received pfctl output: $msg");
 
-						unlink($tmpFile);
-						return TRUE;
+						$return= TRUE;
+						break;
 					} else {
-						pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Failed decoding pfctl output: $contents");
+						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Failed decoding pfctl output: $msg"));
+						break;
 					}
 				} else {
-					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Failed reading tmp file: $tmpFile");
+					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Failed receiving pfctl output: ' . posix_strerror($error));
 				}
 
 				exec('/bin/sleep .1');
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Read wait count: $count");
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count");
 			}
 
-			/// @attention Make sure the child is dead, otherwise the parent gets stuck too
+			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too
 			exec("/bin/kill -KILL $pid");
 
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Timed out running pfctl command'));
+			if (!$return) {
+				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Timed out running pfctl command'));
+			}
 
-			unlink($tmpFile);
+			// Parent removes the queue
+			if (!msg_remove_queue($queue)) {
+				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed removing message queue'));
+			}
+
 			// Parent survives
-			return FALSE;
-		}
-		else {
+			return $return;
+		} else {
 			// This is the child!
 
 			// Child should run the command and save the result in $tmpFile
 			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Running pfctl command');
 			exec($cmd, $output, $retval);
-			$contents= array(
+			$msg= array(
 				'retval' => $retval,
 				'output' => $output
 				);
 
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Saving pfctl output: $tmpFile");
-			file_put_contents($tmpFile, json_encode($contents), LOCK_EX);
+			if (!msg_send($queue, 0, json_encode($msg), FALSE, TRUE, $error)) {
+				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . json_encode($msg) . ', error: ' . posix_strerror($error));
+			} else {
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . json_encode($msg));
+			}
 
 			// Child exits
 			exit;
