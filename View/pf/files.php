@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.11 2016/08/07 16:01:10 soner Exp $ */
+/* $pfre: files.php,v 1.12 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -143,8 +143,21 @@ if (filter_has_var(INPUT_POST, 'download')) {
 			// For IE
 			ini_set('zlib.output_compression', 'Off');
 		}
+
 		header('Content-Type: application/octet-stream');
-		header('Content-Disposition: attachment; filename="pf.conf"');
+
+		if ($View->RuleSet->filename != '') {
+			if (preg_match('/^(.*)\s+\(uploaded\)/', $View->RuleSet->filename, $match)) {
+				$filename= $match[1];
+			} else {
+				$filename= basename($View->RuleSet->filename);
+			}
+		} else {
+			$filename= 'pf.conf';
+		}
+
+		header('Content-Disposition: attachment; filename="' . $filename . '"');
+
 		echo implode("\n", $Output);
 		exit;
 	} else {
