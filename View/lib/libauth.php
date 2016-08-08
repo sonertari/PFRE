@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libauth.php,v 1.5 2016/08/08 05:11:46 soner Exp $ */
+/* $pfre: libauth.php,v 1.6 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,6 +42,10 @@ require_once($VIEW_PATH.'/lib/setup.php');
 if (!isset($_SESSION)) {
 	session_name('pfre');
 	session_start();
+}
+
+if (filter_has_var(INPUT_GET, 'logout')) {
+	LogUserOut();
 }
 
 /** Wrapper for syslog().
@@ -146,10 +150,7 @@ function Authentication($passwd)
 	exit;
 }
 
-/** HTML Header without authentication.
- *
- * Called by AuthHTMLHeader() after logout check, and also by Login page.
- * Separate from AuthHTMLHeader() because Login page should not check logout naturally.
+/** HTML Header.
  *
  * @param[in]	$reloadrate	Page reload rate, defaults to 0 (no reload)
  * @param[in]	$color		Page background, Login page uses gray

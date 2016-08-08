@@ -1,5 +1,5 @@
 <?php
-/* $pfre: libwui.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
+/* $pfre: libwui.php,v 1.3 2016/07/30 00:23:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,21 +36,6 @@
 /** @file
  * WUI library functions.
  */
-
-/** Common HTML Header lines.
- *
- * @attention This function should be called by all pages, because it enforces authentication.
- *
- * @param[in]	$reloadrate	Page reload rate, defaults to 0 (no reload)
- */
-function AuthHTMLHeader()
-{
-	if (filter_has_var(INPUT_GET, 'logout')) {
-		LogUserOut();
-	}
-
-	HTMLHeader();
-}
 
 /** Common HTML footer lines.
  *

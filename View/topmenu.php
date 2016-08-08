@@ -1,5 +1,5 @@
 <?php
-/* $pfre: topmenu.php,v 1.26 2016/07/18 15:30:57 soner Exp $ */
+/* $pfre: topmenu.php,v 1.2 2016/07/29 02:27:09 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@
 
 require_once('lib/vars.php');
 
-AuthHTMLHeader();
+HTMLHeader();
 ?>
 <tr id="top">
 	<td>
