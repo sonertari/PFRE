@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.18 2016/08/08 10:15:07 soner Exp $ */
+/* $pfre: pf.php,v 1.19 2016/08/08 15:48:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -321,6 +321,8 @@ class Pf extends Model
 			return FALSE;
 		}
 		
+		$sendtype= 1;
+
 		$pid= pcntl_fork();
 
 		if ($pid == -1) {
@@ -342,21 +344,19 @@ class Pf extends Model
 				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count, sleep interval: $interval");
 
 				/// @attention Do not wait for a message, loop instead: MSG_IPC_NOWAIT
-				$received= msg_receive($queue, 0, $msgtype, 10000, $msg, FALSE, MSG_NOERROR|MSG_IPC_NOWAIT, $error);
+				$received= msg_receive($queue, 0, $recvtype, 10000, $msg, TRUE, MSG_NOERROR|MSG_IPC_NOWAIT, $error);
 
-				if ($received && $msgtype == 0) {
-					$decoded= json_decode($msg, TRUE);
-
-					if ($decoded !== NULL && is_array($decoded) && array_key_exists('retval', $decoded) && array_key_exists('output', $decoded)) {
-						$retval= $decoded['retval'];
-						$output= $decoded['output'];
+				if ($received && $sendtype == $recvtype) {
+					if (is_array($msg) && array_key_exists('retval', $msg) && array_key_exists('output', $msg)) {
+						$retval= $msg['retval'];
+						$output= $msg['output'];
 
 						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Received pfctl output: $msg");
 
 						$return= TRUE;
 						break;
 					} else {
-						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Failed decoding pfctl output: $msg"));
+						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Output not in correct format: $msg"));
 						break;
 					}
 				} else {
@@ -391,16 +391,10 @@ class Pf extends Model
 				'output' => $output
 				);
 
-			$encoded= json_encode($msg);
-
-			if ($encoded !== NULL) {
-				if (!msg_send($queue, 0, $encoded, FALSE, TRUE, $error)) {
-					pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . $encoded . ', error: ' . posix_strerror($error));
-				} else {
-					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . $encoded);
-				}
+			if (!msg_send($queue, $sendtype, $msg, TRUE, TRUE, $error)) {
+				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . $msg . ', error: ' . posix_strerror($error));
 			} else {
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed encoding pfctl output: ' . print_r($msg, TRUE)));
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . $msg);
 			}
 
 			// Child exits
