@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Option.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: Option.php,v 1.4 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -95,7 +95,7 @@ class Option extends Rule
 			'regex' => RE_OPTIMIZATION,
 			),
 		'ruleset-optimization' => array(
-			'regex' => RE_RULEOPTIMIZATION,
+			'regex' => RE_RULESETOPTIMIZATION,
 			),
 		'debug' => array(
 			'regex' => RE_DEBUG,

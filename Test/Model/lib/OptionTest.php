@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: OptionTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,48 @@ require_once('Rule.php');
 
 class OptionTest extends RuleTest
 {
-	/// @todo Test other types of options too
+	protected $ruleLoginterface= 'set loginterface $int_if';
+	protected $sampleLoginterface= array(
+		'type' => 'loginterface',
+		'loginterface' => '$int_if',
+		);
+
+	protected $ruleBlockPolicy= 'set block-policy drop';
+	protected $sampleBlockPolicy= array(
+		'type' => 'block-policy',
+		'block-policy' => 'drop',
+		);
+
+	protected $ruleStatePolicy= 'set state-policy if-bound';
+	protected $sampleStatePolicy= array(
+		'type' => 'state-policy',
+		'state-policy' => 'if-bound',
+		);
+
+	protected $ruleOptimization= 'set optimization high-latency';
+	protected $sampleOptimization= array(
+		'type' => 'optimization',
+		'optimization' => 'high-latency',
+		);
+
+	protected $ruleRulesetOptimization= 'set ruleset-optimization basic';
+	protected $sampleRulesetOptimization= array(
+		'type' => 'ruleset-optimization',
+		'ruleset-optimization' => 'basic',
+		);
+
+	protected $ruleDebug= 'set debug notice';
+	protected $sampleDebug= array(
+		'type' => 'debug',
+		'debug' => 'notice',
+		);
+
+	protected $ruleHostid= 'set hostid 1';
+	protected $sampleHostid= array(
+		'type' => 'hostid',
+		'hostid' => '1',
+		);
+
 	protected $ruleSkip= 'set skip on { em0, em1 }';
 	protected $sampleSkip= array(
 		'type' => 'skip',
@@ -47,19 +88,105 @@ class OptionTest extends RuleTest
 			),
 		);
 
-	protected $ruleOptimization= 'set optimization high-latency';
-	protected $sampleOptimization= array(
-		'type' => 'optimization',
-		'optimization' => 'high-latency',
+	protected $ruleFingerprints= 'set fingerprints "/etc/pf.os"';
+	protected $sampleFingerprints= array(
+		'type' => 'fingerprints',
+		'fingerprints' => '/etc/pf.os',
+		);
+
+	protected $ruleReassemble= 'set reassemble yes no-df';
+	protected $sampleReassemble= array(
+		'type' => 'reassemble',
+		'reassemble' => 'yes',
+		'no-df' => TRUE,
 		);
 
 	function __construct()
 	{
+		/// @attention Need one of the options tested here, otherwise base class test*() functions fail
 		$this->sample= $this->sampleSkip;
 
 		parent::__construct();
 
 		$this->rule= $this->ruleSkip . $this->ruleComment;
+	}
+
+	function testParserLoginterface() {
+		$this->rule= $this->ruleLoginterface . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleLoginterface,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorLoginterface() {
+		$this->rule= $this->ruleLoginterface . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleLoginterface,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorLoginterface() {
+		$this->rule= $this->ruleLoginterface . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserBlockPolicy() {
+		$this->rule= $this->ruleBlockPolicy . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleBlockPolicy,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorBlockPolicy() {
+		$this->rule= $this->ruleBlockPolicy . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleBlockPolicy,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorBlockPolicy() {
+		$this->rule= $this->ruleBlockPolicy . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserStatePolicy() {
+		$this->rule= $this->ruleStatePolicy . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleStatePolicy,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorStatePolicy() {
+		$this->rule= $this->ruleStatePolicy . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleStatePolicy,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorStatePolicy() {
+		$this->rule= $this->ruleStatePolicy . $this->ruleComment;
+
+		$this->testParserGenerator();
 	}
 
 	function testParserOptimization() {
@@ -84,6 +211,136 @@ class OptionTest extends RuleTest
 
 	function testParserGeneratorOptimization() {
 		$this->rule= $this->ruleOptimization . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserRulesetOptimization() {
+		$this->rule= $this->ruleRulesetOptimization . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleRulesetOptimization,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorRulesetOptimization() {
+		$this->rule= $this->ruleRulesetOptimization . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleRulesetOptimization,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorRulesetOptimization() {
+		$this->rule= $this->ruleRulesetOptimization . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserDebug() {
+		$this->rule= $this->ruleDebug . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleDebug,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorDebug() {
+		$this->rule= $this->ruleDebug . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleDebug,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorDebug() {
+		$this->rule= $this->ruleDebug . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserHostid() {
+		$this->rule= $this->ruleHostid . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleHostid,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorHostid() {
+		$this->rule= $this->ruleHostid . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleHostid,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorHostid() {
+		$this->rule= $this->ruleHostid . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserFingerprints() {
+		$this->rule= $this->ruleFingerprints . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleFingerprints,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorFingerprints() {
+		$this->rule= $this->ruleFingerprints . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleFingerprints,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorFingerprints() {
+		$this->rule= $this->ruleFingerprints . $this->ruleComment;
+
+		$this->testParserGenerator();
+	}
+
+	function testParserReassemble() {
+		$this->rule= $this->ruleReassemble . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleReassemble,
+			$this->sampleComment
+			);
+
+		$this->testParser();
+	}
+
+	function testGeneratorReassemble() {
+		$this->rule= $this->ruleReassemble . $this->ruleComment;
+		$this->sample = array_merge(
+			$this->sampleReassemble,
+			$this->sampleComment
+			);
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorReassemble() {
+		$this->rule= $this->ruleReassemble . $this->ruleComment;
 
 		$this->testParserGenerator();
 	}
