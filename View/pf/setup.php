@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.6 2016/08/08 10:15:07 soner Exp $ */
+/* $pfre: setup.php,v 1.7 2016/08/08 17:25:04 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -49,8 +49,11 @@ if (count($_POST)) {
 		if (in_array(filter_input(INPUT_POST, 'User'), $ALL_USERS)) {
 			if (filter_input(INPUT_POST, 'NewPassword') === filter_input(INPUT_POST, 'ReNewPassword')) {
 				if (preg_match('/^\w{8,}$/', filter_input(INPUT_POST, 'NewPassword'))) {
-					if ($View->Controller($Output, 'CheckAuthentication', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'CurrentPassword')))) {
+					/// @attention Admin can change other users' passwords without needing to know their passwords
+					if (($_SESSION['USER'] == 'admin' && filter_input(INPUT_POST, 'User') != 'admin') ||
+						$View->Controller($Output, 'CheckAuthentication', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'CurrentPassword')))) {
 						if ($View->Controller($Output, 'SetPassword', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'NewPassword')))) {
+							PrintHelpWindow(_NOTICE('User password changed') . ': ' . filter_input(INPUT_POST, 'User'));
 							pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'User password changed: '.filter_input(INPUT_POST, 'User'));
 							if ($_SESSION['USER'] == filter_input(INPUT_POST, 'User')) {
 								// Log user out if she changes her own password, currently only admin can do that
