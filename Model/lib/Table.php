@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.4 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: Table.php,v 1.5 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -110,7 +110,7 @@ class Table extends Rule
 	function parseFile()
 	{
 		$filename= preg_replace('/"/', '', $this->words[++$this->index]);
-		if (!$this->rule['file']) {
+		if (!isset($this->rule['file'])) {
 			$this->rule['file']= $filename;
 		} else {
 			if (!is_array($this->rule['file'])) {

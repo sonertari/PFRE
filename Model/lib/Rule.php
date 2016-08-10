@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.9 2016/08/07 00:08:32 soner Exp $ */
+/* $pfre: Rule.php,v 1.10 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -175,7 +175,7 @@ class Rule
 				return FALSE;
 			}
 			unset($arr[$key]);
-		} elseif ($def['require']) {
+		} elseif (isset($def['require']) && $def['require']) {
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$this->ruleNumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
@@ -184,13 +184,13 @@ class Rule
 
 	function validateArrayValues(&$arr, $key, $def, $parent, $force= FALSE)
 	{
-		if ($def['multi']) {
+		if (isset($def['multi']) && $def['multi']) {
 			foreach ($arr as $v) {
 				if (!$this->validateValue($key, $v, $def, $parent, $force)) {
 					return FALSE;
 				}
 			}
-		} elseif ($def['values']) {
+		} elseif (isset($def['values']) && is_array($def['values'])) {
 			foreach ($def['values'] as $k => $d) {
 				// Recursion
 				if (!$this->validateKeyDef($arr, $k, $d, $key, $force)) {
@@ -211,12 +211,12 @@ class Rule
 
 	function validateValue($key, $value, $def, $parent, $force= FALSE)
 	{
-		if ($def['regex']) {
+		if (isset($def['regex'])) {
 			$rxfn= $def['regex'];
 			$result= preg_match("/$rxfn/", $value);
-		} elseif ($def['func']) {
+		} elseif (isset($def['func'])) {
 			$rxfn= $def['func'];
-			if ($def['force']) {
+			if (isset($def['force']) && $def['force']) {
 				$result= $rxfn($value, $force);
 			} else {
 				$result= $rxfn($value);
@@ -402,6 +402,7 @@ class Rule
 
 	function parseString($delimPre= '"', $delimPost= '"')
 	{
+		$value= '';
 		if ($this->words[$this->index] == $delimPre) {
 			while ($this->words[++$this->index] != $delimPost && !$this->isEndOfWords()) {
 				$value.= ' ' . $this->words[$this->index];

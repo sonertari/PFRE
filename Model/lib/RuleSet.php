@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.8 2016/08/08 08:20:43 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.9 2016/08/08 20:56:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -75,6 +75,8 @@ class RuleSet
 		$text= str_replace("\\\n", '', $text);
 
 		$rulebase= explode("\n", $text);
+
+		$blank= '';
 
 		for ($order= 0; $order < count($rulebase); $order++) {
 			$str= $rulebase[$order];

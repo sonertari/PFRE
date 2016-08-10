@@ -1,5 +1,5 @@
 <?php
-/* $pfre: OptionTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: OptionTest.php,v 1.2 2016/08/10 05:45:34 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -83,8 +83,8 @@ class OptionTest extends RuleTest
 	protected $sampleSkip= array(
 		'type' => 'skip',
 		'skip' => array(
-			em0,
-			em1,
+			'em0',
+			'em1',
 			),
 		);
 
