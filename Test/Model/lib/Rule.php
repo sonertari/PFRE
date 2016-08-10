@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,48 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('RuleBase.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class RuleTest extends RuleBase
+{
+	protected $ruleInterface= 'on em0';
+	protected $sampleInterface= array(
+		'interface' => 'em0',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $ruleAf= 'inet';
+	protected $sampleAf= array(
+		'af' => 'inet',
+		);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	protected $ruleLog= 'log ( all, matches, user, to pflog0 )';
+	protected $sampleLog= array(
+		'log' => array(
+			'all' => TRUE,
+			'matches' => TRUE,
+			'user' => TRUE,
+			'to' => 'pflog0',
+			),
+		);
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	protected $ruleQuick= 'quick';
+	protected $sampleQuick= array(
+		'quick' => TRUE,
+		);
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+	protected $ruleComment= ' # Test';
+	protected $sampleComment= array(
+		'comment' => 'Test',
+		);
+
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sample,
+			$this->sampleComment
+			);
+
+		parent::__construct();
+	}
+}
 ?>

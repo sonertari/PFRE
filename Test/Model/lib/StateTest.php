@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('TimeoutTest.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class StateTest extends TimeoutTest
+{
+	protected $ruleState= 'max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule';
+	protected $sampleState= array(
+		'max' => '1',
+		'max-src-states' => '2',
+		'max-src-nodes' => '3',
+		'max-src-conn' => '4',
+		'max-src-conn-rate' => '5/5',
+		'sloppy' => TRUE,
+		'no-sync' => TRUE,
+		'pflow' => TRUE,
+		'if-bound' => TRUE,
+		'overload' => 'over',
+		'source-track' => TRUE,
+		'source-track-option' => 'rule',
+		'flush' => TRUE,
+		'global' => TRUE,
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sample,
+			$this->sampleState
+			);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+		parent::__construct();
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
-
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$this->rule= 'set state-defaults ' . $this->ruleState . ', ' . $this->ruleTimeout . $this->ruleComment;
+	}
+}
 ?>

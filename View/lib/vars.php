@@ -1,5 +1,5 @@
 <?php
-/* $pfre: vars.php,v 1.13 2016/08/08 05:11:46 soner Exp $ */
+/* $pfre: vars.php,v 1.14 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -40,15 +40,18 @@
  * @bug	There is partial PHP support in Doxygen, thus there are many issues.
  */
 
-/// Root directory of the project tree obtained from Apache.
-$VIEW_PATH= filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
+$ROOT= dirname(dirname(dirname(__FILE__)));
+
+require_once($ROOT.'/lib/defs.php');
+require_once($ROOT.'/lib/setup.php');
+require_once($ROOT.'/lib/lib.php');
 
 require_once($VIEW_PATH.'/lib/setup.php');
 
 /// PF module absolute path.
 $PF_PATH= $VIEW_PATH.'/pf';
 
-// Include these before session start,
+// Include these before session start in /lib/libauth.php
 // because we save instances of these in the session
 require_once($PF_PATH.'/lib/RuleSet.php');
 require_once($PF_PATH.'/lib/Rule.php');
@@ -92,11 +95,11 @@ if (!isset($_SESSION['USER']) || $_SESSION['USER'] == 'loggedout') {
 	exit;
 }
 
-$ROOT= dirname(dirname(dirname(__FILE__)));
+/// Path to image files used in help boxes and links.
+$IMG_PATH= '/images/';
 
-require_once($ROOT.'/lib/defs.php');
-require_once($ROOT.'/lib/lib.php');
-require_once($ROOT.'/lib/setup.php');
+require_once($VIEW_PATH.'/lib/libwui.php');
+require_once($VIEW_PATH.'/lib/view.php');
 
 /** Sub menu configuration, caption and permissions.
  */
@@ -118,10 +121,4 @@ $SubMenus = array(
 		'Perms' => $ADMIN,
 		),
 );
-
-/// Path to image files used in help boxes and links.
-$IMG_PATH= '/images/';
-
-require_once($VIEW_PATH.'/lib/libwui.php');
-require_once($VIEW_PATH.'/lib/view.php');
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.19 2016/08/08 15:48:29 soner Exp $ */
+/* $pfre: pf.php,v 1.20 2016/08/09 13:07:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -336,6 +336,8 @@ class Pf extends Model
 			// Wait count starts from 1 due to do..while loop
 			$count= 1;
 
+			// We use this $interval var instead of a constant like .1, because
+			// if $PfctlTimeout is set to 0, $interval becomes 0 too, effectively disabling sleep
 			// Add 1 to prevent division by zero
 			$interval= $PfctlTimeout/($PfctlTimeout + 1)/10;
 

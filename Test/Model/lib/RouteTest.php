@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,34 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('FilterTest.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class RouteTest extends FilterTest
+{
+	protected $sampleType= array(
+		'type' => 'route-to',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $ruleRouteHost= '{ 192.168.0.1, 192.168.0.2 }';
+	protected $sampleRouteHost= array(
+		'routehost' => array(
+			'192.168.0.1',
+			'192.168.0.2',
+			)
+		);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	function __construct()
+	{
+		$this->ruleType= 'route-to ' . $this->ruleRouteHost;
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+		$this->sample= array_merge(
+			$this->sampleRouteHost,
+			$this->samplePoolType
+			);
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		parent::__construct();
+
+		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . ' ' . $this->rulePoolType . $this->ruleComment;
+	}
+}
 ?>

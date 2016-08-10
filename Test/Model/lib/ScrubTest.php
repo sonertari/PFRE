@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('FilterTest.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class ScrubTest extends FilterTest
+{
+	protected $ruleScrub= 'scrub (no-df, min-ttl 1, max-mss 2, random-id, reassemble tcp)';
+	protected $sampleScrub= array(
+		'min-ttl' => '1',
+		'max-mss' => '2',
+		'no-df' => TRUE,
+		'random-id' => TRUE,
+		'reassemble' => 'tcp',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sampleScrub
+			);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+		parent::__construct();
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
-
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleScrub . ' ' . $this->ruleFilterOpts . $this->ruleComment;
+	}
+}
 ?>

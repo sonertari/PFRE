@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.9 2016/08/06 21:36:02 soner Exp $ */
+/* $pfre: pfrec.php,v 1.10 2016/08/08 04:03:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,8 +42,6 @@
 
 /// @todo Is there a better way?
 $ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
 
 require_once($ROOT.'/lib/defs.php');
 require_once($ROOT.'/lib/setup.php');
@@ -51,25 +49,22 @@ require_once($ROOT.'/lib/setup.php');
 // chdir is for PCRE, libraries
 chdir(dirname(__FILE__));
 
+require_once('lib.php');
+
+require_once($MODEL_PATH.'/pf.php');
+
 /// This is a command line tool, should never be requested on the web interface.
 if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {
+	/// @attention pfrec_syslog() is in the Model, use after including model
 	pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Requested on the wui, exiting...');
 	header('Location: /index.php');
 	exit;
 }
 
-require_once($ROOT.'/lib/lib.php');
-require_once('lib.php');
-
-$Output= '';
-$Error= '';
-$retval= 1;
-
-$Nesting= 0;
-
-require_once($MODEL_PATH.'/pf.php');
 $Model= new Pf();
 $Command= $argv[1];
+
+$retval= 1;
 
 if (method_exists($Model, $Command)) {
 	$ArgV= array_slice($argv, 2);

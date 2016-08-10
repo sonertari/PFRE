@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('Rule.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class AntispoofTest extends RuleTest
+{
+	protected $ruleLabel= 'label "spoof"';
+	protected $sampleLabel= array(
+		'label' => 'spoof',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	function __construct()
+	{
+		$this->ruleInterface= 'for ' . $this->sampleInterface['interface'];
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+		$this->sample= array_merge(
+			$this->sampleLog,
+			$this->sampleQuick,
+			$this->sampleAf,
+			$this->sampleInterface,
+			$this->sampleLabel
+			);
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+		parent::__construct();
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$this->rule= 'antispoof ' . $this->ruleLog . ' ' . $this->ruleQuick . ' ' . $this->ruleInterface . ' ' . $this->ruleAf . ' ' . $this->ruleLabel .
+			$this->ruleComment;
+	}
+}
 ?>

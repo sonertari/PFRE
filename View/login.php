@@ -1,5 +1,5 @@
 <?php
-/* $pfre: login.php,v 1.4 2016/08/08 05:11:46 soner Exp $ */
+/* $pfre: login.php,v 1.5 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -51,9 +51,6 @@ if ($ForceHTTPs) {
 }
 
 require_once($ROOT.'/lib/defs.php');
-require_once($ROOT.'/lib/lib.php');
-
-$VIEW_PATH= filter_input(INPUT_SERVER, 'DOCUMENT_ROOT');
 
 // Session is started in libauth.php
 // Need a session everywhere below, after successful Authentication() too

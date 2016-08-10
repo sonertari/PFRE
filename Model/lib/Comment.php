@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: Comment.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -62,6 +62,7 @@ class Comment extends Rule
 			foreach ($lines as $line) {
 				$this->str.= " $line,";
 			}
+			$this->str= rtrim($this->str, ',');
 			$this->str.= "\n";
 		}
 		return $this->str;

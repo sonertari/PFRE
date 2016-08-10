@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('NatBase.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class NatToTest extends NatBaseTest
+{
+	protected $ruleAction= 'match';
+	protected $sampleAction= array(
+		'action' => 'match',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $ruleStaticPort= 'static-port';
+	protected $sampleStaticPort= array(
+		'static-port' => TRUE,
+		);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	protected $sampleType= array(
+		'type' => 'nat-to',
+		);
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	function __construct()
+	{
+		$this->ruleType= 'nat-to ' . $this->ruleRedirHost . ' ' . $this->ruleRedirPort;
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$this->sample= $this->sampleStaticPort;
+
+		parent::__construct();
+
+		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . ' ' . $this->rulePoolType . ' ' . $this->ruleStaticPort . $this->ruleComment;
+	}
+}
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,46 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+class RuleBase extends PHPUnit_Framework_TestCase
+{
+	protected $cat= '';
 
-/// Project version.
-define('VERSION', '5.9');
+	protected $rule= '';
+	protected $sample= array();
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	function __construct()
+	{
+		if (preg_match('/^(.+)Test$/', get_called_class(), $match)) {
+			$this->cat= $match[1];
+		}
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+		parent::__construct();
+	}
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	function testParser() {
+		$rule= new $this->cat($this->rule);
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$expected= $this->sample;
+		ksort($expected);
+
+		$actual= $rule->rule;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$rule= new $this->cat('');
+
+		$rule->load($this->sample);
+
+		$this->assertEquals($this->rule . "\n", $rule->generate());
+	}
+	
+	function testParserGenerator() {
+		$rule= new $this->cat($this->rule);
+
+		$this->assertEquals($this->rule . "\n", $rule->generate());
+	}
+}
 ?>

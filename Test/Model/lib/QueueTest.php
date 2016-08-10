@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('Rule.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class QueueTest extends RuleTest
+{
+	protected $ruleQueue= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default';
+	protected $sampleQueue= array(
+		'name' => 'test',
+		'interface' => 'em0',
+		'parent' => 'rootq',
+		'bandwidth' => '20M',
+		'bw-burst' => '90M',
+		'bw-time' => '100ms',
+		'min' => '5M',
+		'min-burst' => '10M',
+		'min-time' => '50ms',
+		'max' => '100M',
+		'max-burst' => '1M',
+		'max-time' => '10ms',
+		'qlimit' => '100',
+		'default' => TRUE,
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	function __construct()
+	{
+		$this->sample= $this->sampleQueue;
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+		parent::__construct();
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
-
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$this->rule= $this->ruleQueue . $this->ruleComment;
+	}
+}
 ?>

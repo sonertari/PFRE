@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: NatBase.php,v 1.4 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -56,14 +56,6 @@ class NatBase extends Filter
 			);
 
 		parent::__construct($str);
-	}
-
-	function sanitize()
-	{
-		$this->str= preg_replace("/! +/", "!", $this->str);
-		$this->str= preg_replace("/{/", " { ", $this->str);
-		$this->str= preg_replace("/}/", " } ", $this->str);
-		$this->str= preg_replace("/\"/", " \" ", $this->str);
 	}
 
 	function generate()

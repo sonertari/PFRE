@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,39 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('RuleBase.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class CommentTest extends RuleBase
+{
+	protected $rule= "Line1\nLine2";
+	protected $sample= array(
+		'comment' => "Line1\nLine2",
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $output= "# Line1\n# Line2\n";
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	private $outputSingleLine= "# Line1, Line2\n";
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	function testGenerator() {
+		$rule= new $this->cat('');
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$rule->load($this->sample);
+
+		$this->assertEquals($this->output, $rule->generate());
+	}
+	
+	function testParserGenerator() {
+		$rule= new $this->cat($this->rule);
+
+		$this->assertEquals($this->output, $rule->generate());
+	}
+
+	function testGeneratorSingleLine() {
+		$rule= new Comment('');
+
+		$rule->load($this->sample);
+
+		$this->assertEquals($this->outputSingleLine, $rule->generate(TRUE));
+	}
+}
 ?>

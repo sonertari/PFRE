@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,77 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('FilterBase.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class AnchorTest extends FilterBaseTest
+{
+	protected $ruleAnchor= 'anchor "test"';
+	protected $sampleAnchor= array(
+		'identifier' => 'test',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $ruleInline= 'inline 	block
+	anchor out {
+		pass proto tcp from any to port { 25, 80, 443 }
+	}
+	pass in proto tcp to any port 22';
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	protected $sampleInline= array(
+		'inline' => '	block
+	anchor out {
+		pass proto tcp from any to port { 25, 80, 443 }
+	}
+	pass in proto tcp to any port 22',
+		);
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	protected $outputInline= '{
+	block
+	anchor out {
+		pass proto tcp from any to port { 25, 80, 443 }
+	}
+	pass in proto tcp to any port 22
+}';
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sampleAnchor,
+			$this->sampleInline
+			);
+
+		parent::__construct();
+
+		$this->ruleFilterHead= $this->ruleAnchor . ' ' . $this->ruleDirection . ' ' . $this->ruleInterface . ' ' . $this->ruleAf . ' ' . $this->ruleProto . ' ' . $this->ruleSrcDest;
+
+		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleInline . $this->ruleComment;
+
+		$this->output= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->outputInline . $this->ruleComment . "\n";
+	}
+
+	function testParser() {
+		$rule= new $this->cat($this->rule);
+
+		$expected= $this->sample;
+		ksort($expected);
+
+		$actual= $rule->rule;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$rule= new $this->cat('');
+
+		$rule->load($this->sample);
+
+		$this->assertEquals($this->output, $rule->generate());
+	}
+	
+	function testParserGenerator() {
+		$rule= new $this->cat($this->rule);
+
+		$this->assertEquals($this->output, $rule->generate());
+	}
+}
 ?>

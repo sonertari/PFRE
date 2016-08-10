@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,57 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('Rule.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class TimeoutTest extends RuleTest
+{
+	protected $ruleTimeout= 'frag 0, interval 1, src.track 2, tcp.first 3, tcp.opening 4, tcp.established 5, tcp.closing 6, tcp.finwait 7, tcp.closed 8, udp.first 9, udp.single 10, udp.multiple 11, icmp.first 12, icmp.error 13, other.first 14, other.single 15, other.multiple 16, adaptive.start 17, adaptive.end 18';
+	protected $sampleTimeout= array(
+		'timeout' => array(
+			'all' => array(
+				'frag' => '0',
+				'interval' => '1',
+				'src.track' => '2',
+				),
+			'tcp' => array(
+				'first' => '3',
+				'opening' => '4',
+				'established' => '5',
+				'closing' => '6',
+				'finwait' => '7',
+				'closed' => '8',
+				),
+			'udp' => array(
+				'first' => '9',
+				'single' => '10',
+				'multiple' => '11',
+				),
+			'icmp' => array(
+				'first' => '12',
+				'error' => '13',
+				),
+			'other' => array(
+				'first' => '14',
+				'single' => '15',
+				'multiple' => '16',
+				),
+			'adaptive' => array(
+				'start' => '17',
+				'end' => '18',
+				),
+			),
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sample,
+			$this->sampleTimeout
+			);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+		parent::__construct();
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
-
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+		$this->rule= 'set timeout { ' . $this->ruleTimeout . ' }' . $this->ruleComment;
+	}
+}
 ?>

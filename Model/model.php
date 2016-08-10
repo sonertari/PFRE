@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.6 2016/08/08 08:20:43 soner Exp $ */
+/* $pfre: model.php,v 1.7 2016/08/08 10:15:07 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,6 +36,8 @@
 /** @file
  * Base class for models.
  */
+
+require_once($MODEL_PATH.'/include.php');
 
 class Model
 {

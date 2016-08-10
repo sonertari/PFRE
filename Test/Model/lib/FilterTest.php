@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,53 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('FilterBase.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class FilterTest extends FilterBaseTest
+{
+	protected $ruleFilterHead= '';
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $ruleAction= 'pass';
+	protected $sampleAction= array(
+		'action' => 'pass',
+		);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	protected $sampleType= array(
+		);
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	protected $ruleRedirHost= '192.168.0.2';
+	protected $sampleRedirHost= array(
+		'redirhost' => '192.168.0.2',
+		);
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+	protected $rulePoolType= 'source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address';
+	protected $samplePoolType= array(
+		'source-hash' => TRUE,
+		'source-hash-key' => '09f1cbe02e2f4801b433ba9fab728903',
+		'sticky-address' => TRUE,
+		);
+
+	protected $ruleDivertPort= 'port 22';
+	protected $sampleDivertPort= array(
+		'divertport' => '22',
+		);
+
+	/// @todo Test rdomain
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sample,
+			$this->sampleAction,
+			$this->sampleLog,
+			$this->sampleQuick,
+			$this->sampleType
+			);
+
+		parent::__construct();
+
+		$this->ruleFilterHead= $this->ruleAction . ' ' . $this->ruleDirection . ' ' . $this->ruleLog . ' ' . $this->ruleQuick . ' ' . $this->ruleInterface . ' ' . $this->ruleAf . ' ' . $this->ruleProto . ' ' . $this->ruleSrcDest;
+
+		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . $this->ruleComment;
+	}
+}
 ?>

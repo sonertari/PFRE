@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre$ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,36 +33,73 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/** @file
- * Common variables, arrays, and constants.
- */
+require_once('StateTest.php');
 
-/// Project version.
-define('VERSION', '5.9');
+class FilterBaseTest extends StateTest
+{
+	protected $ruleDirection= 'in';
+	protected $sampleDirection= array(
+		'direction' => 'in',
+		);
 
-$ROOT= dirname(dirname(__FILE__));
-$VIEW_PATH= $ROOT.'/View';
-$MODEL_PATH= $ROOT.'/Model';
+	protected $ruleProto= 'proto tcp';
+	protected $sampleProto= array(
+		'proto' => 'tcp',
+		);
 
-/// Syslog priority strings.
-$LOG_PRIOS= array(
-	'LOG_EMERG',	// system is unusable
-	'LOG_ALERT',	// action must be taken immediately
-	'LOG_CRIT',		// critical conditions
-	'LOG_ERR',		// error conditions
-	'LOG_WARNING',	// warning conditions
-	'LOG_NOTICE',	// normal, but significant, condition
-	'LOG_INFO',		// informational message
-	'LOG_DEBUG',	// debug-level message
-	);
+	protected $ruleSrcDest= 'from 192.168.0.1 port { 22, 2222 } os openbsd to 192.168.0.1 port 22';
+	protected $sampleSrcDest= array(
+		'from' => '192.168.0.1',
+		'fromport' => array(
+			'22',
+			'2222',
+			),
+		'os' => 'openbsd',
+		'to' => '192.168.0.1',
+		'toport' => '22',
+		);
 
-/// Superuser
-$ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
-/// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+	protected $ruleFilterOpts= 'user root group wheel flags S/SA tos 22 allow-opts once label "spoof" tag "spoof" !tagged "spoof" set prio 0 set queue (std, service) rtable 24 probability 10% prio 0 set tos 23 !received-on em0 keep state';
+	protected $sampleFilterOpts= array(
+		'user' => 'root',
+		'group' => 'wheel',
+		'flags' => 'S/SA',
+		'tos' => '22',
+		'state-filter' => 'keep',
+		'allow-opts' => TRUE,
+		'once' => TRUE,
+		'label' => 'spoof',
+		'tag' => 'spoof',
+		'tagged' => 'spoof',
+		'not-tagged' => TRUE,
+		'set-prio' => '0',
+		'queue' => array(
+			'std',
+			'service',
+			),
+		'rtable' => '24',
+		'probability' => '10%',
+		'prio' => '0',
+		'set-tos' => '23',
+		'received-on' => 'em0',
+		'not-received-on' => TRUE,
+		);
 
-$PF_CONFIG_PATH= '/etc/pfre';
-$TMP_PATH= '/tmp';
+	function __construct()
+	{
+		$this->sample= array_merge(
+			$this->sample,
+			$this->sampleDirection,
+			$this->sampleInterface,
+			$this->sampleAf,
+			$this->sampleProto,
+			$this->sampleSrcDest,
+			$this->sampleFilterOpts
+			);
+
+		parent::__construct();
+
+		$this->ruleFilterOpts.= ' ( ' . $this->ruleState . ', ' . $this->ruleTimeout . ' )';
+	}
+}
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.4 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.5 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -374,8 +374,6 @@ class FilterBase extends State
 		$this->genIcmpType();
 		$this->genIcmp6Type();
 		$this->genValue('tos', 'tos ');
-		$this->genValue('state-filter', NULL, ' state');
-		$this->genState();
 		$this->genKey('fragment');
 		$this->genKey('allow-opts');
 		$this->genKey('once');
@@ -390,6 +388,8 @@ class FilterBase extends State
 		$this->genValue('prio', 'prio ');
 		$this->genValue('set-tos', 'set tos ');
 		$this->genReceivedOn();
+		$this->genValue('state-filter', NULL, ' state');
+		$this->genState();
 	}
 	
 	function genSrcDest()

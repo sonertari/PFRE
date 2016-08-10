@@ -1,5 +1,5 @@
 <?php
-/* $pfre: view.php,v 1.4 2016/08/06 21:36:02 soner Exp $ */
+/* $pfre: view.php,v 1.5 2016/08/08 04:03:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -122,5 +122,47 @@ class View
 		pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, '$argv is empty');
 		return FALSE;
 	}
+}
+
+/// For classifying gettext strings into files.
+function _MENU($str)
+{
+	return _($str);
+}
+
+/// For classifying gettext strings into files.
+function _CONTROL($str)
+{
+	return _($str);
+}
+
+/// For classifying gettext strings into files.
+function _NOTICE($str)
+{
+	return _($str);
+}
+
+/// For classifying gettext strings into files.
+function _TITLE($str)
+{
+	return _($str);
+}
+
+/// For classifying gettext strings into files.
+function _HELPBOX($str)
+{
+	return _($str);
+}
+
+/// For classifying gettext strings into files.
+function _HELPWINDOW($str)
+{
+	return _($str);
+}
+
+/// For classifying gettext strings into files.
+function _TITLE2($str)
+{
+	return _($str);
 }
 ?>
