@@ -1,5 +1,5 @@
 <?php
-/* $pfre: OptionTest.php,v 1.2 2016/08/10 05:45:34 soner Exp $ */
+/* $pfre: OptionTest.php,v 1.3 2016/08/10 06:03:15 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,12 +79,12 @@ class OptionTest extends RuleTest
 		'hostid' => '1',
 		);
 
-	protected $ruleSkip= 'set skip on { em0, em1 }';
+	protected $ruleSkip= 'set skip on { lo, em0 }';
 	protected $sampleSkip= array(
 		'type' => 'skip',
 		'skip' => array(
+			'lo',
 			'em0',
-			'em1',
 			),
 		);
 

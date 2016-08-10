@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: NatBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,9 +37,9 @@ require_once('FilterTest.php');
 
 class NatBaseTest extends FilterTest
 {
-	protected $ruleRedirPort= 'port 22';
+	protected $ruleRedirPort= 'port ssh';
 	protected $sampleRedirPort= array(
-		'redirport' => '22',
+		'redirport' => 'ssh',
 		);
 
 	protected $ruleType= '';

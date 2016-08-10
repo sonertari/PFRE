@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: NatToTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,6 +37,7 @@ require_once('NatBase.php');
 
 class NatToTest extends NatBaseTest
 {
+	// Override action, just for NatTo rules
 	protected $ruleAction= 'match';
 	protected $sampleAction= array(
 		'action' => 'match',

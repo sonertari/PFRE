@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: validate.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -63,7 +63,7 @@ define('RE_AF', '^(inet|inet6)$');
 define('RE_DIRECTION', '^(in|out)$');
 
 $RE_IP= '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
-// pfctl get stuck if there are no spaces around the dash -
+// pfctl gets stuck if there are no spaces around the dash -
 $RE_IP_RANGE= "$RE_IP\s+\-\s+$RE_IP";
 $RE_IP6= '[\w:.\/]+';
 

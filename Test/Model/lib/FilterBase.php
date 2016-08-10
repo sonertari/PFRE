@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: FilterBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,40 +47,40 @@ class FilterBaseTest extends StateTest
 		'proto' => 'tcp',
 		);
 
-	protected $ruleSrcDest= 'from 192.168.0.1 port { 22, 2222 } os openbsd to 192.168.0.1 port 22';
+	protected $ruleSrcDest= 'from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh';
 	protected $sampleSrcDest= array(
 		'from' => '192.168.0.1',
 		'fromport' => array(
-			'22',
+			'ssh',
 			'2222',
 			),
 		'os' => 'openbsd',
-		'to' => '192.168.0.1',
-		'toport' => '22',
+		'to' => '192.168.0.2',
+		'toport' => 'ssh',
 		);
 
-	protected $ruleFilterOpts= 'user root group wheel flags S/SA tos 22 allow-opts once label "spoof" tag "spoof" !tagged "spoof" set prio 0 set queue (std, service) rtable 24 probability 10% prio 0 set tos 23 !received-on em0 keep state';
+	protected $ruleFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state';
 	protected $sampleFilterOpts= array(
 		'user' => 'root',
 		'group' => 'wheel',
 		'flags' => 'S/SA',
-		'tos' => '22',
+		'tos' => '1',
 		'state-filter' => 'keep',
 		'allow-opts' => TRUE,
 		'once' => TRUE,
-		'label' => 'spoof',
-		'tag' => 'spoof',
-		'tagged' => 'spoof',
+		'label' => 'test',
+		'tag' => 'test',
+		'tagged' => 'test',
 		'not-tagged' => TRUE,
-		'set-prio' => '0',
+		'set-prio' => '2',
 		'queue' => array(
 			'std',
 			'service',
 			),
-		'rtable' => '24',
+		'rtable' => '3',
 		'probability' => '10%',
-		'prio' => '0',
-		'set-tos' => '23',
+		'prio' => '4',
+		'set-tos' => '5',
 		'received-on' => 'em0',
 		'not-received-on' => TRUE,
 		);

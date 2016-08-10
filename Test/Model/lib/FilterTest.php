@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: FilterTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,9 +47,9 @@ class FilterTest extends FilterBaseTest
 	protected $sampleType= array(
 		);
 
-	protected $ruleRedirHost= '192.168.0.2';
+	protected $ruleRedirHost= '192.168.0.1';
 	protected $sampleRedirHost= array(
-		'redirhost' => '192.168.0.2',
+		'redirhost' => '192.168.0.1',
 		);
 
 	protected $rulePoolType= 'source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address';
@@ -59,9 +59,9 @@ class FilterTest extends FilterBaseTest
 		'sticky-address' => TRUE,
 		);
 
-	protected $ruleDivertPort= 'port 22';
+	protected $ruleDivertPort= 'port ssh';
 	protected $sampleDivertPort= array(
-		'divertport' => '22',
+		'divertport' => 'ssh',
 		);
 
 	/// @todo Test rdomain

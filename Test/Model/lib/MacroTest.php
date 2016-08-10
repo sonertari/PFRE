@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: MacroTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,12 +37,12 @@ require_once('Rule.php');
 
 class MacroTest extends RuleTest
 {
-	protected $ruleMacro= 'test = "{ www, https }"';
+	protected $ruleMacro= 'test = "{ ssh, 2222 }"';
 	protected $sampleMacro= array(
 		'identifier' => 'test',
 		'value' => array(
-			'www',
-			'https',
+			'ssh',
+			'2222',
 			)
 		);
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: AnchorTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -42,6 +42,7 @@ class AnchorTest extends FilterBaseTest
 		'identifier' => 'test',
 		);
 
+	// This is the same sample inline anchor rule in pf.conf(5)
 	protected $ruleInline= 'inline 	block
 	anchor out {
 		pass proto tcp from any to port { 25, 80, 443 }

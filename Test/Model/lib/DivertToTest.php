@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: DivertToTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -41,9 +41,9 @@ class DivertToTest extends FilterTest
 		'type' => 'divert-to',
 		);
 
-	protected $ruleDivertHost= '192.168.0.2';
+	protected $ruleDivertHost= '192.168.0.1';
 	protected $sampleDivertHost= array(
-		'diverthost' => '192.168.0.2',
+		'diverthost' => '192.168.0.1',
 		);
 
 	function __construct()

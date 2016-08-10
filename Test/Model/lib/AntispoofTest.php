@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: AntispoofTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,9 +37,9 @@ require_once('Rule.php');
 
 class AntispoofTest extends RuleTest
 {
-	protected $ruleLabel= 'label "spoof"';
+	protected $ruleLabel= 'label "test"';
 	protected $sampleLabel= array(
-		'label' => 'spoof',
+		'label' => 'test',
 		);
 
 	function __construct()

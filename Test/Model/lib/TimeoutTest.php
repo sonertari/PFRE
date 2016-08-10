@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: TimeoutTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,39 +37,39 @@ require_once('Rule.php');
 
 class TimeoutTest extends RuleTest
 {
-	protected $ruleTimeout= 'frag 0, interval 1, src.track 2, tcp.first 3, tcp.opening 4, tcp.established 5, tcp.closing 6, tcp.finwait 7, tcp.closed 8, udp.first 9, udp.single 10, udp.multiple 11, icmp.first 12, icmp.error 13, other.first 14, other.single 15, other.multiple 16, adaptive.start 17, adaptive.end 18';
+	protected $ruleTimeout= 'frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19';
 	protected $sampleTimeout= array(
 		'timeout' => array(
 			'all' => array(
-				'frag' => '0',
-				'interval' => '1',
-				'src.track' => '2',
+				'frag' => '1',
+				'interval' => '2',
+				'src.track' => '3',
 				),
 			'tcp' => array(
-				'first' => '3',
-				'opening' => '4',
-				'established' => '5',
-				'closing' => '6',
-				'finwait' => '7',
-				'closed' => '8',
+				'first' => '4',
+				'opening' => '5',
+				'established' => '6',
+				'closing' => '7',
+				'finwait' => '8',
+				'closed' => '9',
 				),
 			'udp' => array(
-				'first' => '9',
-				'single' => '10',
-				'multiple' => '11',
+				'first' => '10',
+				'single' => '11',
+				'multiple' => '12',
 				),
 			'icmp' => array(
-				'first' => '12',
-				'error' => '13',
+				'first' => '13',
+				'error' => '14',
 				),
 			'other' => array(
-				'first' => '14',
-				'single' => '15',
-				'multiple' => '16',
+				'first' => '15',
+				'single' => '16',
+				'multiple' => '17',
 				),
 			'adaptive' => array(
-				'start' => '17',
-				'end' => '18',
+				'start' => '18',
+				'end' => '19',
 				),
 			),
 		);
