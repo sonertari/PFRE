@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,66 +33,58 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class RuleSetTest extends PHPUnit_Framework_TestCase
+class RuleSetTest extends RuleSetBase
 {
-	protected $cat= '';
-	protected $catTest= '';
-
-	protected $in= '';
-	protected $rules= array();
-	protected $out= '';
+	private $ruleTypes= array(
+		'Filter',
+		'Antispoof',
+		'Anchor',
+		'Macro',
+		'Table',
+		'AfTo',
+		'NatTo',
+		'BinatTo',
+		'DivertTo',
+		'DivertPacket',
+		'RdrTo',
+		'Route',
+		'Queue',
+		'Scrub',
+		'Option',
+		'Timeout',
+		'Limit',
+		'State',
+		'LoadAnchor',
+		'_Include',
+		'Blank',
+		'Comment',
+	);
 
 	function __construct()
 	{
-		if (preg_match('/^(.+)RuleSetTest$/', get_called_class(), $match)) {
-			$this->cat= $match[1];
-			$this->catTest= $this->cat . 'Test';
+		parent::__construct();
+
+		foreach ($this->ruleTypes as $cat) {
+			$catTest= $cat . 'Test';
+
+			require_once (ltrim($catTest, '_') . '.php');
+
+			$test= new $catTest();
+
+			$this->rules[]= array(
+				'cat' => $cat,
+				'rule' => $test->rule,
+				);
+			$this->out.= $test->out;
 		}
 
-		$test= new $this->catTest();
-
-		$this->in= $test->in;
-		$this->rules= array(
-				array(
-				'cat' => $this->cat,
-				'rule' => $test->rule,
-				)
-			);
-		$this->out= $test->out;
-
-		parent::__construct();
+		$this->in= $this->out;
 	}
 
-	function testParser() {
-		$expected= $this->rules;
-		ksort($expected);
-
+	function testGeneratorPrintNumbers()
+	{
 		$ruleSet= new RuleSet();
-		$ruleSet->parse($this->in);
-
-		$actual= $ruleSet->rules;
-		ksort($actual);
-
-		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
-	}
-
-	function testGenerator() {
-		$ruleSet= new RuleSet();
-		$ruleSet->load($this->rules);
-
-		$this->assertEquals($this->out, $ruleSet->generate());
-	}
-	
-	function testParserGenerator() {
-		$ruleSet= new RuleSet();
-		$ruleSet->parse($this->in);
-
-		$this->assertEquals($this->out, $ruleSet->generate());
-	}
-	
-	function testGeneratorPrintNumbers() {
-		$ruleSet= new RuleSet();
-		$ruleSet->load($this->rules);
+		$ruleSet->parse($this->out);
 
 		$ruleNumber= 0;
 		$s= '';

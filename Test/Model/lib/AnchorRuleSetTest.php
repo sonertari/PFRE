@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: AnchorRuleSetTest.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -34,9 +34,9 @@
  */
 
 require_once('AnchorTest.php');
-require_once('RuleSet.php');
+require_once('RuleSetBase.php');
 
-class AnchorRuleSetTest extends RuleSetTest
+class AnchorRuleSetTest extends RuleSetBase
 {
 	function __construct()
 	{

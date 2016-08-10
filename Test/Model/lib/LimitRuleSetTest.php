@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: LimitRuleSetTest.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -34,9 +34,9 @@
  */
 
 require_once('LimitTest.php');
-require_once('RuleSet.php');
+require_once('RuleSetBase.php');
 
-class LimitRuleSetTest extends RuleSetTest
+class LimitRuleSetTest extends RuleSetBase
 {
 }
 ?>

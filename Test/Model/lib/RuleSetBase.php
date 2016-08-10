@@ -1,5 +1,5 @@
 <?php
-/* $pfre: QueueRuleSetTest.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,10 +33,61 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once('QueueTest.php');
-require_once('RuleSetBase.php');
-
-class QueueRuleSetTest extends RuleSetBase
+class RuleSetBase extends PHPUnit_Framework_TestCase
 {
+	protected $cat= '';
+	protected $catTest= '';
+
+	protected $in= '';
+	protected $rules= array();
+	protected $out= '';
+
+	function __construct()
+	{
+		if (preg_match('/^(.+)RuleSetTest$/', get_called_class(), $match)) {
+			$this->cat= $match[1];
+			$this->catTest= $this->cat . 'Test';
+
+			$test= new $this->catTest();
+
+			$this->in= $test->in;
+			$this->rules= array(
+					array(
+					'cat' => $this->cat,
+					'rule' => $test->rule,
+					)
+				);
+			$this->out= $test->out;
+		}
+
+		parent::__construct();
+	}
+
+	function testParser() {
+		$expected= $this->rules;
+		ksort($expected);
+
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->in);
+
+		$actual= $ruleSet->rules;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$ruleSet= new RuleSet();
+		$ruleSet->load($this->rules);
+
+		$this->assertEquals($this->out, $ruleSet->generate());
+	}
+	
+	function testParserGenerator() {
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->in);
+
+		$this->assertEquals($this->out, $ruleSet->generate());
+	}
 }
 ?>
