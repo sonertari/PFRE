@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.9 2016/08/08 20:56:20 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.10 2016/08/10 06:03:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -84,8 +84,12 @@ class RuleSet
 			
 			$type= $words[0];
             // Do not search in comment lines
-			if ($type !== '' && $type !== '#' && preg_match('/\b(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|timeout|limit|route-to|reply-to|dup-to|divert-packet|state-defaults)\b/', $str, $match)) {
-				$type= $match[1];
+			if ($type !== '' && $type !== '#') {
+				if (preg_match('/\s+(scrub|af-to|nat-to|binat-to|divert-to|rdr-to|route-to|reply-to|dup-to|divert-packet|state-defaults)\s+/', $str, $match)) {
+					$type= $match[1];
+				} elseif (preg_match('/\bset\s+(timeout|limit)\s+/', $str, $match)) {
+					$type= $match[1];
+				}
 			}
 
 			// Add any accumulated comment or blank lines if a non-comment/blank rule is next
