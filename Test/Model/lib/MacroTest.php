@@ -1,5 +1,5 @@
 <?php
-/* $pfre: MacroTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: MacroTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,8 @@ require_once('Rule.php');
 
 class MacroTest extends RuleTest
 {
-	protected $ruleMacro= 'test = "{ ssh, 2222 }"';
-	protected $sampleMacro= array(
+	protected $inMacro= 'test = "{ ssh, 2222 }"';
+	protected $ruleMacro= array(
 		'identifier' => 'test',
 		'value' => array(
 			'ssh',
@@ -48,11 +48,12 @@ class MacroTest extends RuleTest
 
 	function __construct()
 	{
-		$this->sample= $this->sampleMacro;
+		$this->rule= $this->ruleMacro;
 
 		parent::__construct();
 
-		$this->rule= $this->ruleMacro . $this->ruleComment;
+		$this->in= $this->inMacro . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

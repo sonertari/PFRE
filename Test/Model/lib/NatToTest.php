@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatToTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: NatToTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -38,29 +38,30 @@ require_once('NatBase.php');
 class NatToTest extends NatBaseTest
 {
 	// Override action, just for NatTo rules
-	protected $ruleAction= 'match';
-	protected $sampleAction= array(
+	protected $inAction= 'match';
+	protected $ruleAction= array(
 		'action' => 'match',
 		);
 
-	protected $ruleStaticPort= 'static-port';
-	protected $sampleStaticPort= array(
+	protected $inStaticPort= 'static-port';
+	protected $ruleStaticPort= array(
 		'static-port' => TRUE,
 		);
 
-	protected $sampleType= array(
+	protected $ruleType= array(
 		'type' => 'nat-to',
 		);
 
 	function __construct()
 	{
-		$this->ruleType= 'nat-to ' . $this->ruleRedirHost . ' ' . $this->ruleRedirPort;
+		$this->inType= 'nat-to ' . $this->inRedirHost . ' ' . $this->inRedirPort;
 
-		$this->sample= $this->sampleStaticPort;
+		$this->rule= $this->ruleStaticPort;
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . ' ' . $this->rulePoolType . ' ' . $this->ruleStaticPort . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inType . ' ' . $this->inPoolType . ' ' . $this->inStaticPort . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

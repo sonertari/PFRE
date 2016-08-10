@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: NatBase.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,25 +37,26 @@ require_once('FilterTest.php');
 
 class NatBaseTest extends FilterTest
 {
-	protected $ruleRedirPort= 'port ssh';
-	protected $sampleRedirPort= array(
+	protected $inRedirPort= 'port ssh';
+	protected $ruleRedirPort= array(
 		'redirport' => 'ssh',
 		);
 
-	protected $ruleType= '';
+	protected $inType= '';
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sample,
-			$this->sampleRedirHost,
-			$this->sampleRedirPort,
-			$this->samplePoolType
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleRedirHost,
+			$this->ruleRedirPort,
+			$this->rulePoolType
 			);
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . ' ' . $this->rulePoolType . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inType . ' ' . $this->inPoolType . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

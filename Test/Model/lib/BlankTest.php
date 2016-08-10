@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: BlankTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,35 +37,21 @@ require_once('RuleBase.php');
 
 class BlankTest extends RuleBase
 {
-	protected $rule= "\n\n";
-	protected $sample= array(
+	public $in= "\n\n";
+	public $rule= array(
 		'blank' => "\n\n",
 		);
 
-	protected $output= "\n\n";
+	public $out= "\n\n";
 
-	private $outputSingleLine= "\n";
-
-	function testGenerator() {
-		$rule= new $this->cat('');
-
-		$rule->load($this->sample);
-
-		$this->assertEquals($this->output, $rule->generate());
-	}
-
-	function testParserGenerator() {
-		$rule= new $this->cat($this->rule);
-
-		$this->assertEquals($this->output, $rule->generate());
-	}
+	private $outSingleLine= "\n";
 
 	function testGeneratorSingleLine() {
 		$rule= new Blank('');
 
-		$rule->load($this->sample);
+		$rule->load($this->rule);
 
-		$this->assertEquals($this->outputSingleLine, $rule->generate(TRUE));
+		$this->assertEquals($this->outSingleLine, $rule->generate(TRUE));
 	}
 }
 ?>

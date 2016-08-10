@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: LoadAnchorTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,26 +37,27 @@ require_once('Rule.php');
 
 class LoadAnchorTest extends RuleTest
 {
-	protected $ruleAnchor= 'anchor test';
-	protected $sampleAnchor= array(
+	protected $inAnchor= 'anchor test';
+	protected $ruleAnchor= array(
 		'anchor' => 'test',
 		);
 
-	protected $ruleFile= 'from "/etc/pfre/include.conf"';
-	protected $sampleFile= array(
+	protected $inFile= 'from "/etc/pfre/include.conf"';
+	protected $ruleFile= array(
 		'file' => '/etc/pfre/include.conf',
 		);
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sampleAnchor,
-			$this->sampleFile
+		$this->rule= array_merge(
+			$this->ruleAnchor,
+			$this->ruleFile
 			);
 
 		parent::__construct();
 
-		$this->rule= 'load ' . $this->ruleAnchor . ' ' . $this->ruleFile . $this->ruleComment;
+		$this->in= 'load ' . $this->inAnchor . ' ' . $this->inFile . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

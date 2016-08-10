@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: FilterTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,49 +37,50 @@ require_once('FilterBase.php');
 
 class FilterTest extends FilterBaseTest
 {
-	protected $ruleFilterHead= '';
+	protected $inFilterHead= '';
 
-	protected $ruleAction= 'pass';
-	protected $sampleAction= array(
+	protected $inAction= 'pass';
+	protected $ruleAction= array(
 		'action' => 'pass',
 		);
 
-	protected $sampleType= array(
+	protected $ruleType= array(
 		);
 
-	protected $ruleRedirHost= '192.168.0.1';
-	protected $sampleRedirHost= array(
+	protected $inRedirHost= '192.168.0.1';
+	protected $ruleRedirHost= array(
 		'redirhost' => '192.168.0.1',
 		);
 
-	protected $rulePoolType= 'source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address';
-	protected $samplePoolType= array(
+	protected $inPoolType= 'source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address';
+	protected $rulePoolType= array(
 		'source-hash' => TRUE,
 		'source-hash-key' => '09f1cbe02e2f4801b433ba9fab728903',
 		'sticky-address' => TRUE,
 		);
 
-	protected $ruleDivertPort= 'port ssh';
-	protected $sampleDivertPort= array(
+	protected $inDivertPort= 'port ssh';
+	protected $ruleDivertPort= array(
 		'divertport' => 'ssh',
 		);
 
 	/// @todo Test rdomain
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sample,
-			$this->sampleAction,
-			$this->sampleLog,
-			$this->sampleQuick,
-			$this->sampleType
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleAction,
+			$this->ruleLog,
+			$this->ruleQuick,
+			$this->ruleType
 			);
 
 		parent::__construct();
 
-		$this->ruleFilterHead= $this->ruleAction . ' ' . $this->ruleDirection . ' ' . $this->ruleLog . ' ' . $this->ruleQuick . ' ' . $this->ruleInterface . ' ' . $this->ruleAf . ' ' . $this->ruleProto . ' ' . $this->ruleSrcDest;
+		$this->inFilterHead= $this->inAction . ' ' . $this->inDirection . ' ' . $this->inLog . ' ' . $this->inQuick . ' ' . $this->inInterface . ' ' . $this->inAf . ' ' . $this->inProto . ' ' . $this->inSrcDest;
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

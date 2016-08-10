@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: StateTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,8 @@ require_once('TimeoutTest.php');
 
 class StateTest extends TimeoutTest
 {
-	protected $ruleState= 'max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule';
-	protected $sampleState= array(
+	protected $inState= 'max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule';
+	protected $ruleState= array(
 		'max' => '1',
 		'max-src-states' => '2',
 		'max-src-nodes' => '3',
@@ -57,14 +57,15 @@ class StateTest extends TimeoutTest
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sample,
-			$this->sampleState
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleState
 			);
 
 		parent::__construct();
 
-		$this->rule= 'set state-defaults ' . $this->ruleState . ', ' . $this->ruleTimeout . $this->ruleComment;
+		$this->in= 'set state-defaults ' . $this->inState . ', ' . $this->inTimeout . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

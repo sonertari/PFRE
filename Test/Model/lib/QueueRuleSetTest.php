@@ -1,5 +1,5 @@
 <?php
-/* $pfre: TableTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once('Rule.php');
+require_once('QueueTest.php');
+require_once('RuleSet.php');
 
-class TableTest extends RuleTest
+class QueueRuleSetTest extends RuleSetTest
 {
-	protected $inTable= 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 }';
-	protected $ruleTable= array(
-		'identifier' => 'test',
-		'persist' => TRUE,
-		'const' => TRUE,
-		'counters' => TRUE,
-		'file' => array(
-			'/etc/pf.restrictedips1',
-			'/etc/pf.restrictedips2',
-			),
-		'data' => array(
-			'192.168.0.1',
-			'192.168.0.2',
-			),
-		);
-
-	function __construct()
-	{
-		$this->rule= $this->ruleTable;
-
-		parent::__construct();
-
-		$this->in= $this->inTable . $this->inComment;
-		$this->out= $this->in . "\n";
-	}
 }
 ?>

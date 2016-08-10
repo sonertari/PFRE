@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AnchorTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: AnchorTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,19 +37,19 @@ require_once('FilterBase.php');
 
 class AnchorTest extends FilterBaseTest
 {
-	protected $ruleAnchor= 'anchor "test"';
-	protected $sampleAnchor= array(
+	protected $inAnchor= 'anchor "test"';
+	protected $ruleAnchor= array(
 		'identifier' => 'test',
 		);
 
-	// This is the same sample inline anchor rule in pf.conf(5)
-	protected $ruleInline= 'inline 	block
+	// This is the same rule inline anchor rule in pf.conf(5)
+	protected $inInline= 'inline 	block
 	anchor out {
 		pass proto tcp from any to port { 25, 80, 443 }
 	}
 	pass in proto tcp to any port 22';
 
-	protected $sampleInline= array(
+	protected $ruleInline= array(
 		'inline' => '	block
 	anchor out {
 		pass proto tcp from any to port { 25, 80, 443 }
@@ -57,7 +57,7 @@ class AnchorTest extends FilterBaseTest
 	pass in proto tcp to any port 22',
 		);
 
-	protected $outputInline= '{
+	protected $outInline= '{
 	block
 	anchor out {
 		pass proto tcp from any to port { 25, 80, 443 }
@@ -67,24 +67,24 @@ class AnchorTest extends FilterBaseTest
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sampleAnchor,
-			$this->sampleInline
+		$this->rule= array_merge(
+			$this->ruleAnchor,
+			$this->ruleInline
 			);
 
 		parent::__construct();
 
-		$this->ruleFilterHead= $this->ruleAnchor . ' ' . $this->ruleDirection . ' ' . $this->ruleInterface . ' ' . $this->ruleAf . ' ' . $this->ruleProto . ' ' . $this->ruleSrcDest;
+		$this->inFilterHead= $this->inAnchor . ' ' . $this->inDirection . ' ' . $this->inInterface . ' ' . $this->inAf . ' ' . $this->inProto . ' ' . $this->inSrcDest;
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleInline . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inInline . $this->inComment;
 
-		$this->output= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->outputInline . $this->ruleComment . "\n";
+		$this->out= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->outInline . $this->inComment . "\n";
 	}
 
 	function testParser() {
-		$rule= new $this->cat($this->rule);
+		$rule= new $this->cat($this->in);
 
-		$expected= $this->sample;
+		$expected= $this->rule;
 		ksort($expected);
 
 		$actual= $rule->rule;
@@ -96,15 +96,15 @@ class AnchorTest extends FilterBaseTest
 	function testGenerator() {
 		$rule= new $this->cat('');
 
-		$rule->load($this->sample);
+		$rule->load($this->rule);
 
-		$this->assertEquals($this->output, $rule->generate());
+		$this->assertEquals($this->out, $rule->generate());
 	}
 	
 	function testParserGenerator() {
-		$rule= new $this->cat($this->rule);
+		$rule= new $this->cat($this->in);
 
-		$this->assertEquals($this->output, $rule->generate());
+		$this->assertEquals($this->out, $rule->generate());
 	}
 }
 ?>

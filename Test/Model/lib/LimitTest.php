@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: LimitTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,8 @@ require_once('Rule.php');
 
 class LimitTest extends RuleTest
 {
-	protected $ruleLimit= 'states 1, frags 2, src-nodes 3, tables 4, table-entries 5';
-	protected $sampleLimit= array(
+	protected $inLimit= 'states 1, frags 2, src-nodes 3, tables 4, table-entries 5';
+	protected $ruleLimit= array(
 		'limit' => array(
 			'states' => '1',
 			'frags' => '2',
@@ -50,11 +50,12 @@ class LimitTest extends RuleTest
 
 	function __construct()
 	{
-		$this->sample= $this->sampleLimit;
+		$this->rule= $this->ruleLimit;
 
 		parent::__construct();
 
-		$this->rule= 'set limit { ' . $this->ruleLimit . ' }' . $this->ruleComment;
+		$this->in= 'set limit { ' . $this->inLimit . ' }' . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: Rule.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,18 +37,18 @@ require_once('RuleBase.php');
 
 class RuleTest extends RuleBase
 {
-	protected $ruleInterface= 'on em0';
-	protected $sampleInterface= array(
+	protected $inInterface= 'on em0';
+	protected $ruleInterface= array(
 		'interface' => 'em0',
 		);
 
-	protected $ruleAf= 'inet';
-	protected $sampleAf= array(
+	protected $inAf= 'inet';
+	protected $ruleAf= array(
 		'af' => 'inet',
 		);
 
-	protected $ruleLog= 'log ( all, matches, user, to pflog0 )';
-	protected $sampleLog= array(
+	protected $inLog= 'log ( all, matches, user, to pflog0 )';
+	protected $ruleLog= array(
 		'log' => array(
 			'all' => TRUE,
 			'matches' => TRUE,
@@ -57,21 +57,21 @@ class RuleTest extends RuleBase
 			),
 		);
 
-	protected $ruleQuick= 'quick';
-	protected $sampleQuick= array(
+	protected $inQuick= 'quick';
+	protected $ruleQuick= array(
 		'quick' => TRUE,
 		);
 
-	protected $ruleComment= ' # Test';
-	protected $sampleComment= array(
+	protected $inComment= ' # Test';
+	protected $ruleComment= array(
 		'comment' => 'Test',
 		);
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sample,
-			$this->sampleComment
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleComment
 			);
 
 		parent::__construct();

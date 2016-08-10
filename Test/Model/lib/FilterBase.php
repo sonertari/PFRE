@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,18 +37,18 @@ require_once('StateTest.php');
 
 class FilterBaseTest extends StateTest
 {
-	protected $ruleDirection= 'in';
-	protected $sampleDirection= array(
+	protected $inDirection= 'in';
+	protected $ruleDirection= array(
 		'direction' => 'in',
 		);
 
-	protected $ruleProto= 'proto tcp';
-	protected $sampleProto= array(
+	protected $inProto= 'proto tcp';
+	protected $ruleProto= array(
 		'proto' => 'tcp',
 		);
 
-	protected $ruleSrcDest= 'from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh';
-	protected $sampleSrcDest= array(
+	protected $inSrcDest= 'from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh';
+	protected $ruleSrcDest= array(
 		'from' => '192.168.0.1',
 		'fromport' => array(
 			'ssh',
@@ -59,8 +59,8 @@ class FilterBaseTest extends StateTest
 		'toport' => 'ssh',
 		);
 
-	protected $ruleFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state';
-	protected $sampleFilterOpts= array(
+	protected $inFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state';
+	protected $ruleFilterOpts= array(
 		'user' => 'root',
 		'group' => 'wheel',
 		'flags' => 'S/SA',
@@ -87,19 +87,19 @@ class FilterBaseTest extends StateTest
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sample,
-			$this->sampleDirection,
-			$this->sampleInterface,
-			$this->sampleAf,
-			$this->sampleProto,
-			$this->sampleSrcDest,
-			$this->sampleFilterOpts
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleDirection,
+			$this->ruleInterface,
+			$this->ruleAf,
+			$this->ruleProto,
+			$this->ruleSrcDest,
+			$this->ruleFilterOpts
 			);
 
 		parent::__construct();
 
-		$this->ruleFilterOpts.= ' ( ' . $this->ruleState . ', ' . $this->ruleTimeout . ' )';
+		$this->inFilterOpts.= ' ( ' . $this->inState . ', ' . $this->inTimeout . ' )';
 	}
 }
 ?>

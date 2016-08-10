@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,9 @@ class RuleBase extends PHPUnit_Framework_TestCase
 {
 	protected $cat= '';
 
-	protected $rule= '';
-	protected $sample= array();
+	public $in= '';
+	public $rule= array();
+	public $out= '';
 
 	function __construct()
 	{
@@ -50,9 +51,9 @@ class RuleBase extends PHPUnit_Framework_TestCase
 	}
 
 	function testParser() {
-		$rule= new $this->cat($this->rule);
+		$rule= new $this->cat($this->in);
 
-		$expected= $this->sample;
+		$expected= $this->rule;
 		ksort($expected);
 
 		$actual= $rule->rule;
@@ -64,15 +65,15 @@ class RuleBase extends PHPUnit_Framework_TestCase
 	function testGenerator() {
 		$rule= new $this->cat('');
 
-		$rule->load($this->sample);
+		$rule->load($this->rule);
 
-		$this->assertEquals($this->rule . "\n", $rule->generate());
+		$this->assertEquals($this->out, $rule->generate());
 	}
 	
 	function testParserGenerator() {
-		$rule= new $this->cat($this->rule);
+		$rule= new $this->cat($this->in);
 
-		$this->assertEquals($this->rule . "\n", $rule->generate());
+		$this->assertEquals($this->out, $rule->generate());
 	}
 }
 ?>

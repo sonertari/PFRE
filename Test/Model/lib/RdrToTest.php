@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: RdrToTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,15 +37,17 @@ require_once('NatBase.php');
 
 class RdrToTest extends NatBaseTest
 {
-	protected $sampleType= array(
+	protected $ruleType= array(
 		'type' => 'rdr-to',
 		);
 
 	function __construct()
 	{
-		$this->ruleType= 'rdr-to ' . $this->ruleRedirHost . ' ' . $this->ruleRedirPort;
+		$this->inType= 'rdr-to ' . $this->inRedirHost . ' ' . $this->inRedirPort;
 
 		parent::__construct();
+
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

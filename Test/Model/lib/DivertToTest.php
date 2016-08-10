@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertToTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: DivertToTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,27 +37,28 @@ require_once('FilterTest.php');
 
 class DivertToTest extends FilterTest
 {
-	protected $sampleType= array(
+	protected $ruleType= array(
 		'type' => 'divert-to',
 		);
 
-	protected $ruleDivertHost= '192.168.0.1';
-	protected $sampleDivertHost= array(
+	protected $inDivertHost= '192.168.0.1';
+	protected $ruleDivertHost= array(
 		'diverthost' => '192.168.0.1',
 		);
 
 	function __construct()
 	{
-		$this->ruleType= 'divert-to ' . $this->ruleDivertHost . ' ' . $this->ruleDivertPort;
+		$this->inType= 'divert-to ' . $this->inDivertHost . ' ' . $this->inDivertPort;
 
-		$this->sample= array_merge(
-			$this->sampleDivertHost,
-			$this->sampleDivertPort
+		$this->rule= array_merge(
+			$this->ruleDivertHost,
+			$this->ruleDivertPort
 			);
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inType . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

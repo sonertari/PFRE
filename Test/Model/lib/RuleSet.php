@@ -1,5 +1,5 @@
 <?php
-/* $pfre: TableTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,75 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once('Rule.php');
-
-class TableTest extends RuleTest
+class RuleSetTest extends PHPUnit_Framework_TestCase
 {
-	protected $inTable= 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 }';
-	protected $ruleTable= array(
-		'identifier' => 'test',
-		'persist' => TRUE,
-		'const' => TRUE,
-		'counters' => TRUE,
-		'file' => array(
-			'/etc/pf.restrictedips1',
-			'/etc/pf.restrictedips2',
-			),
-		'data' => array(
-			'192.168.0.1',
-			'192.168.0.2',
-			),
-		);
+	protected $cat= '';
+	protected $catTest= '';
+
+	protected $in= '';
+	protected $rules= array();
+	protected $out= '';
 
 	function __construct()
 	{
-		$this->rule= $this->ruleTable;
+		if (preg_match('/^(.+)RuleSetTest$/', get_called_class(), $match)) {
+			$this->cat= $match[1];
+			$this->catTest= $this->cat . 'Test';
+		}
+
+		$test= new $this->catTest();
+
+		$this->in= $test->in;
+		$this->rules= array(
+				array(
+				'cat' => $this->cat,
+				'rule' => $test->rule,
+				)
+			);
+		$this->out= $test->out;
 
 		parent::__construct();
+	}
 
-		$this->in= $this->inTable . $this->inComment;
-		$this->out= $this->in . "\n";
+	function testParser() {
+		$expected= $this->rules;
+		ksort($expected);
+
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->in);
+
+		$actual= $ruleSet->rules;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$ruleSet= new RuleSet();
+		$ruleSet->load($this->rules);
+
+		$this->assertEquals($this->out, $ruleSet->generate());
+	}
+	
+	function testParserGenerator() {
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->in);
+
+		$this->assertEquals($this->out, $ruleSet->generate());
+	}
+	
+	function testGeneratorPrintNumbers() {
+		$ruleSet= new RuleSet();
+		$ruleSet->load($this->rules);
+
+		$ruleNumber= 0;
+		$s= '';
+		foreach (explode("\n", $this->out) as $line) {
+			$s.= sprintf('% 4d', $ruleNumber++) . ": $line\n";
+		}
+		$str= $s;
+
+		$this->assertEquals($str, $ruleSet->generate(TRUE));
 	}
 }
 ?>

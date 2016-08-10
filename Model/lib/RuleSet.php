@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.10 2016/08/10 06:03:14 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.11 2016/08/10 10:31:35 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -279,6 +279,7 @@ class RuleSet
 		// Do not merge this loop with the generate loop above
 		if ($printNumbers) {
 			$ruleNumber= 0;
+			$s= '';
 			foreach (explode("\n", $str) as $line) {
 				$s.= sprintf('% 4d', $ruleNumber++) . ": $line\n";
 			}

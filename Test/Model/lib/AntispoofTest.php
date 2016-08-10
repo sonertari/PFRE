@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AntispoofTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: AntispoofTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,27 +37,27 @@ require_once('Rule.php');
 
 class AntispoofTest extends RuleTest
 {
-	protected $ruleLabel= 'label "test"';
-	protected $sampleLabel= array(
+	protected $inLabel= 'label "test"';
+	protected $ruleLabel= array(
 		'label' => 'test',
 		);
 
 	function __construct()
 	{
-		$this->ruleInterface= 'for ' . $this->sampleInterface['interface'];
+		$this->inInterface= 'for ' . $this->ruleInterface['interface'];
 
-		$this->sample= array_merge(
-			$this->sampleLog,
-			$this->sampleQuick,
-			$this->sampleAf,
-			$this->sampleInterface,
-			$this->sampleLabel
+		$this->rule= array_merge(
+			$this->ruleLog,
+			$this->ruleQuick,
+			$this->ruleAf,
+			$this->ruleInterface,
+			$this->ruleLabel
 			);
 
 		parent::__construct();
 
-		$this->rule= 'antispoof ' . $this->ruleLog . ' ' . $this->ruleQuick . ' ' . $this->ruleInterface . ' ' . $this->ruleAf . ' ' . $this->ruleLabel .
-			$this->ruleComment;
+		$this->in= 'antispoof ' . $this->inLog . ' ' . $this->inQuick . ' ' . $this->inInterface . ' ' . $this->inAf . ' ' . $this->inLabel . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

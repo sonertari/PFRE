@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: RouteTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,12 +37,12 @@ require_once('FilterTest.php');
 
 class RouteTest extends FilterTest
 {
-	protected $sampleType= array(
+	protected $ruleType= array(
 		'type' => 'route-to',
 		);
 
-	protected $ruleRouteHost= '{ 192.168.0.1, 192.168.0.2 }';
-	protected $sampleRouteHost= array(
+	protected $inRouteHost= '{ 192.168.0.1, 192.168.0.2 }';
+	protected $ruleRouteHost= array(
 		'routehost' => array(
 			'192.168.0.1',
 			'192.168.0.2',
@@ -51,16 +51,17 @@ class RouteTest extends FilterTest
 
 	function __construct()
 	{
-		$this->ruleType= 'route-to ' . $this->ruleRouteHost;
+		$this->inType= 'route-to ' . $this->inRouteHost;
 
-		$this->sample= array_merge(
-			$this->sampleRouteHost,
-			$this->samplePoolType
+		$this->rule= array_merge(
+			$this->ruleRouteHost,
+			$this->rulePoolType
 			);
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . ' ' . $this->rulePoolType . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inType . ' ' . $this->inPoolType . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

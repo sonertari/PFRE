@@ -1,5 +1,5 @@
 <?php
-/* $pfre: TimeoutTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: TimeoutTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,8 @@ require_once('Rule.php');
 
 class TimeoutTest extends RuleTest
 {
-	protected $ruleTimeout= 'frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19';
-	protected $sampleTimeout= array(
+	protected $inTimeout= 'frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19';
+	protected $ruleTimeout= array(
 		'timeout' => array(
 			'all' => array(
 				'frag' => '1',
@@ -76,14 +76,15 @@ class TimeoutTest extends RuleTest
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sample,
-			$this->sampleTimeout
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleTimeout
 			);
 
 		parent::__construct();
 
-		$this->rule= 'set timeout { ' . $this->ruleTimeout . ' }' . $this->ruleComment;
+		$this->in= 'set timeout { ' . $this->inTimeout . ' }' . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

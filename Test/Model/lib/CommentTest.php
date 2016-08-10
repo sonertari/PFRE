@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: CommentTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,35 +37,21 @@ require_once('RuleBase.php');
 
 class CommentTest extends RuleBase
 {
-	protected $rule= "Line1\nLine2";
-	protected $sample= array(
+	public $in= "Line1\nLine2";
+	public $rule= array(
 		'comment' => "Line1\nLine2",
 		);
 
-	protected $output= "# Line1\n# Line2\n";
+	public $out= "# Line1\n# Line2\n";
 
-	private $outputSingleLine= "# Line1, Line2\n";
-
-	function testGenerator() {
-		$rule= new $this->cat('');
-
-		$rule->load($this->sample);
-
-		$this->assertEquals($this->output, $rule->generate());
-	}
-	
-	function testParserGenerator() {
-		$rule= new $this->cat($this->rule);
-
-		$this->assertEquals($this->output, $rule->generate());
-	}
+	private $outSingleLine= "# Line1, Line2\n";
 
 	function testGeneratorSingleLine() {
 		$rule= new Comment('');
 
-		$rule->load($this->sample);
+		$rule->load($this->rule);
 
-		$this->assertEquals($this->outputSingleLine, $rule->generate(TRUE));
+		$this->assertEquals($this->outSingleLine, $rule->generate(TRUE));
 	}
 }
 ?>

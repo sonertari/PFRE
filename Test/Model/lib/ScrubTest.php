@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: ScrubTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,8 @@ require_once('FilterTest.php');
 
 class ScrubTest extends FilterTest
 {
-	protected $ruleScrub= 'scrub (no-df, min-ttl 1, max-mss 2, random-id, reassemble tcp)';
-	protected $sampleScrub= array(
+	protected $inScrub= 'scrub (no-df, min-ttl 1, max-mss 2, random-id, reassemble tcp)';
+	protected $ruleScrub= array(
 		'min-ttl' => '1',
 		'max-mss' => '2',
 		'no-df' => TRUE,
@@ -48,13 +48,14 @@ class ScrubTest extends FilterTest
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sampleScrub
+		$this->rule= array_merge(
+			$this->ruleScrub
 			);
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleScrub . ' ' . $this->ruleFilterOpts . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inScrub . ' ' . $this->inFilterOpts . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: DivertPacketTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,21 +37,22 @@ require_once('FilterTest.php');
 
 class DivertPacketTest extends FilterTest
 {
-	protected $sampleType= array(
+	protected $ruleType= array(
 		'type' => 'divert-packet',
 		);
 
 	function __construct()
 	{
-		$this->ruleType= 'divert-packet ' . $this->ruleDivertPort;
+		$this->inType= 'divert-packet ' . $this->inDivertPort;
 
-		$this->sample= array_merge(
-			$this->sampleDivertPort
+		$this->rule= array_merge(
+			$this->ruleDivertPort
 			);
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleType . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inType . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

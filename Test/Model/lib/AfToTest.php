@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfToTest.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: AfToTest.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,8 +37,8 @@ require_once('FilterTest.php');
 
 class AfToTest extends FilterTest
 {
-	protected $ruleAfto= 'af-to inet from 192.168.0.1 to 192.168.0.2';
-	protected $sampleAfto= array(
+	protected $inAfto= 'af-to inet from 192.168.0.1 to 192.168.0.2';
+	protected $ruleAfto= array(
 		'rediraf' => 'inet',
 		'redirhost' => '192.168.0.1',
 		'toredirhost' => '192.168.0.2'
@@ -46,16 +46,17 @@ class AfToTest extends FilterTest
 
 	function __construct()
 	{
-		$this->sample= array_merge(
-			$this->sampleAfto,
+		$this->rule= array_merge(
+			$this->ruleAfto,
 			// Redirhost in AfTo has a leading 'from', hence handled in $ruleAfto instead
-			//$this->sampleRedirHost,
-			$this->samplePoolType
+			//$this->ruleRedirHost,
+			$this->rulePoolType
 			);
 
 		parent::__construct();
 
-		$this->rule= $this->ruleFilterHead . ' ' . $this->ruleFilterOpts . ' ' . $this->ruleAfto . ' ' . $this->rulePoolType . $this->ruleComment;
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inAfto . ' ' . $this->inPoolType . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>
