@@ -1,5 +1,5 @@
 <?php
-/* $pfre: TableTest.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: TableTest.php,v 1.3 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('Rule.php');
 
-class TableTest extends RuleTest
+class TableTest extends Rule
 {
 	protected $inTable= 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 }';
 	protected $ruleTable= array(

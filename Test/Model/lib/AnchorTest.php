@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AnchorTest.php,v 1.3 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: AnchorTest.php,v 1.4 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('FilterBase.php');
 
-class AnchorTest extends FilterBaseTest
+class AnchorTest extends FilterBase
 {
 	protected $inAnchor= 'anchor "test"';
 	protected $ruleAnchor= array(

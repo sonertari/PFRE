@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterTest.php,v 1.3 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: FilterTest.php,v 1.4 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('FilterBase.php');
 
-class FilterTest extends FilterBaseTest
+class FilterTest extends FilterBase
 {
 	protected $inFilterHead= '';
 

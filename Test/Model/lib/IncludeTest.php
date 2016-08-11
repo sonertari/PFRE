@@ -1,5 +1,5 @@
 <?php
-/* $pfre: IncludeTest.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: IncludeTest.php,v 1.3 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('Rule.php');
 
-class _IncludeTest extends RuleTest
+class _IncludeTest extends Rule
 {
 	protected $inInclude= 'include "/etc/pfre/include.conf"';
 	protected $ruleInclude= array(

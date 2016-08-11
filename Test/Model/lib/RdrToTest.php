@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RdrToTest.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: RdrToTest.php,v 1.3 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('NatBase.php');
 
-class RdrToTest extends NatBaseTest
+class RdrToTest extends NatBase
 {
 	protected $ruleType= array(
 		'type' => 'rdr-to',

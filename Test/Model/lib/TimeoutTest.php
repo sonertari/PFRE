@@ -1,5 +1,5 @@
 <?php
-/* $pfre: TimeoutTest.php,v 1.3 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: TimeoutTest.php,v 1.4 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('Rule.php');
 
-class TimeoutTest extends RuleTest
+class TimeoutTest extends Rule
 {
 	protected $inTimeout= 'frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19';
 	protected $ruleTimeout= array(

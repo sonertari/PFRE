@@ -1,5 +1,5 @@
 <?php
-/* $pfre: QueueTest.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: QueueTest.php,v 1.3 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('Rule.php');
 
-class QueueTest extends RuleTest
+class QueueTest extends Rule
 {
 	protected $inQueue= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default';
 	protected $ruleQueue= array(

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: OptionTest.php,v 1.5 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: OptionTest.php,v 1.6 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('Rule.php');
 
-class OptionTest extends RuleTest
+class OptionTest extends Rule
 {
 	protected $inLoginterface= 'set loginterface $int_if';
 	protected $ruleLoginterface= array(

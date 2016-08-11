@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: Rule.php,v 1.3 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ namespace ModelTest;
 
 require_once('RuleBase.php');
 
-class RuleTest extends RuleBase
+class Rule extends RuleBase
 {
 	protected $inInterface= 'on em0';
 	protected $ruleInterface= array(
