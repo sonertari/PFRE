@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.5 2016/08/07 14:22:37 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.6 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace Model;
 
 class FilterBase extends State
 {

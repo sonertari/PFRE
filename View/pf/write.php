@@ -1,5 +1,5 @@
 <?php
-/* $pfre: write.php,v 1.7 2016/08/08 06:55:25 soner Exp $ */
+/* $pfre: write.php,v 1.8 2016/08/08 20:56:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once ('include.php');
+require_once ('pf.php');
 
 $printNumbers= TRUE;
 if (count($_POST) && !filter_has_var(INPUT_POST, 'numbers')) {

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: NatBase.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
+/* $pfre: NatBase.php,v 1.3 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace ModelTest;
 
 require_once('FilterTest.php');
 

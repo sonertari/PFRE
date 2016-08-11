@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.12 2016/08/08 06:55:25 soner Exp $ */
+/* $pfre: files.php,v 1.13 2016/08/08 08:37:55 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once ('include.php');
+use View\RuleSet;
+
+require_once ('pf.php');
 
 if (filter_has_var(INPUT_POST, 'reload')) {
 	$force= 0;

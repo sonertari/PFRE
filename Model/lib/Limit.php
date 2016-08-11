@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Limit.php,v 1.2 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: Limit.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace Model;
 
 class Limit extends Rule
 {

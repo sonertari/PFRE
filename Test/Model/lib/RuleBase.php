@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleBase.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: RuleBase.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class RuleBase extends PHPUnit_Framework_TestCase
+namespace ModelTest;
+
+class RuleBase extends \PHPUnit_Framework_TestCase
 {
 	protected $cat= '';
 
@@ -43,8 +45,8 @@ class RuleBase extends PHPUnit_Framework_TestCase
 
 	function __construct()
 	{
-		if (preg_match('/^(.+)Test$/', get_called_class(), $match)) {
-			$this->cat= $match[1];
+		if (preg_match('/^' . __NAMESPACE__ . '\\\\(.+)Test$/', get_called_class(), $match)) {
+			$this->cat= 'Model\\' . $match[1];
 		}
 
 		parent::__construct();

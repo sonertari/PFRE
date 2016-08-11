@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.4 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: include.php,v 1.4 2016/08/08 06:55:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,41 +33,32 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace Model;
+require_once('../lib/vars.php');
 
-class Comment extends Rule
+class Pf extends View
 {
-	protected $typedef= array(
-		'comment' => array(
-			'require' => TRUE,
-			'regex' => RE_COMMENT,
-			),
-		);
+	public $RuleSet;
 
-	function parse($str)
+	function __construct()
 	{
-		$this->init();
-		$this->rule['comment']= $str;
-	}
-
-	function generate($singleLine= FALSE)
-	{
-		$this->str= '';
-		
-		$lines= preg_split("/\n/", stripslashes($this->rule['comment']));
-		if (!$singleLine) {
-			foreach ($lines as $line) {
-				$this->str.= "# $line\n";
-			}
-		} else {
-			$this->str.= '#';
-			foreach ($lines as $line) {
-				$this->str.= " $line,";
-			}
-			$this->str= rtrim($this->str, ',');
-			$this->str.= "\n";
+		if (!isset($_SESSION['pf']['ruleset'])) {
+			$_SESSION['pf']['ruleset']= new RuleSet();
 		}
-		return $this->str;
+		$this->RuleSet= &$_SESSION['pf']['ruleset'];
+	}
+}
+
+$View= new Pf();
+
+// Load the main pf configuration if the ruleset is empty
+if ($View->RuleSet->filename == '') {
+	$filepath= '/etc/pf.conf';
+	$ruleSet= new View\RuleSet();
+	if ($ruleSet->load($filepath, 0, TRUE)) {
+		$View->RuleSet= $ruleSet;
+		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
+	} else {
+		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
 	}
 }
 ?>

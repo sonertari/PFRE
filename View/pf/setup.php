@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.7 2016/08/08 17:25:04 soner Exp $ */
+/* $pfre: setup.php,v 1.8 2016/08/10 20:29:50 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -41,7 +41,7 @@ if ($ForceHTTPs) {
 	}
 }
 
-require_once('include.php');
+require_once('pf.php');
 
 if (count($_POST)) {
 	// Allow posting empty strings to display an error message

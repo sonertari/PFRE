@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: bootstrap.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,6 +36,9 @@
 $ROOT= dirname(dirname(__FILE__));
 require_once($ROOT . '/lib/defs.php');
 require_once($MODEL_PATH . '/include.php');
+require_once($VIEW_PATH . '/pf/include.php');
+
+$TEST_PATH= $ROOT . '/Test';
 
 /// @todo Delete these after fixing NOTICEs
 PHPUnit_Framework_Error_Warning::$enabled = FALSE;

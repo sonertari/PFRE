@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleBase.php,v 1.2 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: validateTest.php,v 1.1 2016/08/11 06:37:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class validateTest extends PHPUnit_Framework_TestCase
+namespace ModelTest;
+
+class validateTest extends \PHPUnit_Framework_TestCase
 {
 	function runTests($re, $pass, $fail, $dollar= TRUE, $backtick= TRUE) {
 		$result= TRUE;

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.7 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: Anchor.php,v 1.8 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace Model;
+
 $Nesting= 0;
 
 class Anchor extends FilterBase
@@ -54,7 +56,7 @@ class Anchor extends FilterBase
 			'regex' => RE_ANCHOR_ID,
 			),
 		'inline' => array(
-			'func' => 'IsInlineAnchor',
+			'func' => 'Model\\IsInlineAnchor',
 			'force' => TRUE,
 			),
 		);

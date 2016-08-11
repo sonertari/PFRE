@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.30 2016/08/07 14:22:37 soner Exp $ */
+/* $pfre: Rule.php,v 1.31 2016/08/08 15:48:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace View;
+
 class Rule
 {
 	public $cat= '';
@@ -46,7 +48,7 @@ class Rule
 
 	function __construct()
 	{
-		$this->cat= get_called_class();
+		$this->cat= str_replace(__NAMESPACE__ . '\\', '', get_called_class());
 		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&amp;rulenumber=';
 		$this->setType();
 	}

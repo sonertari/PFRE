@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Include.php,v 1.12 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: Include.php,v 1.13 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace View;
 
 class _Include extends Rule
 {

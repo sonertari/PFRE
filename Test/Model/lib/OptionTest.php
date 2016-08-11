@@ -1,5 +1,5 @@
 <?php
-/* $pfre: OptionTest.php,v 1.4 2016/08/10 09:31:57 soner Exp $ */
+/* $pfre: OptionTest.php,v 1.5 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace ModelTest;
 
 require_once('Rule.php');
 

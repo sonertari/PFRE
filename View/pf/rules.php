@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.17 2016/08/08 06:55:25 soner Exp $ */
+/* $pfre: rules.php,v 1.18 2016/08/08 15:48:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once ('include.php');
+require_once ('pf.php');
 
 $ruleCategoryNames = array(
     'filter' => 'Filter',
@@ -133,7 +133,6 @@ if (filter_has_var(INPUT_POST, 'ruleNumber') && filter_input(INPUT_POST, 'ruleNu
 
 if (isset($edit)) {
     require ('edit.php');
-    exit;
 }
 
 if (filter_has_var(INPUT_GET, 'up')) {

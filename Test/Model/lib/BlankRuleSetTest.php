@@ -1,5 +1,5 @@
 <?php
-/* $pfre: BlankRuleSetTest.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: BlankRuleSetTest.php,v 1.2 2016/08/10 17:25:22 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace ModelTest;
 
 require_once('BlankTest.php');
 require_once('RuleSetBase.php');

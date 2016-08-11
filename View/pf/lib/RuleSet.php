@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.26 2016/08/08 17:25:04 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.27 2016/08/08 20:56:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace View;
+
 class RuleSet
 {
 	public $filename= '';
@@ -60,14 +62,20 @@ class RuleSet
 			return FALSE;
 		}
 
+		$this->loadArray($rulesArray);
+
+		return TRUE;
+	}
+			
+	function loadArray($rulesArray)
+	{
 		$this->deleteRules();
 		foreach ($rulesArray as $ruleDef) {
-			$class= $ruleDef['cat'];
-			$ruleObj= new $class();
+			$cat= __NAMESPACE__ . '\\' . $ruleDef['cat'];
+			$ruleObj= new $cat();
 			$ruleObj->rule= $ruleDef['rule'];
 			$this->rules[]= $ruleObj;
 		}
-		return TRUE;
 	}
 	
 	function deleteRules()

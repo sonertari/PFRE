@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once('include.php');
+require_once('pf.php');
 
 $Submenu= SetSubmenu('rules');
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.21 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: pf.php,v 1.22 2016/08/11 06:37:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+use Model\RuleSet;
 
 require_once($MODEL_PATH.'/model.php');
 
@@ -385,7 +387,9 @@ class Pf extends Model
 			}
 
 			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too
-			exec("/bin/kill -KILL $pid");
+			if (posix_getpgid($pid)) {
+				exec("/bin/kill -KILL $pid");
+			}
 
 			// Parent survives
 			return $return;

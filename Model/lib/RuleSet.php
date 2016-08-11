@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.11 2016/08/10 10:31:35 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.12 2016/08/10 15:21:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,8 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace Model;
+
 class RuleSet
 {
 	public $rules= array();
@@ -44,8 +46,8 @@ class RuleSet
 		$retval= TRUE;
 		$ruleNumber= 0;
 		foreach ($rulesArray as $ruleDef) {
-			$class= $ruleDef['cat'];
-			$ruleObj= new $class('');
+			$cat= __NAMESPACE__ . '\\' . $ruleDef['cat'];
+			$ruleObj= new $cat('');
 			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber, $force)) {
 				if (!$force) {
 					$msg= 'Error loading, rule loaded partially';

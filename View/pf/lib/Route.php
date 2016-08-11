@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.10 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: Route.php,v 1.11 2016/08/07 14:22:37 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace View;
 
 class Route extends Filter
 {

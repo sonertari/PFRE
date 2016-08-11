@@ -1,5 +1,5 @@
 <?php
-/* $pfre: include.php,v 1.3 2016/08/05 22:30:06 soner Exp $ */
+/* $pfre: vars.php,v 1.15 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,32 +33,47 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once('../lib/vars.php');
+/** @file
+ * Required includes.
+ */
 
-class Pf extends View
-{
-	public $RuleSet;
+$ROOT= dirname(dirname(dirname(__FILE__)));
 
-	function __construct()
-	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+require_once($ROOT.'/lib/defs.php');
+require_once($ROOT.'/lib/setup.php');
+require_once($ROOT.'/lib/lib.php');
 
-$View= new Pf();
+require_once($VIEW_PATH.'/lib/setup.php');
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
-	}
-}
+/// PF module absolute path.
+$PF_PATH= $VIEW_PATH.'/pf';
+
+// Include these before session start in /lib/libauth.php
+// because we save instances of these in the session
+require_once($PF_PATH.'/lib/RuleSet.php');
+require_once($PF_PATH.'/lib/Rule.php');
+require_once($PF_PATH.'/lib/Timeout.php');
+require_once($PF_PATH.'/lib/State.php');
+require_once($PF_PATH.'/lib/FilterBase.php');
+require_once($PF_PATH.'/lib/Filter.php');
+require_once($PF_PATH.'/lib/Antispoof.php');
+require_once($PF_PATH.'/lib/Anchor.php');
+require_once($PF_PATH.'/lib/NatBase.php');
+require_once($PF_PATH.'/lib/NatTo.php');
+require_once($PF_PATH.'/lib/BinatTo.php');
+require_once($PF_PATH.'/lib/RdrTo.php');
+require_once($PF_PATH.'/lib/AfTo.php');
+require_once($PF_PATH.'/lib/DivertTo.php');
+require_once($PF_PATH.'/lib/DivertPacket.php');
+require_once($PF_PATH.'/lib/Route.php');
+require_once($PF_PATH.'/lib/Macro.php');
+require_once($PF_PATH.'/lib/Table.php');
+require_once($PF_PATH.'/lib/Queue.php');
+require_once($PF_PATH.'/lib/Scrub.php');
+require_once($PF_PATH.'/lib/Option.php');
+require_once($PF_PATH.'/lib/Limit.php');
+require_once($PF_PATH.'/lib/LoadAnchor.php');
+require_once($PF_PATH.'/lib/Include.php');
+require_once($PF_PATH.'/lib/Comment.php');
+require_once($PF_PATH.'/lib/Blank.php');
 ?>

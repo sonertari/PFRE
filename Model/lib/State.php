@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: State.php,v 1.3 2016/08/06 02:50:38 soner Exp $ */
+/* $pfre: State.php,v 1.4 2016/08/06 09:43:30 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -32,6 +32,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+namespace Model;
 
 class State extends Timeout
 {

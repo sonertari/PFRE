@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.1 2016/08/10 15:21:16 soner Exp $ */
+/* $pfre: RuleSetTest.php,v 1.1 2016/08/10 17:25:22 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+namespace ModelTest;
+
+use Model\RuleSet;
+
 class RuleSetTest extends RuleSetBase
 {
 	private $ruleTypes= array(
@@ -65,10 +69,9 @@ class RuleSetTest extends RuleSetBase
 		parent::__construct();
 
 		foreach ($this->ruleTypes as $cat) {
-			$catTest= $cat . 'Test';
+			require_once (ltrim($cat . 'Test', '_') . '.php');
 
-			require_once (ltrim($catTest, '_') . '.php');
-
+			$catTest= __NAMESPACE__ . '\\' . $cat . 'Test';
 			$test= new $catTest();
 
 			$this->rules[]= array(

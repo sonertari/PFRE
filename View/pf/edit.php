@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.9 2016/08/06 02:13:05 soner Exp $ */
+/* $pfre: edit.php,v 1.10 2016/08/06 23:48:36 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-require_once ('include.php');
+require_once ('pf.php');
 
 if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	$cat= $ruleType2Class[$edit];
@@ -64,5 +64,7 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	require_once($VIEW_PATH.'/header.php');
 	$ruleObj->edit($ruleNumber, $modified, $testResult, $generateResult, $action);
 	require_once($VIEW_PATH.'/footer.php');
+
+	exit;
 }
 ?>
