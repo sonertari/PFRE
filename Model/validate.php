@@ -1,5 +1,5 @@
 <?php
-/* $pfre: validate.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: validate.php,v 1.2 2016/08/10 09:31:57 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,7 +36,7 @@
 define('RE_BOOL', '^[01]$');
 define('RE_NAME', '^[\w_.-]{0,50}$');
 define('RE_NUM', '^\d{1,20}$');
-define('RE_SHA1', '^[a-f\d]+$');
+define('RE_SHA1', '^[a-f\d]{40}$');
 
 // "Macro names must start with a letter, digit, or underscore, and may contain any of those characters"
 $RE_ID= '[\w_-]{1,50}';
@@ -45,7 +45,7 @@ define('RE_ID', "^$RE_ID$");
 $RE_MACRO_VAR= '\$' . $RE_ID;
 
 /// @todo What are possible macro values?
-define('RE_MACRO_VALUE', '^(\w|\$)[\w_.\/\-*]{0,50}$');
+define('RE_MACRO_VALUE', '^((\w|\$)[\w_.\/\-*]{0,49}|)$');
 
 $RE_IF_NAME= '\w{1,20}';
 $RE_IF_MODIF= '(|:(0|broadcast|network|peer))';
@@ -53,7 +53,7 @@ $RE_IF_MODIF= '(|:(0|broadcast|network|peer))';
 $RE_IF= "($RE_IF_NAME|$RE_MACRO_VAR)$RE_IF_MODIF";
 define('RE_IF', "^$RE_IF$");
 
-$RE_IF_PAREN= "\($RE_IF\)";
+$RE_IF_PAREN= "\(\s*$RE_IF\s*\)";
 define('RE_IFSPEC', "^(|!)($RE_IF|$RE_IF_PAREN)$");
 
 $RE_PROTO= '[\w-]{1,50}';
@@ -65,7 +65,7 @@ define('RE_DIRECTION', '^(in|out)$');
 $RE_IP= '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
 // pfctl gets stuck if there are no spaces around the dash -
 $RE_IP_RANGE= "$RE_IP\s+\-\s+$RE_IP";
-$RE_IP6= '[\w:.\/]+';
+$RE_IP6= '[\w:.\/]{1,50}';
 
 /// @todo Is dash - possible in hostnames?
 $RE_HOSTNAME= '[\w.\/_]{1,100}';
@@ -84,13 +84,13 @@ $RE_TABLE_ADDRESS= "($RE_HOSTNAME|$RE_IF|self|$RE_IP|$RE_IP6|$RE_MACRO_VAR)";
 $RE_TABLE_ADDRESS_NET= "$RE_TABLE_ADDRESS\s*\/\s*\d{1,2}";
 define('RE_TABLE_ADDRESS', "^(|!)($RE_TABLE_ADDRESS|$RE_TABLE_ADDRESS_NET)$");
 
-$RE_HOST= "(|!)($RE_ADDRESS|$RE_ADDRESS_NET|$RE_TABLE_VAR)";
+$RE_HOST= "(|!)($RE_ADDRESS|$RE_ADDRESS_NET|$RE_TABLE_VAR$RE_WEIGHT)";
 
 define('RE_HOST', "^$RE_HOST$");
 define('RE_REDIRHOST', "^($RE_ADDRESS|$RE_ADDRESS_NET)$");
 
 $RE_HOST_AT_IF= "$RE_HOST\s*@\s*$RE_IF";
-$RE_IF_ADDRESS_NET= "\($RE_IF(|\s+$RE_ADDRESS|\s+$RE_ADDRESS_NET)\)$";
+$RE_IF_ADDRESS_NET= "\(\s*$RE_IF(|\s+$RE_ADDRESS|\s+$RE_ADDRESS_NET)\s*\)$";
 
 define('RE_ROUTEHOST', "^($RE_HOST|$RE_HOST_AT_IF|$RE_IF_ADDRESS_NET)$");
 
@@ -124,7 +124,7 @@ define('RE_ACTION', '^(pass|match|block)$');
 define('RE_BLOCKOPTION', '^(drop|return|return-rst|return-icmp|return-icmp6)$');
 
 /// @todo Enum types instead
-define('RE_TYPE', '^[a-z-]{0,30}$');
+define('RE_TYPE', '^[a-z-]{1,30}$');
 
 define('RE_SOURCE_HASH_KEY', '^\w{16,}$');
 
@@ -135,8 +135,8 @@ define('RE_RULESETOPTIMIZATION', '^(none|basic|profile)$');
 define('RE_DEBUG', '^(emerg|alert|crit|err|warning|notice|info|debug)$');
 define('RE_REASSEMBLE', '^(yes|no)$');
 
-define('RE_BANDWIDTH', '^\w{1,16}(|K|M|G)$');
-define('RE_BWTIME', '^\w{1,16}ms$');
+define('RE_BANDWIDTH', '^\d{1,16}(|K|M|G)$');
+define('RE_BWTIME', '^\d{1,16}ms$');
 
 define('RE_REASSEMBLE_TCP', '^tcp$');
 

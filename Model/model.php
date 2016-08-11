@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.7 2016/08/08 10:15:07 soner Exp $ */
+/* $pfre: model.php,v 1.8 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -166,7 +166,7 @@ class Model
 	 */
 	function SetPassword($user, $passwd)
 	{
-		/// Passwords in htpasswd file are SHA1 encrypted.
+		/// Passwords in htpasswd file are SHA encrypted.
 		exec("/usr/local/bin/htpasswd -b -s $this->passwdFile $user $passwd 2>&1", $output, $retval);
 		if ($retval === 0) {
 			return TRUE;

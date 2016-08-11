@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.20 2016/08/09 13:07:29 soner Exp $ */
+/* $pfre: pf.php,v 1.21 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -147,7 +147,8 @@ class Pf extends Model
 		$rulesArray= json_decode($json, TRUE);
 
 		$ruleSet= new RuleSet();
-		if (!$ruleSet->load($rulesArray, $force) && !$force) {
+		$loadResult= $ruleSet->load($rulesArray, $force);
+		if (!$loadResult && !$force) {
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
 			return FALSE;
 		}
@@ -161,15 +162,22 @@ class Pf extends Model
 			exec("/usr/bin/install -o root -m 0600 -D -b -B '.orig' '$tmpFile' $file 2>&1", $output, $retval);
 			if ($retval === 0) {
 				if ($load === TRUE) {
-					$cmd= "/sbin/pfctl -f $file 2>&1";
+					if ($loadResult) {
+						$cmd= "/sbin/pfctl -f $file 2>&1";
 
-					if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
-						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Failed loading pf rules: $file"));
+						if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
+							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Failed loading pf rules: $file"));
+							return FALSE;
+						}
+
+						if ($retval !== 0) {
+							$err= 'Cannot load pf rules';
+						}
+					} else {
+						// Install button on the View is disabled if the ruleset has errors, so we should never reach here
+						// But this method can be called on the command line too, hence this check
+						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Will not load rules with errors: $file"));
 						return FALSE;
-					}
-
-					if ($retval !== 0) {
-						$err= 'Cannot load pf rules';
 					}
 				}
 			} else {
