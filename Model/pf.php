@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.22 2016/08/11 06:37:41 soner Exp $ */
+/* $pfre: pf.php,v 1.23 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -150,6 +150,7 @@ class Pf extends Model
 
 		$ruleSet= new RuleSet();
 		$loadResult= $ruleSet->load($rulesArray, $force);
+
 		if (!$loadResult && !$force) {
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
 			return FALSE;
@@ -224,9 +225,10 @@ class Pf extends Model
 	{
 		$ruleDef= json_decode($json, TRUE);
 
-		$class= $ruleDef['cat'];
-		$ruleObj= new $class('');
+		$cat= 'Model\\' . $ruleDef['cat'];
+		$ruleObj= new $cat('');
 		$retval= $ruleObj->load($ruleDef['rule'], $ruleNumber, $force);
+
 		if ($retval || $force) {
 			Output($ruleObj->generate());
 		} else {
@@ -242,6 +244,7 @@ class Pf extends Model
 
 		$ruleSet= new RuleSet();
 		$retval= $ruleSet->load($rulesArray, $force);
+
 		if ($retval || $force) {
 			Output($ruleSet->generate($lines));
 		} else {

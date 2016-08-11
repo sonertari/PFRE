@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.27 2016/08/08 20:56:20 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.28 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -204,6 +204,7 @@ class RuleSet
 			$action= 'create';
 			unset($_SESSION['edit']);
 			$_SESSION['edit']['ruleNumber']= $ruleNumber;
+			$cat= __NAMESPACE__ . '\\' . $cat;
 			$_SESSION['edit']['object']= new $cat('');
 		}
 	}
@@ -242,10 +243,11 @@ class RuleSet
 		}
 	}
 	
-	function isModified($action, $ruleNumber, $ruleObj)
+	function isModified($ruleNumber, $ruleObj)
 	{
 		$modified= TRUE;
-		if ($action != 'create') {
+
+		if (key_exists($ruleNumber, $this->rules)) {
 			// Make sure keys are sorted before comparison
 			$newRule= $ruleObj->rule;
 			ksort($newRule);
@@ -257,6 +259,7 @@ class RuleSet
 				$modified= FALSE;
 			}
 		}
+
 		return $modified;
 	}
 	

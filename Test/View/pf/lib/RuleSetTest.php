@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSetTest.php,v 1.1 2016/08/10 17:25:22 soner Exp $ */
+/* $pfre: RuleSetTest.php,v 1.1 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -170,6 +170,43 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 		$actual= $actualRuleSet->getQueueNames();
 
 		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testIsNotModified()
+	{
+		$actualRules= $this->createRulesArray(array('Filter'));
+
+		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet->loadArray($actualRules);
+
+		$newRule= new \ModelTest\FilterTest();
+
+		$this->assertFalse($actualRuleSet->isModified(0, $newRule));
+	}
+
+	function testIsModified()
+	{
+		$actualRules= $this->createRulesArray(array('Filter'));
+
+		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet->loadArray($actualRules);
+
+		$newRule= new \ModelTest\FilterTest();
+		$newRule->rule['action']= 'match';
+
+		$this->assertTrue($actualRuleSet->isModified(0, $newRule));
+	}
+
+	function testIsModifiedNonExistentRule()
+	{
+		$actualRules= $this->createRulesArray(array('Filter'));
+
+		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet->loadArray($actualRules);
+
+		$newRule= new \ModelTest\FilterTest();
+
+		$this->assertTrue($actualRuleSet->isModified($actualRuleSet->nextRuleNumber(), $newRule));
 	}
 }
 ?>

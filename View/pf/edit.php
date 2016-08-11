@@ -1,5 +1,5 @@
 <?php
-/* $pfre: edit.php,v 1.10 2016/08/06 23:48:36 soner Exp $ */
+/* $pfre: edit.php,v 1.11 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -46,7 +46,11 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 	$testResult= $View->RuleSet->test($ruleNumber, $ruleObj);
 	$View->RuleSet->cancel();
 	$View->RuleSet->save($action, $ruleNumber, $ruleObj, $testResult);
-	$modified= $View->RuleSet->isModified($action, $ruleNumber, $ruleObj);
+
+	$modified= TRUE;
+	if ($action != 'create') {
+		$modified= $View->RuleSet->isModified($ruleNumber, $ruleObj);
+	}
 
 	$force= 0;
 	if (filter_has_var(INPUT_POST, 'forcegenerate')) {
