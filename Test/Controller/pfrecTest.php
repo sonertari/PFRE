@@ -1,5 +1,5 @@
 <?php
-/* $pfre: modelTest.php,v 1.1 2016/08/12 08:29:58 soner Exp $ */
+/* $pfre: pfrecTest.php,v 1.1 2016/08/12 14:18:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,9 +33,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-namespace ModelTest;
+namespace ControllerTest;
 
 use Model\RuleSet;
+use ModelTest\FilterTest;
 
 /// @todo Check why $MODEL_PATH is not defined in global space, and including bootstrap.php here does not define $MODEL_PATH either
 $ROOT= dirname(dirname(dirname(__FILE__)));
