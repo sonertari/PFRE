@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pfTest.php,v 1.1 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: modelTest.php,v 1.1 2016/08/12 08:29:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -46,7 +46,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 	{
 		global $TEST_ROOT_PATH, $Output;
 
-		$file= $TEST_ROOT_PATH . '/var/www/htdocs/pfre/test.php';
+		$file= $TEST_ROOT_PATH . '/var/www/htdocs/pfre/View/test.php';
 
 		$model= new \Model();
 		$result= $model->GetFileCvsTag($file);

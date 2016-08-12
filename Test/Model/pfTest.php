@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSetTest.php,v 1.2 2016/08/11 19:36:31 soner Exp $ */
+/* $pfre: pfTest.php,v 1.1 2016/08/12 03:51:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -148,7 +148,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$expected= implode("\n", $output);
 		$actual= $Output;
 
-		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+		$this->assertEquals($expected, $actual);
 	}
 
 	function testDeletePfRuleFile()
@@ -157,8 +157,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_ROOT_PATH . '/etc/pfre/delete.conf';
 
-		$this->assertFileNotExists($file);
-
+		unlink($file);
 		file_put_contents($file, '', LOCK_EX);
 
 		$this->assertFileExists($file);
@@ -176,6 +175,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_ROOT_PATH . '/etc/pfre/delete.conf';
 
+		unlink($file);
 		$this->assertFileNotExists($file);
 		
 		$pf= new \Pf();

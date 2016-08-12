@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.11 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: pfrec.php,v 1.12 2016/08/12 03:51:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,13 +61,24 @@ if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {
 	exit;
 }
 
+$ArgV= array_slice($argv, 1);
+
+if ($ArgV[0] === '-t') {
+	$ArgV= array_slice($ArgV, 1);
+
+	$TEST_PREFIX= '/Test/root';
+	$TEST_ROOT_PATH= $ROOT . $TEST_PREFIX;
+	$TEST_SRC_PATH= $TEST_PREFIX . '/var/www/htdocs/pfre';
+	$INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
+}
+
 $Model= new Pf();
-$Command= $argv[1];
+$Command= $ArgV[0];
 
 $retval= 1;
 
 if (method_exists($Model, $Command)) {
-	$ArgV= array_slice($argv, 2);
+	$ArgV= array_slice($ArgV, 1);
 
 	if (array_key_exists($Command, $Model->Commands)) {
 		$run= FALSE;

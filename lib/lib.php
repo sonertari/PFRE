@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.4 2016/08/06 20:29:32 soner Exp $ */
+/* $pfre: lib.php,v 1.5 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,16 +39,19 @@
 
 function IsFilePath($str)
 {
-	global $PF_CONFIG_PATH, $TMP_PATH;
+	global $PF_CONFIG_PATH, $TMP_PATH, $TEST_ROOT_PATH;
 
+	// If we are not testing the controller, we should expect regular file paths
+	// For example, _Include or LoadAnchor type of rules accept regular paths, not test ones
+	/// @attention ? should never appear in regex patterns, this is better than using / or | chars
 	return
 		// For CVS Tag displayed in the footer
-		preg_match('|^/var/www/htdocs/pfre/View/\w[\w./\-_]*$|', $str)
+		preg_match("?^($TEST_ROOT_PATH|)/var/www/htdocs/pfre/View/\w[\w./\-_]*$?", $str)
 		// pf configuration files
-		|| preg_match("|^$PF_CONFIG_PATH/\w[\w.\-_]*$|", $str)
-		|| preg_match("|^/etc/\w[\w.\-_]*$|", $str)
+		|| preg_match("?^($TEST_ROOT_PATH|)$PF_CONFIG_PATH/\w[\w.\-_]*$?", $str)
+		|| preg_match("?^($TEST_ROOT_PATH|)/etc/\w[\w.\-_]*$?", $str)
 		// Uploaded tmp files
-		|| preg_match("|^$TMP_PATH/\w[\w.\-_]*$|", $str);
+		|| preg_match("?^($TEST_ROOT_PATH|)$TMP_PATH/\w[\w.\-_]*$?", $str);
 }
 
 function FlattenArray(&$array)
