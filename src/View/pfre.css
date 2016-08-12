@@ -1,0 +1,565 @@
+/* $pfre: pfre.css,v 1.2 2016/07/30 00:23:57 soner Exp $ */
+
+/*
+ * Copyright (c) 2016 Soner Tari.  All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. All advertising materials mentioning features or use of this
+ *    software must display the following acknowledgement: This
+ *    product includes software developed by Soner Tari
+ *    and its contributors.
+ * 4. Neither the name of Soner Tari nor the names of
+ *    its contributors may be used to endorse or promote products
+ *    derived from this software without specific prior written
+ *    permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+ * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+ * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ * IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+ 
+/*
+ * Defaults
+ */
+h1
+{
+	font-size: 150%;
+}
+
+h2
+{
+	font-size: 130%;
+	margin: 1em 0 0.3em 0;
+}
+
+h3
+{
+	font-size: 110%;
+}
+
+body
+{
+	font-size: 75%;
+}
+
+fieldset
+{
+	border: 0;
+	margin-top: 0em;
+}
+
+table
+{
+	width: 100%;
+	border: none black;
+	border-collapse: collapse;
+	overflow: visible;
+}
+
+th
+{
+	color: white;
+	background: #004a4a;
+	padding: 0.25em;
+	border: 1px solid white;
+	line-height: 1em;
+	font-size: 90%;
+}
+
+td
+{
+	padding: 0.5em;
+}
+
+form
+{
+	padding: 0;
+	margin: 0;
+}
+
+code, pre
+{
+	padding-left: 1em;
+	font-size: 120%;
+}
+
+a
+{
+	text-decoration: none;
+}
+
+a:hover
+{
+ 	color: red;
+	background: white;
+}
+
+/*
+ * Main display area
+ */
+#infobox
+{
+	text-align: left;
+}
+
+td.infobox
+{
+	padding: 0;
+	padding-left: 0.5em;
+	margin: 0;
+	vertical-align: top;
+}
+
+#main td {
+	border: 1px solid #CCC;
+	padding: 1px;
+	font-size: 95%;
+}
+
+/*
+ * Top menu
+ */
+#menu
+{
+ 	margin-top: 3px;
+	padding-bottom: 0.2em;
+}
+
+#menu #tabs
+{
+	padding: 0;
+	margin-top: 10px;
+	margin-left: 10px;
+}
+
+#menu ul, #menu li
+{
+	padding: 0;
+	list-style: none;
+	margin: 0;
+	display: inline;
+}
+
+#menu #tabs a
+{
+	padding: 0;
+	padding: 0.2em 0.6em;
+	color: white;
+	font-weight: bold;
+	border-top: 1px solid gray;
+	border-right: 1px solid gray;
+	border-left: 1px solid gray;
+	background-color: #b0b0b0;
+}
+
+#menu #tabs a:hover
+{
+	background-color: #505050;
+}
+
+#menu #tabs li.active a
+{
+	color: white;
+	font-weight: bold;
+  	background-color: #004a4a;
+	border-top: 1px solid black;
+	border-right: 1px solid black;
+	border-left: 1px solid black;
+}
+
+#menu .links
+{
+}
+
+#menu .links li
+{
+	margin-left: 0.5em;
+}
+
+#menu #links a, #menu #links a:hover
+{
+	color: black;
+	background-color: black;
+}
+
+#top td
+{
+	padding: 0;
+}
+
+.topmenu
+{
+	background: #f0f0f0;
+}
+
+#top .title
+{
+	color: #004a4a;
+	text-align: center;
+}
+
+#menuunderline
+{
+	padding: 0.25em;
+	background: #004a4a;
+}
+
+/*
+ * Page footer
+ */
+#bottomhelpregion
+{
+	padding: 0em 0em 0.5em 0.5em;
+	vertical-align: bottom;
+}
+
+#footer td
+{
+	padding: 0.2em 0.6em;
+	border-top: 1px solid #004a4a;
+	text-align: right;
+	text-decoration: none;
+	background-color: #f0f0f0;
+}
+
+#footer .user
+{
+	color: red;
+	text-align: left;
+}
+
+#footer .cvs
+{
+	color: #004a4a;
+	text-align: center;
+}
+
+/*
+ * Login page
+ */
+#window
+{
+	width: auto;
+	background: white;
+	border-top: 2px solid #ccc;
+	border-left: 2px solid #ccc;
+	border-bottom: 2px solid black;
+	border-right: 2px solid black;
+}
+
+#window .titlebar
+{
+	text-align: center;
+	color: white;
+	background: #004a4a;
+	font-weight: bold;
+}
+
+#window .authbox
+{
+	text-align: center;
+}
+
+#window td.button
+{
+	text-align: right;
+}
+
+#window input.button
+{
+	font-weight: bold;
+}
+
+#authbox
+{
+	width: auto;
+	margin-top: 0.5em;
+	padding: 1px 1px 1px 1px;
+	background: #ccc;
+	border: 1px solid #eee;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+}
+
+#authbox .label
+{
+ 	text-align: right;
+	font-weight: bold;
+}
+
+#authbox td.textbox
+{
+	text-align: left;
+}
+
+#authbox input.textbox
+{
+	width: 200px;
+}
+
+/*
+ * Rules page
+ */
+.oddline
+{
+	background-color: #ebebeb;
+}
+
+.block
+{
+	background-color: #FF6264;
+}
+
+.pass
+{
+	background-color: #64FF62;
+}
+
+.match
+{
+	background-color: #fff79f;
+}
+
+.comment
+{
+	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	background-color: #ffddc0;
+	line-height: 1.5em;
+	padding-left: 1em;
+	padding-right: 1em;
+	text-align: left;
+}
+
+.include
+{
+	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	background-color: #c2c2ff;
+	line-height: 1.5em;
+	padding-left: 1em;
+	padding-right: 1em;
+	text-align: left;
+}
+
+.blank
+{
+	border-bottom: 1px solid #CCC;
+	border-right: 1px solid #CCC;
+	background-color: #ffffff;
+	line-height: 1.5em;
+	padding-left: 1em;
+	padding-right: 1em;
+	text-align: left;
+}
+
+.category
+{
+	background-color: #ffffff;
+}
+
+.edit
+{
+	background-color: white;
+	border: none;
+	text-align: center;
+	white-space: nowrap;
+}
+
+/*
+ * Edit pages
+ */
+.add
+{
+	border-top: 1px solid #CCC;
+	margin-top: 1em;
+	padding-top: 0.2em;
+}
+
+.buttons
+{
+	margin-top: 1em;
+	text-align: left;
+}
+
+/*
+ * Setup page
+ */
+#nvp
+{
+	margin-top: 0.25em;
+	margin-bottom: 0.25em;
+}
+
+#nvp td
+{
+	padding: 0.25em;
+	margin: 0;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+}
+
+#nvp .title
+{
+	text-align: right;
+	border-right: 3px solid #ccc;
+ 	width: 15%;
+}
+
+#nvp .optitle
+{
+	text-align: left;
+	padding: 0.1em;
+	border: none;
+}
+
+#nvp .evenline
+{
+	background: white;
+}
+
+#nvp .oddline
+{
+	background: #f0f0f0;
+}
+
+#nvp .none
+{
+	border: none;
+	background: white;
+}
+
+#nvp .ifs
+{
+	padding: 0.1em;
+	border: none;
+}
+
+#nvp .titlegrouptop
+{
+	text-align: right;
+	border-right: 3px solid #ccc;
+	border-bottom: 0;
+	padding-bottom: 0;
+ 	width: 15%;
+}
+
+#nvp .titlegroupmiddle
+{
+	text-align: right;
+	border: 0;
+	border-right: 3px solid #ccc;
+	padding-bottom: 0;
+}
+
+#nvp .titlegroupbottom
+{
+	text-align: right;
+	border-top: 0;
+	border-right: 3px solid #ccc;
+}
+
+#nvp .valuegrouptop
+{
+	border-bottom: 0;
+	padding-bottom: 0;
+}
+
+#nvp .valuegroupmiddle
+{
+	border: 0;
+	padding-bottom: 0;
+}
+
+#nvp .valuegroupbottom
+{
+	border-top: 0;
+}
+.center
+{
+	text-align: center;
+}
+
+/*
+ * Help box with title
+ */
+#mainhelpbox
+{
+	text-align: left;
+	font-size: 90%;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	background: #ffede4;
+	margin-top: 0.25em;
+}
+
+#mainhelpbox th
+{
+	color: white;
+  	background: #004a4a;
+	line-height: 1em;
+	font-size: 100%;
+	border: none;
+	padding: 0.25em 0.25em 0.25em 5px;
+}
+
+#mainhelpbox td
+{
+	padding: 1em 1em 1em 0em;
+}
+
+#mainhelpbox .image
+{
+	vertical-align: top;
+	width: 0;
+	padding: 0;
+}
+
+#mainhelpbox .table td
+{
+	padding: 2px;
+}
+
+/*
+ * Help box (on the right)
+ */
+#helpbox
+{
+	text-align: left;
+	vertical-align: top;
+	font-size: 90%;
+	border-top: 1px solid #ddd;
+	border-left: 1px solid #ddd;
+	border-bottom: 1px solid gray;
+	border-right: 1px solid gray;
+	background: #ffede4;
+}
+
+#helpbox td
+{
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+#helpbox td.leftbar
+{
+	width: 3px;
+	background: #004a4a;
+	padding: 0;
+}
