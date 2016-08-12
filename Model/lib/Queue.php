@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.3 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: Queue.php,v 1.4 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -140,11 +140,11 @@ class Queue extends Rule
 		$this->parseNextValue();
 
 		/// @todo Fix this possible off-by-N errors
-		if ($this->words[$this->index + 1] == 'burst') {
+		if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == 'burst')) {
 			$this->index+= 2;
 			$this->rule[$burst]= $this->words[$this->index];
 		}
-		if ($this->words[$this->index + 1] == 'for') {
+		if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == 'for')) {
 			$this->index+= 2;
 			$this->rule[$time]= $this->words[$this->index];
 		}
@@ -169,7 +169,7 @@ class Queue extends Rule
 	function genBandwidth($key, $pre)
 	{
 		if (isset($this->rule[$key])) {
-			$this->str.= " $key " . $this->rule[$key] . ($this->rule["$pre-burst"] ? ' burst ' . $this->rule["$pre-burst"] : '') . ($this->rule["$pre-time"] ? ' for ' . $this->rule["$pre-time"] : '');
+			$this->str.= " $key " . $this->rule[$key] . (isset($this->rule["$pre-burst"]) ? ' burst ' . $this->rule["$pre-burst"] : '') . (isset($this->rule["$pre-time"]) ? ' for ' . $this->rule["$pre-time"] : '');
 		}
 	}
 }

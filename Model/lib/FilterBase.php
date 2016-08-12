@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.6 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.7 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -434,9 +434,8 @@ class FilterBase extends State
 
 	function genIcmpType()
 	{
-		if (($this->rule['af'] === 'inet') &&
-			((isset($this->rule['proto']) && $this->rule['proto'] === 'icmp') ||
-			 (is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto'])))) {
+		if ((isset($this->rule['af']) && $this->rule['af'] === 'inet') &&
+			(isset($this->rule['proto']) && ($this->rule['proto'] === 'icmp' || (is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto']))))) {
 			if (isset($this->rule['icmp-type'])) {
 				$this->str.= $this->generateItem($this->rule['icmp-type'], 'icmp-type');
 				if (isset($this->rule['icmp-code'])) {
@@ -448,9 +447,8 @@ class FilterBase extends State
 
 	function genIcmp6Type()
 	{
-		if (($this->rule['af'] === 'inet6') &&
-			((isset($this->rule['proto']) && $this->rule['proto'] === 'icmp6') ||
-			 (is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto'])))) {
+		if ((isset($this->rule['af']) && $this->rule['af'] === 'inet6') &&
+			(isset($this->rule['proto']) && ($this->rule['proto'] === 'icmp6' || (is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto']))))) {
 			if (isset($this->rule['icmp6-type'])) {
 				$this->str.= $this->generateItem($this->rule['icmp6-type'], 'icmp6-type');
 				if (isset($this->rule['icmp6-code'])) {

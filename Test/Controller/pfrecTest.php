@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pfrecTest.php,v 1.1 2016/08/12 14:18:43 soner Exp $ */
+/* $pfre: pfrecTest.php,v 1.2 2016/08/12 14:33:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -324,7 +324,10 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_ROOT_PATH . '/etc/pfre/delete.conf';
 
-		unlink($file);
+		if (file_exists($file)) {
+			unlink($file);
+		}
+
 		file_put_contents($file, '', LOCK_EX);
 
 		$this->assertFileExists($file);
@@ -349,7 +352,9 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 
 		$destFile= $TEST_ROOT_PATH . '/etc/pfre/install.conf';
 
-		unlink($destFile);
+		if (file_exists($destFile)) {
+			unlink($destFile);
+		}
 
 		$this->assertFileNotExists($destFile);
 

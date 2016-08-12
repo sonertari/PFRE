@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.5 2016/08/07 15:09:47 soner Exp $ */
+/* $pfre: Filter.php,v 1.6 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -216,7 +216,7 @@ class Filter extends FilterBase
 			$this->parseItems($hostKey);
 		}
 		// @attention Do not use else here
-		if ($this->words[$this->index + 1] == 'port') {
+		if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == 'port')) {
 			$this->index+= 2;
 			$this->rule[$portKey]= $this->words[$this->index];
 		}
@@ -285,26 +285,28 @@ class Filter extends FilterBase
 	{
 		$this->genValue('blockoption');
 
-		if ($this->rule['blockoption'] == 'return-rst') {
-			$this->genValue('block-ttl', '( ttl ', ' )');
-		} elseif ($this->rule['blockoption'] == 'return-icmp') {
-			$this->arr= array();
+		if (isset($this->rule['blockoption'])) {
+			if ($this->rule['blockoption'] == 'return-rst') {
+				$this->genValue('block-ttl', '( ttl ', ' )');
+			} elseif ($this->rule['blockoption'] == 'return-icmp') {
+				$this->arr= array();
 
-			if (isset($this->rule['block-icmpcode'])) {
-				$this->arr[]= $this->rule['block-icmpcode'];
+				if (isset($this->rule['block-icmpcode'])) {
+					$this->arr[]= $this->rule['block-icmpcode'];
 
-				if (isset($this->rule['block-icmp6code'])) {
-					$this->arr[]= $this->rule['block-icmp6code'];
+					if (isset($this->rule['block-icmp6code'])) {
+						$this->arr[]= $this->rule['block-icmp6code'];
+					}
 				}
-			}
 
-			if (count($this->arr)) {
-				$this->str.= ' ( ';
-				$this->str.= implode(', ', $this->arr);
-				$this->str.= ' )';
+				if (count($this->arr)) {
+					$this->str.= ' ( ';
+					$this->str.= implode(', ', $this->arr);
+					$this->str.= ' )';
+				}
+			} elseif ($this->rule['blockoption'] == 'return-icmp6') {
+				$this->genValue('block-icmp6code', '( ', ' )');
 			}
-		} elseif ($this->rule['blockoption'] == 'return-icmp6') {
-			$this->genValue('block-icmp6code', '( ', ' )');
 		}
 	}
 	

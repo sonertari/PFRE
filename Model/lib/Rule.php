@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.11 2016/08/10 06:03:15 soner Exp $ */
+/* $pfre: Rule.php,v 1.12 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -350,7 +350,7 @@ class Rule
 			$retval= '(' . implode(' ', $items) . ')';
 		} else {
 			// IP range, routehost = host "@" interface-name, IP net
-			if ($this->words[$this->index + 1] == '-' || $this->words[$this->index + 1] == '@' || $this->words[$this->index + 1] == '/') {
+			if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == '-' || $this->words[$this->index + 1] == '@' || $this->words[$this->index + 1] == '/')) {
 				$retval= $this->words[$this->index] . ' ' . $this->words[$this->index + 1] . ' ' . $this->words[$this->index + 2];
 				$this->index+= 2;
 			} else {
@@ -359,7 +359,7 @@ class Rule
 		}
 
 		// address [ "weight" number ] | address [ "/" mask-bits ] [ "weight" number ]
-		if ($this->words[$this->index + 1] == 'weight') {
+		if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == 'weight')) {
 			$retval= $this->words[$this->index] . ' ' . $this->words[$this->index + 1] . ' ' . $this->words[$this->index + 2];
 			$this->index+= 2;
 		}
@@ -386,7 +386,7 @@ class Rule
 		if (in_array($this->words[$this->index], array('=', '!=', '<', '<=', '>', '>='))) {
 			// unary-op = [ "=" | "!=" | "<" | "<=" | ">" | ">=" ] ( name | number )
 			return $this->words[$this->index] . ' ' . $this->words[++$this->index];
-		} elseif (in_array($this->words[$this->index + 1], array('<>', '><', ':'))) {
+		} elseif (isset($this->words[$this->index + 1]) && (in_array($this->words[$this->index + 1], array('<>', '><', ':')))) {
 			// binary-op = number ( "<>" | "><" | ":" ) number
 			// portspec = "port" ( number | name ) [ ":" ( "*" | number | name ) ]
 			return $this->words[$this->index] . ' ' . $this->words[++$this->index] . ' ' . $this->words[++$this->index];
@@ -435,7 +435,7 @@ class Rule
 				$this->parseItems($this->words[$this->index]);
 			}
 		}
-		if ($this->words[$this->index + 1] == 'port') {
+		if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == 'port')) {
 			$this->index++;
 			$this->rule[$portKey]= $this->parsePortItem();
 		}

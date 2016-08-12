@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pfTest.php,v 1.1 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: pfTest.php,v 1.2 2016/08/12 14:18:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -157,7 +157,10 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_ROOT_PATH . '/etc/pfre/delete.conf';
 
-		unlink($file);
+		if (file_exists($file)) {
+			unlink($file);
+		}
+
 		file_put_contents($file, '', LOCK_EX);
 
 		$this->assertFileExists($file);
@@ -175,7 +178,10 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_ROOT_PATH . '/etc/pfre/delete.conf';
 
-		unlink($file);
+		if (file_exists($file)) {
+			unlink($file);
+		}
+
 		$this->assertFileNotExists($file);
 		
 		$pf= new \Pf();
@@ -212,7 +218,9 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$destFile= $TEST_ROOT_PATH . '/etc/pf.conf';
 
-		unlink($destFile);
+		if (file_exists($destFile)) {
+			unlink($destFile);
+		}
 
 		$this->assertFileNotExists($destFile);
 
@@ -238,7 +246,9 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$destFile= $TEST_ROOT_PATH . '/etc/pfre/install.conf';
 
-		unlink($destFile);
+		if (file_exists($destFile)) {
+			unlink($destFile);
+		}
 
 		$this->assertFileNotExists($destFile);
 
