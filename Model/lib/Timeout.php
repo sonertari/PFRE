@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.4 2016/08/06 09:43:30 soner Exp $ */
+/* $pfre: Timeout.php,v 1.5 2016/08/11 18:29:20 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -188,7 +188,7 @@ class Timeout extends Rule
 		// @todo Find a better way
 		// @attention Do not use foreach here, we modify the list we loop on
 		for ($index= 0; $index < count($this->words); $index++) {
-			if (preg_match('/(src|tcp|udp|icmp|other|adaptive)\.(.+)/', $this->words[$index], $match)) {
+			if (preg_match('/^(src|tcp|udp|icmp|other|adaptive)\.(.+)$/', $this->words[$index], $match)) {
 				$head= array_slice($this->words, 0, $index);
 				$tail= array_slice($this->words, $index + 1);
 				$this->words= array_merge($head, array($match[1], $match[2]), $tail);

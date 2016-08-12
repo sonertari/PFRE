@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.23 2016/08/11 18:29:21 soner Exp $ */
+/* $pfre: pf.php,v 1.24 2016/08/11 19:36:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -86,7 +86,7 @@ class Pf extends Model
 
 	function GetPfRules($file, $tmp= FALSE, $force= FALSE)
 	{
-		global $PF_CONFIG_PATH, $TMP_PATH;
+		global $PF_CONFIG_PATH, $TMP_PATH, $TEST_ROOT_PATH;
 
 		if ($file !== '/etc/pf.conf') {
 			if (!$this->ValidateFilename($file)) {
@@ -99,43 +99,50 @@ class Pf extends Model
 			}
 		}
 
-		$ruleStr= $this->GetFile($file);
+		$ruleStr= $this->GetFile("$TEST_ROOT_PATH$file");
 
-		/// @todo Check if we need to unlink tmp file
-		//if ($tmp !== FALSE) {
-		//	unlink($file);
-		//}
+		if ($ruleStr !== FALSE) {
+			/// @todo Check if we need to unlink tmp file
+			//if ($tmp !== FALSE) {
+			//	unlink($file);
+			//}
 
-		$ruleSet= new RuleSet();
-		$retval= $ruleSet->parse($ruleStr, $force);
+			$ruleSet= new RuleSet();
+			$retval= $ruleSet->parse($ruleStr, $force);
 
-		// Output ruleset, success or fail
-		Output(json_encode($ruleSet));
+			// Output ruleset, success or fail
+			Output(json_encode($ruleSet));
+		} else {
+			$retval= FALSE;
+		}
+
 		return $retval;
 	}
 
 	function GetPfRuleFiles()
 	{
-		global $PF_CONFIG_PATH;
+		global $PF_CONFIG_PATH, $TEST_ROOT_PATH;
 
-		Output($this->GetFiles($PF_CONFIG_PATH));
+		Output($this->GetFiles("$TEST_ROOT_PATH$PF_CONFIG_PATH"));
 		return TRUE;
 	}
 	
 	function DeletePfRuleFile($file)
 	{
-		global $PF_CONFIG_PATH;
+		global $PF_CONFIG_PATH, $TEST_ROOT_PATH;
 
-		if ($this->ValidateFilename($file)) {
-			Output($this->DeleteFile("$PF_CONFIG_PATH/$file"));
-			return TRUE;
+		$result= $this->ValidateFilename($file);
+
+		if ($result) {
+			$result= $this->DeleteFile("$TEST_ROOT_PATH$PF_CONFIG_PATH/$file");
 		}
-		return FALSE;
+
+		return $result;
 	}
 	
 	function InstallPfRules($json, $file= NULL, $load= TRUE, $force= FALSE)
 	{
-		global $PF_CONFIG_PATH;
+		global $PF_CONFIG_PATH, $INSTALL_USER, $TEST_ROOT_PATH;
 
 		if ($file == NULL) {
 			$file= '/etc/pf.conf';
@@ -146,6 +153,7 @@ class Pf extends Model
 			$file= "$PF_CONFIG_PATH/$file";
 		}
 				
+		/// @todo Check if $rulesArray is in correct format
 		$rulesArray= json_decode($json, TRUE);
 
 		$ruleSet= new RuleSet();
@@ -160,13 +168,18 @@ class Pf extends Model
 
 		$output= array();
 		
-		$tmpFile= tempnam('/tmp', 'pf.conf.');
+		$tmpFile= tempnam("$TEST_ROOT_PATH/tmp", 'pf.conf.');
 		if ($this->PutFile($tmpFile, $rules) !== FALSE) {
-			exec("/usr/bin/install -o root -m 0600 -D -b -B '.orig' '$tmpFile' $file 2>&1", $output, $retval);
+			$SUFFIX_OPT= '-B';
+			if (posix_uname()['sysname'] === 'Linux') {
+				$SUFFIX_OPT= '-S';
+			}
+
+			exec("/usr/bin/install -o $INSTALL_USER -m 0600 -D -b $SUFFIX_OPT '.orig' '$tmpFile' $TEST_ROOT_PATH$file 2>&1", $output, $retval);
 			if ($retval === 0) {
 				if ($load === TRUE) {
 					if ($loadResult) {
-						$cmd= "/sbin/pfctl -f $file 2>&1";
+						$cmd= "/sbin/pfctl -f $TEST_ROOT_PATH$file 2>&1";
 
 						if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
 							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Failed loading pf rules: $file"));
@@ -211,13 +224,11 @@ class Pf extends Model
 	function ValidateFilename(&$file)
 	{
 		$file= basename($file);
-		if (preg_match('/[\w.-_]+/', $file)) {
+		if (preg_match('/^[\w._\-]+$/', $file)) {
 			return TRUE;
 		}
 
-		$err= "Filename not accepted: $file";
-		Error($err . "\n" . implode("\n", $output));
-		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $err);
+		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("Filename not accepted: $file"));
 		return FALSE;
 	}
 

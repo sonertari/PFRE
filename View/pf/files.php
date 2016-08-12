@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.13 2016/08/08 08:37:55 soner Exp $ */
+/* $pfre: files.php,v 1.14 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -149,7 +149,7 @@ if (filter_has_var(INPUT_POST, 'download')) {
 		header('Content-Type: application/octet-stream');
 
 		if ($View->RuleSet->filename != '') {
-			if (preg_match('/^(.*)\s+\(uploaded\)/', $View->RuleSet->filename, $match)) {
+			if (preg_match('/^(.*)\s+\(uploaded\)$/', $View->RuleSet->filename, $match)) {
 				$filename= $match[1];
 			} else {
 				$filename= basename($View->RuleSet->filename);

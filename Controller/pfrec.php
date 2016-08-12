@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.10 2016/08/08 04:03:41 soner Exp $ */
+/* $pfre: pfrec.php,v 1.11 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -49,9 +49,9 @@ require_once($ROOT.'/lib/setup.php');
 // chdir is for PCRE, libraries
 chdir(dirname(__FILE__));
 
-require_once('lib.php');
-
 require_once($MODEL_PATH.'/pf.php');
+
+require_once('lib.php');
 
 /// This is a command line tool, should never be requested on the web interface.
 if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {

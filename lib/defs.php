@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.2 2016/08/04 14:42:54 soner Exp $ */
+/* $pfre: defs.php,v 1.3 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,4 +65,7 @@ $ALL_USERS= array_merge($ADMIN, $USER);
 
 $PF_CONFIG_PATH= '/etc/pfre';
 $TMP_PATH= '/tmp';
+
+$TEST_ROOT_PATH= '';
+$INSTALL_USER= 'root';
 ?>

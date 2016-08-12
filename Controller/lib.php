@@ -1,5 +1,5 @@
 <?php
-/* $pfre: lib.php,v 1.13 2016/08/08 08:20:43 soner Exp $ */
+/* $pfre: lib.php,v 1.14 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,18 +36,6 @@
 /** @file
  * Defs and library functions for Controller.
  */
-
-/// @attention PHP is not compiled, otherwise would use bindec()
-/// @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!
-/// Shell command argument types
-define('NONE',			1);
-define('FILEPATH',		2);
-define('NAME',			4);
-define('NUM',			8);
-define('SHA1STR',		16);
-define('BOOL',			32);
-define('SAVEFILEPATH',	64);
-define('JSON',			128);
 
 /** Functions and info strings used in shell arg control.
  *

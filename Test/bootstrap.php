@@ -1,5 +1,5 @@
 <?php
-/* $pfre: bootstrap.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: bootstrap.php,v 1.2 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,6 +39,13 @@ require_once($MODEL_PATH . '/include.php');
 require_once($VIEW_PATH . '/pf/include.php');
 
 $TEST_PATH= $ROOT . '/Test';
+$TEST_ROOT_PATH= $TEST_PATH . '/root';
+
+/// @todo Check why posix_getlogin() returns empty string
+/// @todo Is it better to use exec('whoami')?
+$INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
+
+require_once($MODEL_PATH.'/pf.php');
 
 /// @todo Delete these after fixing NOTICEs
 PHPUnit_Framework_Error_Warning::$enabled = FALSE;

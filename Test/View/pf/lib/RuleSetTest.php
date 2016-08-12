@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSetTest.php,v 1.1 2016/08/11 18:29:21 soner Exp $ */
+/* $pfre: RuleSetTest.php,v 1.2 2016/08/11 19:36:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,8 @@
 
 namespace ViewTest;
 
+use \View\RuleSet;
+
 class RuleSetTest extends \PHPUnit_Framework_TestCase
 {
 	function createRulesArray($ruleTypes)
@@ -62,14 +64,14 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter', 'Antispoof'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$actualRuleSet->up(1);
 
 		$expectedRules= $this->createRulesArray(array('Antispoof', 'Filter'));
 
-		$expectedRuleSet= new \View\RuleSet();
+		$expectedRuleSet= new RuleSet();
 		$expectedRuleSet->loadArray($expectedRules);
 
 		$expected= $expectedRuleSet->rules;
@@ -82,14 +84,14 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter', 'Antispoof'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$actualRuleSet->down(0);
 
 		$expectedRules= $this->createRulesArray(array('Antispoof', 'Filter'));
 
-		$expectedRuleSet= new \View\RuleSet();
+		$expectedRuleSet= new RuleSet();
 		$expectedRuleSet->loadArray($expectedRules);
 
 		$expected= $expectedRuleSet->rules;
@@ -102,14 +104,14 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter', 'Antispoof'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$actualRuleSet->del(0);
 
 		$expectedRules= $this->createRulesArray(array('Antispoof'));
 
-		$expectedRuleSet= new \View\RuleSet();
+		$expectedRuleSet= new RuleSet();
 		$expectedRuleSet->loadArray($expectedRules);
 
 		$expected= $expectedRuleSet->rules;
@@ -122,14 +124,14 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter', 'Antispoof'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$actualRuleSet->move(0, 1);
 
 		$expectedRules= $this->createRulesArray(array('Antispoof', 'Filter'));
 
-		$expectedRuleSet= new \View\RuleSet();
+		$expectedRuleSet= new RuleSet();
 		$expectedRuleSet->loadArray($expectedRules);
 
 		$expected= $expectedRuleSet->rules;
@@ -142,14 +144,14 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter', 'Antispoof'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$actualRuleSet->add(1);
 
 		$expectedRules= $this->createRulesArray(array('Filter', 'Filter', 'Antispoof'));
 
-		$expectedRuleSet= new \View\RuleSet();
+		$expectedRuleSet= new RuleSet();
 		$expectedRuleSet->loadArray($expectedRules);
 		$expectedRuleSet->rules[1]= '';
 
@@ -163,7 +165,7 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Queue'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$expected= array('test');
@@ -176,7 +178,7 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$newRule= new \ModelTest\FilterTest();
@@ -188,7 +190,7 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$newRule= new \ModelTest\FilterTest();
@@ -201,7 +203,7 @@ class RuleSetTest extends \PHPUnit_Framework_TestCase
 	{
 		$actualRules= $this->createRulesArray(array('Filter'));
 
-		$actualRuleSet= new \View\RuleSet();
+		$actualRuleSet= new RuleSet();
 		$actualRuleSet->loadArray($actualRules);
 
 		$newRule= new \ModelTest\FilterTest();

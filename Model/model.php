@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.8 2016/08/10 04:39:43 soner Exp $ */
+/* $pfre: model.php,v 1.9 2016/08/11 06:37:41 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -365,7 +365,7 @@ class Model
 	 */
 	function SearchFile($file, $re, $set= 1, $trimchars= '')
 	{
-		/// @todo What to do multiple matching NVPs
+		/// @todo What to do with multiple matching NVPs
 		if (preg_match($re, file_get_contents($file), $match)) {
 			$retval= $match[$set];
 			if ($trimchars !== '') {

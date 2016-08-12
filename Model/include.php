@@ -1,5 +1,5 @@
 <?php
-/* $pfre$ */
+/* $pfre: include.php,v 1.1 2016/08/10 04:39:43 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -65,6 +65,18 @@ require_once($MODEL_PATH.'/lib/LoadAnchor.php');
 require_once($MODEL_PATH.'/lib/Include.php');
 require_once($MODEL_PATH.'/lib/Comment.php');
 require_once($MODEL_PATH.'/lib/Blank.php');
+
+/// @attention PHP is not compiled, otherwise would use bindec()
+/// @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!
+/// Shell command argument types
+define('NONE',			1);
+define('FILEPATH',		2);
+define('NAME',			4);
+define('NUM',			8);
+define('SHA1STR',		16);
+define('BOOL',			32);
+define('SAVEFILEPATH',	64);
+define('JSON',			128);
 
 $Output= '';
 $Error= '';
