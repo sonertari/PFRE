@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.9 2016/08/11 18:29:21 soner Exp $ */
+/* $pfre: setup.php,v 1.10 2016/08/12 08:29:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -143,7 +143,7 @@ require_once($VIEW_PATH.'/header.php');
 			<td class="valuegrouptop">
 				<input type="text" name="User" style="width: 100px;" maxlength="20" value="<?php echo $_SESSION['USER'] ?>"/>
 			</td>
-			<td class="none" rowspan="3">
+			<td class="none" rowspan="4">
 				<?php
 				PrintHelpBox(_HELPBOX('Here you can change the web administration interface passwords for admin and user. Passwords should have at least 8 alphanumeric characters.
 
