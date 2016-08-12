@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.8 2016/08/10 20:29:50 soner Exp $ */
+/* $pfre: setup.php,v 1.9 2016/08/11 18:29:21 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -108,10 +108,10 @@ if (count($_POST)) {
 	}
 	else {
 		if (filter_has_var(INPUT_POST, 'DisableHelpBoxes')) {
-			$View->Controller($Output, 'SetHelpBoxes', 'FALSE');
+			$View->Controller($Output, 'SetHelpBox', 'FALSE');
 		}
 		else if (filter_has_var(INPUT_POST, 'EnableHelpBoxes')) {
-			$View->Controller($Output, 'SetHelpBoxes', 'TRUE');
+			$View->Controller($Output, 'SetHelpBox', 'TRUE');
 		}
 		else if (filter_has_var(INPUT_POST, 'SessionTimeout')) {
 			$View->Controller($Output, 'SetSessionTimeout', filter_input(INPUT_POST, 'SessionTimeout'));
@@ -145,7 +145,10 @@ require_once($VIEW_PATH.'/header.php');
 			</td>
 			<td class="none" rowspan="3">
 				<?php
-				PrintHelpBox(_HELPBOX('Here you can change the web administration interface passwords for admin and user. Passwords should have at least 8 alphanumeric characters.'));
+				PrintHelpBox(_HELPBOX('Here you can change the web administration interface passwords for admin and user. Passwords should have at least 8 alphanumeric characters.
+
+Admin can change the user password without knowing the current user password. But if you forget the admin password, you should run the following on the command line to set the password to soner123:
+<code>/usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)</code>'));
 				?>
 			</td>
 		</tr>
@@ -248,7 +251,7 @@ require_once($VIEW_PATH.'/header.php');
 		</td>
 		<td class="none">
 			<?php
-			PrintHelpBox(_HELPBOX('If enabled, authentication pages are forced to use secure connections. Make sure you have a working SSL setup in the web server configuration, otherwise you cannot even log in to the web user interface. However, passwords are always sent encrypted whether plain or secure HTTP is used.'));
+			PrintHelpBox(_HELPBOX('If enabled, authentication pages are forced to use secure connections. Make sure you have a working SSL setup in the web server configuration, otherwise you cannot even log in to the web user interface. It is advised to use secure HTTP.'));
 			?>
 		</td>
 	</tr>

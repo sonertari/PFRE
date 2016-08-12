@@ -1,5 +1,5 @@
 <?php
-/* $pfre: bootstrap.php,v 1.3 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: setup.php,v 1.3 2016/08/08 10:15:07 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,23 +33,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$ROOT= dirname(dirname(__FILE__));
-require_once($ROOT . '/lib/defs.php');
-require_once($MODEL_PATH . '/include.php');
-require_once($VIEW_PATH . '/pf/include.php');
+/** @file
+ * Global setup.
+ */
 
-$TEST_PATH= $ROOT . '/Test';
-$TEST_PREFIX= '/Test/root';
-$TEST_ROOT_PATH= $ROOT . $TEST_PREFIX;
-$TEST_SRC_PATH= $TEST_PREFIX . '/var/www/htdocs/pfre';
+/// Force HTTPs, needs SSL configuration in the web server configuration.
+$ForceHTTPs= FALSE;
 
-/// @todo Check why posix_getlogin() returns empty string
-/// @todo Is it better to use exec('whoami')?
-$INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
+/// Project-wide log level used in pfrewui_syslog() and pfrec_syslog().
+$LOG_LEVEL= LOG_INFO;
 
-require_once($MODEL_PATH.'/pf.php');
+/// Max inline anchors allowed.
+$MaxAnchorNesting= 2;
 
-/// @todo Delete these after fixing NOTICEs
-PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-PHPUnit_Framework_Error_Notice::$enabled = FALSE;
+/// Wait pfctl output for this many seconds before giving up.
+$PfctlTimeout= 5;
+
+/// Default locale for both View and Controller.
+$DefaultLocale= 'en_EN';
 ?>

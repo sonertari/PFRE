@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.9 2016/08/11 06:37:41 soner Exp $ */
+/* $pfre: model.php,v 1.10 2016/08/12 03:51:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -81,7 +81,7 @@ class Model
 					'desc'	=>	_('Set log level'),
 					),
 
-				'SetHelpBoxes'=>	array(
+				'SetHelpBox'=>	array(
 					'argv'	=>	array(NAME),
 					'desc'	=>	_('Set help boxes'),
 					),
@@ -179,54 +179,54 @@ class Model
 
 	function SetLogLevel($level)
 	{
-		global $ROOT;
+		global $ROOT, $TEST_SRC_PATH;
 
 		// Append semi-colon to new value, this setting is a PHP line
-		return $this->SetNVP($ROOT.'/lib/setup.php', '\$LOG_LEVEL', $level.';');
+		return $this->SetNVP($ROOT . $TEST_SRC_PATH . '/lib/setup.php', '\$LOG_LEVEL', $level.';');
 	}
 
-	function SetHelpBoxes($bool)
+	function SetHelpBox($bool)
 	{
-		global $VIEW_PATH;
+		global $ROOT, $TEST_SRC_PATH;
 		
 		// Append semi-colon to new value, this setting is a PHP line
-		return $this->SetNVP($VIEW_PATH.'/lib/setup.php', '\$ShowHelpBox', $bool.';');
+		return $this->SetNVP($ROOT . $TEST_SRC_PATH . '/View/lib/setup.php', '\$ShowHelpBox', $bool.';');
 	}
 	
 	function SetSessionTimeout($timeout)
 	{
-		global $VIEW_PATH;
+		global $ROOT, $TEST_SRC_PATH;
 
 		if ($timeout < 10) {
 			$timeout= 10;
 		}
 		
 		// Append semi-colon to new value, this setting is a PHP line
-		return $this->SetNVP($VIEW_PATH.'/lib/setup.php', '\$SessionTimeout', $timeout.';');
+		return $this->SetNVP($ROOT . $TEST_SRC_PATH . '/View/lib/setup.php', '\$SessionTimeout', $timeout.';');
 	}
 
 	function SetForceHTTPs($bool)
 	{
-		global $ROOT;
+		global $ROOT, $TEST_SRC_PATH;
 		
 		// Append semi-colon to new value, this setting is a PHP line
-		return $this->SetNVP($ROOT.'/lib/setup.php', '\$ForceHTTPs', $bool.';');
+		return $this->SetNVP($ROOT . $TEST_SRC_PATH . '/lib/setup.php', '\$ForceHTTPs', $bool.';');
 	}
 
 	function SetMaxAnchorNesting($max)
 	{
-		global $ROOT;
+		global $ROOT, $TEST_SRC_PATH;
 		
 		// Append semi-colon to new value, this setting is a PHP line
-		return $this->SetNVP($ROOT.'/lib/setup.php', '\$MaxAnchorNesting', $max.';');
+		return $this->SetNVP($ROOT . $TEST_SRC_PATH . '/lib/setup.php', '\$MaxAnchorNesting', $max.';');
 	}
 
 	function SetPfctlTimeout($timeout)
 	{
-		global $ROOT;
+		global $ROOT, $TEST_SRC_PATH;
 		
 		// Append semi-colon to new value, this setting is a PHP line
-		return $this->SetNVP($ROOT.'/lib/setup.php', '\$PfctlTimeout', $timeout.';');
+		return $this->SetNVP($ROOT . $TEST_SRC_PATH . '/lib/setup.php', '\$PfctlTimeout', $timeout.';');
 	}
 	
 	/** Runs given shell command and returns its output as string.

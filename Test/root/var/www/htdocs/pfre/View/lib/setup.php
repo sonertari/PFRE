@@ -1,5 +1,5 @@
 <?php
-/* $pfre: bootstrap.php,v 1.3 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: setup.php,v 1.14 2016/07/24 17:48:16 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,23 +33,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-$ROOT= dirname(dirname(__FILE__));
-require_once($ROOT . '/lib/defs.php');
-require_once($MODEL_PATH . '/include.php');
-require_once($VIEW_PATH . '/pf/include.php');
+/** @file
+ * View setup.
+ */
 
-$TEST_PATH= $ROOT . '/Test';
-$TEST_PREFIX= '/Test/root';
-$TEST_ROOT_PATH= $ROOT . $TEST_PREFIX;
-$TEST_SRC_PATH= $TEST_PREFIX . '/var/www/htdocs/pfre';
+/// Whether to display help boxes on the right.
+$ShowHelpBox= TRUE;
 
-/// @todo Check why posix_getlogin() returns empty string
-/// @todo Is it better to use exec('whoami')?
-$INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
-
-require_once($MODEL_PATH.'/pf.php');
-
-/// @todo Delete these after fixing NOTICEs
-PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-PHPUnit_Framework_Error_Notice::$enabled = FALSE;
+/// Default session timeout in secs.
+$SessionTimeout= 300;
 ?>
