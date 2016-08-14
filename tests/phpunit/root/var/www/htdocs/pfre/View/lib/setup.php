@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: setup.php,v 1.1 2016/08/12 18:28:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+/** @file
+ * View setup.
+ */
 
-require_once('../lib/vars.php');
+/// Whether to display help boxes on the right.
+$ShowHelpBox= TRUE;
 
-class Pf extends View
-{
-	public $RuleSet;
-
-	function __construct()
-	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
-
-$View= new Pf();
-
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
-	}
-}
+/// Default session timeout in secs.
+$SessionTimeout= 300;
 ?>

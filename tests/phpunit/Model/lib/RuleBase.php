@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: RuleBase.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,49 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
-
-class Pf extends View
+class RuleBase extends \PHPUnit_Framework_TestCase
 {
-	public $RuleSet;
+	protected $cat= '';
+
+	public $in= '';
+	public $rule= array();
+	public $out= '';
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
+		if (preg_match('/^' . __NAMESPACE__ . '\\\\(.+)Test$/', get_called_class(), $match)) {
+			$this->cat= 'Model\\' . $match[1];
 		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
+
+		parent::__construct();
 	}
-}
 
-$View= new Pf();
+	function testParser() {
+		$rule= new $this->cat($this->in);
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$expected= $this->rule;
+		ksort($expected);
+
+		$actual= $rule->rule;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$rule= new $this->cat('');
+
+		$rule->load($this->rule);
+
+		$this->assertEquals($this->out, $rule->generate());
+	}
+	
+	function testParserGenerator() {
+		$rule= new $this->cat($this->in);
+
+		$this->assertEquals($this->out, $rule->generate());
 	}
 }
 ?>

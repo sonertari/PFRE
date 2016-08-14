@@ -1,5 +1,5 @@
-<?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+<?php 
+/* $pfre: RuleSetTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,60 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
-
-require_once('../lib/vars.php');
-
-class Pf extends View
+class loginCest
 {
-	public $RuleSet;
-
-	function __construct()
+	/**
+	 * @example {"UserName": "admin", "Password": "soner123"}
+	 * @example {"UserName": "user", "Password": "soner123"}
+	 */
+	public function testLogin(AcceptanceTester $I, \Codeception\Example $example)
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
+		$I->wantTo('test ' . $example['UserName'] . ' login');
+
+		$I->amOnPage('/');
+
+		$I->see('PF Rule Editor');
+		$I->see('User');
+		$I->see('Password');
+
+		$I->fillField('UserName', $example['UserName']);
+		$I->fillField('Password', $example['Password']);
+		$I->click('Login');
+
+		$I->seeInCurrentUrl('pf/conf.php');
+		$I->see($example['UserName'] . '@');
+
+		$I->seeLink('Logout');
+		$I->click('Logout');
+
+		$I->seeInCurrentUrl('login.php');
 	}
-}
 
-$View= new Pf();
+	/**
+	 * @depends testLogin
+	 * @example {"UserName": "soner", "Password": "soner123"}
+	 * @example {"UserName": "user", "Password": "soner124"}
+	 */
+	public function testLoginFail(AcceptanceTester $I, \Codeception\Example $example)
+	{
+		$I->wantTo('test ' . $example['UserName'] . ' login fail');
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$I->amOnPage('/');
+
+		$I->see('PF Rule Editor');
+		$I->see('User');
+		$I->see('Password');
+
+		$I->fillField('UserName', $example['UserName']);
+		$I->fillField('Password', $example['Password']);
+		$I->click('Login');
+
+		$I->waitForElement('#authbox', 10);
+
+		$I->dontSeeInCurrentUrl('pf/conf.php');
+		$I->dontSee($example['UserName'] . '@');
+
+		$I->seeInCurrentUrl('login.php');
 	}
 }
 ?>

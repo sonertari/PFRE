@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: RuleSetBase.php,v 1.1 2016/08/12 18:28:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,65 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+use Model\RuleSet;
 
-class Pf extends View
+class RuleSetBase extends \PHPUnit_Framework_TestCase
 {
-	public $RuleSet;
+	protected $cat= '';
+	protected $catTest= '';
+
+	protected $in= '';
+	protected $rules= array();
+	protected $out= '';
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
+		if (preg_match('/^(' . __NAMESPACE__ . '\\.+)RuleSetTest$/', get_called_class(), $match)) {
+			$this->cat= $match[1];
+			$this->catTest= $this->cat . 'Test';
+
+			$test= new $this->catTest();
+
+			$this->in= $test->in;
+			$this->rules= array(
+					array(
+					'cat' => $this->cat,
+					'rule' => $test->rule,
+					)
+				);
+			$this->out= $test->out;
 		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
+
+		parent::__construct();
 	}
-}
 
-$View= new Pf();
+	function testParser() {
+		$expected= $this->rules;
+		ksort($expected);
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->in);
+
+		$actual= $ruleSet->rules;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$ruleSet= new RuleSet();
+		$ruleSet->load($this->rules);
+
+		$this->assertEquals($this->out, $ruleSet->generate());
+	}
+	
+	function testParserGenerator() {
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->in);
+
+		$this->assertEquals($this->out, $ruleSet->generate());
 	}
 }
 ?>

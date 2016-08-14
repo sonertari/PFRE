@@ -1,6 +1,6 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.13 2016/08/12 14:18:43 soner Exp $ */
+/* $pfre: pfrec.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -68,7 +68,7 @@ if ($ArgV[0] === '-t') {
 	$ArgV= array_slice($ArgV, 1);
 
 	$TEST_ROOT= dirname(dirname(dirname(__FILE__)));
-	$TEST_DIR= '/test/root';
+	$TEST_DIR= '/tests/phpunit/root';
 	$TEST_DIR_PATH= $TEST_ROOT . $TEST_DIR;
 	$TEST_DIR_SRC= $TEST_DIR . '/var/www/htdocs/pfre';
 

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: FilterTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,56 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('FilterBase.php');
 
-class Pf extends View
+class FilterTest extends FilterBase
 {
-	public $RuleSet;
+	protected $inFilterHead= '';
 
+	protected $inAction= 'pass';
+	protected $ruleAction= array(
+		'action' => 'pass',
+		);
+
+	protected $ruleType= array(
+		);
+
+	protected $inRedirHost= '192.168.0.1';
+	protected $ruleRedirHost= array(
+		'redirhost' => '192.168.0.1',
+		);
+
+	protected $inPoolType= 'source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address';
+	protected $rulePoolType= array(
+		'source-hash' => TRUE,
+		'source-hash-key' => '09f1cbe02e2f4801b433ba9fab728903',
+		'sticky-address' => TRUE,
+		);
+
+	protected $inDivertPort= 'port ssh';
+	protected $ruleDivertPort= array(
+		'divertport' => 'ssh',
+		);
+
+	/// @todo Test rdomain
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleAction,
+			$this->ruleLog,
+			$this->ruleQuick,
+			$this->ruleType
+			);
 
-$View= new Pf();
+		parent::__construct();
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$this->inFilterHead= $this->inAction . ' ' . $this->inDirection . ' ' . $this->inLog . ' ' . $this->inQuick . ' ' . $this->inInterface . ' ' . $this->inAf . ' ' . $this->inProto . ' ' . $this->inSrcDest;
+
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

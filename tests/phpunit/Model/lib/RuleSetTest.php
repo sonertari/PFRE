@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: RuleSetTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,70 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+use Model\RuleSet;
 
-class Pf extends View
+class RuleSetTest extends RuleSetBase
 {
-	public $RuleSet;
+	private $ruleTypes= array(
+		'Filter',
+		'Antispoof',
+		'Anchor',
+		'Macro',
+		'Table',
+		'AfTo',
+		'NatTo',
+		'BinatTo',
+		'DivertTo',
+		'DivertPacket',
+		'RdrTo',
+		'Route',
+		'Queue',
+		'Scrub',
+		'Option',
+		'Timeout',
+		'Limit',
+		'State',
+		'LoadAnchor',
+		'_Include',
+		'Blank',
+		'Comment',
+	);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
+		parent::__construct();
+
+		foreach ($this->ruleTypes as $cat) {
+			require_once (ltrim($cat . 'Test', '_') . '.php');
+
+			$catTest= __NAMESPACE__ . '\\' . $cat . 'Test';
+			$test= new $catTest();
+
+			$this->rules[]= array(
+				'cat' => $cat,
+				'rule' => $test->rule,
+				);
+			$this->out.= $test->out;
 		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
+
+		$this->in= $this->out;
 	}
-}
 
-$View= new Pf();
+	function testGeneratorPrintNumbers()
+	{
+		$ruleSet= new RuleSet();
+		$ruleSet->parse($this->out);
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$ruleNumber= 0;
+		$s= '';
+		foreach (explode("\n", $this->out) as $line) {
+			$s.= sprintf('% 4d', $ruleNumber++) . ": $line\n";
+		}
+		$str= $s;
+
+		$this->assertEquals($str, $ruleSet->generate(TRUE));
 	}
 }
 ?>

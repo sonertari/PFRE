@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: setup.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,22 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+/** @file
+ * Global setup.
+ */
 
-require_once('../lib/vars.php');
+/// Force HTTPs, needs SSL configuration in the web server configuration.
+$ForceHTTPs= FALSE;
 
-class Pf extends View
-{
-	public $RuleSet;
+/// Project-wide log level used in pfrewui_syslog() and pfrec_syslog().
+$LOG_LEVEL= LOG_INFO;
 
-	function __construct()
-	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+/// Max inline anchors allowed.
+$MaxAnchorNesting= 2;
 
-$View= new Pf();
+/// Wait pfctl output for this many seconds before giving up.
+$PfctlTimeout= 5;
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
-	}
-}
+/// Default locale for both View and Controller.
+$DefaultLocale= 'en_EN';
 ?>

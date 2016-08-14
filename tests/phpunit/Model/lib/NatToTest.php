@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: NatToTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('NatBase.php');
 
-class Pf extends View
+class NatToTest extends NatBase
 {
-	public $RuleSet;
+	// Override action, just for NatTo rules
+	protected $inAction= 'match';
+	protected $ruleAction= array(
+		'action' => 'match',
+		);
+
+	protected $inStaticPort= 'static-port';
+	protected $ruleStaticPort= array(
+		'static-port' => TRUE,
+		);
+
+	protected $ruleType= array(
+		'type' => 'nat-to',
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->inType= 'nat-to ' . $this->inRedirHost . ' ' . $this->inRedirPort;
 
-$View= new Pf();
+		$this->rule= $this->ruleStaticPort;
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		parent::__construct();
+
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inType . ' ' . $this->inPoolType . ' ' . $this->inStaticPort . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

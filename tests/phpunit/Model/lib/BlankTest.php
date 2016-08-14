@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: BlankTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+use Model\Blank;
 
-class Pf extends View
+require_once('RuleBase.php');
+
+class BlankTest extends RuleBase
 {
-	public $RuleSet;
+	public $in= "\n\n";
+	public $rule= array(
+		'blank' => "\n\n",
+		);
 
-	function __construct()
-	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+	public $out= "\n\n";
 
-$View= new Pf();
+	private $outSingleLine= "\n";
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+	function testGeneratorSingleLine() {
+		$rule= new Blank('');
+
+		$rule->load($this->rule);
+
+		$this->assertEquals($this->outSingleLine, $rule->generate(TRUE));
 	}
 }
 ?>

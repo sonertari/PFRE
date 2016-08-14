@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: LimitTest.php,v 1.1 2016/08/12 18:28:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,31 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('Rule.php');
 
-class Pf extends View
+class LimitTest extends Rule
 {
-	public $RuleSet;
+	protected $inLimit= 'states 1, frags 2, src-nodes 3, tables 4, table-entries 5';
+	protected $ruleLimit= array(
+		'limit' => array(
+			'states' => '1',
+			'frags' => '2',
+			'src-nodes' => '3',
+			'tables' => '4',
+			'table-entries' => '5',
+			),
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= $this->ruleLimit;
 
-$View= new Pf();
+		parent::__construct();
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$this->in= 'set limit { ' . $this->inLimit . ' }' . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

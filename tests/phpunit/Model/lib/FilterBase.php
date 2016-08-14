@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,75 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('StateTest.php');
 
-class Pf extends View
+class FilterBase extends StateTest
 {
-	public $RuleSet;
+	protected $inDirection= 'in';
+	protected $ruleDirection= array(
+		'direction' => 'in',
+		);
+
+	protected $inProto= 'proto tcp';
+	protected $ruleProto= array(
+		'proto' => 'tcp',
+		);
+
+	protected $inSrcDest= 'from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh';
+	protected $ruleSrcDest= array(
+		'from' => '192.168.0.1',
+		'fromport' => array(
+			'ssh',
+			'2222',
+			),
+		'os' => 'openbsd',
+		'to' => '192.168.0.2',
+		'toport' => 'ssh',
+		);
+
+	protected $inFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state';
+	protected $ruleFilterOpts= array(
+		'user' => 'root',
+		'group' => 'wheel',
+		'flags' => 'S/SA',
+		'tos' => '1',
+		'state-filter' => 'keep',
+		'allow-opts' => TRUE,
+		'once' => TRUE,
+		'label' => 'test',
+		'tag' => 'test',
+		'tagged' => 'test',
+		'not-tagged' => TRUE,
+		'set-prio' => '2',
+		'queue' => array(
+			'std',
+			'service',
+			),
+		'rtable' => '3',
+		'probability' => '10%',
+		'prio' => '4',
+		'set-tos' => '5',
+		'received-on' => 'em0',
+		'not-received-on' => TRUE,
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleDirection,
+			$this->ruleInterface,
+			$this->ruleAf,
+			$this->ruleProto,
+			$this->ruleSrcDest,
+			$this->ruleFilterOpts
+			);
 
-$View= new Pf();
+		parent::__construct();
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$this->inFilterOpts.= ' ( ' . $this->inState . ', ' . $this->inTimeout . ' )';
 	}
 }
 ?>

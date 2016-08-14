@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: QueueTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,38 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('Rule.php');
 
-class Pf extends View
+class QueueTest extends Rule
 {
-	public $RuleSet;
+	protected $inQueue= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default';
+	protected $ruleQueue= array(
+		'name' => 'test',
+		'interface' => 'em0',
+		'parent' => 'rootq',
+		'bandwidth' => '20M',
+		'bw-burst' => '90M',
+		'bw-time' => '100ms',
+		'min' => '5M',
+		'min-burst' => '10M',
+		'min-time' => '50ms',
+		'max' => '100M',
+		'max-burst' => '1M',
+		'max-time' => '10ms',
+		'qlimit' => '100',
+		'default' => TRUE,
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= $this->ruleQueue;
 
-$View= new Pf();
+		parent::__construct();
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$this->in= $this->inQueue . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: StateTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('TimeoutTest.php');
 
-class Pf extends View
+class StateTest extends TimeoutTest
 {
-	public $RuleSet;
+	protected $inState= 'max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule';
+	protected $ruleState= array(
+		'max' => '1',
+		'max-src-states' => '2',
+		'max-src-nodes' => '3',
+		'max-src-conn' => '4',
+		'max-src-conn-rate' => '5/5',
+		'sloppy' => TRUE,
+		'no-sync' => TRUE,
+		'pflow' => TRUE,
+		'if-bound' => TRUE,
+		'overload' => 'over',
+		'source-track' => TRUE,
+		'source-track-option' => 'rule',
+		'flush' => TRUE,
+		'global' => TRUE,
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleState
+			);
 
-$View= new Pf();
+		parent::__construct();
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$this->in= 'set state-defaults ' . $this->inState . ', ' . $this->inTimeout . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

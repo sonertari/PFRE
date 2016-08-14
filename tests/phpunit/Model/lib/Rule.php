@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: Rule.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,50 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('RuleBase.php');
 
-class Pf extends View
+class Rule extends RuleBase
 {
-	public $RuleSet;
+	protected $inInterface= 'on em0';
+	protected $ruleInterface= array(
+		'interface' => 'em0',
+		);
+
+	protected $inAf= 'inet';
+	protected $ruleAf= array(
+		'af' => 'inet',
+		);
+
+	protected $inLog= 'log ( all, matches, user, to pflog0 )';
+	protected $ruleLog= array(
+		'log' => array(
+			'all' => TRUE,
+			'matches' => TRUE,
+			'user' => TRUE,
+			'to' => 'pflog0',
+			),
+		);
+
+	protected $inQuick= 'quick';
+	protected $ruleQuick= array(
+		'quick' => TRUE,
+		);
+
+	protected $inComment= ' # Test';
+	protected $ruleComment= array(
+		'comment' => 'Test',
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleComment
+			);
 
-$View= new Pf();
-
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		parent::__construct();
 	}
 }
 ?>

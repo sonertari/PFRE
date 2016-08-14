@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: bootstrap.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,23 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+$SRC_ROOT= dirname(dirname(dirname(__FILE__))) . '/src';
+require_once($SRC_ROOT . '/lib/defs.php');
 
-require_once('../lib/vars.php');
+require_once($SRC_ROOT . '/Model/include.php');
+require_once($SRC_ROOT . '/View/pf/include.php');
 
-class Pf extends View
-{
-	public $RuleSet;
+$TEST_ROOT= dirname(dirname(dirname(__FILE__)));
+$TEST_PATH= $TEST_ROOT . '/tests/phpunit';
+$TEST_DIR= '/tests/phpunit/root';
+$TEST_DIR_PATH= $TEST_ROOT . $TEST_DIR;
+$TEST_DIR_SRC= $TEST_DIR . '/var/www/htdocs/pfre';
 
-	function __construct()
-	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+/// @todo Check why posix_getlogin() returns empty string
+/// @todo Is it better to use exec('whoami')?
+$INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
 
-$View= new Pf();
-
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
-	}
-}
+/// @todo Delete these after fixing NOTICEs
+PHPUnit_Framework_Error_Warning::$enabled = FALSE;
+PHPUnit_Framework_Error_Notice::$enabled = FALSE;
 ?>

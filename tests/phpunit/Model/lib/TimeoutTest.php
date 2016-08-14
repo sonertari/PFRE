@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: TimeoutTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,60 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('Rule.php');
 
-class Pf extends View
+class TimeoutTest extends Rule
 {
-	public $RuleSet;
+	protected $inTimeout= 'frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19';
+	protected $ruleTimeout= array(
+		'timeout' => array(
+			'all' => array(
+				'frag' => '1',
+				'interval' => '2',
+				'src.track' => '3',
+				),
+			'tcp' => array(
+				'first' => '4',
+				'opening' => '5',
+				'established' => '6',
+				'closing' => '7',
+				'finwait' => '8',
+				'closed' => '9',
+				),
+			'udp' => array(
+				'first' => '10',
+				'single' => '11',
+				'multiple' => '12',
+				),
+			'icmp' => array(
+				'first' => '13',
+				'error' => '14',
+				),
+			'other' => array(
+				'first' => '15',
+				'single' => '16',
+				'multiple' => '17',
+				),
+			'adaptive' => array(
+				'start' => '18',
+				'end' => '19',
+				),
+			),
+		);
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
-	}
-}
+		$this->rule= array_merge(
+			$this->rule,
+			$this->ruleTimeout
+			);
 
-$View= new Pf();
+		parent::__construct();
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$this->in= 'set timeout { ' . $this->inTimeout . ' }' . $this->inComment;
+		$this->out= $this->in . "\n";
 	}
 }
 ?>

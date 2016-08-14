@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
+/* $pfre: AnchorTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,34 +33,80 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-use View\RuleSet;
+namespace ModelTest;
 
-require_once('../lib/vars.php');
+require_once('FilterBase.php');
 
-class Pf extends View
+class AnchorTest extends FilterBase
 {
-	public $RuleSet;
+	protected $inAnchor= 'anchor "test"';
+	protected $ruleAnchor= array(
+		'identifier' => 'test',
+		);
+
+	// This is the same rule inline anchor rule in pf.conf(5)
+	protected $inInline= 'inline 	block
+	anchor out {
+		pass proto tcp from any to port { 25, 80, 443 }
+	}
+	pass in proto tcp to any port 22';
+
+	protected $ruleInline= array(
+		'inline' => '	block
+	anchor out {
+		pass proto tcp from any to port { 25, 80, 443 }
+	}
+	pass in proto tcp to any port 22',
+		);
+
+	protected $outInline= '{
+	block
+	anchor out {
+		pass proto tcp from any to port { 25, 80, 443 }
+	}
+	pass in proto tcp to any port 22
+}';
 
 	function __construct()
 	{
-		if (!isset($_SESSION['pf']['ruleset'])) {
-			$_SESSION['pf']['ruleset']= new RuleSet();
-		}
-		$this->RuleSet= &$_SESSION['pf']['ruleset'];
+		$this->rule= array_merge(
+			$this->ruleAnchor,
+			$this->ruleInline
+			);
+
+		parent::__construct();
+
+		$this->inFilterHead= $this->inAnchor . ' ' . $this->inDirection . ' ' . $this->inInterface . ' ' . $this->inAf . ' ' . $this->inProto . ' ' . $this->inSrcDest;
+
+		$this->in= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->inInline . $this->inComment;
+
+		$this->out= $this->inFilterHead . ' ' . $this->inFilterOpts . ' ' . $this->outInline . $this->inComment . "\n";
 	}
-}
 
-$View= new Pf();
+	function testParser() {
+		$rule= new $this->cat($this->in);
 
-// Load the main pf configuration if the ruleset is empty
-if ($View->RuleSet->filename == '') {
-	$filepath= '/etc/pf.conf';
-	$ruleSet= new RuleSet();
-	if ($ruleSet->load($filepath, 0, TRUE)) {
-		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
-	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		$expected= $this->rule;
+		ksort($expected);
+
+		$actual= $rule->rule;
+		ksort($actual);
+
+		$this->assertJsonStringEqualsJsonString(json_encode($expected), json_encode($actual));
+	}
+
+	function testGenerator() {
+		$rule= new $this->cat('');
+
+		$rule->load($this->rule);
+
+		$this->assertEquals($this->out, $rule->generate());
+	}
+	
+	function testParserGenerator() {
+		$rule= new $this->cat($this->in);
+
+		$this->assertEquals($this->out, $rule->generate());
 	}
 }
 ?>
