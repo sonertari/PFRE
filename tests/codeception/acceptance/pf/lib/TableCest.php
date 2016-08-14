@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.1 2016/08/14 13:13:29 soner Exp $ */
+/* $pfre: TableCest.php,v 1.2 2016/08/14 14:14:38 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,118 +33,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class TableCest
+require_once ('Rule.php');
+
+class TableCest extends Rule
 {
-	public function _before(Helper\ConfigureWebDriver $config)
-	{
-		/// @attention Disable clear_cookies before each test
-		// Because Codeception enables clear_cookies after each test function
-		$config->setClearCookies(FALSE);
-	}
+	protected $type= 'Table';
+	protected $ruleNumber= 4;
+	protected $ruleNumberGenerated= 10;
+	protected $sender= 'table';
 
-	protected function login(AcceptanceTester $I)
-	{
-		$I->wantTo('test rules page');
-		$I->amOnPage('/');
-
-		$I->see('PF Rule Editor');
-		$I->see('User');
-		$I->see('Password');
-
-		$I->fillField('UserName', 'admin');
-		$I->fillField('Password', 'soner123');
-		$I->click('Login');
-
-		$I->seeInCurrentUrl('pf/conf.php');
-	}
-
-	protected function loadTestRules(AcceptanceTester $I)
-	{
-		$I->click('Load & Save');
-		$I->see('Load rulebase');
-
-		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
-
-		$I->click('Upload');
-	}
-
-	/**
-	 * @before login
-	 * @before loadTestRules
-	 */
-	public function testDisplay(AcceptanceTester $I, Codeception\Test\Unit $tester)
-	{
-		$I->click('Rules');
-
-		$I->seeOptionIsSelected('category', 'All');
-
-		$I->expect('table rule is displayed correctly');
-
-		$display = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => 'Table rule']));
-		$tester->assertEquals($display,
-			'4 Table test const persist counters 192.168.0.1
+	protected $origRule= 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test';
+	protected $expectedDispOrigRule= 'test const persist counters 192.168.0.1
 192.168.0.2
 file "/etc/pf.restrictedips1"
 file "/etc/pf.restrictedips2"
-Test e u d x');
-		
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=4');
-		$I->seeLink('u', 'http://pfre/pf/conf.php?up=4');
-		$I->seeLink('d', 'http://pfre/pf/conf.php?down=4');
-		$I->seeLink('x', 'http://pfre/pf/conf.php?del=4');
-	}
+Test e u d x';
 
-	protected function gotoEditPage($I)
+	protected $modifiedRule= 'table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1';
+	protected $expectedDispModifiedRule= 'test1 192.168.0.1
+192.168.0.2
+1.1.1.1
+file "/etc/pf.restrictedips1"
+file "/etc/pf.restrictedips2"
+file "/etc/pf.restrictedips3"
+Test1 e u d x';
+
+	protected function modifyRule(AcceptanceTester $I)
 	{
-		$I->click('Rules');
-
-		// These 3 methods all work
-		//$I->click(['xpath' => '//a[contains(@href, "rulenumber=14")]']);
-		//$I->click('//a[contains(@href, "rulenumber=14")]');
-		$I->click(\Codeception\Util\Locator::href('conf.php?sender=table&rulenumber=4'));
-
-		$I->see('Edit Table Rule 4');
-
-		$I->maximizeWindow();
-	}
-
-	/**
-	 * @depends testDisplay
-	 */
-	public function testEditSaveNotModifiedFail(AcceptanceTester $I)
-	{
-		$this->gotoEditPage($I);
-
-		$I->dontSee('Edit Table Rule 4 (modified)');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
-
-		$I->click('Save');
-
-		$I->see('Edit Table Rule 4');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
-	}
-
-	/**
-	 * @depends testEditSaveNotModifiedFail
-	 */
-	public function testEditSaveNotModifiedForcedFail(AcceptanceTester $I)
-	{
-		$I->dontSee('Edit Table Rule 4 (modified)');
-
-		$I->checkOption('#forcesave');
-		$I->click('Save');
-
-		$I->see('Edit Table Rule 4');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
-	}
-
-	/**
-	 * @depends testEditSaveNotModifiedForcedFail
-	 */
-	public function testEditModifyRule(AcceptanceTester $I)
-	{
-		$I->expect('changes are applied incrementally');
-
 		$I->fillField('identifier', 'test1');
 		$I->click('Apply');
 		$I->see('Edit Table Rule 4 (modified)');
@@ -177,90 +92,10 @@ Test e u d x');
 
 		$I->fillField('comment', 'Test1');
 		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
 	}
 
-	/**
-	 * @depends testEditModifyRule
-	 */
-	public function testEditSaveModifiedWithErrorsFail(AcceptanceTester $I)
+	protected function revertModifications(AcceptanceTester $I)
 	{
-		$I->click('Save');
-
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
-	}
-
-	/**
-	 * @depends testEditSaveModifiedWithErrorsFail
-	 */
-	public function testEditSaveModifiedWithErrorsForced(AcceptanceTester $I)
-	{
-		$I->checkOption('#forcesave');
-		$I->click('Save');
-
-		$I->dontSee('Edit Table Rule 4');
-		$I->dontSeeElement('h4');
-	}
-
-	/**
-	 * @depends testEditSaveModifiedWithErrorsForced
-	 */
-	public function testDisplayModifiedWithErrorsForced(AcceptanceTester $I, Codeception\Test\Unit $tester)
-	{
-		$I->expect('modified table rule with errors is displayed correctly');
-
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'pre');
-
-		$display = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => 'Table rule']));
-		$tester->assertEquals($display,
-			'4 Table test1 192.168.0.1
-192.168.0.2
-1.1.1.1
-file "/etc/pf.restrictedips1"
-file "/etc/pf.restrictedips2"
-file "/etc/pf.restrictedips3"
-Test1 e u d x');
-		
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=4');
-		$I->seeLink('u', 'http://pfre/pf/conf.php?up=4');
-		$I->seeLink('d', 'http://pfre/pf/conf.php?down=4');
-		$I->seeLink('x', 'http://pfre/pf/conf.php?del=4');
-	}
-
-	/**
-	 * @depends testDisplayModifiedWithErrorsForced
-	 */
-	public function testDisplayGeneratedModifiedWithErrors(AcceptanceTester $I)
-	{
-		$I->expect('modified table rule with errors is generated on Display page correctly');
-
-		$I->click('Display & Install');
-		$I->see('Display line numbers');
-
-		/// @todo Check why the following does not work
-		//$I->seeInPageSource(htmlentities('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1'));
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'pre');
-		$I->dontSee(' 10: table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', '#rules');
-
-		$I->checkOption('#forcedisplay');
-
-		$I->see(' 10: table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', '#rules');
-	}
-
-	/**
-	 * @depends testDisplayGeneratedModifiedWithErrors
-	 * @after logout
-	 */
-	public function testEditRevertModifications(AcceptanceTester $I)
-	{
-		$this->gotoEditPage($I);
-
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
-
-		$I->expect('back to the original rule');
-
 		$I->fillField('identifier', 'test');
 		$I->click('Apply');
 		$I->see('Edit Table Rule 4 (modified)');
@@ -291,16 +126,19 @@ Test1 e u d x');
 
 		$I->fillField('comment', 'Test');
 		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
 	}
 
-	protected function logout(AcceptanceTester $I)
+	protected function modifyRuleQuick(AcceptanceTester $I)
 	{
-		$I->seeLink('Logout');
-		$I->click('Logout');
+		$I->fillField('identifier', 'test1');
+		$I->uncheckOption('#const');
+		$I->uncheckOption('#persist');
+		$I->uncheckOption('#counters');
+		$I->fillField('addValue', '1.1.1.1');
+		$I->fillField('addFile', '/etc/pf.restrictedips3');
+		$I->fillField('comment', 'Test1');
 
-		$I->seeInCurrentUrl('login.php');
+		$I->click('Apply');
 	}
 }
 ?>
