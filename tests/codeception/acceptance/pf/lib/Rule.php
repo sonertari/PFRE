@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.2 2016/08/14 14:14:38 soner Exp $ */
+/* $pfre: Rule.php,v 1.1 2016/08/14 22:16:48 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -48,9 +48,9 @@ class Rule
 	protected $expectedDispOrigRule;
 	protected $expectedDispModifiedRule;
 
-	/// @attention Waiting even for 0 second works around the "stale element reference" exception (?)
+	/// @attention Waiting even for 1 second works around the "stale element reference" exception (?)
 	/// @todo Find the real cause of and solution to this issue
-	private $tabSwitchInterval= 0;
+	private $tabSwitchInterval= 1;
 
 	function __construct()
 	{
