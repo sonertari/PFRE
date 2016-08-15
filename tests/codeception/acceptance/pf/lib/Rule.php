@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.2 2016/08/14 22:28:01 soner Exp $ */
+/* $pfre: Rule.php,v 1.3 2016/08/15 07:00:04 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -46,6 +46,7 @@ class Rule
 	protected $origRule;
 	protected $modifiedRule;
 	protected $revertedRule;
+	protected $generatedRule;
 
 	protected $expectedDispOrigRule;
 	protected $expectedDispModifiedRule;
@@ -55,13 +56,14 @@ class Rule
 	protected $dLink;
 	protected $xLink;
 
-	/// @attention Waiting even for 1 second works around the "stale element reference" exception (?)
+	/// @attention Waiting for 1 second works around the "stale element reference" exception (?)
 	/// @todo Find the real cause of and solution to this issue
-	private $tabSwitchInterval= 0;
+	private $tabSwitchInterval= 1;
 
 	function __construct()
 	{
 		$this->revertedRule= $this->origRule;
+		$this->generatedRule= $this->modifiedRule;
 
 		$this->editPageTitle= 'Edit ' . $this->type . ' Rule ' . $this->ruleNumber;
 
@@ -104,7 +106,7 @@ class Rule
 	protected function loadTestRules(AcceptanceTester $I)
 	{
 		$I->click('Load & Save');
-//		$I->wait($this->tabSwitchInterval);
+		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
 		$I->see('Load rulebase');
 
@@ -120,7 +122,7 @@ class Rule
 	public function testDisplay(AcceptanceTester $I, Codeception\Test\Unit $tester)
 	{
 		$I->click('Rules');
-//		$I->wait($this->tabSwitchInterval);
+		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?submenu=rules');
 
 		$I->seeOptionIsSelected('category', 'All');
@@ -143,13 +145,13 @@ class Rule
 	{
 		$this->gotoEditPage($I);
 
-		$I->see($this->editPageTitle);
-		$I->dontSee('(modified)');
+		$I->see($this->editPageTitle, 'h2');
+		$I->dontSee('(modified)', 'h2');
 		$I->see($this->origRule, 'h4');
 
 		$I->click('Save');
 
-		$I->see($this->editPageTitle);
+		$I->see($this->editPageTitle, 'h2');
 		$I->see($this->origRule, 'h4');
 	}
 
@@ -159,16 +161,16 @@ class Rule
 		// http://seleniumhq.org/exceptions/stale_element_reference.html
 		// The issue at this point seems to be caused by clicking Rules tab while on the rules page, effectively refreshing the page unnecessarily
 		//$I->click('Rules');
-//		$I->wait($this->tabSwitchInterval);
+		$I->wait($this->tabSwitchInterval);
 		// @attention Do not check the URL, it changes depending on where you have come from
 		//$I->seeInCurrentUrl('conf.php?submenu=rules');
 
 		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));
 
-//		$I->wait($this->tabSwitchInterval);
+		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
-		$I->see($this->editPageTitle);
+		$I->see($this->editPageTitle, 'h2');
 	}
 
 	/**
@@ -176,13 +178,13 @@ class Rule
 	 */
 	public function testEditSaveNotModifiedForcedFail(AcceptanceTester $I)
 	{
-		$I->see($this->editPageTitle);
-		$I->dontSee('(modified)');
+		$I->see($this->editPageTitle, 'h2');
+		$I->dontSee('(modified)', 'h2');
 
 		$I->checkOption('#forcesave');
 		$I->click('Save');
 
-		$I->see($this->editPageTitle);
+		$I->see($this->editPageTitle, 'h2');
 		$I->see($this->origRule, 'h4');
 	}
 
@@ -193,13 +195,13 @@ class Rule
 	{
 		$I->expect('changes are applied incrementally');
 		
-		$I->see($this->editPageTitle);
-		$I->dontSee('(modified)');
+		$I->see($this->editPageTitle, 'h2');
+		$I->dontSee('(modified)', 'h2');
 		$I->see($this->origRule, 'h4');
 
 		$this->modifyRule($I);
 
-		$I->see($this->editPageTitle . ' (modified)');
+		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
 	}
 
@@ -214,7 +216,7 @@ class Rule
 	{
 		$I->click('Save');
 
-		$I->see($this->editPageTitle . ' (modified)');
+		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
 	}
 
@@ -226,7 +228,7 @@ class Rule
 		$I->checkOption('#forcesave');
 		$I->click('Save');
 
-		$I->dontSee($this->editPageTitle);
+		$I->dontSee($this->editPageTitle, 'h2');
 		$I->dontSeeElement('h4');
 	}
 
@@ -255,13 +257,13 @@ class Rule
 
 		$I->expect('incrementally reverting modifications brings us back to the original rule');
 
-		$I->see($this->editPageTitle);
-		$I->dontSee('(modified)');
+		$I->see($this->editPageTitle, 'h2');
+		$I->dontSee('(modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
 
 		$this->revertModifications($I);
 
-		$I->see($this->editPageTitle . ' (modified)');
+		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see($this->revertedRule, 'h4');
 	}
 
@@ -278,8 +280,8 @@ class Rule
 
 		$this->modifyRuleQuick($I);
 
-		$I->see($this->editPageTitle);
-		$I->dontSee('(modified)');
+		$I->see($this->editPageTitle, 'h2');
+		$I->dontSee('(modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
 	}
 
@@ -296,15 +298,15 @@ class Rule
 		$I->expect('modified rule with errors is generated on Display page correctly');
 
 		$I->click('Display & Install');
-//		$I->wait($this->tabSwitchInterval);
+		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 
-		$I->dontSee(' ' . $this->ruleNumberGenerated . ': ' . $this->modifiedRule, '#rules');
+		$I->dontSee(' ' . $this->ruleNumberGenerated . ': ' . $this->generatedRule, '#rules');
 
 		$I->checkOption('#forcedisplay');
 
-		$I->see(' ' . $this->ruleNumberGenerated . ': ' . $this->modifiedRule, '#rules');
+		$I->see(' ' . $this->ruleNumberGenerated . ': ' . $this->generatedRule, '#rules');
 	}
 
 	protected function logout(AcceptanceTester $I)
@@ -328,7 +330,7 @@ class Rule
 
 	protected function seeResult(AcceptanceTester $I, $expectedRule)
 	{
-		$I->see($this->editPageTitle . ' (modified)');
+		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see($expectedRule, 'h4');
 	}
 }
