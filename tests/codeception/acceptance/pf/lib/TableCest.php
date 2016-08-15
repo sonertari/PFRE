@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.2 2016/08/14 14:14:38 soner Exp $ */
+/* $pfre: TableCest.php,v 1.3 2016/08/14 22:16:48 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,71 +61,49 @@ Test1 e u d x';
 	protected function modifyRule(AcceptanceTester $I)
 	{
 		$I->fillField('identifier', 'test1');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
+		$this->clickApplySeeResult($I, 'table <test1> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test');
 
 		$I->uncheckOption('#const');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> persist counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
+		$this->clickApplySeeResult($I, 'table <test1> persist counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test');
 
 		$I->uncheckOption('#persist');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
+		$this->clickApplySeeResult($I, 'table <test1> counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test');
 
 		$I->uncheckOption('#counters');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test', 'h4');
+		$this->clickApplySeeResult($I, 'table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test');
 		
 		$I->fillField('addValue', '1.1.1.1');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test', 'h4');
+		$this->clickApplySeeResult($I, 'table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test');
 
 		$I->fillField('addFile', '/etc/pf.restrictedips3');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test', 'h4');
+		$this->clickApplySeeResult($I, 'table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test');
 
 		$I->fillField('comment', 'Test1');
-		$I->click('Apply');
+		$this->clickApplySeeResult($I, $this->modifiedRule);
 	}
 
 	protected function revertModifications(AcceptanceTester $I)
 	{
 		$I->fillField('identifier', 'test');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
+		$this->clickApplySeeResult($I, 'table <test> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1');
 
 		$I->checkOption('#const');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> const file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
+		$this->clickApplySeeResult($I, 'table <test> const file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1');
 
 		$I->checkOption('#persist');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> persist const file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
+		$this->clickApplySeeResult($I, 'table <test> persist const file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1');
 
 		$I->checkOption('#counters');
-		$I->click('Apply');
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1', 'h4');
+		$this->clickApplySeeResult($I, 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1');
 		
-		$I->click(\Codeception\Util\Locator::href('conf.php?sender=table&rulenumber=4&delValue=1.1.1.1&state=edit'));
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2 } # Test1', 'h4');
+		$this->clickDeleteLink($I, 'delValue', '1.1.1.1');
+		$this->seeResult($I, 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2 } # Test1');
 
-		$I->click(\Codeception\Util\Locator::href('conf.php?sender=table&rulenumber=4&delFile=/etc/pf.restrictedips3&state=edit'));
-		$I->see('Edit Table Rule 4 (modified)');
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test1', 'h4');
+		$this->clickDeleteLink($I, 'delFile', '/etc/pf.restrictedips3');
+		$this->seeResult($I, 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test1');
 
 		$I->fillField('comment', 'Test');
-		$I->click('Apply');
+		$this->clickApplySeeResult($I, $this->revertedRule);
 	}
 
 	protected function modifyRuleQuick(AcceptanceTester $I)

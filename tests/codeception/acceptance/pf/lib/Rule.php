@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.1 2016/08/14 22:16:48 soner Exp $ */
+/* $pfre: Rule.php,v 1.2 2016/08/14 22:28:01 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -41,23 +41,39 @@ class Rule
 	protected $sender;
 
 	protected $editPageTitle;
+	protected $trTitle;
 
 	protected $origRule;
 	protected $modifiedRule;
-	
+	protected $revertedRule;
+
 	protected $expectedDispOrigRule;
 	protected $expectedDispModifiedRule;
 
+	protected $eLink;
+	protected $uLink;
+	protected $dLink;
+	protected $xLink;
+
 	/// @attention Waiting even for 1 second works around the "stale element reference" exception (?)
 	/// @todo Find the real cause of and solution to this issue
-	private $tabSwitchInterval= 1;
+	private $tabSwitchInterval= 0;
 
 	function __construct()
 	{
+		$this->revertedRule= $this->origRule;
+
 		$this->editPageTitle= 'Edit ' . $this->type . ' Rule ' . $this->ruleNumber;
+
+		$this->trTitle= $this->type . ' rule';
 
 		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->expectedDispOrigRule;
 		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->expectedDispModifiedRule;
+
+		$this->eLink= 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber;
+		$this->uLink= 'http://pfre/pf/conf.php?up=' . $this->ruleNumber;
+		$this->dLink= 'http://pfre/pf/conf.php?down=' . $this->ruleNumber;
+		$this->xLink= 'http://pfre/pf/conf.php?del=' . $this->ruleNumber;
 	}
 
 	public function _before(Helper\ConfigureWebDriver $config)
@@ -88,7 +104,7 @@ class Rule
 	protected function loadTestRules(AcceptanceTester $I)
 	{
 		$I->click('Load & Save');
-		$I->wait($this->tabSwitchInterval);
+//		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
 		$I->see('Load rulebase');
 
@@ -104,20 +120,20 @@ class Rule
 	public function testDisplay(AcceptanceTester $I, Codeception\Test\Unit $tester)
 	{
 		$I->click('Rules');
-		$I->wait($this->tabSwitchInterval);
+//		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?submenu=rules');
 
 		$I->seeOptionIsSelected('category', 'All');
 
 		$I->expect('rule is displayed correctly');
 
-		$actualDisp = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => $this->type . ' rule']));
+		$actualDisp = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => $this->trTitle]));
 		$tester->assertEquals($this->expectedDispOrigRule, $actualDisp);
 		
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
-		$I->seeLink('u', 'http://pfre/pf/conf.php?up=' . $this->ruleNumber);
-		$I->seeLink('d', 'http://pfre/pf/conf.php?down=' . $this->ruleNumber);
-		$I->seeLink('x', 'http://pfre/pf/conf.php?del=' . $this->ruleNumber);
+		$I->seeLink('e', $this->eLink);
+		$I->seeLink('u', $this->uLink);
+		$I->seeLink('d', $this->dLink);
+		$I->seeLink('x', $this->xLink);
 	}
 
 	/**
@@ -143,14 +159,14 @@ class Rule
 		// http://seleniumhq.org/exceptions/stale_element_reference.html
 		// The issue at this point seems to be caused by clicking Rules tab while on the rules page, effectively refreshing the page unnecessarily
 		//$I->click('Rules');
-		$I->wait($this->tabSwitchInterval);
+//		$I->wait($this->tabSwitchInterval);
 		// @attention Do not check the URL, it changes depending on where you have come from
 		//$I->seeInCurrentUrl('conf.php?submenu=rules');
 
 		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));
 
-		$I->wait($this->tabSwitchInterval);
+//		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->see($this->editPageTitle);
 	}
@@ -221,13 +237,13 @@ class Rule
 	{
 		$I->expect('modified rule with errors is displayed correctly');
 
-		$display = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => $this->type . ' rule']));
+		$display = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => $this->trTitle]));
 		$tester->assertEquals($this->expectedDispModifiedRule, $display);
 		
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
-		$I->seeLink('u', 'http://pfre/pf/conf.php?up=' . $this->ruleNumber);
-		$I->seeLink('d', 'http://pfre/pf/conf.php?down=' . $this->ruleNumber);
-		$I->seeLink('x', 'http://pfre/pf/conf.php?del=' . $this->ruleNumber);
+		$I->seeLink('e', $this->eLink);
+		$I->seeLink('u', $this->uLink);
+		$I->seeLink('d', $this->dLink);
+		$I->seeLink('x', $this->xLink);
 	}
 
 	/**
@@ -246,7 +262,7 @@ class Rule
 		$this->revertModifications($I);
 
 		$I->see($this->editPageTitle . ' (modified)');
-		$I->see($this->origRule, 'h4');
+		$I->see($this->revertedRule, 'h4');
 	}
 
 	protected function revertModifications(AcceptanceTester $I)
@@ -280,7 +296,7 @@ class Rule
 		$I->expect('modified rule with errors is generated on Display page correctly');
 
 		$I->click('Display & Install');
-		$I->wait($this->tabSwitchInterval);
+//		$I->wait($this->tabSwitchInterval);
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 
@@ -297,6 +313,23 @@ class Rule
 		$I->click('Logout');
 
 		$I->seeInCurrentUrl('login.php');
+	}
+
+	protected function clickDeleteLink(AcceptanceTester $I, $delId, $value)
+	{
+		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber . '&' . $delId . '=' . $value . '&state=edit'));
+	}
+
+	protected function clickApplySeeResult(AcceptanceTester $I, $expectedRule)
+	{
+		$I->click('Apply');
+		$this->seeResult($I, $expectedRule);
+	}
+
+	protected function seeResult(AcceptanceTester $I, $expectedRule)
+	{
+		$I->see($this->editPageTitle . ' (modified)');
+		$I->see($expectedRule, 'h4');
 	}
 }
 ?>
