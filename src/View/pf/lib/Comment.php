@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.12 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Comment.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -72,6 +72,8 @@ class Comment extends Rule
 				<input type="submit" id="apply" name="apply" value="Apply" />
 				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
 				<input type="submit" id="cancel" name="cancel" value="Cancel" />
+				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
+				<label for="forcesave">Save with errors</label>
 				<input type="hidden" name="state" value="<?php echo $action; ?>" />
 			</div>
 		</form>

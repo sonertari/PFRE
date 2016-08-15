@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.3 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: Rule.php,v 1.4 2016/08/15 12:51:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -58,7 +58,7 @@ class Rule
 
 	/// @attention Waiting for 1 second works around the "stale element reference" exception (?)
 	/// @todo Find the real cause of and solution to this issue
-	private $tabSwitchInterval= 1;
+	protected $tabSwitchInterval= 1;
 
 	function __construct()
 	{

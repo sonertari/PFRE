@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: FilterCest.php,v 1.1 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: AfToCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -444,10 +444,12 @@ Test1 e u d x';
 		$I->click('Apply');
 
 		$this->clickDeleteLink($I, 'delInterface', 'em0');
+
 		$I->selectOption('#af', '');
 		$I->click('Apply');
 
 		$this->clickDeleteLink($I, 'delProto', 'tcp');
+
 		$I->fillField('#addFrom', '1.1.1.1');
 		$I->click('Apply');
 
