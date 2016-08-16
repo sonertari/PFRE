@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: rulesCest.php,v 1.2 2016/08/16 02:23:25 soner Exp $ */
+/* $pfre: rulesCest.php,v 1.3 2016/08/16 07:32:12 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,59 @@
 
 class rulesCest
 {
+	/// @todo Reuse these tables from rules.php in View
+	private $ruleTypes= array(
+		'filter' => 'Filter',
+		'antispoof' => 'Antispoof',
+		'anchor' => 'Anchor',
+		'macro' => 'Macro',
+		'table' => 'Table',
+		'afto' => 'Af Translate',
+		'natto' => 'Nat',
+		'binatto' => 'Binat',
+		'divertto' => 'Divert',
+		'divertpacket' => 'Divert Packet',
+		'rdrto' => 'Redirect',
+		'route' => 'Route',
+		'queue' => 'Queue',
+		'scrub' => 'Scrub',
+		'option' => 'Option',
+		'timeout' => 'Timeout',
+		'limit' => 'Limit',
+		'state' => 'State Defaults',
+		'loadanchor' => 'Load Anchor',
+		'include' => 'Include',
+		'blank' => 'Blank Line',
+		'comment' => 'Comment',
+		);
+
+	private $ruleType2Class= array(
+		'filter' => 'Filter',
+		'antispoof' => 'Antispoof',
+		'anchor' => 'Anchor',
+		'macro' => 'Macro',
+		'table' => 'Table',
+		'afto' => 'AfTo',
+		'natto' => 'NatTo',
+		'binatto' => 'BinatTo',
+		'divertto' => 'DivertTo',
+		'divertpacket' => 'DivertPacket',
+		'rdrto' => 'RdrTo',
+		'route' => 'Route',
+		'queue' => 'Queue',
+		'scrub' => 'Scrub',
+		'option' => 'Option',
+		'timeout' => 'Timeout',
+		'limit' => 'Limit',
+		'state' => 'State',
+		'loadanchor' => 'LoadAnchor',
+		'include' => '_Include',
+		'blank' => 'Blank',
+		'comment' => 'Comment',
+	);
+
+	protected $tabSwitchInterval= 1;
+
 	public function _before(Helper\ConfigureWebDriver $config)
 	{
 		/// @attention Disable clear_cookies before each test
@@ -44,7 +97,8 @@ class rulesCest
 
 	protected function login(AcceptanceTester $I)
 	{
-		$I->wantTo('test rules page');
+		$I->maximizeWindow();
+
 		$I->amOnPage('/');
 
 		$I->see('PF Rule Editor');
@@ -58,75 +112,205 @@ class rulesCest
 		$I->seeInCurrentUrl('pf/conf.php');
 	}
 
-	/**
-	 * @before login
-	 */
-	public function testShowTable(AcceptanceTester $I)
+	protected function loadTestRules(AcceptanceTester $I)
 	{
 		$I->click('Load & Save');
+		$I->wait($this->tabSwitchInterval);
+		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
 		$I->see('Load rulebase');
 
-		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'pf.conf');
+		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
 
 		$I->click('Upload');
-		
-		/// @todo Check why submitForm() gives Element state error
-		//$I->submitForm(\Codeception\Util\Locator::find('form', ['enctype' => 'multipart/form-data']),
-		//$I->submitForm('#uploadForm',
-		//	array(
-		//		'file' => array(
-		//			'name' => 'pf.conf'
-		//			),
-		//		'max_file_size' => '300000',
-		//		'submitButton' => 'Upload'
-		//		)
-		//	);
 
 		$I->click('Rules');
-
-		$I->seeOptionIsSelected('category', 'All');
-
-		$I->selectOption('category', 'Table');
-		$I->seeOptionIsSelected('category', 'Table');
-
-		$I->click('Show');
-		
-		$I->expect('the list has table rules, and table rules only');
-		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 4);
-		$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => 'Table rule']), 4);
-		$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => 'Table rule', 'class' => 'oddline']), 2);
-
-		$I->expect('table rule numbers are 11, 12, 13, 14');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=11');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=12');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=13');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=14');
 	}
 
 	/**
-	 * @depends testShowTable
+	 * @before login
+	 * @before loadTestRules
 	 */
-	public function testEditTable(AcceptanceTester $I)
-	{
-		// These 3 methods all work
-		//$I->click(['xpath' => '//a[contains(@href, "rulenumber=14")]']);
-		//$I->click('//a[contains(@href, "rulenumber=14")]');
-		$I->click(\Codeception\Util\Locator::href('conf.php?sender=table&rulenumber=14'));
+	public function testShow(AcceptanceTester $I)
+	{		
+		$I->seeOptionIsSelected('#category', 'All');
 
-		$I->see('table <id> persist const counters file "/etc/pf.restrictedips" { 192.168.0.1 }');
+		$ruleNumber= 0;
+		foreach ($this->ruleTypes as $sender => $type) {
+			$I->expect("the list has $type rules, and $type rules only");
+			$I->selectOption('category', $type);
+			$I->click('Show');
 
-		$I->fillField('identifier', 'test');
-		$I->click('Apply');
+			$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 1);
+			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => ltrim($this->ruleType2Class[$sender], '_') . ' rule']), 1);
 
-		$I->fillField('addValue', '1.1.1.1');
-		$I->click('Apply');
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
 
-		$I->see('table <test> persist const counters file "/etc/pf.restrictedips" { 192.168.0.1, 1.1.1.1 }');
+			$ruleNumber++;
+		}
 
-		$I->click('Save');
+		$I->selectOption('#category', 'All');
+		$I->click('Show');
 	}
 
 	/**
+	 * @before loadTestRules
+	 */
+	public function testAddLast(AcceptanceTester $I)
+	{
+		$ruleNumber= count($this->ruleTypes);
+		foreach ($this->ruleTypes as $sender => $type) {
+			$I->expect("clicking the Add button creates a $type rule as rule number $ruleNumber, and takes us to the edit page for that $type rule");
+
+			$I->seeInField('#ruleNumber', $ruleNumber);
+
+			$I->selectOption('#category', $type);
+			$I->click('Add');
+
+			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see($ruleNumber . ' (modified)', 'h2');
+
+			$I->checkOption('#forcesave');
+			$I->click('Save');
+
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+
+			$ruleNumber++;
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testAddFirst(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$ruleNumber= 0;
+		foreach ($this->ruleTypes as $sender => $type) {
+			$I->expect("clicking the Add button creates a $type rule as rule number $ruleNumber, and takes us to the edit page for that $type rule");
+			
+			$I->seeInField('#ruleNumber', $count++);
+
+			$I->selectOption('#category', $type);
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->click('Add');
+
+			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see($ruleNumber . ' (modified)', 'h2');
+
+			$I->checkOption('#forcesave');
+			$I->click('Save');
+
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+
+			/// @attention No need to delete the new rule
+			//$I->click(['xpath' => '//a[contains(@href, "conf.php?del=' . $ruleNumber . '")]']);
+			//$I->wait(1);
+			//$I->acceptPopup();
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testAddMiddle(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$ruleNumber= round(count($this->ruleTypes) / 2);
+		foreach ($this->ruleTypes as $sender => $type) {
+			$I->expect("clicking the Add button creates a $type rule as rule number $ruleNumber, and takes us to the edit page for that $type rule");
+
+			$I->seeInField('#ruleNumber', $count++);
+
+			$I->selectOption('#category', $type);
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->click('Add');
+
+			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see($ruleNumber . ' (modified)', 'h2');
+
+			$I->checkOption('#forcesave');
+			$I->click('Save');
+
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testAddGreaterThanRuleCount(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$I->expect("clicking the Add button creates a Filter rule as rule number $count, and takes us to the edit page for that Filter rule");
+
+		$I->seeInField('#ruleNumber', $count);
+
+		$I->selectOption('#category', 'Filter');
+		$I->fillField('#ruleNumber', $count * 2);
+		$I->click('Add');
+
+		$I->see("Edit Filter Rule $count (modified)", 'h2');
+
+		$I->checkOption('#forcesave');
+		$I->click('Save');
+
+		$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$count");
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testEdit(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+
+		$ruleNumber= 0;
+		foreach ($this->ruleTypes as $sender => $type) {
+			$I->expect("clicking the Edit button takes us to the edit page for $type rule $ruleNumber");
+
+			$I->seeInField('#ruleNumber', $count);
+
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->click('Edit');
+
+			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see($ruleNumber, 'h2');
+			$I->dontSee('(modified)', 'h2');
+
+			$I->click('Cancel');
+			$ruleNumber++;
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testEditGreaterThanRuleCount(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$I->expect("clicking the Edit button creates a Filter rule as rule number $count, and takes us to the edit page for that Filter rule");
+
+		$I->seeInField('#ruleNumber', $count);
+
+		$I->selectOption('#category', 'Filter');
+		$I->fillField('#ruleNumber', $count * 2);
+		$I->click('Edit');
+
+		$I->see("Edit Filter Rule $count (modified)", 'h2');
+
+		$I->checkOption('#forcesave');
+		$I->click('Save');
+
+		$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$count");
+	}
+
+	/**
+	 * For popups:
+	 * 
 	 * @attention Use Selenium 3.0.0-beta4, works fine even with ChromeDriver 2.21
 	 * $ java -jar selenium-server-standalone-3.0.0-beta4.jar
 	 * 
@@ -136,31 +320,158 @@ class rulesCest
 	 * @attention Selenium 3.0.0-beta4 command line is different from that of 2.53.1 above, if an option to be provided:
 	 * $ java -Dwebdriver.chrome.driver=chromedriver -jar selenium-server-standalone-3.0.0-beta4.jar
 	 * 
-	 * @depends testEditTable
+	 * @before loadTestRules
 	 */
-	public function testDeleteTable(AcceptanceTester $I)
+	public function testDelete(AcceptanceTester $I)
 	{
-		/// @todo Check why the following 3 methods do not work, a bug in xpath locator?
-		//$I->click(\Codeception\Util\Locator::href('conf.php?del=14'));
-		//$aLink = $I->grabMultiple(['xpath' => '//a[contains(@href, "conf.php?del=14")]'], 'href');
-		//$I->click(\Codeception\Util\Locator::href($aLink[0]));
-		//$I->click(['xpath' => '//a[@href="http://pfre/pf/conf.php?del=14"]']);
+		$count= count($this->ruleTypes);
+	
+		$ruleNumber= 0;
+		foreach ($this->ruleTypes as $sender => $type) {
+			$I->expect("clicking the Delete button deletes a $type rule $ruleNumber");
 
-		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
-		
-		/// @todo May need to wait if the webdriver or the server is slow?
+			$I->seeInField('#ruleNumber', $count);
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->click('Delete');
+
+			$I->wait(1);
+			$I->seeInPopup('Are you sure you want to delete the rule?');
+			$I->acceptPopup();
+
+			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+
+			$I->selectOption('#category', $type);
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->click('Add');
+
+			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see($ruleNumber . ' (modified)', 'h2');
+
+			$I->checkOption('#forcesave');
+			$I->click('Save');
+
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$ruleNumber++;
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testMove(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$ruleNumber= 0;
+		$delta= 1;
+		$moveTo= 0;
+		while ($ruleNumber < $count) {
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+
+			$moveTo= $ruleNumber + $delta;
+
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->fillField('#moveTo', $moveTo);
+			$I->click('Move');
+			
+			if ($moveTo < $count) {
+				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+				$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$moveTo");
+			} else {
+				$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$moveTo");
+			}
+
+			$ruleNumber= $moveTo;
+			$delta*= 2;
+		}
+
+		$this->loadTestRules($I);
+
+		$ruleNumber= $count - 1;
+		$delta= 1;
+		while ($ruleNumber >= 0) {
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+
+			$moveTo= $ruleNumber - $delta;
+
+			$I->fillField('#ruleNumber', $ruleNumber);
+			$I->fillField('#moveTo', $moveTo);
+			$I->click('Move');
+			
+			if ($moveTo >= 0) {
+				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+				$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$moveTo");
+			} else {
+				$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$moveTo");
+			}
+
+			$ruleNumber= $moveTo;
+			$delta*= 2;
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testDeleteAll(AcceptanceTester $I)
+	{		
+		$count= count($this->ruleTypes);
+
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);
+
+		$I->click('Delete All');
+
 		$I->wait(1);
-		$I->seeInPopup('Are you sure you want to delete Table rule number 14?');
-
-		//$I->wait(1);
+		$I->seeInPopup('Are you sure you want to delete the entire rulebase?');
 		$I->acceptPopup();
 
-		//$I->wait(1);
-		$I->expect('rule 14 is deleted');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=11');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=12');
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=13');
-		$I->dontSeeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=14');
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 0);
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testDown(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$ruleNumber= 0;
+		while ($ruleNumber < $count - 1) {
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+
+			$I->click(['xpath' => '//a[contains(@href, "conf.php?down=' . $ruleNumber . '")]']);
+			//$I->wait(1);
+			
+			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+
+			$ruleNumber++;
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+		}
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testUp(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
+	
+		$ruleNumber= $count - 1;
+		while ($ruleNumber > 0) {
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+
+			$I->click(['xpath' => '//a[contains(@href, "conf.php?up=' . $ruleNumber . '")]']);
+			//$I->wait(1);
+			
+			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+
+			$ruleNumber--;
+			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+		}
 	}
 
 	/// @attention Make logout a test too, so that we always logout in the end

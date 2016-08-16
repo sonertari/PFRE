@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.6 2016/08/16 05:22:24 soner Exp $ */
+/* $pfre: Rule.php,v 1.7 2016/08/16 07:32:12 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -92,7 +92,6 @@ class Rule
 	{
 		$I->maximizeWindow();
 
-		$I->wantTo('test rules page');
 		$I->amOnPage('/');
 
 		$I->see('PF Rule Editor');
@@ -167,6 +166,10 @@ class Rule
 		$I->wait($this->tabSwitchInterval);
 		// @attention Do not check the URL, it changes depending on where you have come from
 		//$I->seeInCurrentUrl('conf.php?submenu=rules');
+
+		// These methods work too
+		//$I->click(['xpath' => '//a[contains(@href, "rulenumber=' . $this->ruleNumber . '")]']);
+		//$I->click('//a[contains(@href, "rulenumber=' . $this->ruleNumber . '")]');
 
 		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));

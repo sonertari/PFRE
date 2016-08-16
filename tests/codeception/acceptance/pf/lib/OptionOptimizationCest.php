@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: OptionOptimizationCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
+/* $pfre: OptionOptimizationCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -61,6 +61,12 @@ class OptionOptimizationCest extends Rule
 
 		$I->click('Rules');
 		$I->wait($this->tabSwitchInterval);
+
+		/// @todo Check why the following 3 methods do not work, a bug in xpath locator?
+		//$I->click(\Codeception\Util\Locator::href('conf.php?del=14'));
+		//$aLink = $I->grabMultiple(['xpath' => '//a[contains(@href, "conf.php?del=14")]'], 'href');
+		//$I->click(\Codeception\Util\Locator::href($aLink[0]));
+		//$I->click(['xpath' => '//a[@href="http://pfre/pf/conf.php?del=14"]']);
 
 		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
 		$I->wait(1);

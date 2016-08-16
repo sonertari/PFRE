@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Route.php,v 1.12 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Route.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,6 +37,12 @@ namespace View;
 
 class Route extends Filter
 {
+	function setType()
+	{
+		// Set a default type to get an initial test result as FALSE, otherwise $testResult becomes TRUE and #forcesave remains disabled
+		$this->rule['type']= 'route-to';
+	}
+
 	function display($ruleNumber, $count)
 	{
 		$this->dispHead($ruleNumber);
