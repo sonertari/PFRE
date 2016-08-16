@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LimitCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: OptionDebugCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -102,7 +102,13 @@ class OptionDebugCest extends Rule
 	{
 		$I->selectOption('#debug', 'debug');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->selectOption('#debug', 'notice');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

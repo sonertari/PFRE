@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: AfToCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: RouteCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -492,6 +492,107 @@ dup-to
 		$I->uncheckOption('#source-hash');
 		$I->uncheckOption('#sticky-address');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
+
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->selectOption('#action', 'pass');
+		$I->selectOption('#direction', 'in');
+		$I->checkOption('#log');
+		$I->click('Apply');
+
+		$I->fillField('#log-to', 'pflog0');
+		$I->checkOption('#log-all');
+		$I->checkOption('#log-matches');
+		$I->checkOption('#log-user');
+		$I->checkOption('#quick');
+		$I->fillField('#addInterface', 'em0');
+		$I->selectOption('#af', 'inet');
+		$I->fillField('#addProto', 'tcp');
+		$I->click('Apply');
+
+		$this->clickDeleteLink($I, 'delFrom', '1.1.1.1');
+
+		$I->fillField('#addFromPort', 'ssh');
+		$I->click('Apply');
+
+		$I->fillField('#addFromPort', '2222');
+		$I->fillField('#addOs', 'openbsd');
+		$I->fillField('#addTo', '192.168.0.2');
+		$I->click('Apply');
+
+		$this->clickDeleteLink($I, 'delToPort', '1111');
+
+		$I->fillField('#addUser', 'root');
+		$I->fillField('#addGroup', 'wheel');
+		$I->fillField('#flags', 'S/SA');
+		$I->fillField('#tos', '1');
+		$I->checkOption('#allow-opts');
+		$I->checkOption('#once');
+		$I->fillField('#label', 'test');
+		$I->fillField('#tag', 'test');
+		$I->fillField('#tagged', 'test');
+		$I->click('Apply');
+
+		$I->checkOption('#not-tagged');
+		$I->fillField('#addPrio', '2');
+		$I->fillField('#rtable', '3');
+		$I->fillField('#probability', '10%');
+		$I->fillField('#prio', '4');
+		$I->fillField('#set-tos', '5');
+		$I->fillField('#received-on', 'em0');
+		$I->click('Apply');
+
+		$I->checkOption('#not-received-on');
+		$I->selectOption('#state-filter', 'Keep State');
+		$I->click('Apply');
+
+		$I->fillField('#max', '1');
+		$I->fillField('#max-src-states', '2');
+		$I->fillField('#max-src-nodes', '3');
+		$I->fillField('#max-src-conn', '4');
+		$I->fillField('#max-src-conn-rate', '5/5');
+		$I->checkOption('#sloppy');
+		$I->checkOption('#no-sync');
+		$I->checkOption('#pflow');
+		$I->checkOption('#if-bound');
+		$I->fillField('#overload', 'over');
+		$I->click('Apply');
+
+		$I->checkOption('#flush');
+		$I->click('Apply');
+
+		$I->checkOption('#global');
+		$I->checkOption('#source-track');
+		$I->click('Apply');
+
+		$I->selectOption('#source-track-option', 'rule');
+		$I->fillField('#src_track', '3');
+		$I->fillField('#tcp_first', '4');
+		$I->fillField('#tcp_opening', '5');
+		$I->fillField('#tcp_established', '6');
+		$I->fillField('#tcp_closing', '7');
+		$I->fillField('#tcp_finwait', '8');
+		$I->fillField('#tcp_closed', '9');
+		$I->fillField('#udp_first', '10');
+		$I->fillField('#udp_single', '11');
+		$I->fillField('#udp_multiple', '12');
+		$I->fillField('#icmp_first', '13');
+		$I->fillField('#icmp_error', '14');
+		$I->fillField('#other_first', '15');
+		$I->fillField('#other_single', '16');
+		$I->fillField('#other_multiple', '17');
+		$I->fillField('#adaptive_start', '18');
+		$I->fillField('#adaptive_end', '19');
+		$I->selectOption('#type', 'route-to');
+		$I->fillField('#addRouteHost', '192.168.0.2');
+		$I->checkOption('#source-hash');
+		$I->click('Apply');
+
+		$I->fillField('#source-hash-key', '09f1cbe02e2f4801b433ba9fab728903');
+		$I->checkOption('#sticky-address');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

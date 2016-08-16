@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: MacroCest.php,v 1.2 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: IncludeCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -94,7 +94,13 @@ class IncludeCest extends Rule
 	{
 		$I->selectOption('#file', '');
 		$I->fillField('comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->selectOption('#file', '');
+		$I->fillField('comment', 'Test');
 		$I->click('Apply');
 	}
 }

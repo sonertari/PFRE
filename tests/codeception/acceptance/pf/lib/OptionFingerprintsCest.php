@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LimitCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: OptionFingerprintsCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -102,7 +102,13 @@ class OptionFingerprintsCest extends Rule
 	{
 		$I->fillField('#fingerprints', '/etc/pf.os1');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#fingerprints', '/etc/pf.os');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

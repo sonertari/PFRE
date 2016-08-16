@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.4 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: Rule.php,v 1.5 2016/08/15 20:05:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -59,6 +59,9 @@ class Rule
 	/// @attention Waiting for 1 second works around the "stale element reference" exception (?)
 	/// @todo Find the real cause of and solution to this issue
 	protected $tabSwitchInterval= 1;
+
+	/// @todo Make this an option
+	protected $QUICK= TRUE;
 
 	function __construct()
 	{
@@ -199,10 +202,18 @@ class Rule
 		$I->dontSee('(modified)', 'h2');
 		$I->see($this->origRule, 'h4');
 
-		$this->modifyRule($I);
+		if ($this->QUICK) {
+			$this->modifyRuleQuick($I);
+		} else {
+			$this->modifyRule($I);
+		}
 
 		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
+	}
+
+	protected function modifyRuleQuick(AcceptanceTester $I)
+	{
 	}
 
 	protected function modifyRule(AcceptanceTester $I)
@@ -261,10 +272,18 @@ class Rule
 		$I->dontSee('(modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
 
-		$this->revertModifications($I);
+		if ($this->QUICK) {
+			$this->revertModificationsQuick($I);
+		} else {
+			$this->revertModifications($I);
+		}
 
 		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see($this->revertedRule, 'h4');
+	}
+
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
 	}
 
 	protected function revertModifications(AcceptanceTester $I)
@@ -283,10 +302,6 @@ class Rule
 		$I->see($this->editPageTitle, 'h2');
 		$I->dontSee('(modified)', 'h2');
 		$I->see($this->modifiedRule, 'h4');
-	}
-
-	protected function modifyRuleQuick(AcceptanceTester $I)
-	{
 	}
 
 	/**

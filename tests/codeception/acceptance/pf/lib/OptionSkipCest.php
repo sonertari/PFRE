@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LimitCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: OptionSkipCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -77,7 +77,16 @@ class OptionSkipCest extends Rule
 		$this->clickDeleteLink($I, 'delSkip', 'lo');
 		$this->clickDeleteLink($I, 'delSkip', 'em0');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#addSkip', 'lo');
+		$I->click('Apply');
+
+		$I->fillField('#addSkip', 'em0');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

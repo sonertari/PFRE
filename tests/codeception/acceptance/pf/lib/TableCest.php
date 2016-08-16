@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.3 2016/08/14 22:16:48 soner Exp $ */
+/* $pfre: TableCest.php,v 1.4 2016/08/15 07:00:04 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -115,7 +115,21 @@ Test1 e u d x';
 		$I->fillField('addValue', '1.1.1.1');
 		$I->fillField('addFile', '/etc/pf.restrictedips3');
 		$I->fillField('comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('identifier', 'test');
+		$I->checkOption('#const');
+		$I->checkOption('#persist');
+		$I->checkOption('#counters');
+		$I->click('Apply');
+		
+		$this->clickDeleteLink($I, 'delValue', '1.1.1.1');
+		$this->clickDeleteLink($I, 'delFile', '/etc/pf.restrictedips3');
+
+		$I->fillField('comment', 'Test');
 		$I->click('Apply');
 	}
 }

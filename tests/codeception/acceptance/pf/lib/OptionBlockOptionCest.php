@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LimitCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: OptionBlockOptionCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -103,7 +103,13 @@ class OptionBlockOptionCest extends Rule
 	{
 		$I->selectOption('#block-policy', 'return');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->selectOption('#block-policy', 'drop');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: IncludeCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: CommentCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -102,7 +102,11 @@ Line4 e u d x';
 		$I->see($this->editPageTitle, 'h2');
 		$I->dontSee('(modified)', 'h2');
 
-		$this->modifyRule($I);
+		if ($this->QUICK) {
+			$this->modifyRuleQuick($I);
+		} else {
+			$this->modifyRule($I);
+		}
 
 		$I->see($this->editPageTitle . ' (modified)', 'h2');
 	}
@@ -158,7 +162,11 @@ Line4');
 		$I->see($this->editPageTitle, 'h2');
 		$I->dontSee('(modified)', 'h2');
 
-		$this->revertModifications($I);
+		if ($this->QUICK) {
+			$this->revertModificationsQuick($I);
+		} else {
+			$this->revertModifications($I);
+		}
 
 		$I->see($this->editPageTitle . ' (modified)', 'h2');
 	}
@@ -198,6 +206,13 @@ Line2');
 Line2
 Line3
 Line4');
+		$I->click('Apply');
+	}
+
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#comment', 'Line1
+Line2');
 		$I->click('Apply');
 	}
 

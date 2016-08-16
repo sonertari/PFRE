@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: IncludeCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: BlankCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -108,7 +108,11 @@ e u d x';
 		$I->dontSee('(modified)', 'h2');
 		$I->see('Number of lines: 2');
 
-		$this->modifyRule($I);
+		if ($this->QUICK) {
+			$this->modifyRuleQuick($I);
+		} else {
+			$this->modifyRule($I);
+		}
 
 		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see('Number of lines: 4');
@@ -165,7 +169,11 @@ e u d x';
 		$I->dontSee('(modified)', 'h2');
 		$I->see('Number of lines: 4');
 
-		$this->revertModifications($I);
+		if ($this->QUICK) {
+			$this->revertModificationsQuick($I);
+		} else {
+			$this->revertModifications($I);
+		}
 
 		$I->see($this->editPageTitle . ' (modified)', 'h2');
 		$I->see('Number of lines: 2');
@@ -203,6 +211,12 @@ e u d x';
 	protected function modifyRuleQuick(AcceptanceTester $I)
 	{
 		$I->fillField('#blank', "\n\n\n");
+		$I->click('Apply');
+	}
+
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#blank', "\n");
 		$I->click('Apply');
 	}
 

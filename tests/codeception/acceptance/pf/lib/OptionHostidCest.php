@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LimitCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: OptionHostidCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -102,7 +102,13 @@ class OptionHostidCest extends Rule
 	{
 		$I->fillField('#hostid', '2');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#hostid', '1');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

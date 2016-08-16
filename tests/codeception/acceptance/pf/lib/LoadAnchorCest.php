@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.4 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: LoadAnchorCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -77,7 +77,14 @@ class LoadAnchorCest extends Rule
 		$I->fillField('#anchor', 'test1');
 		$I->fillField('#file', '/etc/pfre/test.conf');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#anchor', 'test');
+		$I->fillField('#file', '/etc/pfre/include.conf');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

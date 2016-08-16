@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.4 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: StateCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -295,7 +295,49 @@ class StateCest extends Rule
 		$I->fillField('#adaptive_start', '');
 		$I->fillField('#adaptive_end', '');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#max', '1');
+		$I->fillField('#max-src-states', '2');
+		$I->fillField('#max-src-nodes', '3');
+		$I->fillField('#max-src-conn', '4');
+		$I->fillField('#max-src-conn-rate', '5/5');
+		$I->checkOption('#sloppy');
+		$I->checkOption('#no-sync');
+		$I->checkOption('#pflow');
+		$I->checkOption('#if-bound');
+		$I->fillField('#overload', 'over');
+		$I->click('Apply');
+
+		$I->checkOption('#flush');
+		$I->click('Apply');
+
+		$I->checkOption('#global');
+		$I->checkOption('#source-track');
+		$I->click('Apply');
+
+		$I->selectOption('#source-track-option', 'rule');
+		$I->fillField('#src_track', '3');
+		$I->fillField('#tcp_first', '4');
+		$I->fillField('#tcp_opening', '5');
+		$I->fillField('#tcp_established', '6');
+		$I->fillField('#tcp_closing', '7');
+		$I->fillField('#tcp_finwait', '8');
+		$I->fillField('#tcp_closed', '9');
+		$I->fillField('#udp_first', '10');
+		$I->fillField('#udp_single', '11');
+		$I->fillField('#udp_multiple', '12');
+		$I->fillField('#icmp_first', '13');
+		$I->fillField('#icmp_error', '14');
+		$I->fillField('#other_first', '15');
+		$I->fillField('#other_single', '16');
+		$I->fillField('#other_multiple', '17');
+		$I->fillField('#adaptive_start', '18');
+		$I->fillField('#adaptive_end', '19');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

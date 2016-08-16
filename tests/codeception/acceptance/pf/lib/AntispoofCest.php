@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: FilterCest.php,v 1.1 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: AntispoofCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -132,6 +132,23 @@ Test e u d x';
 		$I->selectOption('#af', '');
 		$I->fillField('#label', '');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
+
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->checkOption('#log');
+		$I->click('Apply');
+
+		$I->fillField('#log-to', 'pflog0');
+		$I->checkOption('#log-all');
+		$I->checkOption('#log-matches');
+		$I->checkOption('#log-user');
+		$I->checkOption('#quick');
+		$I->fillField('#addInterface', 'em0');
+		$I->selectOption('#af', 'inet');
+		$I->fillField('#label', 'test');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

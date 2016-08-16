@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.4 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: QueueCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -173,7 +173,32 @@ Test1 e u d x';
 		$I->fillField('#qlimit', '');
 		$I->uncheckOption('#default');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+	}
 
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('#name', 'test');
+		$I->fillField('#interface', 'em0');
+		$I->fillField('#parent', 'rootq');
+		$I->fillField('#bandwidth', '20M');
+		$I->click('Apply');
+
+		$I->fillField('#bw-burst', '90M');
+		$I->fillField('#bw-time', '100ms');
+		$I->fillField('#min', '5M');
+		$I->click('Apply');
+
+		$I->fillField('#min-burst', '10M');
+		$I->fillField('#min-time', '50ms');
+		$I->fillField('#max', '100M');
+		$I->click('Apply');
+
+		$I->fillField('#max-burst', '1M');
+		$I->fillField('#max-time', '10ms');
+		$I->fillField('#qlimit', '100');
+		$I->checkOption('#default');
+		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}
 }

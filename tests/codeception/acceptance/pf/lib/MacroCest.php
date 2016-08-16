@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: MacroCest.php,v 1.1 2016/08/14 22:16:48 soner Exp $ */
+/* $pfre: MacroCest.php,v 1.2 2016/08/15 07:00:04 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -85,6 +85,17 @@ Test1 e u d x';
 		$I->fillField('addValue', '1111');
 		$I->fillField('comment', 'Test1');
 
+		$I->click('Apply');
+	}
+
+	protected function revertModificationsQuick(AcceptanceTester $I)
+	{
+		$I->fillField('identifier', 'test');
+		$I->click('Apply');
+		
+		$this->clickDeleteLink($I, 'delValue', '1111');
+
+		$I->fillField('comment', 'Test');
 		$I->click('Apply');
 	}
 }
