@@ -1,5 +1,5 @@
 <?php
-/* $pfre: files.php,v 1.15 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: files.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -84,7 +84,7 @@ if (filter_has_var(INPUT_POST, 'save')) {
 	}
 
 	// Accept only file names, no paths
-	$savefile= basename(filter_input(INPUT_POST, 'filename'));
+	$savefile= basename(filter_input(INPUT_POST, 'saveFilename'));
 	$filepath= "$PF_CONFIG_PATH/$savefile";
 
 	if ($force || $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules))) {
@@ -199,7 +199,7 @@ require_once($VIEW_PATH.'/header.php');
 <h2>Save rulebase</h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
-	<input type="text" name="filename" id="filename" value="<?php echo $savefile; ?>" />
+	<input type="text" name="saveFilename" id="saveFilename" value="<?php echo $savefile; ?>" />
 	<input type="submit" id="save" name="save" value="Save" />
 	<label for="save">Save current working rules to file</label>
 	<input type="checkbox" id="forcesave" name="forcesave" <?php echo filter_has_var(INPUT_POST, 'forcesave') ? 'checked' : ''; ?> />
