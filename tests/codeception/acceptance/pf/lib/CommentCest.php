@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: CommentCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
+/* $pfre: CommentCest.php,v 1.3 2016/08/16 07:32:12 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -224,7 +224,7 @@ Line2');
 		$I->expect('modified rule with errors is generated on Display page correctly');
 
 		$I->click('Display & Install');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 

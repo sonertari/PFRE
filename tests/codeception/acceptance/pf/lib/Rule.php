@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.7 2016/08/16 07:32:12 soner Exp $ */
+/* $pfre: Rule.php,v 1.8 2016/08/16 15:14:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -56,10 +56,6 @@ class Rule
 	protected $dLink;
 	protected $xLink;
 
-	/// @attention Waiting for 1 second works around the "stale element reference" exception (?)
-	/// @todo Find the real cause of and solution to this issue
-	protected $tabSwitchInterval= 1;
-
 	/// @todo Make this an option
 	protected $QUICK= TRUE;
 
@@ -108,7 +104,7 @@ class Rule
 	protected function loadTestRules(AcceptanceTester $I)
 	{
 		$I->click('Load & Save');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
 		$I->see('Load rulebase');
 
@@ -124,7 +120,7 @@ class Rule
 	public function testDisplay(AcceptanceTester $I, Codeception\Test\Unit $tester)
 	{
 		$I->click('Rules');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=rules');
 
 		$I->seeOptionIsSelected('category', 'All');
@@ -163,7 +159,7 @@ class Rule
 		// http://seleniumhq.org/exceptions/stale_element_reference.html
 		// The issue at this point seems to be caused by clicking Rules tab while on the rules page, effectively refreshing the page unnecessarily
 		//$I->click('Rules');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		// @attention Do not check the URL, it changes depending on where you have come from
 		//$I->seeInCurrentUrl('conf.php?submenu=rules');
 
@@ -174,7 +170,7 @@ class Rule
 		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));
 
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->see($this->editPageTitle, 'h2');
 	}
@@ -315,7 +311,7 @@ class Rule
 		$I->expect('modified rule with errors is generated on Display page correctly');
 
 		$I->click('Display & Install');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 

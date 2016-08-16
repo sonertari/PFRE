@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: OptionLoginterfaceCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
+/* $pfre: OptionLoginterfaceCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,10 +60,10 @@ class OptionLoginterfaceCest extends Rule
 		parent::loadTestRules($I);
 
 		$I->click('Rules');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 
 		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
-		$I->wait(1);
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete Option rule number 14?');
 		$I->acceptPopup();
 

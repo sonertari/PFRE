@@ -10,5 +10,7 @@ modules:
         - WebDriver:
             url: http://pfre/
             browser: chrome
+# PhantomJS works, but runs about 3 times slower
+#            browser: phantomjs
         - \Helper\Acceptance
 

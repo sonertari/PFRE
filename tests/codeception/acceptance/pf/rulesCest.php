@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: rulesCest.php,v 1.3 2016/08/16 07:32:12 soner Exp $ */
+/* $pfre: rulesCest.php,v 1.4 2016/08/16 15:14:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -86,8 +86,6 @@ class rulesCest
 		'comment' => 'Comment',
 	);
 
-	protected $tabSwitchInterval= 1;
-
 	public function _before(Helper\ConfigureWebDriver $config)
 	{
 		/// @attention Disable clear_cookies before each test
@@ -115,7 +113,7 @@ class rulesCest
 	protected function loadTestRules(AcceptanceTester $I)
 	{
 		$I->click('Load & Save');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
 		$I->see('Load rulebase');
 
@@ -205,7 +203,7 @@ class rulesCest
 
 			/// @attention No need to delete the new rule
 			//$I->click(['xpath' => '//a[contains(@href, "conf.php?del=' . $ruleNumber . '")]']);
-			//$I->wait(1);
+			//$I->wait(POPUP_DISPLAY_INTERVAL);
 			//$I->acceptPopup();
 		}
 	}
@@ -336,7 +334,7 @@ class rulesCest
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Delete');
 
-			$I->wait(1);
+			$I->wait(POPUP_DISPLAY_INTERVAL);
 			$I->seeInPopup('Are you sure you want to delete the rule?');
 			$I->acceptPopup();
 
@@ -360,7 +358,7 @@ class rulesCest
 	/**
 	 * @before loadTestRules
 	 */
-	public function testMove(AcceptanceTester $I)
+	public function testMoveDown(AcceptanceTester $I)
 	{
 		$count= count($this->ruleTypes);
 	
@@ -376,6 +374,8 @@ class rulesCest
 			$I->fillField('#moveTo', $moveTo);
 			$I->click('Move');
 			
+			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => 'Filter rule']), 1);
+
 			if ($moveTo < $count) {
 				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
 				$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$moveTo");
@@ -387,8 +387,14 @@ class rulesCest
 			$ruleNumber= $moveTo;
 			$delta*= 2;
 		}
+	}
 
-		$this->loadTestRules($I);
+	/**
+	 * @before loadTestRules
+	 */
+	public function testMoveUp(AcceptanceTester $I)
+	{
+		$count= count($this->ruleTypes);
 
 		$ruleNumber= $count - 1;
 		$delta= 1;
@@ -401,6 +407,8 @@ class rulesCest
 			$I->fillField('#moveTo', $moveTo);
 			$I->click('Move');
 			
+			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => 'Filter rule']), 1);
+
 			if ($moveTo >= 0) {
 				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
 				$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$moveTo");
@@ -425,11 +433,29 @@ class rulesCest
 
 		$I->click('Delete All');
 
-		$I->wait(1);
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete the entire rulebase?');
 		$I->acceptPopup();
 
 		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 0);
+	}
+
+	/**
+	 * @before loadTestRules
+	 */
+	public function testDeleteAllCancel(AcceptanceTester $I)
+	{		
+		$count= count($this->ruleTypes);
+
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);
+
+		$I->click('Delete All');
+
+		$I->wait(POPUP_DISPLAY_INTERVAL);
+		$I->seeInPopup('Are you sure you want to delete the entire rulebase?');
+		$I->cancelPopup();
+
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);
 	}
 
 	/**
@@ -444,8 +470,8 @@ class rulesCest
 			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
 
 			$I->click(['xpath' => '//a[contains(@href, "conf.php?down=' . $ruleNumber . '")]']);
-			//$I->wait(1);
-			
+
+			$I->wait(STALE_ELEMENT_INTERVAL);
 			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
@@ -465,8 +491,8 @@ class rulesCest
 			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
 
 			$I->click(['xpath' => '//a[contains(@href, "conf.php?up=' . $ruleNumber . '")]']);
-			//$I->wait(1);
-			
+
+			$I->wait(STALE_ELEMENT_INTERVAL);
 			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
 
 			$ruleNumber--;

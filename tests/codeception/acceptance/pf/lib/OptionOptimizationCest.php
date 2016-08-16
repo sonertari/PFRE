@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: OptionOptimizationCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
+/* $pfre: OptionOptimizationCest.php,v 1.3 2016/08/16 15:14:31 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -60,7 +60,7 @@ class OptionOptimizationCest extends Rule
 		parent::loadTestRules($I);
 
 		$I->click('Rules');
-		$I->wait($this->tabSwitchInterval);
+		$I->wait(STALE_ELEMENT_INTERVAL);
 
 		/// @todo Check why the following 3 methods do not work, a bug in xpath locator?
 		//$I->click(\Codeception\Util\Locator::href('conf.php?del=14'));
@@ -69,7 +69,7 @@ class OptionOptimizationCest extends Rule
 		//$I->click(['xpath' => '//a[@href="http://pfre/pf/conf.php?del=14"]']);
 
 		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
-		$I->wait(1);
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete Option rule number 14?');
 		$I->acceptPopup();
 
