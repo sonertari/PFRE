@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: AfToCest.php,v 1.2 2016/08/15 20:05:28 soner Exp $ */
+/* $pfre: AfToCest.php,v 1.3 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -190,13 +190,13 @@ Test1 e u d x';
 		$I->fillField('#addToRedirHost', '1.1.1.1');
 		$this->clickApplySeeResult($I, 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address # Test');
 
+		$I->uncheckOption('#sticky-address');
+		$this->clickApplySeeResult($I, 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } source-hash 09f1cbe02e2f4801b433ba9fab728903 # Test');
+
 		$I->fillField('#source-hash-key', '');
-		$this->clickApplySeeResult($I, 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } source-hash sticky-address # Test');
+		$this->clickApplySeeResult($I, 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } source-hash # Test');
 
 		$I->uncheckOption('#source-hash');
-		$this->clickApplySeeResult($I, 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } sticky-address # Test');
-
-		$I->uncheckOption('#sticky-address');
 		$this->clickApplySeeResult($I, 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } # Test');
 
 		$I->fillField('#comment', 'Test1');
@@ -491,12 +491,12 @@ Test1 e u d x';
 		$this->clickDeleteLink($I, 'delRedirHost', '192.168.0.1');
 
 		$I->fillField('#addToRedirHost', '1.1.1.1');
+		$I->uncheckOption('#sticky-address');
 		$I->fillField('#source-hash-key', '');
 		// Apply to erase the source-hash-key, otherwise the rule stays modified after the last Apply
 		$I->click('Apply');
 
 		$I->uncheckOption('#source-hash');
-		$I->uncheckOption('#sticky-address');
 		$I->fillField('#comment', 'Test1');
 		$I->click('Apply');
 	}

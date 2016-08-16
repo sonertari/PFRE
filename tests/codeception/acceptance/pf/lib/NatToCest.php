@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: NatToCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
+/* $pfre: NatToCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -187,13 +187,13 @@ Test1 e u d x';
 		$I->fillField('#redirport', '');
 		$this->clickApplySeeResult($I, 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } source-hash 09f1cbe02e2f4801b433ba9fab728903 sticky-address static-port # Test');
 
+		$I->uncheckOption('#sticky-address');
+		$this->clickApplySeeResult($I, 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } source-hash 09f1cbe02e2f4801b433ba9fab728903 static-port # Test');
+
 		$I->fillField('#source-hash-key', '');
-		$this->clickApplySeeResult($I, 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } source-hash sticky-address static-port # Test');
+		$this->clickApplySeeResult($I, 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } source-hash static-port # Test');
 
 		$I->uncheckOption('#source-hash');
-		$this->clickApplySeeResult($I, 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } sticky-address static-port # Test');
-
-		$I->uncheckOption('#sticky-address');
 		$this->clickApplySeeResult($I, 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } static-port # Test');
 
 		$I->uncheckOption('#static-port');
@@ -487,12 +487,12 @@ Test1 e u d x';
 		$I->selectOption('#state-filter', '');
 		$I->fillField('#addRedirHost', '1.1.1.1');
 		$I->fillField('#redirport', '');
+		$I->uncheckOption('#sticky-address');
 		$I->fillField('#source-hash-key', '');
 		// Apply to erase the source-hash-key, otherwise the rule stays modified after the last Apply
 		$I->click('Apply');
 
 		$I->uncheckOption('#source-hash');
-		$I->uncheckOption('#sticky-address');
 		$I->uncheckOption('#static-port');
 		$I->fillField('#comment', 'Test1');
 		$I->click('Apply');

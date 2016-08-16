@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: rulesCest.php,v 1.1 2016/08/14 13:13:29 soner Exp $ */
+/* $pfre: rulesCest.php,v 1.2 2016/08/16 02:23:25 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -137,7 +137,6 @@ class rulesCest
 	 * $ java -Dwebdriver.chrome.driver=chromedriver -jar selenium-server-standalone-3.0.0-beta4.jar
 	 * 
 	 * @depends testEditTable
-	 * @after logout
 	 */
 	public function testDeleteTable(AcceptanceTester $I)
 	{
@@ -164,7 +163,8 @@ class rulesCest
 		$I->dontSeeLink('e', 'http://pfre/pf/conf.php?sender=table&rulenumber=14');
 	}
 
-	protected function logout(AcceptanceTester $I)
+	/// @attention Make logout a test too, so that we always logout in the end
+	public function logout(AcceptanceTester $I)
 	{
 		$I->seeLink('Logout');
 		$I->click('Logout');

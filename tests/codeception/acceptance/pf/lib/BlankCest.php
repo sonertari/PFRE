@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: BlankCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
+/* $pfre: BlankCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -222,7 +222,6 @@ e u d x';
 
 	/**
 	 * @depends testEditBackToModifiedRule
-	 * @after logout
 	 */
 	public function testDisplayGeneratedModifiedWithErrors(AcceptanceTester $I)
 	{

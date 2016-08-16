@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.5 2016/08/15 20:05:28 soner Exp $ */
+/* $pfre: Rule.php,v 1.6 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -306,7 +306,6 @@ class Rule
 
 	/**
 	 * @depends testEditBackToModifiedRule
-	 * @after logout
 	 */
 	public function testDisplayGeneratedModifiedWithErrors(AcceptanceTester $I)
 	{
@@ -324,7 +323,8 @@ class Rule
 		$I->see(' ' . $this->ruleNumberGenerated . ': ' . $this->generatedRule, '#rules');
 	}
 
-	protected function logout(AcceptanceTester $I)
+	/// @attention Make logout a test too, so that we always logout in the end
+	public function logout(AcceptanceTester $I)
 	{
 		$I->seeLink('Logout');
 		$I->click('Logout');
