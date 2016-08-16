@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: RuleSetTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
+/* $pfre: rulesCest.php,v 1.1 2016/08/14 13:13:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -150,7 +150,7 @@ class rulesCest
 		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
 		
 		/// @todo May need to wait if the webdriver or the server is slow?
-		//$I->wait(1);
+		$I->wait(1);
 		$I->seeInPopup('Are you sure you want to delete Table rule number 14?');
 
 		//$I->wait(1);
