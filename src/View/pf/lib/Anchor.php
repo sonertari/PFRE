@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
+/* $pfre: Anchor.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -43,12 +43,11 @@ class Anchor extends FilterBase
 		$this->dispAction();
 		$this->dispValue('direction', 'Direction');
 		$this->dispInterface();
-		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
 		$this->dispValue('proto', 'Proto');
 		$this->dispSrcDest();
-		$this->dispInline();
+		$this->dispValue('state-filter', 'State');
 		$this->dispQueue();
+		$this->dispInline();
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -74,7 +73,7 @@ class Anchor extends FilterBase
 	function dispInline()
 	{
 		?>
-		<td title="Inline rules" nowrap="nowrap">
+		<td title="Inline rules" colspan="2" nowrap="nowrap">
 			<?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($this->rule['inline']))); ?>
 		</td>
 		<?php

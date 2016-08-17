@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: AnchorCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
+/* $pfre: AnchorCest.php,v 1.3 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -77,12 +77,13 @@ em0
 tcp
 192.168.0.1 ssh
 2222
-192.168.0.2 ssh block
+192.168.0.2 ssh keep
+std
+service block
 anchor out {
 pass proto tcp from any to port { 25, 80, 443 }
 }
-pass in proto tcp to any port 22 std
-service Test e u d x';
+pass in proto tcp to any port 22 Test e u d x';
 		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' out
 192.168.0.1
 1.1.1.1
