@@ -1,4 +1,6 @@
 <?php
+define('QUICK', FALSE);
+
 /// @attention Wait for 1 second for popups to show
 /// @todo Find a better way?
 define('POPUP_DISPLAY_INTERVAL', 1);

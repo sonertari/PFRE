@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.8 2016/08/16 15:14:31 soner Exp $ */
+/* $pfre: Rule.php,v 1.9 2016/08/16 18:07:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -57,10 +57,12 @@ class Rule
 	protected $xLink;
 
 	/// @todo Make this an option
-	protected $QUICK= TRUE;
+	protected $QUICK= FALSE;
 
 	function __construct()
 	{
+		$this->QUICK= QUICK;
+
 		$this->revertedRule= $this->origRule;
 		$this->generatedRule= $this->modifiedRule;
 
