@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: rulesCest.php,v 1.4 2016/08/16 15:14:31 soner Exp $ */
+/* $pfre: rulesCest.php,v 1.5 2016/08/16 18:07:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -95,7 +95,7 @@ class rulesCest
 
 	protected function login(AcceptanceTester $I)
 	{
-		$I->maximizeWindow();
+		//$I->maximizeWindow();
 
 		$I->amOnPage('/');
 

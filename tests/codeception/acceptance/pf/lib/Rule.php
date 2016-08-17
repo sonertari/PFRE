@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.11 2016/08/17 18:29:17 soner Exp $ */
+/* $pfre: Rule.php,v 1.12 2016/08/17 19:37:49 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -79,28 +79,38 @@ class Rule
 		$this->xLink= 'http://pfre/pf/conf.php?del=' . $this->ruleNumber;
 	}
 
-	public function _before(Helper\ConfigureWebDriver $config)
+	public function _before(AcceptanceTester $I, Helper\ConfigureWebDriver $config)
 	{
 		/// @attention Disable clear_cookies before each test
 		// Because Codeception enables clear_cookies after each test function
 		$config->setClearCookies(FALSE);
+
+		// This is to resume failed tests, otherwise this should never happen between tests
+		$this->authenticate($I);
 	}
 
 	protected function login(AcceptanceTester $I)
 	{
-		$I->maximizeWindow();
+		//$I->maximizeWindow();
 
 		$I->amOnPage('/');
 
-		$I->see('PF Rule Editor');
-		$I->see('User');
-		$I->see('Password');
+		$this->authenticate($I);
+	}
 
-		$I->fillField('UserName', 'admin');
-		$I->fillField('Password', 'soner123');
-		$I->click('Login');
+	protected function authenticate(AcceptanceTester $I)
+	{
+		if (preg_match('|/login\.php|', $I->grabFromCurrentUrl())) {
+			$I->see('PF Rule Editor');
+			$I->see('User');
+			$I->see('Password');
 
-		$I->seeInCurrentUrl('pf/conf.php');
+			$I->fillField('UserName', 'admin');
+			$I->fillField('Password', 'soner123');
+			$I->click('Login');
+
+			$I->seeInCurrentUrl('pf/conf.php');
+		}
 	}
 
 	protected function loadTestRules(AcceptanceTester $I)
