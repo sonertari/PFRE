@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: rulesCest.php,v 1.5 2016/08/16 18:07:47 soner Exp $ */
+/* $pfre: filesCest.php,v 1.1 2016/08/16 21:11:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -84,8 +84,6 @@ include "/etc/pfre/include.conf" # Test
 
 	protected function login(AcceptanceTester $I)
 	{
-		$I->maximizeWindow();
-
 		$I->amOnPage('/');
 
 		$I->see('PF Rule Editor');

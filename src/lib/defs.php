@@ -1,5 +1,5 @@
 <?php
-/* $pfre: defs.php,v 1.5 2016/08/12 08:29:58 soner Exp $ */
+/* $pfre: defs.php,v 1.1 2016/08/12 18:28:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -69,6 +69,7 @@ $PF_CONFIG_PATH= '/etc/pfre';
 $TMP_PATH= '/tmp';
 
 $TEST_DIR_PATH= '';
-$TEST_DIR_SRC= '';
+/// @attention Necessary to set to '/pfre' instead of '' to fix $ROOT . $TEST_DIR_SRC in model.php
+$TEST_DIR_SRC= '/pfre';
 $INSTALL_USER= 'root';
 ?>

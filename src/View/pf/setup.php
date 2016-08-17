@@ -1,5 +1,5 @@
 <?php
-/* $pfre: setup.php,v 1.11 2016/08/12 08:51:24 soner Exp $ */
+/* $pfre: setup.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -108,20 +108,30 @@ if (count($_POST)) {
 	}
 	else {
 		if (filter_has_var(INPUT_POST, 'DisableHelpBoxes')) {
-			$View->Controller($Output, 'SetHelpBox', 'FALSE');
+			if ($View->Controller($Output, 'SetHelpBox', 'FALSE')) {
+				pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, 'Disable HelpBoxes');
+			}
 		}
 		else if (filter_has_var(INPUT_POST, 'EnableHelpBoxes')) {
-			$View->Controller($Output, 'SetHelpBox', 'TRUE');
+			if ($View->Controller($Output, 'SetHelpBox', 'TRUE')) {
+				pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, 'Enable HelpBoxes');
+			}
 		}
 		else if (filter_has_var(INPUT_POST, 'SessionTimeout')) {
-			$View->Controller($Output, 'SetSessionTimeout', filter_input(INPUT_POST, 'SessionTimeout'));
+			if ($View->Controller($Output, 'SetSessionTimeout', filter_input(INPUT_POST, 'SessionTimeout'))) {
+				pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, 'SessionTimeout set: '.filter_input(INPUT_POST, 'SessionTimeout'));
+			}
 		}
 		else if (filter_input(INPUT_POST, 'DisableForceHTTPs') || filter_input(INPUT_POST, 'EnableForceHTTPs')) {
 			if (filter_has_var(INPUT_POST, 'DisableForceHTTPs')) {
-				$View->Controller($Output, 'SetForceHTTPs', 'FALSE');
+				if ($View->Controller($Output, 'SetForceHTTPs', 'FALSE')) {
+					pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Disable ForceHTTPs');
+				}
 			}
 			else if (filter_has_var(INPUT_POST, 'EnableForceHTTPs')) {
-				$View->Controller($Output, 'SetForceHTTPs', 'TRUE');
+				if ($View->Controller($Output, 'SetForceHTTPs', 'TRUE')) {
+					pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Enable ForceHTTPs');
+				}
 			}
 			// Reload the page using plain HTTP to activate the change
 			header('Location: http://'.filter_input(INPUT_SERVER, 'SERVER_ADDR').filter_input(INPUT_SERVER, 'REQUEST_URI'));
@@ -174,7 +184,7 @@ Admin can change the user password without knowing the current user password. Bu
 			</td>
 			<td class="valuegroupbottom">
 				<input type="password" name="ReNewPassword" style="width: 100px;" maxlength="20"/>
-				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+				<input type="submit" id="ApplyPassword" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
 			</td>
 		</tr>
 	</form>
@@ -194,7 +204,7 @@ Admin can change the user password without knowing the current user password. Bu
 					}
 					?>
 				</select>
-				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+				<input type="submit" id="ApplyLogLevel" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
 			</form>
 		</td>
 		<td class="none">
@@ -228,7 +238,7 @@ Admin can change the user password without knowing the current user password. Bu
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<input type="text" name="SessionTimeout" style="width: 50px;" maxlength="4" value="<?php echo $SessionTimeout ?>" />
-				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+				<input type="submit" id="ApplySessionTimeout" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
 			</form>
 		</td>
 		<td class="none">
@@ -262,7 +272,7 @@ Admin can change the user password without knowing the current user password. Bu
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<input type="text" name="MaxAnchorNesting" style="width: 50px;" maxlength="2" value="<?php echo $MaxAnchorNesting ?>" />
-				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+				<input type="submit" id="ApplyMaxAnchorNesting" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
 			</form>
 		</td>
 		<td class="none">
@@ -278,7 +288,7 @@ Admin can change the user password without knowing the current user password. Bu
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<input type="text" name="PfctlTimeout" style="width: 50px;" maxlength="2" value="<?php echo $PfctlTimeout ?>" />
-				<input type="submit" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+				<input type="submit" id="ApplyPfctlTimeout" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
 			</form>
 		</td>
 		<td class="none">
