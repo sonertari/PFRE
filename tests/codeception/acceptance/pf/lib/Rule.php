@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.10 2016/08/17 01:23:26 soner Exp $ */
+/* $pfre: Rule.php,v 1.11 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -70,8 +70,8 @@ class Rule
 
 		$this->trTitle= $this->type . ' rule';
 
-		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->lineNumber . ' ' . $this->type . ' ' . $this->expectedDispOrigRule;
-		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->lineNumber . ' ' . $this->type . ' ' . $this->expectedDispModifiedRule;
+		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' ' . $this->expectedDispOrigRule;
+		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' ' . $this->expectedDispModifiedRule;
 
 		$this->eLink= 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber;
 		$this->uLink= 'http://pfre/pf/conf.php?up=' . $this->ruleNumber;
