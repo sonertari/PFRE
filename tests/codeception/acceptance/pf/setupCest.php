@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: filesCest.php,v 1.1 2016/08/16 21:11:29 soner Exp $ */
+/* $pfre: setupCest.php,v 1.1 2016/08/17 00:19:54 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,7 +33,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-class writeCest
+class setupCest
 {
 	public function _before(Helper\ConfigureWebDriver $config)
 	{
