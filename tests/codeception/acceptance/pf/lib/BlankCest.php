@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: BlankCest.php,v 1.3 2016/08/16 07:32:12 soner Exp $ */
+/* $pfre: BlankCest.php,v 1.4 2016/08/16 18:07:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class BlankCest extends Rule
 {
 	protected $type= 'Blank';
 	protected $ruleNumber= 20;
-	protected $ruleNumberGenerated= 26;
+	protected $lineNumber= 26;
 	protected $sender= 'blank';
 
 	protected $origRule= "\n";
@@ -52,10 +52,14 @@ class BlankCest extends Rule
 	{
 		parent::__construct();
 
-		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . '
+		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
+' . ($this->lineNumber + 1) . '
 
 e u d x';
-		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . '
+		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
+' . ($this->lineNumber + 1) . '
+' . ($this->lineNumber + 2) . '
+' . ($this->lineNumber + 3) . '
 
 
 
@@ -232,17 +236,17 @@ e u d x';
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 
-		$I->dontSee(' ' . $this->ruleNumberGenerated . ': 
-  ' . ($this->ruleNumberGenerated + 1) . ': 
-  ' . ($this->ruleNumberGenerated + 2) . ': 
-  ' . ($this->ruleNumberGenerated + 3) . ': ', '#rules');
+		$I->dontSee(' ' . $this->lineNumber . ': 
+  ' . ($this->lineNumber + 1) . ': 
+  ' . ($this->lineNumber + 2) . ': 
+  ' . ($this->lineNumber + 3) . ': ', '#rules');
 
 		$I->checkOption('#forcedisplay');
 
-		$I->see(' ' . $this->ruleNumberGenerated . ': 
-  ' . ($this->ruleNumberGenerated + 1) . ': 
-  ' . ($this->ruleNumberGenerated + 2) . ': 
-  ' . ($this->ruleNumberGenerated + 3) . ': ', '#rules');
+		$I->see(' ' . $this->lineNumber . ': 
+  ' . ($this->lineNumber + 1) . ': 
+  ' . ($this->lineNumber + 2) . ': 
+  ' . ($this->lineNumber + 3) . ': ', '#rules');
 	}
 }
 ?>

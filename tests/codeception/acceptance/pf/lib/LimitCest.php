@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: LimitCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: LimitCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class LimitCest extends Rule
 {
 	protected $type= 'Limit';
 	protected $ruleNumber= 16;
-	protected $ruleNumberGenerated= 22;
+	protected $lineNumber= 22;
 	protected $sender= 'limit';
 
 	protected $origRule= 'set limit { states 1, frags 2, src-nodes 3, tables 4, table-entries 5 } # Test';

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: AntispoofCest.php,v 1.1 2016/08/15 20:05:28 soner Exp $ */
+/* $pfre: AntispoofCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class AntispoofCest extends Rule
 {
 	protected $type= 'Antispoof';
 	protected $ruleNumber= 1;
-	protected $ruleNumberGenerated= 1;
+	protected $lineNumber= 1;
 	protected $sender= 'antispoof';
 
 	protected $origRule= 'antispoof log ( all, matches, user, to pflog0 ) quick for em0 inet label "test" # Test';

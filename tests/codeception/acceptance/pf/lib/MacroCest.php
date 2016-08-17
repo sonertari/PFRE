@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: MacroCest.php,v 1.2 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: MacroCest.php,v 1.3 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class MacroCest extends Rule
 {
 	protected $type= 'Macro';
 	protected $ruleNumber= 3;
-	protected $ruleNumberGenerated= 9;
+	protected $lineNumber= 9;
 	protected $sender= 'macro';
 
 	protected $origRule= 'test = "{ ssh, 2222 }" # Test';

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Rule.php,v 1.9 2016/08/16 18:07:47 soner Exp $ */
+/* $pfre: Rule.php,v 1.10 2016/08/17 01:23:26 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,7 +37,7 @@ class Rule
 {
 	protected $type;
 	protected $ruleNumber;
-	protected $ruleNumberGenerated;
+	protected $lineNumber;
 	protected $sender;
 
 	protected $editPageTitle;
@@ -70,8 +70,8 @@ class Rule
 
 		$this->trTitle= $this->type . ' rule';
 
-		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->expectedDispOrigRule;
-		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->expectedDispModifiedRule;
+		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->lineNumber . ' ' . $this->type . ' ' . $this->expectedDispOrigRule;
+		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->lineNumber . ' ' . $this->type . ' ' . $this->expectedDispModifiedRule;
 
 		$this->eLink= 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber;
 		$this->uLink= 'http://pfre/pf/conf.php?up=' . $this->ruleNumber;
@@ -317,11 +317,11 @@ class Rule
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 
-		$I->dontSee(' ' . $this->ruleNumberGenerated . ': ' . $this->generatedRule, '#rules');
+		$I->dontSee(' ' . $this->lineNumber . ': ' . $this->generatedRule, '#rules');
 
 		$I->checkOption('#forcedisplay');
 
-		$I->see(' ' . $this->ruleNumberGenerated . ': ' . $this->generatedRule, '#rules');
+		$I->see(' ' . $this->lineNumber . ': ' . $this->generatedRule, '#rules');
 	}
 
 	/// @attention Make logout a test too, so that we always logout in the end

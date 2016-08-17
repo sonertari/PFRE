@@ -1,5 +1,5 @@
 <?php
-/* $pfre: rules.php,v 1.19 2016/08/11 18:29:21 soner Exp $ */
+/* $pfre: rules.php,v 1.1 2016/08/12 18:28:27 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -163,7 +163,6 @@ if (filter_has_var(INPUT_POST, 'deleteAll')) {
 	PrintHelpWindow('Rulebase deleted');
 }
 
-/// @attention Reduce multiline comments to single line, so that reported and actual rule numbers match
 $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules));
 
 require_once($VIEW_PATH.'/header.php');
@@ -197,20 +196,23 @@ require_once($VIEW_PATH.'/header.php');
 	?>
     <table>
         <tr>
-            <th>No</th>
+            <th>Rule</th>
             <th>Type</th>
+            <th>Line</th>
             <th colspan="12">Rule</th>
             <th>Comment</th>
             <th>Edit</th>
         </tr>
         <?php
-        $ruleNumber = 0;
+        $ruleNumber= 0;
+		$lineNumber= 0;
         $count = count($View->RuleSet->rules) - 1;
         foreach ($View->RuleSet->rules as $rule) {
 			if ($show == 'all' || $ruleType2Class[$show] == $rule->cat) {
 				$rule->display($ruleNumber, $count);
 			}
 			$ruleNumber++;
+			$lineNumber++;
         }
         ?>
     </table>

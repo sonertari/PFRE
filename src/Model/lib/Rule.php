@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.13 2016/08/12 15:28:34 soner Exp $ */
+/* $pfre: Rule.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -151,6 +151,9 @@ class Rule
 
 	function validate($ruleArray, $force= FALSE)
 	{
+		global $Nesting;
+		$nestingStr= $Nesting > 0 ? "Nesting $Nesting, " : '';
+
 		$arr= $ruleArray;
 		foreach ($this->typedef as $key => $def) {
 			if (!$this->validateKeyDef($arr, $key, $def, '', $force)) {
@@ -159,7 +162,7 @@ class Rule
 		}
 
 		if (count($arr) > 0) {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$this->ruleNumber: Validation Error: Unexpected elements: " . implode(', ', array_keys($arr))));
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $this->ruleNumber: Validation Error: Unexpected elements: " . implode(', ', array_keys($arr))));
 			return FALSE;
 		}
 		return TRUE;
@@ -167,6 +170,9 @@ class Rule
 
 	function validateKeyDef(&$arr, $key, $def, $parent, $force= FALSE)
 	{
+		global $Nesting;
+		$nestingStr= $Nesting > 0 ? "Nesting $Nesting, " : '';
+
 		if (array_key_exists($key, $arr)) {
 			if (is_array($arr[$key])) {
 				// Recursion
@@ -178,7 +184,7 @@ class Rule
 			}
 			unset($arr[$key]);
 		} elseif (isset($def['require']) && $def['require']) {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$this->ruleNumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $this->ruleNumber: Validation Error: Required element missing: " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
 		return TRUE;
@@ -186,6 +192,9 @@ class Rule
 
 	function validateArrayValues(&$arr, $key, $def, $parent, $force= FALSE)
 	{
+		global $Nesting;
+		$nestingStr= $Nesting > 0 ? "Nesting $Nesting, " : '';
+
 		if (isset($def['multi']) && $def['multi']) {
 			foreach ($arr as $v) {
 				if (!$this->validateValue($key, $v, $def, $parent, $force)) {
@@ -201,11 +210,11 @@ class Rule
 			}
 
 			if (count($arr) > 0) {
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$this->ruleNumber: Validation Error: Unexpected elements: " . ltrim("$parent.$key", '.') . ' ' . implode(', ', array_keys($arr))));
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $this->ruleNumber: Validation Error: Unexpected elements: " . ltrim("$parent.$key", '.') . ' ' . implode(', ', array_keys($arr))));
 				return FALSE;
 			}
 		} else {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$this->ruleNumber: Validation Error: Multiple values not allowed for " . ltrim("$parent.$key", '.')));
+			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $this->ruleNumber: Validation Error: Multiple values not allowed for " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
 		return TRUE;
@@ -213,6 +222,9 @@ class Rule
 
 	function validateValue($key, $value, $def, $parent, $force= FALSE)
 	{
+		global $Nesting;
+		$nestingStr= $Nesting > 0 ? "Nesting $Nesting, " : '';
+
 		if (isset($def['regex'])) {
 			$rxfn= $def['regex'];
 			$result= preg_match("/$rxfn/", $value);
@@ -224,16 +236,16 @@ class Rule
 				$result= $rxfn($value);
 			}
 		} else {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error("$this->ruleNumber: Validation Error: No regex or func def for: " . ltrim("$parent.$key", '.')));
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $this->ruleNumber: Validation Error: No regex or func def for: " . ltrim("$parent.$key", '.')));
 			return FALSE;
 		}
 
 		if (!$result) {
-			Error("$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': <pre>" . htmlentities(print_r($value, TRUE)) . '</pre>');
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE));
+			Error($nestingStr . "Rule $this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': <pre>" . htmlentities(print_r($value, TRUE)) . '</pre>');
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $this->ruleNumber: Validation Error: Invalid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE));
 			return FALSE;
 		} else {
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "$this->ruleNumber: Valid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE) . ", $rxfn");
+			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $this->ruleNumber: Valid value for '" . ltrim("$parent.$key", '.') . "': " . print_r($value, TRUE) . ", $rxfn");
 		}
 		return TRUE;
 	}

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: TableCest.php,v 1.4 2016/08/15 07:00:04 soner Exp $ */
+/* $pfre: TableCest.php,v 1.5 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class TableCest extends Rule
 {
 	protected $type= 'Table';
 	protected $ruleNumber= 4;
-	protected $ruleNumberGenerated= 10;
+	protected $lineNumber= 10;
 	protected $sender= 'table';
 
 	protected $origRule= 'table <test> persist const counters file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" { 192.168.0.1, 192.168.0.2 } # Test';

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: StateCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: StateCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class StateCest extends Rule
 {
 	protected $type= 'State';
 	protected $ruleNumber= 17;
-	protected $ruleNumberGenerated= 23;
+	protected $lineNumber= 23;
 	protected $sender= 'state';
 
 	protected $origRule= 'set state-defaults max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule, frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19 # Test';

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: AnchorCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
+/* $pfre: AnchorCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class AnchorCest extends Rule
 {
 	protected $type= 'Anchor';
 	protected $ruleNumber= 2;
-	protected $ruleNumberGenerated= 2;
+	protected $lineNumber= 2;
 	protected $sender= 'anchor';
 
 	protected $origRule= 'anchor "test" in on em0 inet proto tcp from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state ( max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule, frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19 ) {
@@ -49,22 +49,10 @@ pass proto tcp from any to port { 25, 80, 443 }
 }
 pass in proto tcp to any port 22
 } # Test';
-	protected $expectedDispOrigRule= 'test in
-em0
-tcp
-192.168.0.1 ssh
-2222
-192.168.0.2 ssh keep
-std
-service Test e u d x';
+	protected $expectedDispOrigRule= '';
 
 	protected $modifiedRule= 'anchor out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } # Test1';
-	protected $expectedDispModifiedRule= 'out
-192.168.0.1
-1.1.1.1
-ssh
-1111
-Test1 e u d x';
+	protected $expectedDispModifiedRule= '';
 
 	private $inline= ' {
 block
@@ -78,6 +66,29 @@ pass in proto tcp to any port 22
 	{
 		parent::__construct();
 
+		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
+' . ($this->lineNumber + 1) . '
+' . ($this->lineNumber + 2) . '
+' . ($this->lineNumber + 3) . '
+' . ($this->lineNumber + 4) . '
+' . ($this->lineNumber + 5) . '
+' . ($this->lineNumber + 6) . ' test in
+em0
+tcp
+192.168.0.1 ssh
+2222
+192.168.0.2 ssh block
+anchor out {
+pass proto tcp from any to port { 25, 80, 443 }
+}
+pass in proto tcp to any port 22 std
+service Test e u d x';
+		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' out
+192.168.0.1
+1.1.1.1
+ssh
+1111
+Test1 e u d x';
 		$this->revertedRule= 'anchor "test" in on em0 inet proto tcp from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state ( max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule, frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19 ) {
 block
 anchor out {

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.25 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: pf.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -275,7 +275,8 @@ class Pf extends Model
 			return FALSE;
 		}
 
-		$rulesStr= $ruleSet->generate(FALSE, NULL, TRUE, TRUE);
+		/// @attention pfctl reports line numbers, not rule numbers, so do not reduce multi-line rules into single-line
+		$rulesStr= $ruleSet->generate(FALSE, NULL, TRUE);
 
 		$cmd= "/bin/echo '$rulesStr' | /sbin/pfctl -nf - 2>&1";
 
@@ -301,11 +302,11 @@ class Pf extends Model
 				
 				if ($src == 'stdin') {
 					$rule= $rules[$line];
-					Error("$line: $err:\n<pre>" . htmlentities($rule) . '</pre>');
+					Error("Line $line: $err:\n<pre>" . htmlentities($rule) . '</pre>');
 				} else {
 					// Rule numbers in include files need an extra decrement
 					$line--;
-					Error("Error in include file: $src\n$line: $err");
+					Error("Error in include file: $src\nLine $line: $err");
 				}
 			} else {
 				Error($o);

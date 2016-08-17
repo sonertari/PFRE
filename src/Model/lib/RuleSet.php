@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.13 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -41,6 +41,9 @@ class RuleSet
 	
 	function load($rulesArray, $force= FALSE)
 	{
+		global $Nesting;
+		$nestingStr= $Nesting > 0 ? "Nesting $Nesting, " : '';
+
 		$this->deleteRules();
 	
 		$retval= TRUE;
@@ -54,7 +57,7 @@ class RuleSet
 				} else {
 					$msg= 'Error loading, rule load forced';
 				}
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error("$ruleNumber: $msg"));
+				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $ruleNumber: $msg"));
 				$retval= FALSE;
 			}
 			$this->rules[]= $ruleObj;

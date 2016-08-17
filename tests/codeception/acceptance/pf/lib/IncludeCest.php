@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: IncludeCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: IncludeCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class IncludeCest extends Rule
 {
 	protected $type= 'Include';
 	protected $ruleNumber= 19;
-	protected $ruleNumberGenerated= 25;
+	protected $lineNumber= 25;
 	protected $sender= 'include';
 
 	protected $origRule= 'include "/etc/pfre/include.conf" # Test';

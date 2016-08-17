@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
+/* $pfre: Blank.php,v 1.2 2016/08/15 20:05:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -44,6 +44,12 @@ class Blank extends Rule
 		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 	
+	function countLines()
+	{
+		// Decrement one more time for the rule itself (already incremented in the main display loop in rules.php)
+		return count(explode("\n", $this->rule['blank'])) - 2;
+	}
+
 	function dispBlank()
 	{
 		?>

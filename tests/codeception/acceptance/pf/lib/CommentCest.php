@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: CommentCest.php,v 1.3 2016/08/16 07:32:12 soner Exp $ */
+/* $pfre: CommentCest.php,v 1.4 2016/08/16 18:07:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,25 +39,33 @@ class CommentCest extends Rule
 {
 	protected $type= 'Comment';
 	protected $ruleNumber= 21;
-	protected $ruleNumberGenerated= 28;
+	protected $lineNumber= 28;
 	protected $sender= 'comment';
 
 	protected $origRule= 'Line1
 Line2';
-	protected $expectedDispOrigRule= 'Line1
-Line2 e u d x';
+	protected $expectedDispOrigRule= '';
 
 	protected $modifiedRule= 'Line1
 Line2
-Line3';
-	protected $expectedDispModifiedRule= 'Line1
-Line2
 Line3
-Line4 e u d x';
+Line4';
+	protected $expectedDispModifiedRule= '';
 
 	function __construct()
 	{
 		parent::__construct();
+
+		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
+' . ($this->lineNumber + 1) . ' Line1
+Line2 e u d x';
+		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
+' . ($this->lineNumber + 1) . '
+' . ($this->lineNumber + 2) . '
+' . ($this->lineNumber + 3) . ' Line1
+Line2
+Line3
+Line4 e u d x';
 
 		$this->editPageTitle= 'Edit ' . $this->type . ' ' . $this->ruleNumber;
 		$this->dLink= NULL;
@@ -228,17 +236,17 @@ Line2');
 		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
 		$I->see('Display line numbers');
 
-		$I->dontSee(' ' . $this->ruleNumberGenerated . ': # Line1
-  ' . ($this->ruleNumberGenerated + 1) . ': # Line2
-  ' . ($this->ruleNumberGenerated + 2) . ': # Line3
-  ' . ($this->ruleNumberGenerated + 3) . ': # Line4', '#rules');
+		$I->dontSee(' ' . $this->lineNumber . ': # Line1
+  ' . ($this->lineNumber + 1) . ': # Line2
+  ' . ($this->lineNumber + 2) . ': # Line3
+  ' . ($this->lineNumber + 3) . ': # Line4', '#rules');
 
 		$I->checkOption('#forcedisplay');
 
-		$I->see(' ' . $this->ruleNumberGenerated . ': # Line1
-  ' . ($this->ruleNumberGenerated + 1) . ': # Line2
-  ' . ($this->ruleNumberGenerated + 2) . ': # Line3
-  ' . ($this->ruleNumberGenerated + 3) . ': # Line4', '#rules');
+		$I->see(' ' . $this->lineNumber . ': # Line1
+  ' . ($this->lineNumber + 1) . ': # Line2
+  ' . ($this->lineNumber + 2) . ': # Line3
+  ' . ($this->lineNumber + 3) . ': # Line4', '#rules');
 	}
 }
 ?>

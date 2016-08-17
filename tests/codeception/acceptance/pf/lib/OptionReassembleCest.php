@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: OptionReassembleCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
+/* $pfre: OptionReassembleCest.php,v 1.3 2016/08/16 18:07:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class OptionReassembleCest extends Rule
 {
 	protected $type= 'Option';
 	protected $ruleNumber= 21;
-	protected $ruleNumberGenerated= 29;
+	protected $lineNumber= 29;
 	protected $sender= 'option';
 
 	protected $origRule= 'set reassemble yes # Test';

@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: OptionOptimizationCest.php,v 1.3 2016/08/16 15:14:31 soner Exp $ */
+/* $pfre: OptionOptimizationCest.php,v 1.4 2016/08/16 18:07:47 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class OptionOptimizationCest extends Rule
 {
 	protected $type= 'Option';
 	protected $ruleNumber= 21;
-	protected $ruleNumberGenerated= 29;
+	protected $lineNumber= 29;
 	protected $sender= 'option';
 
 	protected $origRule= 'set optimization normal # Test';

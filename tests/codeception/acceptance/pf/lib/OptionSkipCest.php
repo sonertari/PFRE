@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: OptionSkipCest.php,v 1.1 2016/08/16 02:23:25 soner Exp $ */
+/* $pfre: OptionSkipCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class OptionSkipCest extends Rule
 {
 	protected $type= 'Option';
 	protected $ruleNumber= 14;
-	protected $ruleNumberGenerated= 20;
+	protected $lineNumber= 20;
 	protected $sender= 'option';
 
 	protected $origRule= 'set skip on { lo, em0 } # Test';

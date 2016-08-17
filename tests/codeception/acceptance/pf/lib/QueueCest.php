@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: QueueCest.php,v 1.1 2016/08/15 12:51:14 soner Exp $ */
+/* $pfre: QueueCest.php,v 1.2 2016/08/16 05:22:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -39,7 +39,7 @@ class QueueCest extends Rule
 {
 	protected $type= 'Queue';
 	protected $ruleNumber= 12;
-	protected $ruleNumberGenerated= 18;
+	protected $lineNumber= 18;
 	protected $sender= 'queue';
 
 	protected $origRule= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test';

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.19 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Anchor.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -36,12 +36,46 @@
 namespace View;
 
 class Anchor extends FilterBase
-{	
+{
+	function display($ruleNumber, $count)
+	{
+		$this->dispHead($ruleNumber);
+		$this->dispAction();
+		$this->dispValue('direction', 'Direction');
+		$this->dispInterface();
+		$this->dispLog();
+		$this->dispKey('quick', 'Quick');
+		$this->dispValue('proto', 'Proto');
+		$this->dispSrcDest();
+		$this->dispInline();
+		$this->dispQueue();
+		$this->dispTail($ruleNumber, $count);
+	}
+	
+	function countLines()
+	{
+		if (isset($this->rule['inline'])) {
+			// Add 1 for anchor-close line
+			return count(explode("\n", $this->rule['inline'])) + 1;
+		} else {
+			return 0;
+		}
+	}
+
 	function dispAction()
 	{
 		?>
 		<td title="Id" nowrap="nowrap">
 			<?php echo $this->rule['identifier']; ?>
+		</td>
+		<?php
+	}
+
+	function dispInline()
+	{
+		?>
+		<td title="Inline rules" nowrap="nowrap">
+			<?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($this->rule['inline']))); ?>
 		</td>
 		<?php
 	}

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.32 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Rule.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -59,15 +59,32 @@ class Rule
 
 	function dispHead($ruleNumber)
 	{
+		global $lineNumber;
+		$lineCount= $this->countLines();
 		?>
 		<tr title="<?php echo ltrim($this->cat, '_'); ?> rule"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : ''); ?>>
-			<td class="center">
+			<td title="Rule number" class="center">
 				<?php echo $ruleNumber; ?>
 			</td>
 			<td title="Category" class="category">
 				<?php echo ltrim($this->cat, '_'); ?>
 			</td>
+			<td title="Line number" class="center">
+				<?php
+				$lines= array();
+				for ($i= 0; $i <= $lineCount; $i++) {
+					$lines[]= ($lineNumber + $i);
+				}
+				echo implode('<br>', $lines);
+				?>
+			</td>
 		<?php
+		$lineNumber+= $lineCount;
+	}
+
+	function countLines()
+	{
+		return 0;
 	}
 
 	function dispTail($ruleNumber, $count)
@@ -424,7 +441,7 @@ class Rule
 		global $ruleStr;
 		?>
 		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->ruleNumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
-		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", str_replace("\n", '<br>', htmlentities($ruleStr))); ?></h4>
+		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($ruleStr))); ?></h4>
 		<form id="theform" name="theform" action="<?php echo $this->href . $this->ruleNumber; ?>" method="post">
 			<table id="nvp">
 			<?php
