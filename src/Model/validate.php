@@ -1,5 +1,5 @@
 <?php
-/* $pfre: validate.php,v 1.3 2016/08/11 06:37:41 soner Exp $ */
+/* $pfre: validate.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -143,5 +143,5 @@ define('RE_REASSEMBLE_TCP', '^tcp$');
 define('RE_CONNRATE', '^\d{1,20}\/\d{1,20}$');
 define('RE_SOURCETRACKOPTION', '^(rule|global)$');
 
-define('RE_ICMPCODE', '^[\w-]{1,20}$');
+define('RE_ICMPTYPE', '^[\w-]{1,20}(| code [\w-]{1,20})$');
 ?>

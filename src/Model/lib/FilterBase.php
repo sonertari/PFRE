@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.8 2016/08/12 15:28:34 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -89,11 +89,11 @@ class FilterBase extends State
 			),
 		'icmp-type' => array(
 			'method' => 'parseICMPType',
-			'params' => array('icmp-code'),
+			'params' => array(),
 			),
 		'icmp6-type' => array(
 			'method' => 'parseICMPType',
-			'params' => array('icmp6-code'),
+			'params' => array(),
 			),
 		'tos' => array(
 			'method' => 'parseNextValue',
@@ -236,16 +236,12 @@ class FilterBase extends State
 			'regex' => RE_FLAGS,
 			),
 		'icmp-type' => array(
-			'regex' => RE_ICMPCODE,
-			),
-		'icmp-code' => array(
-			'regex' => RE_ICMPCODE,
+			'multi' => TRUE,
+			'regex' => RE_ICMPTYPE,
 			),
 		'icmp6-type' => array(
-			'regex' => RE_ICMPCODE,
-			),
-		'icmp6-code' => array(
-			'regex' => RE_ICMPCODE,
+			'multi' => TRUE,
+			'regex' => RE_ICMPTYPE,
 			),
 		'tos' => array(
 			'regex' => RE_W_1_10,
@@ -334,6 +330,19 @@ class FilterBase extends State
 		parent::__construct($str);
 	}
 
+    /**
+	 * Gets icmp or icmp6 type and code in the rule string.
+	 * 
+	 * This method is called if the parser finds an 'icmp-type' keyword in the rule string.
+	 * There may be multiple icmp types listed.
+	 * 
+	 * ICMP code comes after a 'code' keyword, if any.
+	 */
+	function parseICMPType()
+	{
+		$this->parseItems($this->words[$this->index]);
+	}
+
 	function parseSet()
 	{
 		if ($this->words[$this->index + 1] === 'prio') {
@@ -373,8 +382,8 @@ class FilterBase extends State
 		$this->genItems('user', 'user');
 		$this->genItems('group', 'group');
 		$this->genValue('flags', 'flags ');
-		$this->genIcmpType();
-		$this->genIcmp6Type();
+		$this->genIcmpType('icmp', 'inet');
+		$this->genIcmpType('icmp6', 'inet6');
 		$this->genValue('tos', 'tos ');
 		$this->genKey('fragment');
 		$this->genKey('allow-opts');
@@ -432,28 +441,12 @@ class FilterBase extends State
 		}
 	}
 
-	function genIcmpType()
+	function genIcmpType($icmp, $af)
 	{
-		if ((isset($this->rule['af']) && $this->rule['af'] === 'inet') &&
-			(isset($this->rule['proto']) && ($this->rule['proto'] === 'icmp' || (is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto']))))) {
-			if (isset($this->rule['icmp-type'])) {
-				$this->str.= $this->generateItem($this->rule['icmp-type'], 'icmp-type');
-				if (isset($this->rule['icmp-code'])) {
-					$this->str.= $this->generateItem($this->rule['icmp-code'], 'code');
-				}
-			}
-		}
-	}
-
-	function genIcmp6Type()
-	{
-		if ((isset($this->rule['af']) && $this->rule['af'] === 'inet6') &&
-			(isset($this->rule['proto']) && ($this->rule['proto'] === 'icmp6' || (is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto']))))) {
-			if (isset($this->rule['icmp6-type'])) {
-				$this->str.= $this->generateItem($this->rule['icmp6-type'], 'icmp6-type');
-				if (isset($this->rule['icmp6-code'])) {
-					$this->str.= $this->generateItem($this->rule['icmp6-code'], 'code');
-				}
+		if ((isset($this->rule['af']) && $this->rule['af'] === $af) &&
+			(isset($this->rule['proto']) && ($this->rule['proto'] === $icmp || (is_array($this->rule['proto']) && in_array($icmp, $this->rule['proto']))))) {
+			if (isset($this->rule[$icmp . '-type'])) {
+				$this->str.= $this->generateItem($this->rule[$icmp . '-type'], $icmp . '-type');
 			}
 		}
 	}

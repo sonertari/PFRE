@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.18 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -164,12 +164,10 @@ class FilterBase extends State
 		$this->inputQueue();
 
 		$this->inputDel('icmp-type', 'delIcmpType');
-		$this->inputAdd('icmp-type', 'addIcmpType');
-		$this->inputKeyIfHasVar('icmp-code', 'icmp-type');
+		$this->inputAddIcmpType('icmp');
 
 		$this->inputDel('icmp6-type', 'delIcmp6Type');
-		$this->inputAdd('icmp6-type', 'addIcmp6Type');
-		$this->inputKeyIfHasVar('icmp6-code', 'icmp6-type');
+		$this->inputAddIcmpType('icmp6');
 		
 		$this->inputBool('fragment');
 		$this->inputBool('allow-opts');
@@ -213,6 +211,23 @@ class FilterBase extends State
 				$this->rule['queue']= filter_input(INPUT_POST, 'queuePri');
 			} else {
 				unset($this->rule['queue']);
+			}
+		}
+	}
+
+	function inputAddIcmpType($key)
+	{
+		if (filter_has_var(INPUT_POST, 'state')) {
+			$typeVar= $key . '-type';
+			if (filter_has_var(INPUT_POST, $typeVar) && filter_input(INPUT_POST, $typeVar) !== '') {
+				$value= filter_input(INPUT_POST, $typeVar);
+
+				$codeVar= $key . '-code';
+				if (filter_has_var(INPUT_POST, $codeVar) && filter_input(INPUT_POST, $codeVar) !== '') {
+					$value.= ' code ' . filter_input(INPUT_POST, $codeVar);
+				}
+
+				$this->inputAddValue($key . '-type', $value);
 			}
 		}
 	}
@@ -267,8 +282,8 @@ class FilterBase extends State
 		$this->editStateFilter();
 		$this->editText('flags', 'TCP Flags', NULL, 20, 'defaults to S/SA');
 		$this->editQueue();
-		$this->editIcmpType();
-		$this->editIcmp6Type();
+		$this->editIcmpType('icmp', 'ICMP Type', 'delIcmpType', 'addIcmpType');
+		$this->editIcmpType('icmp6', 'ICMP6 Type', 'delIcmp6Type', 'addIcmp6Type');
 		
 		$this->editCheckbox('fragment', 'Fragment');
 		$this->editCheckbox('allow-opts', 'Allow Opts');
@@ -357,34 +372,26 @@ class FilterBase extends State
 		}
 	}
 
-	function editIcmpType()
+	function editIcmpType($key, $title, $delName, $addName)
 	{
-		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp' || is_array($this->rule['proto']) && in_array('icmp', $this->rule['proto']))) {
-			$this->editValues('icmp-type', 'ICMP Type', 'delIcmpType', 'addIcmpType', 'number, name or macro');
+		$help= $key;
+		if (isset($this->rule['proto']) && ($this->rule['proto'] == $key || is_array($this->rule['proto']) && in_array($key, $this->rule['proto']))) {
 			?>
 			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 				<td class="title">
-					<?php echo _TITLE('ICMP Code').':' ?>
+					<?php echo $title . ':' ?>
 				</td>
 				<td>
-					<input type="text" name="icmp-code" id="icmp-code" value="<?php echo $this->rule['icmp-code']; ?>" <?php echo (isset($this->rule['icmp-type']) && !is_array($this->rule['icmp-type']) ? '' : 'disabled')?> />
-				</td>
-			</tr>
-			<?php
-		}
-	}
-
-	function editIcmp6Type()
-	{
-		if (isset($this->rule['proto']) && ($this->rule['proto'] == 'icmp6' || is_array($this->rule['proto']) && in_array('icmp6', $this->rule['proto']))) {
-			$this->editValues('icmp6-type', 'ICMP6 Type', 'delIcmp6Type', 'addIcmp6Type', 'number, name or macro');
-			?>
-			<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
-				<td class="title">
-					<?php echo _TITLE('ICMP6 Code').':' ?>
-				</td>
-				<td>
-					<input type="text" name="icmp6-code" id="icmp6-code" value="<?php echo $this->rule['icmp6-code']; ?>" <?php echo (isset($this->rule['icmp6-type']) && !is_array($this->rule['icmp6-type']) ? '' : 'disabled')?> />
+					<?php
+					$this->editDeleteValueLinks($this->rule[$key . '-type'], $delName);
+					?>
+					<input type="text" id="<?php echo $key; ?>-type" name="<?php echo $key; ?>-type" placeholder="number or name" />
+					<label for="<?php echo $key; ?>-type">type</label>
+					<input type="text" id="<?php echo $key; ?>-code" name="<?php echo $key; ?>-code" placeholder="number or name" />
+					<label for="<?php echo $key; ?>-code">code</label>
+					<?php
+					$this->editHelp($key. '-type');
+					?>
 				</td>
 			</tr>
 			<?php

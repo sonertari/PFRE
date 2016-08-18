@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,20 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/**
+ * @namespace Model
+ * 
+ * Model of MVC: Generally, the Model is responsible for executing commands from the View.
+ * 
+ * In PFRE, the Model:
+ * \li Loads rules from strings given to it or from files in the file system
+ * \li Generates rules or rulesets given by the View
+ * \li Validates the values in rules: Untaints all externally supplied data
+ * \li Tests rules using pfctl, and returns the test results
+ * \li Installs, saves, or deletes rule files
+ * \li Authenticates users
+ * \li Configures PFRE settings
+ */
 namespace Model;
 
 class RuleSet

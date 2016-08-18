@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.1 2016/08/12 18:28:23 soner Exp $ */
+/* $pfre: Rule.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -253,7 +253,7 @@ class Rule
 	function inputKeyIfHasVar($key, $var)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			if (filter_has_var(INPUT_POST, $var)) {
+			if (isset($this->rule[$var])) {
 				$this->rule[$key]= filter_input(INPUT_POST, $key);
 			}
 		}
