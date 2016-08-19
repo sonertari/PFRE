@@ -1,5 +1,5 @@
 <?php
-/* $pfre: DivertPacket.php,v 1.3 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: DivertPacket.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -51,6 +51,12 @@ class DivertPacket extends Filter
 		parent::__construct($str);
 	}
 
+	/** 
+	 * Parses port definition of divert-packet, if any.
+	 * 
+	 * Always sets the type to divert-packet, because this method is called when a divert-packet
+	 * keyword is found.
+	 */
 	function parseDivertPort()
 	{
 		$this->parseNVP('type');

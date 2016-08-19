@@ -1,5 +1,5 @@
 <?php
-/* $pfre: validate.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
+/* $pfre: validate.php,v 1.2 2016/08/18 18:55:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,12 +33,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Regex constants and vars used to validate rules.
+ */
+
 define('RE_BOOL', '^[01]$');
 define('RE_NAME', '^[\w_.-]{0,50}$');
 define('RE_NUM', '^\d{1,20}$');
 define('RE_SHA1', '^[a-f\d]{40}$');
 
-// "Macro names must start with a letter, digit, or underscore, and may contain any of those characters"
+/// "Macro names must start with a letter, digit, or underscore, and may contain any of those characters"
 $RE_ID= '[\w_-]{1,50}';
 define('RE_ID', "^$RE_ID$");
 
@@ -63,7 +67,7 @@ define('RE_AF', '^(inet|inet6)$');
 define('RE_DIRECTION', '^(in|out)$');
 
 $RE_IP= '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
-// pfctl gets stuck if there are no spaces around the dash -
+/// pfctl gets stuck if there are no spaces around the dash -
 $RE_IP_RANGE= "$RE_IP\s+\-\s+$RE_IP";
 $RE_IP6= '[\w:.\/]{1,50}';
 
@@ -116,7 +120,7 @@ define('RE_ANCHOR_ID', '^[\w_\/*-]{1,100}$');
 
 define('RE_BLANK', "^\n{0,10}$");
 /// @todo Should we disallow $ and ` chars in comments?
-//define('RE_COMMENT_INLINE', '^[^$`]{0,100}$');
+/// For example, define('RE_COMMENT_INLINE', '^[^$`]{0,100}$');
 define('RE_COMMENT_INLINE', '^[\s\S]{0,100}$');
 define('RE_COMMENT', '^[\s\S]{0,1000}$');
 

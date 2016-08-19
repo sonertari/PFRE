@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
+/* $pfre: Comment.php,v 1.2 2016/08/19 03:53:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,6 +37,11 @@ namespace Model;
 
 class Comment extends Rule
 {
+	/** 
+	 * Type definition for comments.
+	 * 
+	 * We should never have a Comment object without 'comment' key, hence 'require'.
+	 */
 	protected $typedef= array(
 		'comment' => array(
 			'require' => TRUE,

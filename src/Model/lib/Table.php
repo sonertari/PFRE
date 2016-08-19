@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Table.php,v 1.7 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Table.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -109,6 +109,12 @@ class Table extends Rule
 		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
+	/**
+	 * Parses file.
+	 * 
+	 * File definition always has 'file' keyword in the front. So we call this
+	 * method each time we find a 'file' word in the rule string.
+	 */
 	function parseFile()
 	{
 		$filename= preg_replace('/"/', '', $this->words[++$this->index]);

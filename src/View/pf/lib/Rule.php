@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
+/* $pfre: Rule.php,v 1.3 2016/08/18 18:55:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -91,7 +91,7 @@ class Rule
 	{
 		?>
 		<td class="comment">
-			<?php echo stripslashes($this->rule['comment']); ?>
+			<?php echo htmlentities(stripslashes($this->rule['comment'])); ?>
 		</td>
 		<?php
 		$this->dispTailEditLinks($ruleNumber, $count);

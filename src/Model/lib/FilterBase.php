@@ -1,5 +1,5 @@
 <?php
-/* $pfre: FilterBase.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
+/* $pfre: FilterBase.php,v 1.2 2016/08/18 18:55:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -330,7 +330,7 @@ class FilterBase extends State
 		parent::__construct($str);
 	}
 
-    /**
+	/**
 	 * Gets icmp or icmp6 type and code in the rule string.
 	 * 
 	 * This method is called if the parser finds an 'icmp-type' keyword in the rule string.
@@ -343,6 +343,9 @@ class FilterBase extends State
 		$this->parseItems($this->words[$this->index]);
 	}
 
+	/**
+	 * Parses prio or tos settings of the rule.
+	 */
 	function parseSet()
 	{
 		if ($this->words[$this->index + 1] === 'prio') {
@@ -354,12 +357,24 @@ class FilterBase extends State
 		}
 	}
 
+	/**
+	 * Parses !tagged.
+	 * 
+	 * This method is called when !tagged is found in the rule string.
+	 * Sanitization step removes any spaces between ! and tagged, so we always find a !tagged.
+	 */
 	function parseNotTagged()
 	{
 		$this->parseDelimitedStr('tagged');
 		$this->rule['not-tagged']= TRUE;
 	}
 
+	/**
+	 * Parses !received-on.
+	 * 
+	 * This method is called when !received-on is found in the rule string.
+	 * Sanitization step removes any spaces between ! and received-on, so we always find a !received-on.
+	 */
 	function parseNotReceivedOn()
 	{
 		$this->parseItems('received-on', '(', ')');
@@ -428,6 +443,11 @@ class FilterBase extends State
 		}
 	}
 
+	/**
+	 * Prints state options.
+	 * 
+	 * genStateOpts() calls genTimeoutOpts() which populates the arr var.
+	 */
 	function genState()
 	{
 		if (isset($this->rule['state-filter'])) {
@@ -441,6 +461,14 @@ class FilterBase extends State
 		}
 	}
 
+	/** 
+	 * Prints ICMP type and code.
+	 * 
+	 * Used to print both icmp and icmp6, hence we pass af too.
+	 * 
+	 * @param string $icmp icmp or icmp6
+	 * @param string $af inet or inet6
+	 */
 	function genIcmpType($icmp, $af)
 	{
 		if ((isset($this->rule['af']) && $this->rule['af'] === $af) &&

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: include.php,v 1.2 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: include.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -31,6 +31,10 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/** @file
+ * Includes, defines, and functions used in the Model.
  */
 
 $ROOT= dirname(dirname(dirname(__FILE__)));
@@ -69,9 +73,13 @@ require_once($MODEL_PATH.'/lib/Include.php');
 require_once($MODEL_PATH.'/lib/Comment.php');
 require_once($MODEL_PATH.'/lib/Blank.php');
 
-/// @attention PHP is not compiled, otherwise would use bindec()
-/// @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!
-/// Shell command argument types
+/**
+ * Shell command argument types.
+ *
+ * @attention PHP is not compiled, otherwise would use bindec()
+ * 
+ * @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!
+ */
 define('NONE',			1);
 define('FILEPATH',		2);
 define('NAME',			4);
@@ -84,6 +92,16 @@ define('JSON',			128);
 $Output= '';
 $Error= '';
 
+/**
+ * Sets or updates $Output with the given message.
+ *
+ * Output strings are accumulated in global $Output var and returned to View.
+ * 
+ * We return the given $msg param as is, so that we can use this function to print
+ * the same message in the logs too.
+ * 
+ * @param string $msg Output message.
+ */
 function Output($msg)
 {
 	global $Output;
@@ -98,11 +116,15 @@ function Output($msg)
 	return $msg;
 }
 
-/** Sets or updates $Error with the given message.
+/**
+ * Sets or updates $Error with the given message.
  *
- * Error strings are accumulated in global $Error and returned to View.
+ * Error strings are accumulated in global $Error var and returned to View.
  * 
- * @param[in]	$msg	string Error message.
+ * We return the given $msg param as is, so that we can use this function to print
+ * the same message in the logs too.
+ * 
+ * @param string $msg Error message.
  */
 function Error($msg)
 {
@@ -118,15 +140,16 @@ function Error($msg)
 	return $msg;
 }
 
-/** Wrapper for controller error logging via syslog.
+/**
+ * Wrapper for controller error logging via syslog.
  *
  * A global $LOG_LEVEL is set in setup.php.
  *
- * @param[in]	$prio	Log priority checked against $LOG_LEVEL
- * @param[in]	$file	Source file the function is in
- * @param[in]	$func	Function where the log is taken
- * @param[in]	$line	Line number within the function
- * @param[in]	$msg	Log message
+ * @param int $prio	Log priority checked against $LOG_LEVEL
+ * @param string $file Source file the function is in
+ * @param string $func Function where the log is taken
+ * @param int $line	Line number within the function
+ * @param string $msg Log message
  */
 function pfrec_syslog($prio, $file, $func, $line, $msg)
 {
@@ -153,22 +176,21 @@ function pfrec_syslog($prio, $file, $func, $line, $msg)
 	}
 }
 
-/** Escapes chars.
+/**
+ * Escapes chars.
  *
  * Prevents double escapes by default.
  *
  * preg_quote() double escapes, thus is not suitable. It is not possible to
  * make sure that strings contain no escapes, because this function is used
- * over strings obtained
- * from config files too, which we don't have any control over.
+ * over strings obtained from config files too, which we don't have any control over.
  *
- * Example: $no_double_escapes as FALSE is used in the code to double escape
- * $ char.
+ * Example: $no_double_escapes as FALSE is used in the code to double escape the $ char.
  *
- * @param[in]	$str	string String to process.
- * @param[in]	$chars	string Chars to escape.
- * @param[in]	$no_double_escapes	boolean Whether to prevent double escapes.
- * @return Escaped string.
+ * @param string $str String to process.
+ * @param string $chars Chars to escape.
+ * @param bool $no_double_escapes Whether to prevent double escapes.
+ * @return string Escaped string.
  */
 function Escape($str, $chars, $no_double_escapes= TRUE)
 {

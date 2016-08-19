@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
+/* $pfre: Blank.php,v 1.2 2016/08/19 03:53:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -37,6 +37,11 @@ namespace Model;
 
 class Blank extends Rule
 {
+	/** 
+	 * Type definition for blank lines.
+	 * 
+	 * We should never have a Blank object without 'blank' key, hence 'require'.
+	 */
 	protected $typedef= array(
 		'blank' => array(
 			'require' => TRUE,

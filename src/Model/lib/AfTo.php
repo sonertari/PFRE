@@ -1,5 +1,5 @@
 <?php
-/* $pfre: AfTo.php,v 1.5 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: AfTo.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,6 +35,9 @@
 
 namespace Model;
 
+/** 
+ * Class for AF Translation rules.
+ */
 class AfTo extends Filter
 {
 	protected $keyAfTo= array(
@@ -93,7 +96,7 @@ class AfTo extends Filter
 		$this->genFilterOpts();
 
 		$this->genAfto();
-		// @todo Can we have pooltype with af-to? BNF says no, but pfctl does not complain about it
+		/// @todo Can we have pooltype in af-to rules? BNF says no, but pfctl does not complain about it
 		$this->genPoolType();
 
 		$this->genComment();

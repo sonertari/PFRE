@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Queue.php,v 1.5 2016/08/12 15:28:34 soner Exp $ */
+/* $pfre: Queue.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -135,11 +135,19 @@ class Queue extends Rule
 		$this->str= preg_replace('/,/', ' , ', $this->str);
 	}
 
+	/**
+	 * Parses bandwidth.
+	 * 
+	 * "burst" bandwidth-spec "for" number "ms", hence time is obligatory after burst,
+	 * but we allow for time only definitions, so the user can fix the rule on the WUI.
+	 * 
+	 * @param string $burst bw-burst, min-burst, or max-burst
+	 * @param string $time bw-time, min-time, or max-time
+	 */
 	function parseBandwidth($burst, $time)
 	{
 		$this->parseNextValue();
 
-		/// @todo Fix this possible off-by-N errors
 		if (isset($this->words[$this->index + 1]) && ($this->words[$this->index + 1] == 'burst')) {
 			$this->index+= 2;
 			$this->rule[$burst]= $this->words[$this->index];

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: model.php,v 1.11 2016/08/12 08:29:58 soner Exp $ */
+/* $pfre: model.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -34,7 +34,7 @@
  */
 
 /** @file
- * Base class for models.
+ * Contains base class which runs basic Model tasks.
  */
 
 require_once($MODEL_PATH.'/include.php');
@@ -44,12 +44,13 @@ class Model
 	/// Apache password file pathname.
 	protected $passwdFile= '/var/www/conf/.htpasswd';
 	
-	/** Argument lists and descriptions of commands.
+	/**
+	 * Argument lists and descriptions of commands.
 	 *
-	 * @param[out] argv	Array of arg types in order
-	 * @param[out] desc	Description of the shell function
+	 * @todo Should we implement $Commands using Interfaces in OOP?
 	 *
-	 * @todo $Commands should be implemented with Interfaces in OOP?
+	 * @param array argv Array of arg types in order
+	 * @param string desc Description of the shell function
 	 */
 	public $Commands= array();
 
@@ -109,11 +110,14 @@ class Model
 			);
 	}
 
-	/** Checks user's password supplied against the one in htpasswd file.
+	/**
+	 * Checks user's password supplied against the one in .htpasswd file.
+	 * 
+	 * Note that the passwords in .htpasswd are double encrypted.
 	 *
-	 * @param[in]	$user	User name.
-	 * @param[in]	$passwd	Password.
-	 * @return TRUE if passwd matches, FALSE otherwise.
+	 * @param string $user User name.
+	 * @param string $passwd SHA encrypted password.
+	 * @return bool TRUE if passwd matches, FALSE otherwise.
 	 */
 	function CheckAuthentication($user, $passwd)
 	{
@@ -145,9 +149,11 @@ class Model
 		return FALSE;
 	}
 
-	/** Returns cvs tag in the given file, if any.
+	/**
+	 * Returns cvs tag in the given file, if any.
 	 *
-	 * @param[in]	$file string File pathname.
+	 * @param string $file File pathname.
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function GetFileCvsTag($file)
 	{
@@ -162,7 +168,12 @@ class Model
 		return FALSE;
 	}
 
-	/** Sets user's password in htpasswd file.
+	/**
+	 * Sets user's password in .htpasswd file.
+	 * 
+	 * @param string $user User name.
+	 * @param string $passwd SHA encrypted password.
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetPassword($user, $passwd)
 	{
@@ -177,6 +188,12 @@ class Model
 		return FALSE;
 	}
 
+	/**
+	 * Sets global log level.
+	 * 
+	 * @param string $level Level to set to.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function SetLogLevel($level)
 	{
 		global $ROOT, $TEST_DIR_SRC;
@@ -185,6 +202,12 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/lib/setup.php', '\$LOG_LEVEL', $level.';');
 	}
 
+	/**
+	 * Enables or disables help boxes.
+	 * 
+	 * @param bool $bool TRUE to enable, FALSE otherwise.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function SetHelpBox($bool)
 	{
 		global $ROOT, $TEST_DIR_SRC;
@@ -193,6 +216,14 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/View/lib/setup.php', '\$ShowHelpBox', $bool.';');
 	}
 	
+	/**
+	 * Sets session timeout.
+	 * 
+	 * If the given values is less than 10, we set the timeout to 10 seconds.
+	 * 
+	 * @param int $timeout Timeout in seconds.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function SetSessionTimeout($timeout)
 	{
 		global $ROOT, $TEST_DIR_SRC;
@@ -205,6 +236,12 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/View/lib/setup.php', '\$SessionTimeout', $timeout.';');
 	}
 
+	/**
+	 * Enables or disables HTTPs.
+	 * 
+	 * @param bool $bool TRUE to enable, FALSE to disable HTTPs.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function SetForceHTTPs($bool)
 	{
 		global $ROOT, $TEST_DIR_SRC;
@@ -213,6 +250,12 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/lib/setup.php', '\$ForceHTTPs', $bool.';');
 	}
 
+	/**
+	 * Sets the max number of nested anchors allowed.
+	 * 
+	 * @param int $max Number of nested anchors allowed.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function SetMaxAnchorNesting($max)
 	{
 		global $ROOT, $TEST_DIR_SRC;
@@ -221,6 +264,14 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/lib/setup.php', '\$MaxAnchorNesting', $max.';');
 	}
 
+	/**
+	 * Sets pfctl timeout.
+	 * 
+	 * Note that setting this value to 0 effectively fails all pfctl calls.
+	 * 
+	 * @param int $timeout Timeout waiting pfctl output in seconds.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function SetPfctlTimeout($timeout)
 	{
 		global $ROOT, $TEST_DIR_SRC;
@@ -229,12 +280,13 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/lib/setup.php', '\$PfctlTimeout', $timeout.';');
 	}
 	
-	/** Runs given shell command and returns its output as string.
+	/**
+	 * Runs the given shell command and returns its output as string.
 	 *
 	 * @todo Fix return value checks in some references, RunShellCommand() does not return FALSE
 	 *
-	 * @param[in]	$cmd	Command line to run.
-	 * @return Command result in a string.
+	 * @param string $cmd Command string to run.
+	 * @return string Command result in a string.
 	 */
 	function RunShellCommand($cmd)
 	{
@@ -248,22 +300,24 @@ class Model
 		return '';
 	}
 
-	/** Returns files with the given filepath pattern.
+	/**
+	 * Returns files with the given filepath pattern.
 	 *
 	 * $filepath does not have to be just directory path, and may contain wildcards.
 	 *
-	 * @param[in]	$filepath	string Pattern
-	 * @return List of file names, without path
+	 * @param string $filepath File pattern to match
+	 * @return string List of file names, without path
 	 */
 	function GetFiles($filepath)
 	{
 		return $this->RunShellCommand("ls -1 $filepath");
 	}
 
-	/** Reads file contents.
+	/**
+	 * Reads file contents.
 	 *
-	 * @param[in]	$file	Config file
-	 * @return File contents
+	 * @param string $file Config file
+	 * @return mixed File contents in a string or FALSE on fail
 	 */
 	function GetFile($file)
 	{
@@ -273,9 +327,11 @@ class Model
 		return FALSE;
 	}
 
-	/** Deletes file or dir.
+	/**
+	 * Deletes the given file or directory.
 	 *
-	 * @param[in]	$path	string File or dir.
+	 * @param string $path File or dir to delete.
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function DeleteFile($path)
 	{
@@ -296,10 +352,12 @@ class Model
 		return FALSE;
 	}
 
-	/** Writes contents to file.
+	/**
+	 * Writes contents to file.
 	 *
-	 * @param[in]	$file		Config file.
-	 * @param[in]	$contents	Contents to write.
+	 * @param string $file Config filename.
+	 * @param string $contents Contents to write.
+	 * @return mixed Output of file_put_contents() or FALSE on fail
 	 */
 	function PutFile($file, $contents)
 	{
@@ -309,12 +367,13 @@ class Model
 		return FALSE;
 	}
 
-	/** Changes value of NVP.
+	/**
+	 * Changes value of NVP.
 	 *
-	 * @param[in]	$file		Config file
-	 * @param[in]	$name		Name of NVP
-	 * @param[in]	$newvalue	New value to set
-	 * @return boolean Success or failure
+	 * @param string $file Config file
+	 * @param string $name Name of NVP
+	 * @param mixed $newvalue New value to set
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetNVP($file, $name, $newvalue)
 	{
@@ -343,25 +402,27 @@ class Model
 		return FALSE;
 	}
 
-	/** Reads value of NVP.
+	/**
+	 * Reads value of NVP.
 	 *
-	 * @param[in]	$file		string Config file
-	 * @param[in]	$name		string Name of NVP
-	 * @param[in]	$trimchars	string Chars to trim in the results
-	 * @return Value of NVP or NULL on failure
+	 * @param string $file Config file
+	 * @param string $name Name of NVP
+	 * @param string $trimchars Chars to trim in the results
+	 * @return mixed Value of NVP or NULL on failure
 	 */
 	function GetNVP($file, $name, $trimchars= '')
 	{
 		return $this->SearchFile($file, "/^\h*$name\b\h*$this->NVPS\h*([^$this->COMC'\"\n]*|'[^'\n]*'|\"[^\"\n]*\"|[^$this->COMC\n]*)(\h*|\h*$this->COMC.*)$/m", 1, $trimchars);
 	}
 
-	/** Searches a given file with a given regexp.
+	/**
+	 * Searches the given file with the given regex.
 	 *
-	 * @param[in]	$file	string Config file
-	 * @param[in]	$re		string Regexp to search the file with, should have end markers
-	 * @param[in]	$set	int There may be multiple parentheses in $re, which one to return
-	 * @param[in]	$trimchars If given, these chars are trimmed
-	 * @return String found or FALSE if no match
+	 * @param string $file Config file
+	 * @param string $re Regex to search the file with, should have end markers
+	 * @param int $set There may be multiple parentheses in $re, which one to return
+	 * @param string $trimchars If given, these chars are trimmed on the left or right
+	 * @return mixed String found or FALSE if no match
 	 */
 	function SearchFile($file, $re, $set= 1, $trimchars= '')
 	{

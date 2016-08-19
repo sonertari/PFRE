@@ -1,5 +1,5 @@
 <?php 
-/* $pfre: Timeout.php,v 1.6 2016/08/12 03:51:26 soner Exp $ */
+/* $pfre: Timeout.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -178,15 +178,20 @@ class Timeout extends Rule
 		parent::__construct($str);
 	}
 
+	/**
+	 * Splits timeout rule.
+	 * 
+	 * We cannot split at dots using preg_split(), otherwise IP addresses are split too. So we split as usual,
+	 * and then loop over the timeout keywords to split them at dots.
+	 * 
+	 * @todo Is there a better way?
+	 */
 	function split()
 	{
-		// @attention Cannot split at dots, otherwise IP addresses are split too, so split as usual
-		//$this->words= preg_split('/[\s,\t\.]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
 		parent::split();
 
 		// Split timeout keys
-		// @todo Find a better way
-		// @attention Do not use foreach here, we modify the list we loop on
+		/// @attention Do not use foreach here, we modify the list we loop on
 		for ($index= 0; $index < count($this->words); $index++) {
 			if (preg_match('/^(src|tcp|udp|icmp|other|adaptive)\.(.+)$/', $this->words[$index], $match)) {
 				$head= array_slice($this->words, 0, $index);
@@ -225,6 +230,11 @@ class Timeout extends Rule
 		return $this->str;
 	}
 	
+	/**
+	 * Prints timeout specs.
+	 * 
+	 * genTimeoutOpts() populates the arr var.
+	 */
 	function genTimeout()
 	{
 		if (count($this->rule['timeout'])) {
@@ -241,11 +251,18 @@ class Timeout extends Rule
 		}
 	}
 	
+	/**
+	 * Populates arr member var with timeout specs.
+	 * 
+	 * We check if timeout is set in the beginning, because this method is used by other classes too.
+	 * Otherwise, we wouldn't need to check again, because a Timeout rule should always have a 'timeout' element.
+	 * 
+	 * @attention The reset() is critical if a page calls this function twice, otherwise the internal array pointer
+	 * points at the end after the while loop.
+	 */
 	function genTimeoutOpts()
 	{
-		// Check if timeout is set again, this method is used elsewhere too
 		if (count($this->rule['timeout'])) {
-			/// @attention This reset is critical if a page calls this function twice, and it does so in this case
 			reset($this->rule['timeout']);
 
 			if (count($this->rule['timeout']) == 1 && count(array_values($this->rule['timeout'][key($this->rule['timeout'])])) == 1) {

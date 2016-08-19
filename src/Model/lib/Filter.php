@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Filter.php,v 1.7 2016/08/12 15:28:34 soner Exp $ */
+/* $pfre: Filter.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -249,12 +249,16 @@ class Filter extends FilterBase
 		}
 	}
 	
+	/** 
+	 * Parses source hash and its key, if any.
+	 * 
+	 * @attention There is no pattern for hash key or string, so we check keywords instead.
+	 * This is one of the benefits of using keyword lists instead of switch/case structs while parsing.
+	 */
 	function parseSourceHash()
 	{
 		$this->parseBool();
 
-		/// @attention No pattern for hash key or string, so check keywords instead
-		/// This is one of the benefits of using keyword lists instead of switch/case structs while parsing
 		//if (preg_match('/^[a-f\d]{16,}$/', $this->words[$this->index + 1])) {
 		if (!in_array($this->words[$this->index + 1], $this->keywords)) {
 			$this->rule['source-hash-key']= $this->words[++$this->index];

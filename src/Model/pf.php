@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
+/* $pfre: pf.php,v 1.3 2016/08/19 03:53:02 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -31,6 +31,10 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/** @file
+ * Contains Pf class to run pf tasks.
  */
 
 use Model\RuleSet;
@@ -84,6 +88,14 @@ class Pf extends Model
 			);
 	}
 
+	/**
+	 * Reads, parses, and validates the rules in the given file.
+	 *
+	 * @param string $file Rule file.
+	 * @param bool $tmp Whether the given rule file is a temporary uploaded file or not.
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function GetPfRules($file, $tmp= FALSE, $force= FALSE)
 	{
 		global $PF_CONFIG_PATH, $TMP_PATH, $TEST_DIR_PATH;
@@ -119,6 +131,13 @@ class Pf extends Model
 		return $retval;
 	}
 
+	/**
+	 * Returns the file list under $PF_CONFIG_PATH.
+	 * 
+	 * @todo Should we return success or fail status, instead of TRUE?
+	 *
+	 * @return bool TRUE always.
+	 */
 	function GetPfRuleFiles()
 	{
 		global $PF_CONFIG_PATH, $TEST_DIR_PATH;
@@ -127,6 +146,14 @@ class Pf extends Model
 		return TRUE;
 	}
 	
+	/**
+	 * Deletes the given file under $PF_CONFIG_PATH.
+	 * 
+	 * Makes sure the file name is valid.
+	 * Deletes only files under $PF_CONFIG_PATH. ValidateFilename() strips other file paths.
+	 *
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function DeletePfRuleFile($file)
 	{
 		global $PF_CONFIG_PATH, $TEST_DIR_PATH;
@@ -140,6 +167,18 @@ class Pf extends Model
 		return $result;
 	}
 	
+	/**
+	 * Reads, parses, and validates the rules in the given file.
+	 * 
+	 * @attention We never run pfctl if the rules fail validation. Hence $force can only
+	 * force loading the rules, not running pfctl.
+	 *
+	 * @param string $json JSON encoded rules array.
+	 * @param string $file File name to save to.
+	 * @param bool $load Whether to load the rules using pfctl after saving.
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function InstallPfRules($json, $file= NULL, $load= TRUE, $force= FALSE)
 	{
 		global $PF_CONFIG_PATH, $INSTALL_USER, $TEST_DIR_PATH;
@@ -221,6 +260,14 @@ class Pf extends Model
 		return FALSE;
 	}
 
+	/**
+	 * Validates the given file name.
+	 * 
+	 * Strips the file path, because we work with files under $PF_CONFIG_PATH only.
+	 *
+	 * @param string $file File name to validate.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function ValidateFilename(&$file)
 	{
 		$file= basename($file);
@@ -232,6 +279,14 @@ class Pf extends Model
 		return FALSE;
 	}
 
+	/**
+	 * Loads and generates the given JSON encoded rule array.
+	 * 
+	 * @param string $json JSON encoded rule array.
+	 * @param int $ruleNumber Rule number.
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function GeneratePfRule($json, $ruleNumber, $force= FALSE)
 	{
 		$ruleDef= json_decode($json, TRUE);
@@ -249,6 +304,14 @@ class Pf extends Model
 		return $retval;
 	}
 
+	/**
+	 * Loads and generates the given JSON encoded rules array.
+	 * 
+	 * @param string $json JSON encoded rules array.
+	 * @param bool $lines Whether to print line numbers in front of each line.
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function GeneratePfRules($json, $lines= FALSE, $force= FALSE)
 	{
 		$rulesArray= json_decode($json, TRUE);
@@ -265,6 +328,15 @@ class Pf extends Model
 		return $retval;
 	}
 
+	/**
+	 * Tests the given JSON encoded rules array.
+	 * 
+	 * Note that testing involves running pfctl, so there is no $force param here,
+	 * because we never run pfctl with rules failed validation.
+	 * 
+	 * @param string $json JSON encoded rules array.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function TestPfRules($json)
 	{
 		$rulesArray= json_decode($json, TRUE);
@@ -315,22 +387,45 @@ class Pf extends Model
 		return FALSE;
 	}
 
-	/** Daemonizes to run the given pfctl command.
+	/**
+	 * Daemonizes to run the given pfctl command.
+	 * 
+	 * We create a sysv message queue before forking the child process. The parent process
+	 * waits for a message from the child. The child process runs the pfctl command, packs
+	 * its ouput and return value in an array, and returns it in a message.
+	 * 
+	 * The parent loops waiting for a message from the child. In the loop we use a sleep interval
+	 * obtained by an equation involving $PfctlTimeout, instead of a constant like 0.1,
+	 * so that if $PfctlTimeout is set to 0, the interval becomes 0 too.
+	 * 
+	 * However, note that disabling the sleep interval may fail pfctl calls, because the parent
+	 * exits without waiting for a message from the child.
+	 * 
+	 * pfctl takes a long time to return in certain cases. The WUI should not wait for too long,
+	 * but exit upon timeout. In fact, all such external calls should timeout, instead of
+	 * waiting indefinitely.
+	 * 
+	 * @bug pfctl gets stuck, or takes a long time to return on some errors.
+	 * 
+	 * Example 1: A macro using an unknown interface: int_if = "a1",
+	 * pfctl tries to look up for its IP address, which takes a long time before failing with:
+	 * > no IP address found for a1,
+	 * > could not parse host specification
+	 * 
+	 * Example 2: A table with an entry (e.g. "test") for which no DNS record can be found,
+	 * pfctl waits for name service lookup, which takes too long:
+	 * > no IP address found for test,
+	 * > could not parse host specification
+	 * Therefore, we need to use a function which returns upon timeout, hence this method.
+	 * 
+	 * @param string $cmd pfctl command to run.
+	 * @param string $output Output of pfctl.
+	 * @param int $output Return value of pfctl.
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function RunPfctlCmd($cmd, &$output, &$retval)
 	{
 		global $PfctlTimeout;
-
-		/// @bug pfctl gets stuck, or takes a long time to return on some errors
-		// Example 1: A macro using an unknown interface: int_if = "a1",
-		// pfctl tries to look up for its IP address, which takes a long time before failing with:
-		// > no IP address found for a1
-		// > could not parse host specification
-		// Example 2: A table with an entry for which no DNS record can be found
-		// pfctl waits for name service lookup, which takes too long:
-		// > no IP address found for test
-		// > could not parse host specification
-		// Therefore, need to use a function which returns upon timeout, hence this method
 
 		$retval= 0;
 		$output= array();
@@ -363,7 +458,7 @@ class Pf extends Model
 
 			// We use this $interval var instead of a constant like .1, because
 			// if $PfctlTimeout is set to 0, $interval becomes 0 too, effectively disabling sleep
-			// Add 1 to prevent division by zero
+			// Add 1 to prevent division by zero ($PfctlTimeout cannot be set to -1 on the WUI)
 			$interval= $PfctlTimeout/($PfctlTimeout + 1)/10;
 
 			do {

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Anchor.php,v 1.9 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Anchor.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -35,12 +35,24 @@
 
 namespace Model;
 
+/** 
+ * Keeps the count of nested anchors in inline rules.
+ */
 $Nesting= 0;
 
+/** 
+ * Class for Anchor rules.
+ */
 class Anchor extends FilterBase
 {	
+	/** 
+	 * Keywords for anchor rules.
+	 * 
+	 * Identifier can be empty, but "anchors without explicit rules must specify a name".
+	 * 
+	 * 'inline' keyword is inserted by the anchor parser.
+	 */
 	protected $keyAnchor= array(
-		// identifier can be empty, but "anchors without explicit rules must specify a name"
 		'anchor' => array(
 			'method' => 'parseDelimitedStr',
 			'params' => array('identifier'),
@@ -51,6 +63,14 @@ class Anchor extends FilterBase
 			),
 		);
 
+	/** 
+	 * Type definition for anchor rules.
+	 * 
+	 * IsInlineAnchor() validates inline rules.
+	 * 
+	 * 'force' element instructs type checker to pass the $force param to IsInlineAnchor().
+	 * Otherwise, this does not mean that rule loading will be forced.
+	 */
 	protected $typeAnchor= array(
 		'identifier' => array(
 			'regex' => RE_ANCHOR_ID,
@@ -70,6 +90,16 @@ class Anchor extends FilterBase
 		parent::__construct($str);
 	}
 
+	/** 
+	 * Sanitizes anchor rule sting.
+	 * 
+	 * We should not sanitize inline rules, because they will be parsed by a newly created
+	 * RuleSet. So we remove the inline rules, sanitize the rest of the string as usual, and
+	 * reinsert the inline rules back.
+	 * 
+	 * Note that inline comments are parsed and removed before sanitization, hence removal
+	 * and reinsertion of inline rules does not cause a problem in parsing inline comments.
+	 */
 	function sanitize()
 	{
 		$inline= '';
@@ -87,6 +117,13 @@ class Anchor extends FilterBase
 		}
 	}
 
+	/** 
+	 * Splits anchor rule string into words.
+	 * 
+	 * Similarly to sanitize(), we should not split inline rules, because they will be parsed
+	 * by the newly created RuleSet. However, the difference now is that we remove the 'inline'
+	 * keyword and insert the rest as the value of that keyword in the rules array.
+	 */
 	function split()
 	{
 		$inline= '';
@@ -106,6 +143,11 @@ class Anchor extends FilterBase
 		}
 	}
 
+	/** 
+	 * Generates anchor rule.
+	 * 
+	 * Inline rules are always appended to the end.
+	 */
 	function generate()
 	{
 		$this->str= 'anchor';
@@ -119,7 +161,6 @@ class Anchor extends FilterBase
 
 		$this->genFilterOpts();
 
-		// Inline rules should come last
 		$this->genInline();
 
 		$this->genComment();
@@ -127,17 +168,30 @@ class Anchor extends FilterBase
 		return $this->str;
 	}
 
+	/** 
+	 * Generates inline rules.
+	 * 
+	 * Inline rules should start on a new line.
+	 * Ending brace (anchor-close) should be at the start of a new line.
+	 * 
+	 * @attention Note that inline rules are parsed and untainted in the Model before passing to pfctl.
+	 */
 	function genInline()
 	{
 		if (isset($this->rule['inline'])) {
-			// Inline rules should start on a new line
-			// Ending brace (anchor-close) should be at the start of a new line
-			/// @attention Inline rules are parsed and untainted in the Model before passing to pfctl
 			$this->str.= " {\n" . $this->rule['inline'] . "\n}";
 		}
 	}
 }
 
+/** 
+ * Checks and validates any inline rules.
+ * 
+ * Since we create a new RuleSet object for each nested anchor, we limit the number of nesting.
+ * 
+ * @param string $str List of rule definitions in an array.
+ * @param bool $force If set, continues checking and validating even if there are errors or $MaxAnchorNesting is reached.
+ */
 function IsInlineAnchor($str, $force= FALSE)
 {
 	global $LOG_LEVEL, $Nesting, $MaxAnchorNesting;

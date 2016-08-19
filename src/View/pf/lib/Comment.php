@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.2 2016/08/15 20:05:28 soner Exp $ */
+/* $pfre: Comment.php,v 1.3 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -54,7 +54,7 @@ class Comment extends Rule
 	{
 		?>
 		<td class="comment" colspan="13">
-			<?php echo nl2br(stripslashes($this->rule['comment'])); ?>
+			<?php echo nl2br(htmlentities(stripslashes($this->rule['comment']))); ?>
 		</td>
 		<?php
 	}
