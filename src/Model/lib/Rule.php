@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Rule.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
+/* $pfre: Rule.php,v 1.3 2016/08/18 18:55:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -31,6 +31,10 @@
  * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+/** @file
+ * Contains the base class for all model rule types.
  */
 
 namespace Model;
@@ -168,6 +172,18 @@ class Rule
 	 */
 	protected $nestingStr;
 
+	/** 
+	 * Creates and initializes the rule object with the given rule string.
+	 * 
+	 * We first set the nesting information, which is used in reporting errors occurred during parsing.
+	 * Hence this string should be set before parsing the given string.
+	 * 
+	 * We also set the category or type of the rule.
+	 * 
+	 * Finally, we parse the given string, if not empty.
+	 *
+	 * @param string $str String to parse.
+	 */
 	function __construct($str)
 	{
 		global $Nesting;

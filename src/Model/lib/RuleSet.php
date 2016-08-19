@@ -1,5 +1,5 @@
 <?php
-/* $pfre: RuleSet.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
+/* $pfre: RuleSet.php,v 1.3 2016/08/18 18:55:58 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -33,6 +33,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Contains the RuleSet class.
+ */
+
 /**
  * @namespace Model
  * 
@@ -49,10 +53,33 @@
  */
 namespace Model;
 
+/** 
+ * Loads, validates, parses, and generates a list of rules.
+ */
 class RuleSet
 {
 	public $rules= array();
 	
+	/** 
+	 * Loads the rule definitions given in an array.
+	 * 
+	 * The rule definitions in $rulesArray contains the type and NVP elements of the rule.
+	 * For each item in $rulesArray, we create an empty rule object of type mentioned in the rule definition and
+	 * call the load method of the rule with the NVP elements.
+	 * 
+	 * Rule number is determined by the order of the rule in the given $rulesArray.
+	 * 
+	 * If loading produces errors, we can force loading by setting $force to TRUE. The user is allowed to do this on the
+	 * WUI, so that rule sets with errors can be loaded and fixed using PFRE.
+	 * 
+	 * Note that loading does not stop even if $force is set to FALSE, we partially load the current rule with error and
+	 * continue loading the next rule in the array.
+	 * 
+	 * Also, this is where we set the nesting string, which is used in reporting errors in nested anchors in inline rules.
+	 *
+	 * @param array $rulesArray List of rule definitions in an array.
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 */
 	function load($rulesArray, $force= FALSE)
 	{
 		global $Nesting;
@@ -80,11 +107,31 @@ class RuleSet
 		return $retval;
 	}
 	
+	/** 
+	 * Deletes all the rules in the ruleset.
+	 */
 	function deleteRules()
 	{
 		$this->rules= array();
 	}
 	
+	/** 
+	 * Parses the given rule string.
+	 * 
+	 * These are the steps:
+	 * \li First delete any existing rules
+	 * \li Sort out inline comments and new lines
+	 * \li Divide the given string into lines, which are to be parsed by rule objects
+	 * \li Determine the type of rule on each line
+	 * \li Insert any accumulated comments or blank lines
+	 * \li Collect inline anchor rules which spans multiple lines
+	 * \li Finally create a rule object of the type determined above and pass the line to be parsed to that object
+	 * 
+	 * We validate the ruleset after all those steps are completed.
+	 *
+	 * @param string $text Rule set in string format to parse.
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 */
 	function parse($text, $force= FALSE)
 	{
 		$this->deleteRules();
@@ -97,8 +144,8 @@ class RuleSet
 
 		$blank= '';
 
-		for ($order= 0; $order < count($rulebase); $order++) {
-			$str= $rulebase[$order];
+		for ($index= 0; $index < count($rulebase); $index++) {
+			$str= $rulebase[$index];
 			$words= preg_split('/[\s,\t]+/', trim($str), -1);
 			
 			$type= $words[0];
@@ -124,7 +171,7 @@ class RuleSet
 			}
 
 			if ($type === 'anchor' && preg_match('/^.*{\s*$/', $str)) {
-				$this->parseInlineRules($rulebase, $str, $order, $force);
+				$this->parseInlineRules($rulebase, $str, $index, $force);
 			}
 
 			switch ($type) {
@@ -222,6 +269,15 @@ class RuleSet
 		return $this->validate($force);
 	}
 
+	/** 
+	 * Validates the ruleset.
+	 * 
+	 * Since encoding and decoding the rules array produces an array with the elements we need,
+	 * we reload the already loaded ruleset using json encode and decode functions. The load
+	 * method validates the rules in the ruleset.
+	 *
+	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
+	 */
 	function validate($force= FALSE)
 	{
 		// Reload for validation
@@ -233,7 +289,37 @@ class RuleSet
 		return TRUE;
 	}
 
-	function parseInlineRules($rulebase, &$str, &$order, $force= FALSE)
+	/** 
+	 * Collects inline anchor rules spanning multiple lines.
+	 * 
+	 * Inline rule starts with an opening brace at the end of the anchor line and ends with
+	 * a closing brace at the beginning of the last line, possibly followed by an inline comment.
+	 * 
+	 * @code{.php}
+	 * 	anchor "external" on egress {
+	 * 		block
+	 * 		anchor out {
+	 * 			pass proto tcp from any to port { 25, 80, 443 }
+	 * 		}
+	 * 		pass in proto tcp to any port 22
+	 * 	} # Inline comment
+	 * @endcode
+	 * 
+	 * Since inline rules span multiple lines, we combine those lines and append them at the
+	 * end of the anchor rule after the 'inline' keyword. This process advances the line index
+	 * to the line following the last inline rule.
+	 * 
+	 * Nested anchor rules are allowed in inline rules. We limit the number of nesting by
+	 * $MaxAnchorNesting. This limit can be overridden by the $force parameter. Otherwise,
+	 * the method stops collecting and combining inline rules after $MaxAnchorNesting
+	 * number of nesting is reached.
+	 * 
+	 * @param array $rules Rule strings in array format.
+	 * @param string $str Current anchor rule in string format.
+	 * @param int $index Index pointing at the current line.
+	 * @param bool $force Forces collection of inline rules even after nesting limit is reached.
+	 */
+	function parseInlineRules($rules, &$str, &$index, $force= FALSE)
 	{
 		global $MaxAnchorNesting;
 
@@ -241,9 +327,9 @@ class RuleSet
 			$str= $match[1] . ' inline ';
 
 			$nesting= 1;
-			$order++;
-			while ($order < count($rulebase)) {
-				$line= $rulebase[$order];
+			$index++;
+			while ($index < count($rules)) {
+				$line= $rules[$index];
 
 				// anchor-close = "}", but there may be a comment after it, hence match
 				if (!preg_match('/^\s*}(.*)$/', $line, $match)) {
@@ -269,33 +355,30 @@ class RuleSet
 						$str.= "$line\n";
 					}
 				}
-				$order++;
+				$index++;
 			}
 		}
 	}
 	
-	function generate($printNumbers= FALSE, $uptoRuleNumber= NULL, $includeNonRules= TRUE, $singleLineNonRules= FALSE)
+	/** 
+	 * Prints the ruleset.
+	 * 
+	 * We iterate over all the rule objects and ask them to return string representations of themselves.
+	 * We combine these strings and print on the Display page.
+	 * 
+	 * The default on the Display page is to print line numbers in front of each line. 
+	 *
+	 * @param bool $printNumbers Print line numbers.
+	 */
+	function generate($printNumbers= FALSE)
 	{
-		if ($uptoRuleNumber == NULL) {
-			$uptoRuleNumber= count($this->rules);
-		}
-		
 		$str= '';
-		$count= 0;
 		foreach ($this->rules as $rule) {
-			if (!in_array($rule->cat, array('Comment', 'Blank'))) {
-				$str.= $rule->generate();
-			} elseif ($includeNonRules) {
-				$str.= $rule->generate($singleLineNonRules);
-			}
-			
-            // Exclusive, not inclusive of the rule $uptoRuleNumber
-			if (++$count >= $uptoRuleNumber) {
-				break;
-			}
+			$str.= $rule->generate();
 		}
         
-		// Do not merge this loop with the generate loop above
+		// Do not merge this loop with the generate loop above, because there are rules which produce
+		// multiline string representations, such as comments and anchors with inline rules.
 		if ($printNumbers) {
 			$ruleNumber= 0;
 			$s= '';

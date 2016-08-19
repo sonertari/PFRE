@@ -1,5 +1,5 @@
 <?php
-/* $pfre: validateTest.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
+/* $pfre: validateTest.php,v 1.1 2016/08/14 13:13:29 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -1152,17 +1152,20 @@ class validateTest extends \PHPUnit_Framework_TestCase
 			);
 	}
 
-	function testICMPCODE() {
+	function testICMPTYPE() {
 		$this->assertTrue(
 			$this->runTests(
-				RE_ICMPCODE,
+				RE_ICMPTYPE,
 				array(
 					'a0-',
+					'a0- code a0-',
 					'01234567890123456789',
+					'01234567890123456789 code 01234567890123456789',
 					),
 				array(
 					'',
-					'0123456789001234567890',
+					'012345678901234567890',
+					'01234567890123456789 code 012345678901234567890',
 					)
 				)
 			);

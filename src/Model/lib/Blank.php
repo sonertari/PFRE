@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Blank.php,v 1.4 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Blank.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -50,9 +50,9 @@ class Blank extends Rule
 		$this->rule['blank']= $str;
 	}
 
-	function generate($singleLine= FALSE)
+	function generate()
 	{
-		return $singleLine ? "\n" : $this->rule['blank'];
+		return $this->rule['blank'];
 	}
 }
 ?>

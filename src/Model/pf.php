@@ -1,5 +1,5 @@
 <?php
-/* $pfre: pf.php,v 1.1 2016/08/12 18:28:28 soner Exp $ */
+/* $pfre: pf.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -276,7 +276,7 @@ class Pf extends Model
 		}
 
 		/// @attention pfctl reports line numbers, not rule numbers, so do not reduce multi-line rules into single-line
-		$rulesStr= $ruleSet->generate(FALSE, NULL, TRUE);
+		$rulesStr= $ruleSet->generate();
 
 		$cmd= "/bin/echo '$rulesStr' | /sbin/pfctl -nf - 2>&1";
 

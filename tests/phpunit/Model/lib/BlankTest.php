@@ -1,5 +1,5 @@
 <?php
-/* $pfre: BlankTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
+/* $pfre: BlankTest.php,v 1.1 2016/08/14 13:13:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,15 +47,5 @@ class BlankTest extends RuleBase
 		);
 
 	public $out= "\n\n";
-
-	private $outSingleLine= "\n";
-
-	function testGeneratorSingleLine() {
-		$rule= new Blank('');
-
-		$rule->load($this->rule);
-
-		$this->assertEquals($this->outSingleLine, $rule->generate(TRUE));
-	}
 }
 ?>

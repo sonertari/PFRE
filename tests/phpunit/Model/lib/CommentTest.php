@@ -1,5 +1,5 @@
 <?php
-/* $pfre: CommentTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
+/* $pfre: CommentTest.php,v 1.1 2016/08/14 13:13:28 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -47,15 +47,5 @@ class CommentTest extends RuleBase
 		);
 
 	public $out= "# Line1\n# Line2\n";
-
-	private $outSingleLine= "# Line1, Line2\n";
-
-	function testGeneratorSingleLine() {
-		$rule= new Comment('');
-
-		$rule->load($this->rule);
-
-		$this->assertEquals($this->outSingleLine, $rule->generate(TRUE));
-	}
 }
 ?>

@@ -1,5 +1,5 @@
 <?php
-/* $pfre: Comment.php,v 1.5 2016/08/11 18:29:20 soner Exp $ */
+/* $pfre: Comment.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
 
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
@@ -50,22 +50,13 @@ class Comment extends Rule
 		$this->rule['comment']= $str;
 	}
 
-	function generate($singleLine= FALSE)
+	function generate()
 	{
 		$this->str= '';
 		
 		$lines= preg_split("/\n/", stripslashes($this->rule['comment']));
-		if (!$singleLine) {
-			foreach ($lines as $line) {
-				$this->str.= "# $line\n";
-			}
-		} else {
-			$this->str.= '#';
-			foreach ($lines as $line) {
-				$this->str.= " $line,";
-			}
-			$this->str= rtrim($this->str, ',');
-			$this->str.= "\n";
+		foreach ($lines as $line) {
+			$this->str.= "# $line\n";
 		}
 		return $this->str;
 	}
