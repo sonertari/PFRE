@@ -1,6 +1,4 @@
 <?php
-/* $pfre: libwui.php,v 1.4 2016/08/08 07:38:05 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

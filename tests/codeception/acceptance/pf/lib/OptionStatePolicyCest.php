@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: OptionStatePolicyCest.php,v 1.3 2016/08/16 18:07:47 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

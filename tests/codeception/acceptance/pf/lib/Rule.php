@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: Rule.php,v 1.12 2016/08/17 19:37:49 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

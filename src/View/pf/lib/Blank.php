@@ -1,6 +1,4 @@
 <?php
-/* $pfre: Blank.php,v 1.2 2016/08/15 20:05:28 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

@@ -1,6 +1,4 @@
 <?php
-/* $pfre: include.php,v 1.5 2016/08/11 18:29:21 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

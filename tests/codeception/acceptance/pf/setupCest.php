@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: setupCest.php,v 1.1 2016/08/17 00:19:54 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

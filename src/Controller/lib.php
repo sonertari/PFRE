@@ -1,6 +1,4 @@
 <?php
-/* $pfre: lib.php,v 1.15 2016/08/12 03:51:26 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

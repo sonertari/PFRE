@@ -1,6 +1,4 @@
 <?php
-/* $pfre: view.php,v 1.6 2016/08/10 04:39:43 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

@@ -1,6 +1,4 @@
 <?php
-/* $pfre: Queue.php,v 1.1 2016/08/12 18:28:24 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

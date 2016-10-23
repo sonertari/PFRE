@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: Limit.php,v 1.4 2016/08/11 18:29:20 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *
