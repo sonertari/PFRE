@@ -37,10 +37,11 @@
  * Defs and library functions for Controller.
  */
 
-/** Functions and info strings used in shell arg control.
+/**
+ * Functions and info strings used in shell arg control.
  *
- * @param[out]	func	Function to check type
- * @param[out]	desc	Info string to use when check failed
+ * @param string func Function to check type
+ * @param string desc Info string to use when check failed
  */
 $ArgTypes= array(
 	FILEPATH	=>	array(
@@ -103,15 +104,16 @@ function IsBool($str)
 	return preg_match('/' . RE_BOOL . '/', $str);
 }
 
-/** Compute and fill arg count variables.
+/**
+ * Compute and fill arg count variables.
  *
- * @param[in]	$commands	Available commands for the current model
- * @param[in]	$argv		Argument vector
- * @param[in]	$cmd		Method name, key to $commands
- * @param[out]	$actual		Given arg count
- * @param[out]	$expected	Expected arg count
- * @param[out]	$acceptable	Acceptable arg count
- * @param[out]	$check		Arg count used while validating
+ * @param array $commands Available commands for the current model
+ * @param array $argv Argument vector
+ * @param string $cmd Method name, key to $commands
+ * @param int $actual Given arg count
+ * @param int $expected Expected arg count
+ * @param int $acceptable Acceptable arg count
+ * @param int $check Arg count used while validating
  */
 function ComputeArgCounts($commands, $argv, $cmd, &$actual, &$expected, &$acceptable, &$check)
 {
@@ -130,15 +132,16 @@ function ComputeArgCounts($commands, $argv, $cmd, &$actual, &$expected, &$accept
 	$check= min($actual, $expected);
 }
 
-/** Checks types of the arguments passed.
+/**
+ * Checks types of the arguments passed.
  *
  * The arguments are checked against the types listed in $commands.
  *
- * @param[in]	$commands	Available commands for the current model
- * @param[in]	$command	Method name, key to $commands
- * @param[in]	$argv		Argument vector
- * @param[out]	$check		Arg count used while validating
- * @return boolean Validation result
+ * @param array $commands Available commands for the current model
+ * @param string $command Method name, key to $commands
+ * @param array $argv Argument vector
+ * @param int $check Arg count used while validating
+ * @return bool Validation result
  *
  * @todo There are 2 types of argument checks in this project, which one to choose?
  */
