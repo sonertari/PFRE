@@ -1,6 +1,4 @@
 <?php
-/* $pfre: setup.php,v 1.3 2016/08/08 10:15:07 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

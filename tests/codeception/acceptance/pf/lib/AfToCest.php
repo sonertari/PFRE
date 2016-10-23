@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: AfToCest.php,v 1.4 2016/08/16 07:32:12 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

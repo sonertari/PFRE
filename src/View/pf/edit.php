@@ -1,6 +1,4 @@
 <?php
-/* $pfre: edit.php,v 1.12 2016/08/11 19:36:31 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

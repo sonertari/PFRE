@@ -1,6 +1,4 @@
 <?php
-/* $pfre: Anchor.php,v 1.2 2016/08/17 18:29:17 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

@@ -1,6 +1,4 @@
 <?php
-/* $pfre: FilterBase.php,v 1.2 2016/08/18 18:55:58 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

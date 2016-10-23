@@ -1,7 +1,5 @@
 #!/usr/local/bin/php
 <?php
-/* $pfre: pfrec.php,v 1.2 2016/08/14 13:13:29 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

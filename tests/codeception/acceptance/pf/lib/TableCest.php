@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: TableCest.php,v 1.5 2016/08/16 05:22:24 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

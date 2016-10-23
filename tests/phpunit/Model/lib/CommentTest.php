@@ -1,6 +1,4 @@
 <?php
-/* $pfre: CommentTest.php,v 1.1 2016/08/14 13:13:28 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

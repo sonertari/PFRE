@@ -1,6 +1,4 @@
 <?php
-/* $pfre: header.php,v 1.6 2016/07/11 17:31:39 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

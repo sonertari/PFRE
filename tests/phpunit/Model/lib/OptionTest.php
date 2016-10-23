@@ -1,6 +1,4 @@
 <?php
-/* $pfre: OptionTest.php,v 1.1 2016/08/12 18:28:26 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

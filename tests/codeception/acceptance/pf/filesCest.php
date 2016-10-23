@@ -1,6 +1,4 @@
 <?php 
-/* $pfre: filesCest.php,v 1.2 2016/08/17 00:19:54 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *

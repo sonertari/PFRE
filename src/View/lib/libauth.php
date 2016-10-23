@@ -1,6 +1,4 @@
 <?php
-/* $pfre: libauth.php,v 1.7 2016/08/08 07:38:05 soner Exp $ */
-
 /*
  * Copyright (c) 2016 Soner Tari.  All rights reserved.
  *
