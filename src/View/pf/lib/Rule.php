@@ -434,6 +434,13 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints rule title, generated rule, and form header at the top of the edit page.
+	 * 
+	 * All edit pages use this method.
+	 * 
+	 * @param bool $modified Whether the rule is modified or not.
+	 */
 	function editHead($modified)
 	{
 		global $ruleStr;
@@ -445,6 +452,16 @@ class Rule
 			<?php
 	}
 
+	/**
+	 * Prints buttons and checkboxes to apply, save or cancel any modification on the edit page.
+	 * 
+	 * Almost all edit pages use this method.
+	 * 
+	 * @param bool $modified Whether the rule is modified or not.
+	 * @param bool $testResult Test result of the rule.
+	 * @param bool $generateResult Rule generation result.
+	 * @param string $action State of the edit page.
+	 */
 	function editTail($modified, $testResult, $generateResult, $action)
 	{
 			?>
@@ -514,6 +531,9 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints input box for inline comments.
+	 */
 	function editComment()
 	{
 		?>
@@ -528,6 +548,17 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints delete links for values.
+	 * 
+	 * Used for multi-value fields in rules.
+	 * Followed by add input box.
+	 *
+	 * @param mixed $value Value for delete link, array or string.
+	 * @param string $name Get input var name, usually with a del prefix
+	 * @param string $prefix Prefix to print
+	 * @param string $postfix Postfix to print
+	 */
 	function editDeleteValueLinks($value, $name, $prefix= '', $postfix= '')
 	{
 		global $action;
@@ -554,14 +585,18 @@ class Rule
 		}
 	}
 
-	/** Prints add value controls.
+	/**
+	 * Prints add input box for values.
+	 * 
+	 * Simply a text input box and a label.
+	 * Used for multi-value fields in rules.
 	 *
-	 * @param[in]	$id		string	Id of the input
-	 * @param[in]	$label	string	Label
-	 * @param[in]	$hint	string	Hint text
-	 * @param[in]	$value	string	Value instead of hint
-	 * @param[in]	$size	int		Size of the input
-	 * @param[in]	$disabled	bool	Condition to disable the input
+	 * @param string $id Id of the input
+	 * @param string $label Label
+	 * @param string $hint Hint text
+	 * @param string $value Value instead of hint
+	 * @param int $size Size of the input
+	 * @param bool $disabled Condition to disable the input
 	 */
 	function editAddValueBox($id, $label, $hint, $size= 0, $disabled= FALSE)
 	{
@@ -571,7 +606,16 @@ class Rule
 		<?php
 	}
 
-	function editHelp($label) {
+	/**
+	 * Prints help image with a link to an anchor in pf.conf man page.
+	 * 
+	 * pf.conf man page is an html file generated from the actual pf.conf(5).
+	 * The anchors are added manually to match with the labels given here.
+	 *
+	 * @param string $label Anchor in pf.conf man page.
+	 */
+	function editHelp($label)
+	{
 		global $IMG_PATH;
 		?>
 		<a target="<?php echo $label ?>" href="/pf.conf.html#<?php echo $label ?>">
