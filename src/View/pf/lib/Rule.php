@@ -35,13 +35,41 @@ namespace View;
 
 class Rule
 {
+	/**
+	 * Category or type of rule.
+	 */
 	public $cat= '';
+
+	/**
+	 * Internal structure of rule properties in NVP format.
+	 */
 	public $rule= array();
 
+	/**
+	 * Common part of edit links.
+	 */
 	protected $href= '';
+
+	/**
+	 * Rule number.
+	 * 
+	 * Normally rules do not know their order in the ruleset. We pass this number
+	 * when necessary only. Otherwise, rules can freely move up or down in the ruleset.
+	 */
 	protected $ruleNumber= 0;
 	
+	/**
+	 * Used by certain rule types while displaying themselves on the list.
+	 */
 	protected $arr= array();
+
+	/**
+	 * Current count of rows on edit pages.
+	 * 
+	 * This number changes dynamically based on the properties of the rule that the user modifies.
+	 * For example, if the user sets a state, the edit page displays state options too.
+	 * This is used to alternate the color of consecutive rows.
+	 */
 	protected $editIndex= 0;
 
 	function __construct()
@@ -51,10 +79,25 @@ class Rule
 		$this->setType();
 	}
 
+	/**
+	 * Sets the type of certain Translation rules.
+	 * 
+	 * The 'type' key keeps the translation type of such rules. We set the value of this key
+	 * to either the rule type itself or the translation type of certain rules, such as Route.
+	 * Also note that, we need a default type for Route rules, so such rules set this to
+	 * one of the possible translation types they allow, when they are first created.
+	 */
 	function setType()
 	{
 	}
 
+	/**
+	 * Prints rule number, rule type, and line number.
+	 * 
+	 * Used by almost all rule types.
+	 *
+	 * @param int $ruleNumber Rule number.
+	 */
 	function dispHead($ruleNumber)
 	{
 		global $lineNumber;
@@ -80,11 +123,30 @@ class Rule
 		$lineNumber+= $lineCount;
 	}
 
+	/**
+	 * Returns the number of extra lines.
+	 * 
+	 * Almost all rules occupy only one line, except possibly Blank, Comment, or Anchor rules.
+	 * To compute the actual number of lines a rule occupy we need a method like this, which
+	 * those rule types override and return the extra number of lines they occupy.
+	 *
+	 * @return int Number of extra lines in the rule.
+	 */
 	function countLines()
 	{
 		return 0;
 	}
 
+	/**
+	 * Prints inline comments and edit links.
+	 * 
+	 * Used by almost all rule types.
+	 * Passes $count to dispTailEditLinks() to disable up or down edit links of the first and
+	 * the last rule in the rule set.
+	 *
+	 * @param int $ruleNumber Rule number.
+	 * @param int $count Number of rules in the ruleset.
+	 */
 	function dispTail($ruleNumber, $count)
 	{
 		?>
@@ -95,6 +157,17 @@ class Rule
 		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 
+	/**
+	 * Prints edit links in a cell.
+	 * 
+	 * Certain rule types do not have inline comments, such as Blank and Comment rules.
+	 * Such rules call this method, instead of dispTail().
+	 * Passes $count to dispEditLinks() to disable up or down edit links of the first and
+	 * the last rule in the rule set.
+	 *
+	 * @param int $ruleNumber Rule number.
+	 * @param int $count Number of rules in the ruleset.
+	 */
 	function dispTailEditLinks($ruleNumber, $count)
 	{
 		?>
@@ -107,6 +180,17 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints e, u, d, and x links.
+	 * 
+	 * $count is used to disable up or down edit links of the first and the last rule in the rule set.
+	 *
+	 * @param int $ruleNumber Rule number.
+	 * @param int $count Number of rules in the ruleset.
+	 * @param string $up Used in href for GET input, currently the default value is used only.
+	 * @param string $down Used in href for GET input, currently the default value is used only.
+	 * @param string $del Used in href for GET input, currently the default value is used only.
+	 */
 	function dispEditLinks($ruleNumber, $count, $up= 'up', $down= 'down', $del= 'del')
 	{
 		?>
@@ -131,6 +215,14 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Displays the given key in a cell if its value is TRUE.
+	 * 
+	 * Used with boolean key values only.
+	 * 
+	 * @param string $key Key to print.
+	 * @param string $title Title of the cell.
+	 */
 	function dispKey($key, $title)
 	{
 		?>
@@ -140,6 +232,13 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Displays the value(s) of the given key in a cell.
+	 * 
+	 * 
+	 * @param string $key Key to print the value of.
+	 * @param string $title Title of the cell.
+	 */
 	function dispValue($key, $title)
 	{
 		?>
@@ -149,11 +248,17 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Displays the value(s) of the given host key in a cell.
+	 * 
+	 * @param string $key Host key to print the value of.
+	 * @param string $title Title of the cell.
+	 */
 	function dispValues($key, $title)
 	{
 		?>
 		<td title="<?php echo $title; ?>">
-			<?php $this->printHostPort($this->rule[$key], TRUE); ?>
+			<?php $this->printHostPort($this->rule[$key]); ?>
 		</td>
 		<?php
 	}
@@ -167,6 +272,14 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints the given value(s).
+	 * 
+	 * @param mixed $value Value to print.
+	 * @param string $pre Prefix to print.
+	 * @param string $post Postfix to print.
+	 * @param int $count Max number of values to print.
+	 */
 	function printValue($value, $pre= '', $post= '', $count= 10)
 	{
 		if ($value) {
@@ -186,6 +299,11 @@ class Rule
 		}
 	}
 
+	/**
+	 * Displays log specification in a cell.
+	 * 
+	 * @param int $colspan Number of columns to span.
+	 */
 	function dispLog($colspan= 1)
 	{
 		?>
@@ -207,6 +325,13 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints host or port values.
+	 * 
+	 * @param mixed $value Value to print.
+	 * @param bool $noAny Whether to print 'any' or not.
+	 * @param int $count Max number of values to print.
+	 */
 	function printHostPort($value, $noAny= TRUE, $count= 10)
 	{
 		if (!is_array($value)) {
@@ -223,31 +348,63 @@ class Rule
 		}
 	}
 
+	/**
+	 * Gets the value of the given POST input key.
+	 * 
+	 * If a $parent is supplied, we use it as the parent of the given key.
+	 * 
+	 * Note that we use 'state' POST input variable to make sure if the submit form
+	 * on the edit page has been used or not. All edit pages have 'state' var as hidden
+	 * input of the submit form. Otherwise, the rules page has submit forms using POST
+	 * vars and they are visible on edit pages too. So, this is the way we differentiate
+	 * the POST vars on the edit pages from the ones on the rules page.
+	 * 
+	 * @param string $key Input key or variable to get the value of.
+	 * @param string $parent Parent of the given key.
+	 */
 	function inputKey($key, $parent= NULL)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$rule= &$this->rule;
-			if ($parent !== NULL) {
-				$rule= &$this->rule[$parent];
-			}
+			//$value= preg_replace('/"/', '', filter_input(INPUT_POST, $key));
+			$value= trim(filter_input(INPUT_POST, $key), "\" \t\n\r\0\x0B");
 
-			//$rule[$key]= preg_replace('/"/', '', filter_input(INPUT_POST, $key));
-			$rule[$key]= trim(filter_input(INPUT_POST, $key), "\" \t\n\r\0\x0B");
+			if ($parent == NULL) {
+				$this->rule[$key]= $value;
+			} else {
+				$this->rule[$parent][$key]= $value;
+			}
 		}
 	}
 
+	/**
+	 * Gets the boolean value of the given POST input key.
+	 * 
+	 * If a $parent is supplied, we use it as the parent of the given key.
+	 * 
+	 * @param string $key Input key or variable to get the value of.
+	 * @param string $parent Parent of the given key.
+	 */
 	function inputBool($key, $parent= NULL)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$rule= &$this->rule;
-			if ($parent !== NULL) {
-				$rule= &$this->rule[$parent];
-			}
+			$value= (filter_has_var(INPUT_POST, $key) ? TRUE : '');
 
-			$rule[$key]= (filter_has_var(INPUT_POST, $key) ? TRUE : '');
+			if ($parent == NULL) {
+				$this->rule[$key]= $value;
+			} else {
+				$this->rule[$parent][$key]= $value;
+			}
 		}
 	}
 
+	/**
+	 * Gets the value of the given POST input key, if another given key exists already.
+	 * 
+	 * Used to implement dependencies, e.g. between source-hash and source-hash-key
+	 * 
+	 * @param string $key Input key or variable to get the value of.
+	 * @param string $var Key to check if exists.
+	 */
 	function inputKeyIfHasVar($key, $var)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
@@ -257,6 +414,17 @@ class Rule
 		}
 	}
 
+	/**
+	 * Gets the value of the given GET input var and deletes it from the given key.
+	 * 
+	 * This method is used to get the values of delete links.
+	 * 
+	 * If a $parent is supplied, we use it as the parent of the given key.
+	 * 
+	 * @param string $key Key to delete the value from.
+	 * @param string $var Input key or variable to get the value of.
+	 * @param string $parent Parent of the given key.
+	 */
 	function inputDel($key, $var, $parent= NULL)
 	{
 		if (count($_GET)) {
@@ -266,6 +434,17 @@ class Rule
 		}
 	}
 
+	/**
+	 * Deletes the given value from the given key.
+	 * 
+	 * If the number of values drops to 1, we convert the values from array to simple value.
+	 * 
+	 * If a $parent is supplied, we use it as the parent of the given key.
+	 * 
+	 * @param string $key Key to delete the value from.
+	 * @param string $value Value to delete.
+	 * @param string $parent Parent of the given key.
+	 */
 	function inputDelValue($key, $value, $parent= NULL)
 	{
 		$rule= &$this->rule;
@@ -277,7 +456,7 @@ class Rule
 			$index= array_search($value, $rule[$key]);
 			if ($index !== FALSE) {
 				unset($rule[$key][$index]);
-				/// @todo Should we also update the keys?
+				/// @todo After unseting, should we also update the keys the array?
 			}
 
 			FlattenArray($rule[$key]);
@@ -286,6 +465,18 @@ class Rule
 		}
 	}
 
+	/**
+	 * Gets the value of the given POST input var and adds it to the given key.
+	 * 
+	 * This method is used to get the values of multi-valued keys.
+	 * All such inputs should have matching delete links, and visa-versa.
+	 * 
+	 * If a $parent is supplied, we use it as the parent of the given key.
+	 * 
+	 * @param string $key Key to add the value to.
+	 * @param string $var Input key or variable to get the value of.
+	 * @param string $parent Parent of the given key.
+	 */
 	function inputAdd($key, $var, $parent= NULL)
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
@@ -295,6 +486,17 @@ class Rule
 		}
 	}
 
+	/**
+	 * Adds the given value to the given key.
+	 * 
+	 * Converts a simple value to an array, if the number of values becomes more than 1.
+	 * 
+	 * If a $parent is supplied, we use it as the parent of the given key.
+	 * 
+	 * @param string $key Key to add the value to.
+	 * @param string $value Value to add.
+	 * @param string $parent Parent of the given key.
+	 */
 	function inputAddValue($key, $value, $parent= NULL)
 	{
 		$rule= &$this->rule;
@@ -316,12 +518,22 @@ class Rule
 		}
 	}
 
+	/**
+	 * Deletes or adds interface definitions.
+	 * 
+	 * This is an example that all such inputs should have matching delete links and add input boxes.
+	 * 
+	 * @todo We should force such dependencies: If there is addInterface, then delInterface should exist.
+	 */
 	function inputInterface()
 	{
 		$this->inputDel('interface', 'delInterface');
 		$this->inputAdd('interface', 'addInterface');
 	}
 
+	/**
+	 * Gets the POST input vars of log specifications.
+	 */
 	function inputLog()
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
@@ -348,12 +560,27 @@ class Rule
 		}
 	}
 
+	/**
+	 * Deletes empty values in internal rule structure.
+	 * 
+	 * Converts single valued arrays to simple values, if $flatten is TRUE.
+	 * 
+	 * @param bool $flatten Whether to flatten arrays with single values.
+	 */
 	function inputDelEmpty($flatten= TRUE)
 	{
 		/// @todo Check why we cannot combine inputDelEmpty() with inputDelEmptyRecursive()
 		$this->rule= $this->inputDelEmptyRecursive($this->rule, $flatten);
 	}
 
+	/**
+	 * Recursively deletes empty values in NVP arrays.
+	 * 
+	 * Converts single valued arrays to simple values, if $flatten is TRUE.
+	 * 
+	 * @param array $array Array to delete empty values from.
+	 * @param bool $flatten Whether to flatten arrays with single values.
+	 */
 	function inputDelEmptyRecursive($array, $flatten)
 	{
 		foreach ($array as $key => $value) {
@@ -361,7 +588,7 @@ class Rule
 				unset($array[$key]);
 			} elseif (is_array($value)) {
 				/// @todo Is there a better way? Passing $flatten=FALSE down from Timeout and Limit objects does not work, Filter objects need TRUE
-				/// @attention Do not flatten timeout and limit options
+				/// @attention Do not flatten timeout, limit, and log options; their structure should always be array.
 				$array[$key]= $this->inputDelEmptyRecursive($value, in_array($key, array('timeout', 'limit', 'log')) ? FALSE : $flatten);
 
 				if (count($array[$key]) == 0) {
@@ -378,6 +605,14 @@ class Rule
 		return $array;
 	}
 
+	/**
+	 * Prints a checkbox for the given key, within a table row.
+	 * 
+	 * Used for keys with boolean values.
+	 * 
+	 * @param string $key Id and name of the checkbox.
+	 * @param string $title Title for the key.
+	 */
 	function editCheckbox($key, $title)
 	{
 		?>
@@ -393,6 +628,17 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints an edit box for the given key, within a table row.
+	 * 
+	 * Used for keys with a single value.
+	 * 
+	 * @param string $key Id and name of the checkbox.
+	 * @param string $title Title for the key.
+	 * @param string $help Anchor in the html file for the pf.conf(5) man page.
+	 * @param int $size Size of the input.
+	 * @param string $hint Hint text.
+	 */
 	function editText($key, $title, $help= NULL, $size= 0, $hint= '')
 	{
 		$help= $help === NULL ? $key : $help;
@@ -413,6 +659,18 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints delete links and input boxes for multi-valued keys, within a table row.
+	 * 
+	 * @param string $key Id and name of the checkbox.
+	 * @param string $title Title for the key.
+	 * @param string $delName Var name to use in delete links.
+	 * @param string $addName Id of input box.
+	 * @param string $hint Hint text.
+	 * @param string $help Anchor in the html file for the pf.conf(5) man page.
+	 * @param int $size Size of the input.
+	 * @param bool $disabled Condition to disable the input
+	 */
 	function editValues($key, $title, $delName, $addName, $hint, $help= NULL, $size= 0, $disabled= FALSE)
 	{
 		$help= $help === NULL ? $key : $help;
@@ -504,6 +762,9 @@ class Rule
 		<?php
 	}
 
+	/**
+	 * Prints edit controls for log specifications.
+	 */
 	function editLog()
 	{
 		?>

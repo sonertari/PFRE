@@ -1,5 +1,6 @@
 /docs/
 /nbproject/
+/tests/codeception/_output/
 # CVS default ignores begin
 tags
 TAGS
