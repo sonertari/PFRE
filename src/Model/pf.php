@@ -428,7 +428,7 @@ class Pf extends Model
 		$retval= 0;
 		$output= array();
 
-		/// @todo Check why using 0 as mqid eventually (30-50 accesses later) fails creating or attaching to the queue
+		/// @todo Check why using 0 as mqid eventually (30-50 accesses later) fails creating or attaching to the queue.
 		$mqid= 1;
 
 		// Create or attach to the queue before forking
@@ -494,7 +494,7 @@ class Pf extends Model
 				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Failed removing message queue'));
 			}
 
-			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too
+			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too.
 			if (posix_getpgid($pid)) {
 				exec("/bin/kill -KILL $pid");
 			}

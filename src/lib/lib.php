@@ -35,27 +35,38 @@
  * Project-wide common functions.
  */
 
-function IsFilePath($str)
+/**
+ * Validates the given file path.
+ * 
+ * If we are not testing the controller, we should expect regular file paths.
+ * For example, _Include or LoadAnchor type of rules accept regular paths, not test ones.
+ * 
+ * @attention ? should never appear in regex patterns, this is better than using / or | chars.
+ * 
+ * @param string $filepath File path to validate.
+ */
+function IsFilePath($filepath)
 {
 	global $PF_CONFIG_PATH, $TMP_PATH, $TEST_DIR_PATH;
 
-	// If we are not testing the controller, we should expect regular file paths
-	// For example, _Include or LoadAnchor type of rules accept regular paths, not test ones
-	/// @attention ? should never appear in regex patterns, this is better than using / or | chars
 	return
-		// For CVS Tag displayed in the footer
-		preg_match("?^($TEST_DIR_PATH|)/var/www/htdocs/pfre/View/\w[\w./\-_]*$?", $str)
 		// pf configuration files
-		|| preg_match("?^($TEST_DIR_PATH|)$PF_CONFIG_PATH/\w[\w.\-_]*$?", $str)
-		|| preg_match("?^($TEST_DIR_PATH|)/etc/\w[\w.\-_]*$?", $str)
+		preg_match("?^($TEST_DIR_PATH|)$PF_CONFIG_PATH/\w[\w.\-_]*$?", $filepath)
+		|| preg_match("?^($TEST_DIR_PATH|)/etc/\w[\w.\-_]*$?", $filepath)
 		// Uploaded tmp files
-		|| preg_match("?^($TEST_DIR_PATH|)$TMP_PATH/\w[\w.\-_]*$?", $str);
+		|| preg_match("?^($TEST_DIR_PATH|)$TMP_PATH/\w[\w.\-_]*$?", $filepath);
 }
 
+/**
+ * Converts an array to a simple value.
+ * 
+ * @attention Don't use 0 as key to fetch the last value; the last key index may not be 0.
+ * 
+ * @param array $array Array to flatten.
+ */
 function FlattenArray(&$array)
 {
 	if (count($array) == 1) {
-		/// @attention Don't use 0 as key to fetch the last value
 		$array= $array[key($array)];
 	}
 }

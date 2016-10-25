@@ -37,7 +37,7 @@ class Route extends Filter
 {
 	function setType()
 	{
-		// Set a default type to get an initial test result as FALSE, otherwise $testResult becomes TRUE and #forcesave remains disabled
+		/// @attention Set a default type to get an initial test result as FALSE, otherwise $testResult becomes TRUE and #forcesave remains disabled.
 		$this->rule['type']= 'route-to';
 	}
 

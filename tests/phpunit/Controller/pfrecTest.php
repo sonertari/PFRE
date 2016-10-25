@@ -55,33 +55,6 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		parent::__construct();
 	}
 
-	function testGetFileCvsTag()
-	{
-		global $TEST_DIR_PATH;
-
-		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/View/test.php';
-
-		$cmdline= $this->pfrec . " -t GetFileCvsTag '$file'";
-
-		exec($cmdline, $outputArray, $retval);
-
-		$this->assertEquals(0, $retval);
-
-		$actual= json_decode($outputArray[0])[0];
-
-		$contents= file_get_contents($file);
-
-		$tag= '';
-		$re= '/:\s+(.*\.php,v\s+[\d.:\/\s]+)\s+/';
-		if (preg_match($re, $contents, $match)) {
-			$tag= $match[1];
-		}
-
-		$expected= $tag;
-
-		$this->assertEquals($expected, $actual);
-	}
-
 	function testSetLogLevel()
 	{
 		global $TEST_DIR_PATH;

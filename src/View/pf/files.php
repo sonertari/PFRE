@@ -31,6 +31,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Load, upload, download, save, and delete page.
+ */
+
 use View\RuleSet;
 
 require_once ('pf.php');

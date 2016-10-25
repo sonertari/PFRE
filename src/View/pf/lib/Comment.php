@@ -42,9 +42,13 @@ class Comment extends Rule
 		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 
+	/**
+	 * Counts lines in the rule.
+	 * 
+	 * @attention Decrement once for the rule itself (already incremented in the main display loop in rules.php).
+	 */
 	function countLines()
 	{
-		// Decrement once for the rule itself (already incremented in the main display loop in rules.php)
 		return count(explode("\n", $this->rule['comment'])) - 1;
 	}
 
@@ -66,6 +70,17 @@ class Comment extends Rule
 		$this->inputDelEmpty();
 	}
 	
+	/**
+	 * Prints edit page.
+	 * 
+	 * Comment rules are very simple and do not need to be generated.
+	 * 
+	 * @param int $ruleNumber Rule number.
+	 * @param bool $modified Whether the rule is modified or not.
+	 * @param bool $testResult Test result.
+	 * @param bool $generateResult Rule generation result.
+	 * @param string $action Current state of the edit page.
+	 */
 	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		?>

@@ -146,7 +146,7 @@ class FilterBase extends State
 		$this->inputDel('toport', 'delToPort');
 		$this->inputAdd('toport', 'addToPort');
 
-		/// @attention process all after src and dest
+		/// @attention Process 'all' after src and dest, because inputAll() unsets src and dest if necessary.
 		$this->inputAll();
 
 		$this->inputDel('os', 'delOs');

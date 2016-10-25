@@ -99,6 +99,18 @@ class Rule
 	}
 
 	/**
+	 * Processes inputs submitted on the edit page.
+	 * 
+	 * All child classes should override this method.
+	 * 
+	 * @param int $ruleNumber Rule number.
+	 * @param int $count Number of rules in the ruleset.
+	 */
+	function display($ruleNumber, $count)
+	{
+	}
+
+	/**
 	 * Prints rule number, rule type, and line number.
 	 * 
 	 * Used by almost all rule types.
@@ -356,6 +368,15 @@ class Rule
 	}
 
 	/**
+	 * Processes inputs submitted on the edit page.
+	 * 
+	 * All child classes should override this method.
+	 */
+	function input()
+	{
+	}
+
+	/**
 	 * Gets the value of the given POST input key.
 	 * 
 	 * If a $parent is supplied, we use it as the parent of the given key.
@@ -610,6 +631,21 @@ class Rule
 			}
 		}
 		return $array;
+	}
+
+	/**
+	 * Prints edit page.
+	 * 
+	 * All child classes should override this method.
+	 * 
+	 * @param int $ruleNumber Rule number.
+	 * @param bool $modified Whether the rule is modified or not.
+	 * @param bool $testResult Test result.
+	 * @param bool $generateResult Rule generation result.
+	 * @param string $action Current state of the edit page.
+	 */
+	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
+	{
 	}
 
 	/**

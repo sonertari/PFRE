@@ -49,6 +49,11 @@ class Anchor extends FilterBase
 		$this->dispTail($ruleNumber, $count);
 	}
 	
+	/**
+	 * Counts the lines in inline rules.
+	 * 
+	 * Inline rules always span beyond the anchor rule itself.
+	 */
 	function countLines()
 	{
 		if (isset($this->rule['inline'])) {
@@ -68,6 +73,11 @@ class Anchor extends FilterBase
 		<?php
 	}
 
+	/**
+	 * Displays inline rules.
+	 * 
+	 * We enclose all tabs into code tags, otherwise indentation is lost.
+	 */
 	function dispInline()
 	{
 		?>
@@ -90,9 +100,13 @@ class Anchor extends FilterBase
 		$this->inputDelEmpty();
 	}
 
+	/**
+	 * Gets submitted inline rules.
+	 * 
+	 * inputKey() trims, hence this new method.
+	 */
 	function inputInline()
 	{
-		// inputKey() trims, hence this new method
 		if (filter_has_var(INPUT_POST, 'state')) {
 			// textarea inserts \r\n instead of just \n, which pfctl complains about, so delete \r chars
 			$this->rule['inline']= preg_replace('/\r/', '', filter_input(INPUT_POST, 'inline'));

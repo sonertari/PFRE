@@ -47,8 +47,8 @@ class Model
 	 *
 	 * @todo Should we implement $Commands using Interfaces in OOP?
 	 *
-	 * @param array argv Array of arg types in order
-	 * @param string desc Description of the shell function
+	 * @param array argv Array of arg types in order.
+	 * @param string desc Description of the shell function.
 	 */
 	public $Commands= array();
 
@@ -65,11 +65,6 @@ class Model
 					'desc'	=>	_('Check authentication'),
 					),
 				
-				'GetFileCvsTag'=>	array(
-					'argv'	=>	array(FILEPATH),
-					'desc'	=>	_('Get source file CVS tag'),
-					),
-
 				'SetPassword'	=>	array(
 					'argv'	=>	array(NAME, SHA1STR),
 					'desc'	=>	_('Set user password'),
@@ -144,25 +139,6 @@ class Model
 			}
 		}
 		Error('Authentication failed');
-		return FALSE;
-	}
-
-	/**
-	 * Returns cvs tag in the given file, if any.
-	 *
-	 * @param string $file File pathname.
-	 * @return bool TRUE on success, FALSE on fail.
-	 */
-	function GetFileCvsTag($file)
-	{
-		if (($contents= $this->GetFile($file)) !== FALSE) {
-			/// @warning Don't add $ to tag, otherwise CVS changes $re during commit
-			$re= '/pfre:\s+(.*\.php,v\s+\d+\.\d+\s+\d+\/\d+\/\d+\s+\d+:\d+:\d+)\s+\S+\s+Exp\s+\$/';
-			if (preg_match($re, $contents, $match)) {
-				Output($match[1]);
-				return TRUE;
-			}
-		}
 		return FALSE;
 	}
 
@@ -303,8 +279,8 @@ class Model
 	 *
 	 * $filepath does not have to be just directory path, and may contain wildcards.
 	 *
-	 * @param string $filepath File pattern to match
-	 * @return string List of file names, without path
+	 * @param string $filepath File pattern to match.
+	 * @return string List of file names, without path.
 	 */
 	function GetFiles($filepath)
 	{
@@ -314,8 +290,8 @@ class Model
 	/**
 	 * Reads file contents.
 	 *
-	 * @param string $file Config file
-	 * @return mixed File contents in a string or FALSE on fail
+	 * @param string $file Config file.
+	 * @return mixed File contents in a string or FALSE on fail.
 	 */
 	function GetFile($file)
 	{
@@ -355,7 +331,7 @@ class Model
 	 *
 	 * @param string $file Config filename.
 	 * @param string $contents Contents to write.
-	 * @return mixed Output of file_put_contents() or FALSE on fail
+	 * @return mixed Output of file_put_contents() or FALSE on fail.
 	 */
 	function PutFile($file, $contents)
 	{
@@ -368,9 +344,9 @@ class Model
 	/**
 	 * Changes value of NVP.
 	 *
-	 * @param string $file Config file
-	 * @param string $name Name of NVP
-	 * @param mixed $newvalue New value to set
+	 * @param string $file Config file.
+	 * @param string $name Name of NVP.
+	 * @param mixed $newvalue New value to set.
 	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetNVP($file, $name, $newvalue)
@@ -403,10 +379,10 @@ class Model
 	/**
 	 * Reads value of NVP.
 	 *
-	 * @param string $file Config file
-	 * @param string $name Name of NVP
-	 * @param string $trimchars Chars to trim in the results
-	 * @return mixed Value of NVP or NULL on failure
+	 * @param string $file Config file.
+	 * @param string $name Name of NVP.
+	 * @param string $trimchars Chars to trim in the results.
+	 * @return mixed Value of NVP or NULL on failure.
 	 */
 	function GetNVP($file, $name, $trimchars= '')
 	{
@@ -416,11 +392,11 @@ class Model
 	/**
 	 * Searches the given file with the given regex.
 	 *
-	 * @param string $file Config file
-	 * @param string $re Regex to search the file with, should have end markers
-	 * @param int $set There may be multiple parentheses in $re, which one to return
-	 * @param string $trimchars If given, these chars are trimmed on the left or right
-	 * @return mixed String found or FALSE if no match
+	 * @param string $file Config file.
+	 * @param string $re Regex to search the file with, should have end markers.
+	 * @param int $set There may be multiple parentheses in $re, which one to return.
+	 * @param string $trimchars If given, these chars are trimmed on the left or right.
+	 * @return mixed String found or FALSE if no match.
 	 */
 	function SearchFile($file, $re, $set= 1, $trimchars= '')
 	{

@@ -31,6 +31,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Jump table for all tabs/pages.
+ */
+
 require_once('pf.php');
 
 $Submenu= SetSubmenu('rules');

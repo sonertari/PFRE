@@ -37,13 +37,14 @@
 
 class View
 {
-	/** Calls the controller.
+	/**
+	 * Calls the controller.
 	 *
 	 * Both command and arguments are passed as variable arguments.
 	 *
-	 * @param[out]	$output			Output of the command
-	 * @param[in]	Variable_Args	Command line in variable arguments
-	 * @return boolean Return value of shell command (adjusted for PHP)
+	 * @param array $output Output of the command.
+	 * @param mixed Variable_Args Elements of the command line in variable arguments.
+	 * @return bool Return value of shell command (adjusted for PHP).
 	 */
 	function Controller(&$output)
 	{
@@ -99,11 +100,12 @@ class View
 		return $return;
 	}
 	
-	/** Escapes the arguments passed to Controller() and builds the command line.
+	/**
+	 * Escapes the arguments passed to Controller() and builds the command line.
 	 *
-	 * @param[in]	$argv		Command and arguments array
-	 * @param[out]	$cmdline	Actual command line to run
-	 * @return boolean
+	 * @param array $argv Command and arguments array.
+	 * @param string $cmdline Actual command line to run.
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function EscapeArgs($argv, &$cmdline)
 	{
