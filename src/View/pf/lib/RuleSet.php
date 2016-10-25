@@ -31,13 +31,59 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Contains the ruleset class which runs maintains rules.
+ */
+
+/**
+ * @namespace View
+ * 
+ * View of MVC: Generally, the View displays Model data and allows modification of the data.
+ * 
+ * The View does not know how to parse or generate pf rules. It only maintains a list of rules
+ * in an internal data structure, the format of which is exactly the same with the one in
+ * the Model.
+ * 
+ * In PFRE, the View:
+ * \li Loads rules from a rules array
+ * \li Displays the ruleset in a list
+ * \li Enables user to edit individual rules
+ * \li Displays generated rules and test results
+ * \li Enables user to install, save, or delete rules and rulesets
+ * \li Provides a login page for user authentication
+ * \li Enables user to configure PFRE settings
+ */
 namespace View;
 
+/**
+ * Loads and maintains rules.
+ */
 class RuleSet
 {
+	/**
+	 * The name of the currently loaded file.
+	 */
 	public $filename= '';
+
+	/**
+	 * The list holding the ruleset.
+	 */
 	public $rules= array();
 			
+	/**
+	 * Loads the rules in a given file.
+	 * 
+	 * Refers to the Model to parse and create the rules array, which the Model
+	 * returns as json encoded string.
+	 * 
+	 * $filename and $tmpFilename are displayed on rules and install pages.
+	 *
+	 * @param string $filename File name in the filesystem.
+	 * @param int $tmp Whether the file is uploaded from a browser.
+	 * @param int $force Whether to force loading the file even with errors.
+	 * @param string $tmpFilename Name if the temporary file uploaded.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
 	function load($filename, $tmp= 0, $force= 0, $tmpFilename= '')
 	{
 		global $View;
@@ -65,6 +111,14 @@ class RuleSet
 		return TRUE;
 	}
 			
+	/**
+	 * Loads the rules from a given rules array.
+	 * 
+	 * First, we delete the rules list, then create the rule objects.
+	 * A simple assignment of rule structure to the rules member var is sufficient.
+	 * 
+	 * @param array $rulesArray Rules in an array.
+	 */
 	function loadArray($rulesArray)
 	{
 		$this->deleteRules();
@@ -81,6 +135,13 @@ class RuleSet
 		$this->rules= array();
 	}
 	
+	/**
+	 * Moves a rule up in the ruleset.
+	 * 
+	 * Simply switches the places of two rules.
+	 * 
+	 * @param int $ruleNumber The number of the rule to move up.
+	 */
 	function up($ruleNumber)
 	{
 		if (isset($this->rules[$ruleNumber - 1])) {
@@ -90,6 +151,13 @@ class RuleSet
 		}
 	}
 	
+	/**
+	 * Moves a rule down in the ruleset.
+	 * 
+	 * Simply switches the places of two rules.
+	 * 
+	 * @param int $ruleNumber The number of the rule to move down.
+	 */
 	function down($ruleNumber)
 	{
 		if (isset($this->rules[$ruleNumber + 1])) {
@@ -99,14 +167,26 @@ class RuleSet
 		}
 	}
 	
+	/**
+	 * Deletes a rule from the ruleset.
+	 * 
+	 * @attention We slice the array to update the keys, otherwise the unset() call leaves a hole in the ruleset indeces.
+	 * 
+	 * @param int $ruleNumber The number of the rule to delete.
+	 */
 	function del($ruleNumber)
 	{
-		/// @todo No need for a separate function now
 		unset($this->rules[$ruleNumber]);
 		// Fake slice to update the keys
 		$this->rules= array_slice($this->rules, 0);
 	}
 	
+	/**
+	 * Moves a rule to another location in the ruleset.
+	 * 
+	 * @param int $ruleNumber The number of the rule to move.
+	 * @param int $moveTo The location to move the rule to.
+	 */
 	function move($ruleNumber, $moveTo)
 	{
 		if ($ruleNumber < 0 || $ruleNumber >= count($this->rules)) {
@@ -126,6 +206,12 @@ class RuleSet
 		$this->rules= array_merge($head, array($rule), $tail);
 	}
 	
+	/**
+	 * Adds an empty rule location to the ruleset.
+	 * 
+	 * @param int $ruleNumber The location of the new rule.
+	 * @return int The actual rule location allocated.
+	 */
 	function add($ruleNumber= 0)
 	{
 		if (count($this->rules) == 0 || ($ruleNumber >= $this->nextRuleNumber())) {
@@ -144,6 +230,12 @@ class RuleSet
 		}
 	}
 	
+	/**
+	 * Computes the actual rule number which can be allocated.
+	 * 
+	 * @param int $ruleNumber The rule number requested.
+	 * @return int Actual rule number which can be allocated.
+	 */
 	function computeNewRuleNumber($ruleNumber= 0)
 	{
 		if (count($this->rules) == 0 || ($ruleNumber >= $this->nextRuleNumber())) {
@@ -155,16 +247,48 @@ class RuleSet
 		}
 	}
 		
+	/**
+	 * Returns the number of a new rule to be appended to the end of the ruleset.
+	 * 
+	 * This is simply the count of the rules in the ruleset, because the list is zero-based.
+	 */
 	function nextRuleNumber()
 	{
 		return count($this->rules);
 	}
 	
+	/**
+	 * Sets the current state of the edit page and sets up the session vars.
+	 * 
+	 * If we change the rule number requested, perhaps because it is not a valid number in the ruleset,
+	 * we change the current state to 'add'.
+	 * 
+	 * We change the state from 'create' to 'add' if the session properties do not match. Such a mismatch
+	 * means that the user was editing a different rule previously.
+	 * 
+	 * If the state is 'edit' and the session variables are not set up yet, we clone the rule for editing.
+	 * However, we also check if the user arrives the edit page by requesting on the address line, in which case
+	 * we should make sure that the rule number exists and there was a previous edit session.
+	 * 
+	 * Note that the 'add' state means that we should reinitialize the session variables.
+	 * 
+	 * Note also that we always work on a clone of the rule, not the actual rule in the ruleset. Because we should
+	 * not modify the rule until the user saves the changes s/he made.
+	 * 
+	 * One purpose of this state machine is that we should not reinitialize the session vars each time the user submits
+	 * the edit page.
+	 * 
+	 * @todo We need a state diagram for this FSM.
+	 * 
+	 * @param string $cat Type of the current rule to be edited.
+	 * @param string $action Current state of the edit page.
+	 * @param int $ruleNumber Rule number.
+	 */
 	function setupEditSession($cat, &$action, &$ruleNumber)
 	{
 		global $View;
 
-		// Make sure we deal with possible rule numbers only
+		// Make sure we deal only with rule numbers possible in the current ruleset
 		if (!array_key_exists($ruleNumber, $View->RuleSet->rules)) {
 			$ruleNumber= $this->computeNewRuleNumber($ruleNumber);
 			if ($action == 'edit') {
@@ -188,7 +312,7 @@ class RuleSet
 					$_SESSION['edit']['ruleNumber']= $ruleNumber;
 					$_SESSION['edit']['object']= clone $this->rules[$ruleNumber];
 				} elseif (!isset($_SESSION['edit'])) {
-					// @attention Add and del operations on multi-valued vars use GET method, so check if there is an active edit session
+					/// @attention Add and del operations on multi-valued vars use GET method, so check if there is an active edit session.
 					// Rule does not exists, assume add if we are not already editing a new rule
 					// Assume a new rule requested, if the page is submitted on the address line with a non-existing rule number
 					$action= 'add';
@@ -207,6 +331,20 @@ class RuleSet
 		}
 	}
 
+	/**
+	 * Tests the given rule.
+	 * 
+	 * We create a rules array upto the rule number provided, and append the rule to be tested
+	 * to the end. Note that the $ruleObj is the the clone rule modified on the edit page.
+	 * 
+	 * We simply use json encode and decode functions to create the rules array, because json
+	 * encode function includes only the public member variables only. Note also that we pass
+	 * TRUE for $assoc param, to convert objects to arrays.
+	 * 
+	 * @param int $ruleNumber The number of the rule to test.
+	 * @param object $ruleObj The rule object to test.
+	 * @return bool Test result returned from the Model.
+	 */
 	function test($ruleNumber, $ruleObj)
 	{
 		global $View;
@@ -217,6 +355,11 @@ class RuleSet
 		return $View->Controller($Output, 'TestPfRules', json_encode($rulesArray));
 	}
 	
+	/**
+	 * Cancels the edit session.
+	 * 
+	 * First checks if the user has clicked the Cancel button.
+	 */
 	function cancel()
 	{
 		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == 'Cancel')) {
@@ -226,6 +369,22 @@ class RuleSet
 		}
 	}
 	
+	/**
+	 * Saves the modified rule.
+	 * 
+	 * First checks if the user has clicked the Save button.
+	 * 
+	 * We don't save the rule if there are errors, unless the user forces saving.
+	 * 
+	 * We need the $action param to see if we are editing an existing rule or adding a new one.
+	 * So if the user was editing a new rule, it does not exist in the ruleset yet. Because we do not
+	 * modify the ruleset until the rule is saved.
+	 * 
+	 * @param string $action Current state of the edit page.
+	 * @param int $ruleNumber Rule number.
+	 * @param object $ruleObj Modified rule object to save.
+	 * @param bool $testResult Test result of the rule.
+	 */
 	function save($action, $ruleNumber, $ruleObj, $testResult)
 	{
 		if (filter_has_var(INPUT_POST, 'save') && filter_input(INPUT_POST, 'save') == 'Save') {
@@ -241,6 +400,21 @@ class RuleSet
 		}
 	}
 	
+	/**
+	 * Checks if the rule is modified.
+	 * 
+	 * First checks if the rule already exists in the ruleset, i.e. the user is editing
+	 * an existing rule. Otherwise, we always return TRUE for new rules.
+	 * 
+	 * We sort the keys because the modification of the rule on the edit page may result in
+	 * different key orders.
+	 * 
+	 * Serialization allows for an easy comparison of the rules.
+	 * 
+	 * @param int $ruleNumber Rule number.
+	 * @param object $ruleObj Rule object to check.
+	 * @return bool TRUE if the rule is modified, or FALSE otherwise.
+	 */
 	function isModified($ruleNumber, $ruleObj)
 	{
 		$modified= TRUE;
@@ -261,6 +435,11 @@ class RuleSet
 		return $modified;
 	}
 	
+	/**
+	 * Returns the list of queues defined in the current ruleset.
+	 * 
+	 * @return array List of queues.
+	 */
 	function getQueueNames() {
 		$queues= array();
 		foreach ($this->rules as $ruleObj) {

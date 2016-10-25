@@ -31,8 +31,15 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Contains base class for rules.
+ */
+
 namespace View;
 
+/**
+ * Base class for all rule types.
+ */
 class Rule
 {
 	/**
