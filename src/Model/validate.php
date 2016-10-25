@@ -146,4 +146,5 @@ define('RE_CONNRATE', '^\d{1,20}\/\d{1,20}$');
 define('RE_SOURCETRACKOPTION', '^(rule|global)$');
 
 define('RE_ICMPTYPE', '^[\w-]{1,20}(| code [\w-]{1,20})$');
+define('RE_ICMPCODE', '^[\w-]{1,20}$');
 ?>
