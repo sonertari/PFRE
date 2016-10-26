@@ -120,16 +120,19 @@ class Rule
 	function dispHead($ruleNumber)
 	{
 		global $lineNumber;
+
 		$lineCount= $this->countLines();
+		$title= _TITLE('<RULE_TYPE> rule');
+		$title= str_replace('<RULE_TYPE>', ltrim($this->cat, '_'), $title);
 		?>
-		<tr title="<?php echo ltrim($this->cat, '_'); ?> rule"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : ''); ?>>
-			<td title="Rule number" class="center">
+		<tr title="<?php echo $title ?>"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : '') ?>>
+			<td title="<?php echo _TITLE('Rule number') ?>" class="center">
 				<?php echo $ruleNumber; ?>
 			</td>
-			<td title="Category" class="category">
+			<td title="<?php echo _TITLE('Category') ?>" class="category">
 				<?php echo ltrim($this->cat, '_'); ?>
 			</td>
-			<td title="Line number" class="center">
+			<td title="<?php echo _TITLE('Line number') ?>" class="center">
 				<?php
 				$lines= array();
 				for ($i= 0; $i <= $lineCount; $i++) {
@@ -213,24 +216,28 @@ class Rule
 	function dispEditLinks($ruleNumber, $count, $up= 'up', $down= 'down', $del= 'del')
 	{
 		?>
-		<a href="<?php echo $this->href . $ruleNumber; ?>" title="Edit">e</a>
+		<a href="<?php echo $this->href . $ruleNumber ?>" title="<?php echo _TITLE('Edit') ?>">e</a>
 		<?php
 		if ($ruleNumber > 0) {
 			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $up; ?>=<?php echo $ruleNumber; ?>" title="Move up">u</a>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $up ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Move up') ?>">u</a>
 			<?php
 		} else {
 			echo ' u ';
 		}
 		if ($ruleNumber < $count) {
 			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $down; ?>=<?php echo $ruleNumber; ?>" title="Move down">d</a>
+			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $down ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Move down') ?>">d</a>
 			<?php
 		} else {
 			echo ' d ';
 		}
+
+		$confirmMsg= _CONTROL('Are you sure you want to delete <RULE_TYPE> rule number <RULE_NUMBER>?');
+		$confirmMsg= str_replace('<RULE_TYPE>', ltrim($this->cat, '_'), $confirmMsg);
+		$confirmMsg= str_replace('<RULE_NUMBER>', $ruleNumber, $confirmMsg);
 		?>
-		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>?<?php echo $del; ?>=<?php echo $ruleNumber; ?>" title="Delete" onclick="return confirm('Are you sure you want to delete <?php echo $this->cat; ?> rule number <?php echo $ruleNumber; ?>?')">x</a>
+		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $del ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Delete') ?>" onclick="return confirm('<?php echo $confirmMsg ?>')">x</a>
 		<?php
 	}
 
@@ -245,7 +252,7 @@ class Rule
 	function dispKey($key, $title)
 	{
 		?>
-		<td title="<?php echo $title; ?>">
+		<td title="<?php echo $title ?>">
 			<?php echo $this->rule[$key] ? $key : ''; ?>
 		</td>
 		<?php
@@ -261,7 +268,7 @@ class Rule
 	function dispValue($key, $title)
 	{
 		?>
-		<td title="<?php echo $title; ?>">
+		<td title="<?php echo $title ?>">
 			<?php $this->printValue($this->rule[$key]); ?>
 		</td>
 		<?php
@@ -276,7 +283,7 @@ class Rule
 	function dispValues($key, $title)
 	{
 		?>
-		<td title="<?php echo $title; ?>">
+		<td title="<?php echo $title ?>">
 			<?php $this->printHostPort($this->rule[$key]); ?>
 		</td>
 		<?php
@@ -285,7 +292,7 @@ class Rule
 	function dispInterface()
 	{
 		?>
-		<td title="Interface">
+		<td title="<?php echo _TITLE('Interface') ?>">
 			<?php $this->printValue($this->rule['interface']); ?>
 		</td>
 		<?php
@@ -664,7 +671,7 @@ class Rule
 				<?php echo $title.':' ?>
 			</td>
 			<td>
-				<input type="checkbox" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $key ?>" <?php echo ($this->rule[$key] ? 'checked' : ''); ?> />
+				<input type="checkbox" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $key ?>" <?php echo ($this->rule[$key] ? 'checked' : '') ?> />
 				<?php $this->editHelp($key) ?>
 			</td>
 		</tr>
@@ -686,12 +693,12 @@ class Rule
 	{
 		$help= $help === NULL ? $key : $help;
 		?>
-		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline') ?>">
 			<td class="title">
 				<?php echo $title.':' ?>
 			</td>
 			<td>
-				<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $this->rule[$key]; ?>" size="<?php echo $size ?>" placeholder="<?php echo $hint ?>" />
+				<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" value="<?php echo $this->rule[$key] ?>" size="<?php echo $size ?>" placeholder="<?php echo $hint ?>" />
 				<?php
 				if ($help !== FALSE) {
 					$this->editHelp($help);
@@ -718,7 +725,7 @@ class Rule
 	{
 		$help= $help === NULL ? $key : $help;
 		?>
-		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline') ?>">
 			<td class="title">
 				<?php echo $title.':' ?>
 			</td>
@@ -745,10 +752,15 @@ class Rule
 	function editHead($modified)
 	{
 		global $ruleStr;
+
+		$ruleType= ltrim($this->cat, '_');
+		$editHeader= _TITLE('Edit <RULE_TYPE> Rule <RULE_NUMBER>');
+		$editHeader= str_replace('<RULE_TYPE>', $ruleType, $editHeader);
+		$editHeader= str_replace('<RULE_NUMBER>', $this->ruleNumber, $editHeader);
 		?>
-		<h2>Edit <?php echo ltrim($this->cat, '_'); ?> Rule <?php echo $this->ruleNumber . ($modified ? ' (modified)' : ''); ?><?php $this->editHelp(ltrim($this->cat, '_')); ?></h2>
-		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($ruleStr))); ?></h4>
-		<form id="theform" name="theform" action="<?php echo $this->href . $this->ruleNumber; ?>" method="post">
+		<h2><?php echo $editHeader . ($modified ? ' (' . _TITLE('modified') . ')' : '') ?><?php $this->editHelp($ruleType) ?></h2>
+		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($ruleStr))) ?></h4>
+		<form id="editForm" name="editForm" action="<?php echo $this->href . $this->ruleNumber ?>" method="post">
 			<table id="nvp">
 			<?php
 	}
@@ -768,14 +780,14 @@ class Rule
 			?>
 			</table>
 			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="checkbox" id="forcegenerate" name="forcegenerate" <?php echo !$generateResult ? '' : 'disabled'; ?> <?php echo filter_has_var(INPUT_POST, 'forcegenerate') ? 'checked' : ''; ?> />
-				<label for="forcegenerate">Generate with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
+				<input type="submit" id="apply" name="apply" value="<?php echo _CONTROL('Apply') ?>" />
+				<input type="submit" id="save" name="save" value="<?php echo _CONTROL('Save') ?>" <?php echo $modified ? '' : 'disabled' ?> />
+				<input type="submit" id="cancel" name="cancel" value="<?php echo _CONTROL('Cancel') ?>" />
+				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled' ?> />
+				<label for="forcesave"><?php echo _CONTROL('Save with errors') ?></label>
+				<input type="checkbox" id="forcegenerate" name="forcegenerate" <?php echo !$generateResult ? '' : 'disabled' ?> <?php echo filter_has_var(INPUT_POST, 'forcegenerate') ? 'checked' : '' ?> />
+				<label for="forcegenerate"><?php echo _CONTROL('Generate with errors') ?></label>
+				<input type="hidden" name="state" value="<?php echo $action ?>" />
 			</div>
 		</form>
 		<?php
@@ -783,7 +795,7 @@ class Rule
 
 	function editInterface()
 	{
-		$this->editValues('interface', 'Interface', 'delInterface', 'addInterface', 'if or macro', NULL, 10);
+		$this->editValues('interface', 'Interface', 'delInterface', 'addInterface', _CONTROL('if or macro'), NULL, 10);
 	}
 
 	function editAf()
@@ -796,8 +808,8 @@ class Rule
 			<td>
 				<select id="af" name="af">
 					<option value="" label=""></option>
-					<option value="inet" label="inet" <?php echo ($this->rule['af'] == 'inet' ? 'selected' : ''); ?>>inet</option>
-					<option value="inet6" label="inet6" <?php echo ($this->rule['af'] == 'inet6' ? 'selected' : ''); ?>>inet6</option>
+					<option value="inet" label="inet" <?php echo ($this->rule['af'] == 'inet' ? 'selected' : '') ?>>inet</option>
+					<option value="inet6" label="inet6" <?php echo ($this->rule['af'] == 'inet6' ? 'selected' : '') ?>>inet6</option>
 				</select>
 				<?php $this->editHelp('address-family') ?>
 			</td>
@@ -811,23 +823,23 @@ class Rule
 	function editLog()
 	{
 		?>
-		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
+		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline') ?>">
 			<td class="title">
 				<?php echo _TITLE('Logging').':' ?>
 			</td>
 			<td>
-				<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : ''); ?> />
+				<input type="checkbox" id="log" name="log" value="log" <?php echo (isset($this->rule['log']) ? 'checked' : '') ?> />
 				<label for="log">Log</label>
 				<?php
 				$disabled= isset($this->rule['log']) ? '' : 'disabled';
 				?>
-				<label for="log">to:</label>
-				<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" placeholder="logging interface" <?php echo $disabled; ?> />
-				<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+				<label for="log"><?php echo _TITLE('to') ?>:</label>
+				<input type="text" id="log-to" name="log-to" value="<?php echo (isset($this->rule['log']['to']) ? $this->rule['log']['to'] : ''); ?>" placeholder="<?php echo _CONTROL('logging interface') ?>" <?php echo $disabled; ?> />
+				<input type="checkbox" id="log-all" name="log-all" value="log-all" <?php echo (isset($this->rule['log']['all']) ? 'checked' : '') ?> <?php echo $disabled ?> />
 				<label for="log">all</label>
-				<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+				<input type="checkbox" id="log-matches" name="log-matches" value="log-matches" <?php echo (isset($this->rule['log']['matches']) ? 'checked' : ''); ?> <?php echo $disabled ?> />
 				<label for="log">matches</label>
-				<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : ''); ?> <?php echo $disabled; ?> />
+				<input type="checkbox" id="log-user" name="log-user" value="log-user" <?php echo (isset($this->rule['log']['user']) ? 'checked' : '') ?> <?php echo $disabled ?> />
 				<label for="log">user</label>
 				<?php $this->editHelp('log') ?>
 			</td>
@@ -846,7 +858,7 @@ class Rule
 				<?php echo _TITLE('Comment').':' ?>
 			</td>
 			<td>
-				<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']); ?>" size="80" placeholder="enter comment, such as a description of the rule" />
+				<input type="text" id="comment" name="comment" value="<?php echo stripslashes($this->rule['comment']) ?>" size="80" placeholder="<?php echo _CONTROL('enter comment, such as a description of the rule') ?>" />
 			</td>
 		</tr>
 		<?php
@@ -873,14 +885,14 @@ class Rule
 					$v= htmlentities($v);
 					echo "$prefix$v$postfix";
 					?>
-					<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $v; ?>&amp;state=<?php echo $action; ?>">delete</a><br>
+					<a href="<?php echo $this->href . $this->ruleNumber ?>&amp;<?php echo $name ?>=<?php echo $v ?>&amp;state=<?php echo $action ?>"><?php echo _CONTROL('delete') ?></a><br>
 					<?php
 				}
 			} else {
 				$value= htmlentities($value);
 				echo "$prefix$value$postfix";
 				?>
-				<a href="<?php echo $this->href . $this->ruleNumber; ?>&amp;<?php echo $name; ?>=<?php echo $value; ?>&amp;state=<?php echo $action; ?>">delete</a><br>
+				<a href="<?php echo $this->href . $this->ruleNumber ?>&amp;<?php echo $name ?>=<?php echo $value ?>&amp;state=<?php echo $action ?>"><?php echo _CONTROL('delete') ?></a><br>
 				<?php
 			}
 			?>
@@ -905,8 +917,8 @@ class Rule
 	function editAddValueBox($id, $label, $hint, $size= 0, $disabled= FALSE)
 	{
 		?>
-		<input type="text" id="<?php echo $id; ?>" name="<?php echo $id; ?>" size="<?php echo $size; ?>" placeholder="<?php echo $hint; ?>" <?php echo $disabled ? 'disabled' : ''; ?> />
-		<label for="<?php echo $id; ?>"><?php echo $label; ?></label>
+		<input type="text" id="<?php echo $id ?>" name="<?php echo $id ?>" size="<?php echo $size ?>" placeholder="<?php echo $hint ?>" <?php echo $disabled ? 'disabled' : '' ?> />
+		<label for="<?php echo $id ?>"><?php echo $label ?></label>
 		<?php
 	}
 

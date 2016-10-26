@@ -45,10 +45,10 @@ class LoadAnchor extends Rule
 	function dispAnchor()
 	{
 		?>
-		<td title="Anchor">
+		<td title="<?php echo _TITLE('Anchor') ?>">
 			<?php echo $this->rule['anchor']; ?>
 		</td>
-		<td title="File" colspan="11">
+		<td title="<?php echo _TITLE('File') ?>" colspan="11">
 			<?php echo $this->rule['file']; ?>
 		</td>
 		<?php
@@ -70,8 +70,8 @@ class LoadAnchor extends Rule
 
 		$this->editHead($modified);
 
-		$this->editText('anchor', 'Anchor', 'anchor-id', NULL, 'name, may be nested');
-		$this->editText('file', 'File', FALSE, 40, 'filename');
+		$this->editText('anchor', _TITLE('Anchor'), 'anchor-id', NULL, _CONTROL('name, may be nested'));
+		$this->editText('file', _TITLE('File'), FALSE, 40, _CONTROL('filename'));
 
 		$this->editComment();
 		$this->editTail($modified, $testResult, $generateResult, $action);

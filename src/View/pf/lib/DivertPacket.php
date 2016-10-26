@@ -44,14 +44,14 @@ class DivertPacket extends Filter
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		// Log display spans 2 columns
 		$this->dispLog(2);
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('proto', 'Proto');
+		$this->dispKey('quick', _TITLE('Quick'));
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('divertport', 'Divert Port');
+		$this->dispValue('divertport', _TITLE('Divert Port'));
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -84,9 +84,9 @@ class DivertPacket extends Filter
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
-		$this->editText('divertport', 'Divert Port', 'divert-packet', NULL, 'number, name, table or macro');
+		$this->editText('divertport', _TITLE('Divert Port'), 'divert-packet', NULL, _CONTROL('number, name, table or macro'));
 
 		$this->editFilterOpts();
 

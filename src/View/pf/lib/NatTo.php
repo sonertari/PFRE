@@ -70,10 +70,10 @@ class NatTo extends NatBase
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editNat();
-		$this->editCheckbox('static-port', 'Static Port');
+		$this->editCheckbox('static-port', _TITLE('Static Port'));
 
 		$this->editFilterOpts();
 

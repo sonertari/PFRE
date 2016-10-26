@@ -45,7 +45,7 @@ class State extends Timeout
 	function dispState()
 	{
 		?>
-		<td title="State Defaults" colspan="12">
+		<td title="<?php echo _TITLE('State Defaults') ?>" colspan="12">
 			<?php
 			$this->arr= array();
 
@@ -162,14 +162,14 @@ class State extends Timeout
 
 	function editState()
 	{
-		$this->editText('max', 'Max states', 'max', 10, 'number');
-		$this->editText('max-src-states', 'Max single host states', 'max-src-states', 10, 'number');
-		$this->editText('max-src-nodes', 'Max addresses', 'max-src-nodes', 10, 'number');
-		$this->editText('max-src-conn', 'Max connection', 'max-src-conn', 10, 'number');
-		$this->editText('max-src-conn-rate', 'Max connection rate', 'max-src-conn-rate', 20, 'number/number');
-		$this->editCheckbox('sloppy', 'Sloppy tracker');
-		$this->editCheckbox('no-sync', 'No pfsync');
-		$this->editCheckbox('pflow', 'Export to pflow');
+		$this->editText('max', _TITLE('Max States'), 'max', 10, _CONTROL('number'));
+		$this->editText('max-src-states', _TITLE('Max Single Host States'), 'max-src-states', 10, _CONTROL('number'));
+		$this->editText('max-src-nodes', _TITLE('Max Addresses'), 'max-src-nodes', 10, _CONTROL('number'));
+		$this->editText('max-src-conn', _TITLE('Max Connection'), 'max-src-conn', 10, _CONTROL('number'));
+		$this->editText('max-src-conn-rate', _TITLE('Max Connection Rate'), 'max-src-conn-rate', 20, _CONTROL('number/number'));
+		$this->editCheckbox('sloppy', _TITLE('Sloppy Tracker'));
+		$this->editCheckbox('no-sync', _TITLE('No pfsync'));
+		$this->editCheckbox('pflow', _TITLE('Export To pflow'));
 		$this->editIfBinding();
 		$this->editOverload();
 		$this->editSourceTrack();
@@ -181,7 +181,7 @@ class State extends Timeout
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo _TITLE('Interface binding').':' ?>
+				<?php echo _TITLE('Interface Binding').':' ?>
 			</td>
 			<td>
 				<input type="checkbox" id="if-bound" name="if-bound" value="if-bound" <?php echo ($this->rule['if-bound'] ? 'checked' : ''); ?> <?php echo (isset($this->rule['floating']) ? 'disabled' : ''); ?> />
@@ -202,7 +202,7 @@ class State extends Timeout
 				<?php echo _TITLE('Overload').':' ?>
 			</td>
 			<td>
-				<input type="text" size="20" id="overload" name="overload" value="<?php echo $this->rule['overload']; ?>"  placeholder="string"/>
+				<input type="text" size="20" id="overload" name="overload" value="<?php echo $this->rule['overload']; ?>"  placeholder="<?php echo _CONTROL('string') ?>"/>
 				<input type="checkbox" id="flush" name="flush" value="flush" <?php echo ($this->rule['flush'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['overload']) ? 'disabled' : ''); ?> />
 				<label for="flush">flush</label>
 				<input type="checkbox" id="global" name="global" value="global" <?php echo ($this->rule['global'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['flush']) ? 'disabled' : ''); ?> />
@@ -218,7 +218,7 @@ class State extends Timeout
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo _TITLE('Enable source track').':' ?>
+				<?php echo _TITLE('Enable Source Track').':' ?>
 			</td>
 			<td>
 				<input type="checkbox" id="source-track" name="source-track" value="source-track" <?php echo ($this->rule['source-track'] ? 'checked' : ''); ?> />

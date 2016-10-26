@@ -39,13 +39,13 @@ class FilterBase extends State
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('proto', 'Proto');
+		$this->dispKey('quick', _TITLE('Quick'));
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('state-filter', 'State');
+		$this->dispValue('state-filter', _TITLE('State'));
 		$this->dispQueue();
 		$this->dispTail($ruleNumber, $count);
 	}
@@ -53,7 +53,7 @@ class FilterBase extends State
 	function dispAction()
 	{
 		?>
-		<td title="Action" class="<?php echo $this->rule['action']; ?>" nowrap="nowrap">
+		<td title="<?php echo _TITLE('Action') ?>" class="<?php echo $this->rule['action']; ?>" nowrap="nowrap">
 			<?php echo $this->rule['action']; ?>
 		</td>
 		<?php
@@ -63,13 +63,13 @@ class FilterBase extends State
 	{
 		if ($this->rule['all']) {
 			?>
-			<td title="Source->Destination" colspan="4" class="all">
+			<td title="<?php echo _TITLE('Source->Destination') ?>" colspan="4" class="all">
 				all
 			</td>
 			<?php
 		} else {
 			?>
-			<td title="Source">
+			<td title="<?php echo _TITLE('Source') ?>">
 				<?php
 				if (isset($this->rule['from'])) {
 					$this->printHostPort($this->rule['from']);
@@ -78,10 +78,10 @@ class FilterBase extends State
 				}
 				?>
 			</td>
-			<td title="Source Port">
+			<td title="<?php echo _TITLE('Source Port') ?>">
 				<?php $this->printHostPort($this->rule['fromport']); ?>
 			</td>
-			<td title="Destination">
+			<td title="<?php echo _TITLE('Destination') ?>">
 				<?php
 				if (isset($this->rule['to'])) {
 					$this->printHostPort($this->rule['to']);
@@ -90,7 +90,7 @@ class FilterBase extends State
 				}
 				?>
 			</td>
-			<td title="Destination Port">
+			<td title="<?php echo _TITLE('Destination Port') ?>">
 				<?php $this->printHostPort($this->rule['toport']); ?>
 			</td>
 			<?php
@@ -100,7 +100,7 @@ class FilterBase extends State
 	function dispQueue()
 	{
 		?>
-		<td title="Queue">
+		<td title="<?php echo _TITLE('Queue') ?>">
 			<?php echo isset($this->rule['queue']) ? (!is_array($this->rule['queue']) ? $this->rule['queue'] : $this->rule['queue'][0] . '<br>' . $this->rule['queue'][1]) : ''; ?>
 		</td>
 		<?php
@@ -266,39 +266,39 @@ class FilterBase extends State
 		$this->editDirection();
 		$this->editInterface();
 		$this->editAf();
-		$this->editValues('proto', 'Protocol', 'delProto', 'addProto', 'protocol', NULL, 10);
-		$this->editCheckbox('all', 'Match All');
-		$this->editHost('from', 'Source', 'delFrom', 'addFrom', 'ip, host, table or macro', 'src-dst', NULL, isset($this->rule['all']));
-		$this->editValues('fromport', 'Source Port', 'delFromPort', 'addFromPort', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editHost('to', 'Destination', 'delTo', 'addTo', 'ip, host, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editValues('toport', 'Destination Port', 'delToPort', 'addToPort', 'number, name, table or macro', FALSE, NULL, isset($this->rule['all']));
-		$this->editValues('os', 'OS', 'delOs', 'addOs', 'os name or macro');
+		$this->editValues('proto', _TITLE('Protocol'), 'delProto', 'addProto', _CONTROL('protocol'), NULL, 10);
+		$this->editCheckbox('all', _TITLE('Match All'));
+		$this->editHost('from', _TITLE('Source'), 'delFrom', 'addFrom', _CONTROL('ip, host, table or macro'), 'src-dst', NULL, isset($this->rule['all']));
+		$this->editValues('fromport', _TITLE('Source Port'), 'delFromPort', 'addFromPort', _CONTROL('number, name, table or macro'), FALSE, NULL, isset($this->rule['all']));
+		$this->editHost('to', _TITLE('Destination'), 'delTo', 'addTo', _CONTROL('ip, host, table or macro'), FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('toport', _TITLE('Destination Port'), 'delToPort', 'addToPort', _CONTROL('number, name, table or macro'), FALSE, NULL, isset($this->rule['all']));
+		$this->editValues('os', _TITLE('OS'), 'delOs', 'addOs', _CONTROL('os name or macro'));
 	}
 
 	function editFilterOpts()
 	{
 		$this->editStateFilter();
-		$this->editText('flags', 'TCP Flags', NULL, 20, 'defaults to S/SA');
+		$this->editText('flags', _TITLE('TCP Flags'), NULL, 20, _CONTROL('defaults to S/SA'));
 		$this->editQueue();
-		$this->editIcmpType('icmp', 'ICMP Type', 'delIcmpType', 'addIcmpType');
-		$this->editIcmpType('icmp6', 'ICMP6 Type', 'delIcmp6Type', 'addIcmp6Type');
+		$this->editIcmpType('icmp', _TITLE('ICMP Type'), 'delIcmpType', 'addIcmpType');
+		$this->editIcmpType('icmp6', _TITLE('ICMP6 Type'), 'delIcmp6Type', 'addIcmp6Type');
 		
-		$this->editCheckbox('fragment', 'Fragment');
-		$this->editCheckbox('allow-opts', 'Allow Opts');
-		$this->editCheckbox('once', 'Once');
-		$this->editCheckbox('divert-reply', 'Divert Reply');
+		$this->editCheckbox('fragment', _TITLE('Fragment'));
+		$this->editCheckbox('allow-opts', _TITLE('Allow Opts'));
+		$this->editCheckbox('once', _TITLE('Once'));
+		$this->editCheckbox('divert-reply', _TITLE('Divert Reply'));
 		
-		$this->editValues('user', 'User', 'delUser', 'addUser', 'username or userid');
-		$this->editValues('group', 'Group', 'delGroup', 'addGroup', 'groupname or groupid');
-		$this->editText('label', 'Label', NULL, NULL, 'string');
+		$this->editValues('user', _TITLE('User'), 'delUser', 'addUser', _CONTROL('username or userid'));
+		$this->editValues('group', _TITLE('Group'), 'delGroup', 'addGroup', _CONTROL('groupname or groupid'));
+		$this->editText('label', _TITLE('Label'), NULL, NULL, _CONTROL('string'));
 		$this->editTagged();
-		$this->editText('tag', 'Assign Tag', NULL, NULL, 'string');
-		$this->editText('tos', 'Match TOS', NULL, NULL, 'string or number');
-		$this->editText('set-tos', 'Enforce TOS', NULL, NULL, 'string or number');
-		$this->editText('prio', 'Match Priority', NULL, 10, 'number 0-7');
-		$this->editValues('set-prio', 'Assign Priority', 'delPrio', 'addPrio', 'number 0-7', NULL, 10);
-		$this->editText('probability', 'Probability', NULL, 10, '0-100% or 0-1');
-		$this->editText('rtable', 'Routing Table', NULL, 10, 'number');
+		$this->editText('tag', _TITLE('Assign Tag'), NULL, NULL, _CONTROL('string'));
+		$this->editText('tos', _TITLE('Match TOS'), NULL, NULL, _CONTROL('string or number'));
+		$this->editText('set-tos', _TITLE('Enforce TOS'), NULL, NULL, _CONTROL('string or number'));
+		$this->editText('prio', _TITLE('Match Priority'), NULL, 10, _CONTROL('number 0-7'));
+		$this->editValues('set-prio', _TITLE('Assign Priority'), 'delPrio', 'addPrio', _CONTROL('number 0-7'), NULL, 10);
+		$this->editText('probability', _TITLE('Probability'), NULL, 10, _CONTROL('0-100% or 0-1'));
+		$this->editText('rtable', _TITLE('Routing Table'), NULL, 10, _CONTROL('number'));
 		$this->editReceivedOn();
 	}
 
@@ -334,7 +334,7 @@ class FilterBase extends State
 				$this->editDeleteValueLinks($this->rule[$key], $delName);
 				$this->editAddValueBox($addName, NULL, $hint, $size, $disabled || isset($this->rule[$key . 'route']));
 				?>
-				<input type="text" id="<?php echo $key . 'route' ?>" name="<?php echo $key . 'route' ?>" value="<?php echo $this->rule[$key . 'route']; ?>" size="20" placeholder="label" <?php echo $disabled || isset($this->rule[$key]) ? 'disabled' : ''; ?> />
+				<input type="text" id="<?php echo $key . 'route' ?>" name="<?php echo $key . 'route' ?>" value="<?php echo $this->rule[$key . 'route']; ?>" size="20" placeholder="<?php echo _CONTROL('label') ?>" <?php echo $disabled || isset($this->rule[$key]) ? 'disabled' : ''; ?> />
 				<label for="<?php echo $key . 'route' ?>">route</label>
 				<?php
 				if ($help !== FALSE) {
@@ -383,9 +383,9 @@ class FilterBase extends State
 					<?php
 					$this->editDeleteValueLinks($this->rule[$key . '-type'], $delName);
 					?>
-					<input type="text" id="<?php echo $key; ?>-type" name="<?php echo $key; ?>-type" placeholder="number or name" />
+					<input type="text" id="<?php echo $key; ?>-type" name="<?php echo $key; ?>-type" placeholder="<?php echo _CONTROL('number or name') ?>" />
 					<label for="<?php echo $key; ?>-type">type</label>
-					<input type="text" id="<?php echo $key; ?>-code" name="<?php echo $key; ?>-code" placeholder="number or name" />
+					<input type="text" id="<?php echo $key; ?>-code" name="<?php echo $key; ?>-code" placeholder="<?php echo _CONTROL('number or name') ?>" />
 					<label for="<?php echo $key; ?>-code">code</label>
 					<?php
 					$this->editHelp($key. '-type');
@@ -411,11 +411,11 @@ class FilterBase extends State
 				<?php
 				if (count($queueNames) == 0) {
 					?>
-					<option value="" disabled>No Queues defined</option>
+					<option value="" disabled><?php echo _CONTROL('No Queues defined') ?></option>
 					<?php
 				} else {
 					?>
-					<option value="">none</option>
+					<option value=""><?php echo _CONTROL('none') ?></option>
 					<?php
 					if (!is_array($this->rule['queue'])) {
 						$queuePri= $this->rule['queue'];
@@ -436,11 +436,11 @@ class FilterBase extends State
 				<?php
 				if (count($queueNames) == 0) {
 					?>
-					<option value="" disabled>No Queues defined</option>
+					<option value="" disabled><?php echo _CONTROL('No Queues defined') ?></option>
 					<?php
 				} else {
 					?>
-					<option value="">none</option>
+					<option value=""><?php echo _CONTROL('none') ?></option>
 					<?php
 					if (isset($this->rule['queue'])) {
 						foreach ($queueNames as $queue) {
@@ -464,13 +464,13 @@ class FilterBase extends State
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo 'Match Tagged:' ?>
+				<?php echo _TITLE('Match Tagged') . ':' ?>
 			</td>
 			<td>
-				<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" placeholder="string" />
+				<input type="text" id="tagged" name="tagged" value="<?php echo $this->rule['tagged']; ?>" placeholder="<?php echo _CONTROL('string') ?>" />
 				<?php $this->editHelp('tagged'); ?>
 				<input type="checkbox" id="not-tagged" name="not-tagged" value="not-tagged" <?php echo ($this->rule['not-tagged'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['tagged']) ? 'disabled' : ''); ?> />
-				<label for="not-tagged">negated</label>
+				<label for="not-tagged"><?php echo _TITLE('negated') ?></label>
 			</td>
 		</tr>
 		<?php
@@ -481,13 +481,13 @@ class FilterBase extends State
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo 'Received on Interface:' ?>
+				<?php echo _TITLE('Received on Interface') . ':' ?>
 			</td>
 			<td>
-				<input type="text" id="received-on" name="received-on" value="<?php echo $this->rule['received-on']; ?>" size="10" placeholder="if or macro" />
+				<input type="text" id="received-on" name="received-on" value="<?php echo $this->rule['received-on']; ?>" size="10" placeholder="<?php echo _CONTROL('if or macro') ?>" />
 				<?php $this->editHelp('received-on'); ?>
 				<input type="checkbox" id="not-received-on" name="not-received-on" value="not-received-on" <?php echo ($this->rule['not-received-on'] ? 'checked' : ''); ?> <?php echo (!isset($this->rule['received-on']) ? 'disabled' : ''); ?> />
-				<label for="not-received-on">negated</label>
+				<label for="not-received-on"><?php echo _TITLE('negated') ?></label>
 			</td>
 		</tr>
 		<?php

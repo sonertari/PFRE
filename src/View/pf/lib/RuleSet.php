@@ -99,7 +99,7 @@ class RuleSet
 			$this->filename= $filename;
 			if ($tmp && $tmpFilename !== '') {
 				// Mark uploaded files
-				$this->filename= "$tmpFilename (uploaded)";
+				$this->filename= "$tmpFilename (" . _TITLE('uploaded') . ')';
 			}
 			$rulesArray= json_decode($Output[0], TRUE)['rules'];
 		} else {
@@ -190,11 +190,11 @@ class RuleSet
 	function move($ruleNumber, $moveTo)
 	{
 		if ($ruleNumber < 0 || $ruleNumber >= count($this->rules)) {
-			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid rule number $ruleNumber", 'auto', 'ERROR');
+			PrintHelpWindow(_NOTICE('FAILED') . ': ' . _NOTICE('Invalid rule number') . ": $ruleNumber", 'auto', 'ERROR');
 			return;
 		}
 		if ($moveTo < 0 || $moveTo >= count($this->rules) || $ruleNumber == $moveTo) {
-			PrintHelpWindow(_NOTICE('FAILED').': '."Invalid destination rule number: $moveTo", 'auto', 'ERROR');
+			PrintHelpWindow(_NOTICE('FAILED') . ': ' . _NOTICE('Invalid destination rule number') . ": $moveTo", 'auto', 'ERROR');
 			return;
 		}
 

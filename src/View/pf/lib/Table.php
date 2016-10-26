@@ -39,9 +39,9 @@ class Table extends Rule
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispId();
-		$this->dispKey('const', 'Flag');
-		$this->dispKey('persist', 'Flag');
-		$this->dispKey('counters', 'Flag');
+		$this->dispKey('const', _TITLE('Flag'));
+		$this->dispKey('persist', _TITLE('Flag'));
+		$this->dispKey('counters', _TITLE('Flag'));
 		$this->dispValues();
 		$this->dispTail($ruleNumber, $count);
 	}
@@ -58,7 +58,7 @@ class Table extends Rule
 	function dispValues()
 	{
 		?>
-		<td title="Values" colspan="8">
+		<td title="<?php echo _TITLE('Values') ?>" colspan="8">
 			<?php
 			$this->printValue($this->rule['data']);
 			$this->printValue($this->rule['file'], 'file "', '"');
@@ -89,7 +89,7 @@ class Table extends Rule
 
 		$this->editHead($modified);
 
-		$this->editText('identifier', 'Identifier', FALSE, NULL, 'string');
+		$this->editText('identifier', _TITLE('Identifier'), FALSE, NULL, _CONTROL('string'));
 		$this->editFlags();
 		$this->editValues();
 
@@ -132,9 +132,9 @@ class Table extends Rule
 				<?php
 				$this->editDeleteValueLinks($this->rule['data'], 'delValue');
 				$this->editDeleteValueLinks($this->rule['file'], 'delFile', 'file "', '"');
-				$this->editAddValueBox('addValue', 'add host or network', 'host or network', 30);
+				$this->editAddValueBox('addValue', _TITLE('add host or network'), _CONTROL('host or network'), 30);
 				echo '<br />';
-				$this->editAddValueBox('addFile', 'add file', 'filename', 30);
+				$this->editAddValueBox('addFile', _TITLE('add file'), _CONTROL('filename'), 30);
 				?>
 			</td>
 		</tr>

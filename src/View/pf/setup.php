@@ -178,7 +178,7 @@ Admin can change the user password without knowing the current user password. Bu
 		</tr>
 		<tr class="oddline">
 			<td class="titlegroupbottom">
-				<?php echo _TITLE('New Password again').':' ?>
+				<?php echo _TITLE('New Password Again').':' ?>
 			</td>
 			<td class="valuegroupbottom">
 				<input type="password" name="ReNewPassword" style="width: 100px;" maxlength="20"/>
@@ -188,7 +188,7 @@ Admin can change the user password without knowing the current user password. Bu
 	</form>
 	<tr class="evenline">
 		<td class="title">
-			<?php echo _TITLE('Log level').':' ?>
+			<?php echo _TITLE('Log Level').':' ?>
 		</td>
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
@@ -213,14 +213,15 @@ Admin can change the user password without knowing the current user password. Bu
 	</tr>
 	<tr class="oddline">
 		<td class="title">
-			<?php echo _TITLE('Help boxes').':' ?>
+			<?php echo _TITLE('Help Boxes').':' ?>
 		</td>
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<?php
 				$Button= $ShowHelpBox ? 'Disable' : 'Enable';
+				$ButtonValue= $ShowHelpBox ? _CONTROL('Disable') : _CONTROL('Enable');
 				?>
-				<input type="submit" name="<?php echo $Button ?>HelpBoxes" value="<?php echo _($Button) ?>"/>
+				<input type="submit" name="<?php echo $Button ?>HelpBoxes" value="<?php echo $ButtonValue ?>"/>
 			</form>
 		</td>
 		<td class="none">
@@ -231,7 +232,7 @@ Admin can change the user password without knowing the current user password. Bu
 	</tr>
 	<tr class="evenline">
 		<td class="title">
-			<?php echo _TITLE('Session timeout').':' ?>
+			<?php echo _TITLE('Session Timeout').':' ?>
 		</td>
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
@@ -253,8 +254,10 @@ Admin can change the user password without knowing the current user password. Bu
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
 				<?php
 				$Button= $ForceHTTPs ? 'Disable' : 'Enable';
+				$ButtonValue= $ForceHTTPs ? _CONTROL('Disable') : _CONTROL('Enable');
+				$confirmMsg= str_replace('<BUTTON_VALUE>', $ButtonValue, _CONTROL('Are you sure you want to <BUTTON_VALUE> secure HTTP?'));
 				?>
-				<input type="submit" name="<?php echo $Button ?>ForceHTTPs" value="<?php echo _($Button) ?>" onclick="return confirm('Are you sure you want to <?php echo _($Button) ?> secure HTTP?')"/>
+				<input type="submit" name="<?php echo $Button ?>ForceHTTPs" value="<?php echo $ButtonValue ?>" onclick="return confirm('<?php echo $confirmMsg ?>')"/>
 			</form>
 		</td>
 		<td class="none">
@@ -265,7 +268,7 @@ Admin can change the user password without knowing the current user password. Bu
 	</tr>
 	<tr class="evenline">
 		<td class="title">
-			<?php echo _TITLE('Max anchor nesting').':' ?>
+			<?php echo _TITLE('Max Anchor Nesting').':' ?>
 		</td>
 		<td>
 			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">

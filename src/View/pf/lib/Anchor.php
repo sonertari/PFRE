@@ -39,11 +39,11 @@ class Anchor extends FilterBase
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
-		$this->dispValue('proto', 'Proto');
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('state-filter', 'State');
+		$this->dispValue('state-filter', _TITLE('State'));
 		$this->dispQueue();
 		$this->dispInline();
 		$this->dispTail($ruleNumber, $count);
@@ -67,7 +67,7 @@ class Anchor extends FilterBase
 	function dispAction()
 	{
 		?>
-		<td title="Id" nowrap="nowrap">
+		<td title="<?php echo _TITLE('Id') ?>" nowrap="nowrap">
 			<?php echo $this->rule['identifier']; ?>
 		</td>
 		<?php
@@ -81,7 +81,7 @@ class Anchor extends FilterBase
 	function dispInline()
 	{
 		?>
-		<td title="Inline rules" colspan="2" nowrap="nowrap">
+		<td title="<?php echo _TITLE('Inline rules') ?>" colspan="2" nowrap="nowrap">
 			<?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($this->rule['inline']))); ?>
 		</td>
 		<?php
@@ -120,7 +120,7 @@ class Anchor extends FilterBase
 
 		$this->editHead($modified);
 
-		$this->editText('identifier', 'Identifier', 'anchor-id', NULL, 'name, may be nested');
+		$this->editText('identifier', _TITLE('Identifier'), 'anchor-id', NULL, _CONTROL('name, may be nested'));
 
 		$this->editFilterHead();
 		$this->editFilterOpts();
@@ -139,7 +139,7 @@ class Anchor extends FilterBase
 				<?php echo _TITLE('Inline Rules').':' ?>
 			</td>
 			<td>
-				<textarea cols="80" rows="5" id="inline" name="inline" placeholder="Enter inline rules here"><?php echo $this->rule['inline']; ?></textarea>
+				<textarea cols="80" rows="5" id="inline" name="inline" placeholder="<?php echo _CONTROL('Enter inline rules here') ?>"><?php echo $this->rule['inline']; ?></textarea>
 				<?php $this->editHelp('inline') ?>
 			</td>
 		</tr>

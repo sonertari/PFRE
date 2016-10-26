@@ -38,7 +38,7 @@ class Filter extends FilterBase
 	function dispInterface()
 	{
 		?>
-		<td title="Interface">
+		<td title="<?php echo _TITLE('Interface') ?>">
 			<?php
 			if (isset($this->rule['interface'])) {
 				$this->printValue($this->rule['interface']);
@@ -113,7 +113,7 @@ class Filter extends FilterBase
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editFilterOpts();
 
@@ -161,11 +161,11 @@ class Filter extends FilterBase
 					<option value="return-icmp" <?php echo ($this->rule['blockoption'] == 'return-icmp' ? 'selected' : ''); ?>>return-icmp</option>
 					<option value="return-icmp6" <?php echo ($this->rule['blockoption'] == 'return-icmp6' ? 'selected' : ''); ?>>return-icmp6</option>
 				</select>
-				<input type="text" name="block-ttl" id="block-ttl" value="<?php echo $this->rule['block-ttl']; ?>" size="20" placeholder="number" <?php echo $this->rule['blockoption'] == 'return-rst' ? '' : 'disabled' ?> />
+				<input type="text" name="block-ttl" id="block-ttl" value="<?php echo $this->rule['block-ttl']; ?>" size="20" placeholder="<?php echo _CONTROL('number') ?>" <?php echo $this->rule['blockoption'] == 'return-rst' ? '' : 'disabled' ?> />
 				<label for="block-ttl">ttl</label>
-				<input type="text" name="block-icmpcode" id="block-icmpcode" value="<?php echo $this->rule['block-icmpcode']; ?>" size="20" placeholder="number or abbrev." <?php echo $this->rule['blockoption'] == 'return-icmp' ? '' : 'disabled' ?> />
+				<input type="text" name="block-icmpcode" id="block-icmpcode" value="<?php echo $this->rule['block-icmpcode']; ?>" size="20" placeholder="<?php echo _CONTROL('number or abbrev.') ?>" <?php echo $this->rule['blockoption'] == 'return-icmp' ? '' : 'disabled' ?> />
 				<label for="block-icmpcode">icmpcode</label>
-				<input type="text" name="block-icmp6code" id="block-icmp6code" value="<?php echo $this->rule['block-icmp6code']; ?>" size="20" placeholder="number or abbrev." <?php echo (isset($this->rule['block-icmpcode']) && $this->rule['blockoption'] == 'return-icmp') || $this->rule['blockoption'] == 'return-icmp6' ? '' : 'disabled' ?> />
+				<input type="text" name="block-icmp6code" id="block-icmp6code" value="<?php echo $this->rule['block-icmp6code']; ?>" size="20" placeholder="<?php echo _CONTROL('number or abbrev.') ?>" <?php echo (isset($this->rule['block-icmpcode']) && $this->rule['blockoption'] == 'return-icmp') || $this->rule['blockoption'] == 'return-icmp6' ? '' : 'disabled' ?> />
 				<label for="block-icmp6code">icmp6code</label>
 				<?php $this->editHelp('block') ?>
 			</td>
@@ -183,10 +183,10 @@ class Filter extends FilterBase
 			<td>
 				<?php
 				$this->editDeleteValueLinks($this->rule['interface'], 'delInterface');
-				$this->editAddValueBox('addInterface', NULL, 'if or macro', 10, isset($this->rule['rdomain']));
+				$this->editAddValueBox('addInterface', NULL, _CONTROL('if or macro'), 10, isset($this->rule['rdomain']));
 				$this->editHelp('interface');
 				?>
-				<input type="text" name="rdomain" id="rdomain" value="<?php echo $this->rule['rdomain']; ?>" size="10" placeholder="number" <?php echo isset($this->rule['interface']) ? 'disabled' : '' ?> />
+				<input type="text" name="rdomain" id="rdomain" value="<?php echo $this->rule['rdomain']; ?>" size="10" placeholder="<?php echo _CONTROL('number') ?>" <?php echo isset($this->rule['interface']) ? 'disabled' : '' ?> />
 				<label for="rdomain">routing domain</label>
 				<?php $this->editHelp('rdomain') ?>
 			</td>

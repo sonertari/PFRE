@@ -169,7 +169,7 @@ function HTMLHeader($color= 'white')
 			<meta name="keywords" content="PF, Rule, Editor, :)" />
 			<link rel="stylesheet" href="../pfre.css" type="text/css" media="screen" />
 		</head>
-		<body style="background: <?php echo $color ?>;">
+		<body style="background: <?php echo $color ?>">
 			<table>
 			<?php
 }

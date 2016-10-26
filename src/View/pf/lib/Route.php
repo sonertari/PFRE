@@ -45,14 +45,14 @@ class Route extends Filter
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('proto', 'Proto');
+		$this->dispKey('quick', _TITLE('Quick'));
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('type', 'Type');
-		$this->dispValues('routehost', 'Route Host');
+		$this->dispValue('type', _TITLE('Type'));
+		$this->dispValues('routehost', _TITLE('Route Host'));
 		$this->dispTail($ruleNumber, $count);
 	}
 
@@ -88,10 +88,10 @@ class Route extends Filter
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editRouteType();
-		$this->editValues('routehost', 'Route Host', 'delRouteHost', 'addRouteHost', 'ip, host, table or macro', 'Nat', NULL);
+		$this->editValues('routehost', _TITLE('Route Host'), 'delRouteHost', 'addRouteHost', _CONTROL('ip, host, table or macro'), 'Nat', NULL);
 		$this->editPoolType();
 
 		$this->editFilterOpts();

@@ -44,14 +44,14 @@ class DivertTo extends Filter
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('proto', 'Proto');
+		$this->dispKey('quick', _TITLE('Quick'));
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('diverthost', 'Divert Host');
-		$this->dispValue('divertport', 'Divert Port');
+		$this->dispValue('diverthost', _TITLE('Divert Host'));
+		$this->dispValue('divertport', _TITLE('Divert Port'));
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -85,10 +85,10 @@ class DivertTo extends Filter
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
-		$this->editText('diverthost', 'Divert Host', 'Nat', NULL, 'ip, host, table or macro');
-		$this->editText('divertport', 'Divert Port', 'Nat', NULL, 'number, name, table or macro');
+		$this->editText('diverthost', _TITLE('Divert Host'), 'Nat', NULL, _CONTROL('ip, host, table or macro'));
+		$this->editText('divertport', _TITLE('Divert Port'), 'Nat', NULL, _CONTROL('number, name, table or macro'));
 
 		$this->editFilterOpts();
 

@@ -39,13 +39,13 @@ class Scrub extends Filter
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		$this->dispLog();
-		$this->dispValue('proto', 'Proto');
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('min-ttl', 'Min-ttl');
-		$this->dispValue('max-mss', 'Max-mss');
+		$this->dispValue('min-ttl', _TITLE('Min-ttl'));
+		$this->dispValue('max-mss', _TITLE('Max-mss'));
 		$this->dispScrubOpts();
 		$this->dispTail($ruleNumber, $count);
 	}
@@ -53,7 +53,7 @@ class Scrub extends Filter
 	function dispScrubOpts()
 	{
 		?>
-		<td title="Options">
+		<td title="<?php echo _TITLE('Options') ?>">
 			<?php echo ($this->rule['no-df'] ? 'no-df<br>' : '') . ($this->rule['random-id'] ? 'random-id<br>' : '') . ($this->rule['reassemble'] ? 'reassemble ' . $this->rule['reassemble'] . '<br>' : ''); ?>
 		</td>
 		<?php
@@ -93,11 +93,11 @@ class Scrub extends Filter
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editScrubOptions();
-		$this->editText('min-ttl', 'Min TTL', NULL, 10, 'number');
-		$this->editText('max-mss', 'Max MSS', NULL, 10, 'number');
+		$this->editText('min-ttl', _TITLE('Min TTL'), NULL, 10, _CONTROL('number'));
+		$this->editText('max-mss', _TITLE('Max MSS'), NULL, 10, _CONTROL('number'));
 
 		$this->editFilterOpts();
 

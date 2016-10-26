@@ -145,6 +145,7 @@ define('RE_REASSEMBLE_TCP', '^tcp$');
 define('RE_CONNRATE', '^\d{1,20}\/\d{1,20}$');
 define('RE_SOURCETRACKOPTION', '^(rule|global)$');
 
-define('RE_ICMPTYPE', '^[\w-]{1,20}(| code [\w-]{1,20})$');
-define('RE_ICMPCODE', '^[\w-]{1,20}$');
+$RE_ICMPOPT= '[\w-]{1,20}';
+define('RE_ICMPTYPE', "^$RE_ICMPOPT(| code $RE_ICMPOPT)$");
+define('RE_ICMPCODE', "^$RE_ICMPOPT$");
 ?>

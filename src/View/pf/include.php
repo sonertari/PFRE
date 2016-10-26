@@ -47,8 +47,8 @@ require_once($VIEW_PATH.'/lib/setup.php');
 /// PF module absolute path.
 $PF_PATH= $VIEW_PATH.'/pf';
 
-// Include these before session start in /lib/libauth.php
-// because we save instances of these in the session
+/// @attention Include these rule classes before session start in /lib/libauth.php
+/// because we save instances of these in the session
 require_once($PF_PATH.'/lib/RuleSet.php');
 require_once($PF_PATH.'/lib/Rule.php');
 require_once($PF_PATH.'/lib/Timeout.php');

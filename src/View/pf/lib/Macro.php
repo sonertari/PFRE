@@ -44,9 +44,9 @@ class Macro extends Rule
 	
 	function dispMacro()
 	{
-		$this->dispValue('identifier', 'Id');
+		$this->dispValue('identifier', _TITLE('Id'));
 		?>
-		<td title="Value" colspan="11">
+		<td title="<?php echo _TITLE('Value') ?>" colspan="11">
 			<?php $this->printValue($this->rule['value']); ?>
 		</td>
 		<?php
@@ -69,8 +69,8 @@ class Macro extends Rule
 
 		$this->editHead($modified);
 
-		$this->editText('identifier', 'Identifier', FALSE, NULL, 'valid string');
-		$this->editValues('value', 'Value', 'delValue', 'addValue', 'add value', NULL, 30);
+		$this->editText('identifier', _TITLE('Identifier'), FALSE, NULL, _CONTROL('valid string'));
+		$this->editValues('value', _TITLE('Value'), 'delValue', 'addValue', _CONTROL('add value'), NULL, 30);
 
 		$this->editComment();
 		$this->editTail($modified, $testResult, $generateResult, $action);

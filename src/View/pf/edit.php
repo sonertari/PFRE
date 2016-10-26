@@ -64,7 +64,7 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 		/// @attention Inline anchor rules are multi-line, hence implode.
 		$ruleStr= implode("\n", $Output);
 	} else {
-		$ruleStr= 'ERROR: Cannot generate rule';
+		$ruleStr= _NOTICE('ERROR') . ': ' . _NOTICE('Cannot generate rule');
 	}
 
 	require_once($VIEW_PATH.'/header.php');

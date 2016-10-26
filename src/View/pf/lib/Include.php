@@ -46,10 +46,10 @@ class _Include extends Rule
 	{
 		?>
 		<td class="include">
-			<?php echo 'include'; ?>
+			<?php echo _TITLE('include') ?>
 		</td>
-		<td title="File" colspan="11">
-			<?php echo $this->rule['file']; ?>
+		<td title="<?php echo _TITLE('File') ?>" colspan="11">
+			<?php echo $this->rule['file'] ?>
 		</td>
 		<?php
 	}
@@ -92,7 +92,7 @@ class _Include extends Rule
 					foreach ($ruleFiles as $file) {
 						$file= "$PF_CONFIG_PATH/$file";
 						?>
-						<option value="<?php echo $file; ?>" label="<?php echo $file; ?>" <?php echo ($this->rule['file'] == $file ? 'selected' : ''); ?>><?php echo $file; ?></option>
+						<option value="<?php echo $file ?>" label="<?php echo $file ?>" <?php echo ($this->rule['file'] == $file ? 'selected' : ''); ?>><?php echo $file ?></option>
 						<?php
 					}
 					?>
