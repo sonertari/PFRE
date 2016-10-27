@@ -75,7 +75,7 @@ require_once($VIEW_PATH.'/header.php');
 	</form>
 </fieldset>
 <?php
-echo _TITLE('Rule file') . ': ' . $View->RuleSet->filename;
+echo _TITLE('Rules file') . ': ' . $View->RuleSet->filename;
 ?>
 <hr style="border: 0; border-bottom: 1px solid gray;" />
 

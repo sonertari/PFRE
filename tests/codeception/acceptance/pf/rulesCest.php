@@ -113,7 +113,7 @@ class rulesCest
 		$I->click('Load & Save');
 		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
-		$I->see('Load rulebase');
+		$I->see('Load ruleset');
 
 		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
 
@@ -432,7 +432,7 @@ class rulesCest
 		$I->click('Delete All');
 
 		$I->wait(POPUP_DISPLAY_INTERVAL);
-		$I->seeInPopup('Are you sure you want to delete the entire rulebase?');
+		$I->seeInPopup('Are you sure you want to delete the entire ruleset?');
 		$I->acceptPopup();
 
 		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 0);
@@ -450,7 +450,7 @@ class rulesCest
 		$I->click('Delete All');
 
 		$I->wait(POPUP_DISPLAY_INTERVAL);
-		$I->seeInPopup('Are you sure you want to delete the entire rulebase?');
+		$I->seeInPopup('Are you sure you want to delete the entire ruleset?');
 		$I->cancelPopup();
 
 		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);

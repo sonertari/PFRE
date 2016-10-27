@@ -64,7 +64,8 @@ class Comment extends Rule
 	function input()
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
+			// textarea inserts \r\n instead of just \n, which appears as ^M when saved in a rules file, so delete \r chars
+			$this->rule['comment']= preg_replace('/\r/', '', filter_input(INPUT_POST, 'comment'));
 		}
 
 		$this->inputDelEmpty();

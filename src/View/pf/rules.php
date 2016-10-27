@@ -190,7 +190,7 @@ require_once($VIEW_PATH.'/header.php');
         </form>
     </fieldset>
 	<?php
-	echo _TITLE('Rule file') . ': ' . $View->RuleSet->filename;
+	echo _TITLE('Rules file') . ': ' . $View->RuleSet->filename;
 	?>
     <table>
         <tr>
@@ -203,6 +203,7 @@ require_once($VIEW_PATH.'/header.php');
         </tr>
         <?php
         $ruleNumber= 0;
+		// Passed as a global var.
 		$lineNumber= 0;
         $count = count($View->RuleSet->rules) - 1;
         foreach ($View->RuleSet->rules as $rule) {

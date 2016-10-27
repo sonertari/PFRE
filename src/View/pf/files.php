@@ -174,11 +174,11 @@ $ruleFiles= $Output;
 
 require_once($VIEW_PATH.'/header.php');
 ?>
-<h2><?php echo _TITLE('Load rulebase') ?></h2>
+<h2><?php echo _TITLE('Load ruleset') ?></h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="submit" id="reload" name="reload" value="<?php echo _CONTROL('Reload') ?>" />
-	<label for="reload"><?php echo _CONTROL('Reload main rulebase') ?></label>
+	<label for="reload"><?php echo _CONTROL('Reload main ruleset') . ': /etc/pf.conf' ?></label>
 	<br />
 	<select id="filename" name="filename">
 		<option value="" label=""></option>
@@ -198,19 +198,19 @@ require_once($VIEW_PATH.'/header.php');
 
 <p>&nbsp;</p>
 
-<h2><?php echo _TITLE('Save rulebase') ?></h2>
+<h2><?php echo _TITLE('Save ruleset') ?></h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="text" name="saveFilename" id="saveFilename" value="<?php echo $savefile; ?>" />
 	<input type="submit" id="save" name="save" value="<?php echo _CONTROL('Save') ?>" />
-	<label for="save"><?php echo _CONTROL('Save current working rules to file') ?></label>
+	<label for="save"><?php echo _CONTROL('Save ruleset to file') ?></label>
 	<input type="checkbox" id="forcesave" name="forcesave" <?php echo filter_has_var(INPUT_POST, 'forcesave') ? 'checked' : ''; ?> />
 	<label for="forcesave"><?php echo _CONTROL('Save with errors') ?></label>
 </form>
 
 <p>&nbsp;</p>
 
-<h2><?php echo _TITLE('Delete rulebase') ?></h2>
+<h2><?php echo _TITLE('Delete ruleset') ?></h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<select id="deleteFilename" name="deleteFilename">
@@ -229,23 +229,23 @@ require_once($VIEW_PATH.'/header.php');
 
 <p>&nbsp;</p>
 
-<h2><?php echo _TITLE('Upload rulebase') ?></h2>
+<h2><?php echo _TITLE('Upload ruleset') ?></h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" enctype="multipart/form-data" method="post">
     <input type="submit" id="upload" name="upload" value="<?php echo _CONTROL('Upload') ?>" />
     <input type="hidden" name="max_file_size" value="300000" />
-    <?php echo _TITLE('Upload file') ?>: <input name="file" type="file" />
+    <?php echo _TITLE('Upload rules file') ?>: <input name="file" type="file" />
 	<input type="checkbox" id="forceupload" name="forceupload" <?php echo filter_has_var(INPUT_POST, 'forceupload') ? 'checked' : ''; ?> />
 	<label for="forceupload"><?php echo _CONTROL('Upload with errors') ?></label>
 </form>
 
 <p>&nbsp;</p>
 
-<h2>Download rulebase</h2>
+<h2>Download ruleset</h2>
 <br />
 <form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF'); ?>" method="post">
 	<input type="submit" id="download" name="download" value="<?php echo _CONTROL('Download') ?>" />
-	<label for="download"><?php echo _CONTROL('Download current working rulebase') ?></label>
+	<label for="download"><?php echo _CONTROL('Download ruleset') ?></label>
 	<input type="checkbox" id="forcedownload" name="forcedownload" <?php echo filter_has_var(INPUT_POST, 'forcedownload') ? 'checked' : ''; ?> />
 	<label for="forcedownload"><?php echo _CONTROL('Download with errors') ?></label>
 </form>

@@ -138,7 +138,7 @@ class Model
 				return TRUE;
 			}
 		}
-		Error('Authentication failed');
+		Error(_('Authentication failed'));
 		return FALSE;
 	}
 

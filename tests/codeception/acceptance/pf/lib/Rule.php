@@ -116,7 +116,7 @@ class Rule
 		$I->click('Load & Save');
 		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
-		$I->see('Load rulebase');
+		$I->see('Load ruleset');
 
 		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
 
