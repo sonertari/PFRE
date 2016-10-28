@@ -42,9 +42,13 @@ class Blank extends Rule
 		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 	
+	/**
+	 * Counts lines in the rule.
+	 * 
+	 * @attention Decrement one more time for the rule itself (already incremented in the main display loop in rules.php).
+	 */
 	function countLines()
 	{
-		// Decrement one more time for the rule itself (already incremented in the main display loop in rules.php)
 		return count(explode("\n", $this->rule['blank'])) - 2;
 	}
 
@@ -71,21 +75,36 @@ class Blank extends Rule
 		$this->inputDelEmpty();
 	}
 	
+	/**
+	 * Prints edit page.
+	 * 
+	 * Blank rules are very simple and do not need to be generated.
+	 * 
+	 * @param int $ruleNumber Rule number.
+	 * @param bool $modified Whether the rule is modified or not.
+	 * @param bool $testResult Test result.
+	 * @param bool $generateResult Rule generation result.
+	 * @param string $action Current state of the edit page.
+	 */
 	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
 		$count= count(explode("\n", $this->rule['blank'])) - 1;
+
+		$editHeader= _TITLE('Edit <RULE_TYPE> Rule <RULE_NUMBER>');
+		$editHeader= str_replace('<RULE_TYPE>', 'Blank', $editHeader);
+		$editHeader= str_replace('<RULE_NUMBER>', $ruleNumber, $editHeader);
 		?>
-		<h2>Edit Blank <?php echo $ruleNumber . ($modified ? ' (modified)' : ''); ?></h2>
-		<form id="theform" action="<?php echo $this->href . $ruleNumber; ?>" method="post">
-			<?php echo _('Number of lines') . ': ' . $count; ?><br>
-			<textarea cols="80" rows="5" id="blank" name="blank" placeholder="Enter blank lines here"><?php echo $this->rule['blank']; ?></textarea>
+		<h2><?php echo $editHeader . ($modified ? ' (' . _TITLE('modified') . ')' : '') ?></h2>
+		<form id="editForm" action="<?php echo $this->href . $ruleNumber ?>" method="post">
+			<?php echo _TITLE('Number of lines') . ': ' . $count; ?><br>
+			<textarea cols="80" rows="5" id="blank" name="blank" placeholder="<?php echo _CONTROL('Enter blank lines here') ?>"><?php echo $this->rule['blank']; ?></textarea>
 			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
-				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
+				<input type="submit" id="apply" name="apply" value="<?php echo _CONTROL('Apply') ?>" />
+				<input type="submit" id="save" name="save" value="<?php echo _CONTROL('Save') ?>" <?php echo $modified ? '' : 'disabled' ?> />
+				<input type="submit" id="cancel" name="cancel" value="<?php echo _CONTROL('Cancel') ?>" />
+				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled' ?> />
+				<label for="forcesave"><?php echo _CONTROL('Save with errors') ?></label>
+				<input type="hidden" name="state" value="<?php echo $action ?>" />
 			</div>
 		</form>
 		<?php

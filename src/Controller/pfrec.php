@@ -75,13 +75,31 @@ if ($ArgV[0] === '-t') {
 	$INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
 }
 
+// Controller runs using the session locale of View
+$Locale= $ArgV[0];
+
 $Model= new Pf();
-$Command= $ArgV[0];
+$Command= $ArgV[1];
+
+/// @attention Do not set locale until after model file is included and model is created,
+/// otherwise strings recorded into logs are also translated, such as the strings on Commands array of models.
+/// Strings cannot be untranslated.
+if (!array_key_exists($Locale, $LOCALES)) {
+	$Locale= $DefaultLocale;
+}
+
+putenv('LC_ALL='.$Locale);
+putenv('LANG='.$Locale);
+
+$Domain= 'pfre';
+bindtextdomain($Domain, $VIEW_PATH.'/locale');
+bind_textdomain_codeset($Domain, $LOCALES[$Locale]['Codeset']);
+textdomain($Domain);
 
 $retval= 1;
 
 if (method_exists($Model, $Command)) {
-	$ArgV= array_slice($ArgV, 1);
+	$ArgV= array_slice($ArgV, 2);
 
 	if (array_key_exists($Command, $Model->Commands)) {
 		$run= FALSE;

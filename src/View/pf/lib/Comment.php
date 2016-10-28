@@ -42,9 +42,13 @@ class Comment extends Rule
 		$this->dispTailEditLinks($ruleNumber, $count);
 	}
 
+	/**
+	 * Counts lines in the rule.
+	 * 
+	 * @attention Decrement once for the rule itself (already incremented in the main display loop in rules.php).
+	 */
 	function countLines()
 	{
-		// Decrement once for the rule itself (already incremented in the main display loop in rules.php)
 		return count(explode("\n", $this->rule['comment'])) - 1;
 	}
 
@@ -60,25 +64,40 @@ class Comment extends Rule
 	function input()
 	{
 		if (filter_has_var(INPUT_POST, 'state')) {
-			$this->rule['comment']= filter_input(INPUT_POST, 'comment');
+			// textarea inserts \r\n instead of just \n, which appears as ^M when saved in a rules file, so delete \r chars
+			$this->rule['comment']= preg_replace('/\r/', '', filter_input(INPUT_POST, 'comment'));
 		}
 
 		$this->inputDelEmpty();
 	}
 	
+	/**
+	 * Prints edit page.
+	 * 
+	 * Comment rules are very simple and do not need to be generated.
+	 * 
+	 * @param int $ruleNumber Rule number.
+	 * @param bool $modified Whether the rule is modified or not.
+	 * @param bool $testResult Test result.
+	 * @param bool $generateResult Rule generation result.
+	 * @param string $action Current state of the edit page.
+	 */
 	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
+		$editHeader= _TITLE('Edit <RULE_TYPE> Rule <RULE_NUMBER>');
+		$editHeader= str_replace('<RULE_TYPE>', 'Comment', $editHeader);
+		$editHeader= str_replace('<RULE_NUMBER>', $ruleNumber, $editHeader);
 		?>
-		<h2>Edit Comment <?php echo $ruleNumber . ($modified ? ' (modified)' : ''); ?></h2>
-		<form id="theform" action="<?php echo $this->href . $ruleNumber; ?>" method="post">
-			<textarea cols="80" rows="5" id="comment" name="comment" placeholder="Enter comment here"><?php echo stripslashes($this->rule['comment']); ?></textarea>
+		<h2><?php echo $editHeader . ($modified ? ' (' . _TITLE('modified') . ')' : ''); ?></h2>
+		<form id="editForm" action="<?php echo $this->href . $ruleNumber; ?>" method="post">
+			<textarea cols="80" rows="5" id="comment" name="comment" placeholder="<?php echo _CONTROL('Enter comment here') ?>"><?php echo stripslashes($this->rule['comment']); ?></textarea>
 			<div class="buttons">
-				<input type="submit" id="apply" name="apply" value="Apply" />
-				<input type="submit" id="save" name="save" value="Save" <?php echo $modified ? '' : 'disabled'; ?> />
-				<input type="submit" id="cancel" name="cancel" value="Cancel" />
+				<input type="submit" id="apply" name="apply" value="<?php echo _CONTROL('Apply') ?>" />
+				<input type="submit" id="save" name="save" value="<?php echo _CONTROL('Save') ?>" <?php echo $modified ? '' : 'disabled'; ?> />
+				<input type="submit" id="cancel" name="cancel" value="<?php echo _CONTROL('Cancel') ?>" />
 				<input type="checkbox" id="forcesave" name="forcesave" <?php echo $modified && !$testResult ? '' : 'disabled'; ?> />
-				<label for="forcesave">Save with errors</label>
-				<input type="hidden" name="state" value="<?php echo $action; ?>" />
+				<label for="forcesave"><?php echo _CONTROL('Save with errors') ?></label>
+				<input type="hidden" name="state" value="<?php echo $action ?>" />
 			</div>
 		</form>
 		<?php

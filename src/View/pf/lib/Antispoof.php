@@ -39,10 +39,10 @@ class Antispoof extends Rule
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispInterface();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('af', 'Address Family');
+		$this->dispKey('quick', _TITLE('Quick'));
+		$this->dispValue('af', _TITLE('Address Family'));
 		$this->dispLog(8);
-		$this->dispValue('label', 'Label');
+		$this->dispValue('label', _TITLE('Label'));
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -67,11 +67,11 @@ class Antispoof extends Rule
 		$this->editHead($modified);
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editInterface();
 		$this->editAf();
-		$this->editText('label', 'Label', NULL, NULL, 'string');
+		$this->editText('label', _TITLE('Label'), NULL, NULL, _CONTROL('string'));
 
 		$this->editComment();
 		$this->editTail($modified, $testResult, $generateResult, $action);

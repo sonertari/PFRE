@@ -39,14 +39,14 @@ class NatBase extends Filter
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		$this->dispLog();
-		$this->dispKey('quick', 'Quick');
-		$this->dispValue('proto', 'Proto');
+		$this->dispKey('quick', _TITLE('Quick'));
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValues('redirhost', 'Redirect Host');
-		$this->dispValue('redirport', 'Redirect Port');
+		$this->dispValues('redirhost', _TITLE('Redirect Host'));
+		$this->dispValue('redirport', _TITLE('Redirect Port'));
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -87,7 +87,7 @@ class NatBase extends Filter
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editNat();
 
@@ -99,8 +99,8 @@ class NatBase extends Filter
 
 	function editNat()
 	{
-		$this->editValues('redirhost', 'Redirect Host', 'delRedirHost', 'addRedirHost', 'ip, host, table or macro', 'Nat', NULL);
-		$this->editText('redirport', 'Redirect Port', 'Nat', NULL, 'number, name, table or macro');
+		$this->editValues('redirhost', _TITLE('Redirect Host'), 'delRedirHost', 'addRedirHost', _CONTROL('ip, host, table or macro'), 'Nat', NULL);
+		$this->editText('redirport', _TITLE('Redirect Port'), 'Nat', NULL, _CONTROL('number, name, table or macro'));
 		$this->editPoolType();
 	}
 }

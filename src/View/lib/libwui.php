@@ -35,7 +35,8 @@
  * WUI library functions.
  */
 
-/** Common HTML footer lines.
+/**
+ * Common HTML footer lines.
  *
  * @todo This could be in a separate file to include, not a function.
  */
@@ -82,42 +83,27 @@ function AuthHTMLFooter()
 
 				<?php echo $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR') ?>
 			</td>
-			<?php
-			if (in_array($_SESSION['USER'], $ADMIN)) {
-				$file= filter_input(INPUT_SERVER, 'DOCUMENT_ROOT').filter_input(INPUT_SERVER, 'PHP_SELF');
-				if ($View->Controller($output, 'GetFileCvsTag', $file)) {
-					$cvstag= $output[0];
-				}
-				else {
-					$cvstag= _TITLE2('CVS Tag');
-				}
-				?>
-				<td class="cvs">
-					<?php echo $cvstag ?>
-				</td>
-				<?php
-			}
-			?>
 			<td>
-				<?php echo _TITLE2('Copyright') ?> (c) 2016 Soner Tari. <?php echo _TITLE2('All rights reserved.') ?>
+				<?php echo _TITLE('Copyright') ?> (c) 2016 Soner Tari. <?php echo _TITLE('All rights reserved.') ?>
 			</td>
 		</tr>
 	<?php
 	HTMLFooter();
 }
 
-/** Checks and prints a warning if the page is not active.
+/**
+ * Checks and prints a warning if the page is not active.
  *
  * $active is set during left and top menu creation according to logged in user.
  *
- * @param[in]	$active	boolean Whether the page was active
+ * @param bool $active Whether the page was active or not.
  */
 function CheckPageActivation($active)
 {
 	global $VIEW_PATH, $Submenu;
 
 	if (!$active) {
-		echo _TITLE2('Resource not available').': '.$Submenu;
+		echo _TITLE('Resource not available').': '.$Submenu;
 
 		require_once($VIEW_PATH.'/footer.php');
 		pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Page not active.');
@@ -125,17 +111,18 @@ function CheckPageActivation($active)
 	}
 }
 
-/** Prints the message in a simple box, without an image.
+/**
+ * Prints the message in a simple box, without an image.
  *
  * Used in simple info boxes on the right of components.
  * New lines are replaced with html breaks before displaying.
  *
- * @param[in]	$msg	Message string
- * @param[in]	$width	Box width, defaults to 300px
- *
  * @warning Checks if $msg is empty, because some automatized functions may
  * not pass a non-empth string (such as on configuration pages), thus the box
  * should not be displayed. Just take debug logs.
+ *
+ * @param string $msg Message to display.
+ * @param int $width Box width, defaults to 300px.
  */
 function PrintHelpBox($msg= '', $width= 300)
 {
@@ -164,25 +151,27 @@ function PrintHelpBox($msg= '', $width= 300)
 	}
 }
 
-/** Prints the message in a box with a title bar and an image.
+/**
+ * Prints the message in a box with a title bar and an image.
  *
  * Used as the main explanation box on a page.
  * New lines are replaced with html breaks before displaying.
  *
- * @param[in]	$msg	Message string
- * @param[in]	$width	Box width, defaults to auto
- * @param[in]	$type	Image type to display
- *
  * @warning $Width type should be string, because some functions use 'auto'.
+ *
+ * @param string $msg Message to display.
+ * @param int $width Box width, defaults to auto.
+ * @param string $type Image type to display.
  */
 function PrintHelpWindow($msg, $width= 'auto', $type= 'INFO')
 {
 	global $IMG_PATH, $InHelpRegion, $ErrorMsg, $WarnMsg, $InfoMsg, $ShowHelpBox;
 
-	/** Types of help boxes.
+	/**
+	 * Types of help boxes.
 	 *
-	 * @param name	Title string
-	 * @param icon	Image to display on top-left corner
+	 * @param string name Title string.
+	 * @param string icon Image to display on the top-left corner of the box.
 	 */
 	$HelpBoxTypes = array(
 		'INFO' => array(

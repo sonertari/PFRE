@@ -46,16 +46,35 @@ if (filter_has_var(INPUT_GET, 'logout')) {
 	LogUserOut();
 }
 
-/** Wrapper for syslog().
+if (filter_has_var(INPUT_POST, 'Locale')) {
+	$_SESSION['Locale'] = filter_input(INPUT_POST, 'Locale');
+	// To refresh the page after language change
+	header('Location: '.$_SERVER['REQUEST_URI']);
+	exit;
+}
+
+if (!isset($_SESSION['Locale'])) {
+	$_SESSION['Locale']= $DefaultLocale;
+}
+putenv('LC_ALL='.$_SESSION['Locale']);
+putenv('LANG='.$_SESSION['Locale']);
+
+$Domain= 'pfre';
+bindtextdomain($Domain, $VIEW_PATH.'/locale');
+bind_textdomain_codeset($Domain, $LOCALES[$_SESSION['Locale']]['Codeset']);
+textdomain($Domain);
+
+/**
+ * Wrapper for syslog().
  *
  * Web interface related syslog messages.
  * A global $LOG_LEVEL is set in setup.php.
  *
- * @param[in]	$prio	Log priority checked against $LOG_LEVEL
- * @param[in]	$file	Source file the function is in
- * @param[in]	$func	Function where the log is taken
- * @param[in]	$line	Line number within the function
- * @param[in]	$msg	Log message
+ * @param int $prio Log priority checked against $LOG_LEVEL.
+ * @param string $file Source file the function is in.
+ * @param string $func Function where the log is taken.
+ * @param int $line Line number within the function.
+ * @param string $msg Log message.
  */
 function pfrewui_syslog($prio, $file, $func, $line, $msg)
 {
@@ -83,11 +102,12 @@ function pfrewui_syslog($prio, $file, $func, $line, $msg)
 	}
 }
 
-/** Logs user out by setting session USER var to loggedout.
+/**
+ * Logs user out by setting session USER var to loggedout.
  *
  * Redirects to the main index page, which asks for re-authentication.
  *
- * @param[in]	$reason	string Reason for log message
+ * @param string $reason Reason for log message.
  */
 function LogUserOut($reason= 'User logged out')
 {
@@ -105,14 +125,15 @@ function LogUserOut($reason= 'User logged out')
 	exit;
 }
 
-/** Authenticates session user with the password supplied.
+/**
+ * Authenticates session user with the password supplied.
  *
  * Passwords are sha1 encrypted before passed to Controller,
  * so the password string is never passed around plain text.
  * This means double encryption in the password file,
  * because Model encrypts again while storing into the file.
  *
- * @param[in]	$passwd	string Password submitted by user
+ * @param string $passwd Password submitted by user.
  */
 function Authentication($passwd)
 {
@@ -148,25 +169,26 @@ function Authentication($passwd)
 	exit;
 }
 
-/** HTML Header.
+/**
+ * HTML Header.
  *
- * @param[in]	$reloadrate	Page reload rate, defaults to 0 (no reload)
- * @param[in]	$color		Page background, Login page uses gray
+ * @param string $color Page background, Login page uses gray.
  */
 function HTMLHeader($color= 'white')
 {
+	global $LOCALES;
 	?>
 	<!DOCTYPE html>
 	<html>
 		<head>
 			<title><?php echo _MENU('PF Rule Editor') ?></title>
-			<meta http-equiv="content-type" content="text/html" />
+			<meta http-equiv="content-type" content="text/html; charset=<?php echo $LOCALES[$_SESSION['Locale']]['Codeset'] ?>" />
 			<meta name="description" content="PF Rule Editor" />
 			<meta name="author" content="Soner Tari"/>
 			<meta name="keywords" content="PF, Rule, Editor, :)" />
 			<link rel="stylesheet" href="../pfre.css" type="text/css" media="screen" />
 		</head>
-		<body style="background: <?php echo $color ?>;">
+		<body style="background: <?php echo $color ?>">
 			<table>
 			<?php
 }
@@ -180,10 +202,11 @@ function HTMLFooter()
 	<?php
 }
 
-/** Sets session submenu variable.
+/**
+ * Sets session submenu variable.
  *
- * @param[in]	$default	string Default submenu selected
- * @return string Selected submenu
+ * @param string $default Default submenu selected.
+ * @return string Selected submenu.
  */
 function SetSubmenu($default)
 {

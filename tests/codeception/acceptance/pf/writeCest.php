@@ -117,6 +117,9 @@ include "/etc/pfre/include.conf" # Test
 		$I->click('Login');
 
 		$I->seeInCurrentUrl('pf/conf.php');
+
+		$I->selectOption('#Locale', 'English');
+		$I->seeOptionIsSelected('#Locale', 'English');
 	}
 
 	protected function loadTestRules(AcceptanceTester $I)
@@ -124,7 +127,7 @@ include "/etc/pfre/include.conf" # Test
 		$I->click('Load & Save');
 		$I->wait(STALE_ELEMENT_INTERVAL);
 		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
-		$I->see('Load rulebase');
+		$I->see('Load ruleset');
 
 		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
 
@@ -141,7 +144,7 @@ include "/etc/pfre/include.conf" # Test
 	{
 		$I->seeInPageSource('<input type="submit" id="install" name="install" value="Install" disabled');
 
-		$I->see('Rule file: test.conf (uploaded)');
+		$I->see('Rules file: test.conf (uploaded)');
 		$I->dontSee($this->generatedRules);
 
 		$I->seeCheckboxIsChecked('#numbers');
@@ -157,7 +160,7 @@ include "/etc/pfre/include.conf" # Test
 	{
 		$I->seeInPageSource('<input type="submit" id="install" name="install" value="Install" disabled');
 
-		$I->see('Rule file: test.conf (uploaded)');
+		$I->see('Rules file: test.conf (uploaded)');
 		$I->dontSee($this->generatedRulesWithoutNumbers);
 
 		$I->uncheckOption('#numbers');

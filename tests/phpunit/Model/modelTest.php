@@ -40,30 +40,6 @@ require_once($MODEL_PATH.'/model.php');
 
 class modelTest extends \PHPUnit_Framework_TestCase
 {
-	function testGetFileCvsTag()
-	{
-		global $TEST_DIR_PATH, $Output;
-
-		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/View/test.php';
-
-		$model= new \Model();
-		$result= $model->GetFileCvsTag($file);
-
-		$contents= file_get_contents($file);
-
-		$tag= '';
-		$re= '/:\s+(.*\.php,v\s+[\d.:\/\s]+)\s+/';
-		if (preg_match($re, $contents, $match)) {
-			$tag= $match[1];
-		}
-
-		$expected= $tag;
-		$actual= $Output;
-
-		$this->assertTrue($result);
-		$this->assertEquals($expected, $actual);
-	}
-
 	function testSetLogLevel()
 	{
 		global $TEST_DIR_PATH;

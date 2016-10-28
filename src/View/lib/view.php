@@ -37,13 +37,14 @@
 
 class View
 {
-	/** Calls the controller.
+	/**
+	 * Calls the controller.
 	 *
 	 * Both command and arguments are passed as variable arguments.
 	 *
-	 * @param[out]	$output			Output of the command
-	 * @param[in]	Variable_Args	Command line in variable arguments
-	 * @return boolean Return value of shell command (adjusted for PHP)
+	 * @param array $output Output of the command.
+	 * @param mixed Variable_Args Elements of the command line in variable arguments.
+	 * @return bool Return value of shell command (adjusted for PHP).
 	 */
 	function Controller(&$output)
 	{
@@ -58,7 +59,8 @@ class View
 			$argv= array_slice($argv, 1);
 
 			if ($this->EscapeArgs($argv, $cmdline)) {
-				$cmdline= "/usr/bin/doas $pfrec $cmdline";
+				$locale= $_SESSION['Locale'];
+				$cmdline= "/usr/bin/doas $pfrec $locale $cmdline";
 				
 				// Init command output
 				$outputArray= array();
@@ -99,11 +101,12 @@ class View
 		return $return;
 	}
 	
-	/** Escapes the arguments passed to Controller() and builds the command line.
+	/**
+	 * Escapes the arguments passed to Controller() and builds the command line.
 	 *
-	 * @param[in]	$argv		Command and arguments array
-	 * @param[out]	$cmdline	Actual command line to run
-	 * @return boolean
+	 * @param array $argv Command and arguments array.
+	 * @param string $cmdline Actual command line to run.
+	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function EscapeArgs($argv, &$cmdline)
 	{
@@ -148,18 +151,6 @@ function _TITLE($str)
 
 /// For classifying gettext strings into files.
 function _HELPBOX($str)
-{
-	return _($str);
-}
-
-/// For classifying gettext strings into files.
-function _HELPWINDOW($str)
-{
-	return _($str);
-}
-
-/// For classifying gettext strings into files.
-function _TITLE2($str)
 {
 	return _($str);
 }

@@ -92,11 +92,12 @@ class RuleSet
 			$ruleObj= new $cat('');
 			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber, $force)) {
 				if (!$force) {
-					$msg= 'Error loading, rule loaded partially';
+					Error($nestingStr . _('Rule') . " $ruleNumber: " . _('Error loading, rule loaded partially'));
+					pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $ruleNumber: Error loading, rule loaded partially");
 				} else {
-					$msg= 'Error loading, rule load forced';
+					Error($nestingStr . _('Rule') . " $ruleNumber: " . _('Error loading, rule load forced'));
+					pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $ruleNumber: Error loading, rule load forced");
 				}
-				pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, Error($nestingStr . "Rule $ruleNumber: $msg"));
 				$retval= FALSE;
 			}
 			$this->rules[]= $ruleObj;
@@ -133,17 +134,17 @@ class RuleSet
 	function parse($text, $force= FALSE)
 	{
 		$this->deleteRules();
-		$rulebase= array();
+		$ruleLines= array();
 
 		$text= preg_replace("/\n#/", "\n# ", $text);
 		$text= str_replace("\\\n", '', $text);
 
-		$rulebase= explode("\n", $text);
+		$ruleLines= explode("\n", $text);
 
 		$blank= '';
 
-		for ($index= 0; $index < count($rulebase); $index++) {
-			$str= $rulebase[$index];
+		for ($index= 0; $index < count($ruleLines); $index++) {
+			$str= $ruleLines[$index];
 			$words= preg_split('/[\s,\t]+/', trim($str), -1);
 			
 			$type= $words[0];
@@ -169,7 +170,7 @@ class RuleSet
 			}
 
 			if ($type === 'anchor' && preg_match('/^.*{\s*$/', $str)) {
-				$this->parseInlineRules($rulebase, $str, $index, $force);
+				$this->parseInlineRules($ruleLines, $str, $index, $force);
 			}
 
 			switch ($type) {
@@ -281,7 +282,8 @@ class RuleSet
 		// Reload for validation
 		$rulesArray= json_decode(json_encode($this->rules), TRUE);
 		if (!$this->load($rulesArray, $force)) {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, Error('Load Error: Ruleset contains errors'));
+			Error(_('Load Error') . ': ' . _('Ruleset contains errors'));
+			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Load Error: Ruleset contains errors');
 			return FALSE;
 		}
 		return TRUE;
@@ -312,12 +314,12 @@ class RuleSet
 	 * the method stops collecting and combining inline rules after $MaxAnchorNesting
 	 * number of nesting is reached.
 	 * 
-	 * @param array $rules Rule strings in array format.
+	 * @param array $ruleLines Rule strings in array format.
 	 * @param string $str Current anchor rule in string format.
 	 * @param int $index Index pointing at the current line.
 	 * @param bool $force Forces collection of inline rules even after nesting limit is reached.
 	 */
-	function parseInlineRules($rules, &$str, &$index, $force= FALSE)
+	function parseInlineRules($ruleLines, &$str, &$index, $force= FALSE)
 	{
 		global $MaxAnchorNesting;
 
@@ -326,8 +328,8 @@ class RuleSet
 
 			$nesting= 1;
 			$index++;
-			while ($index < count($rules)) {
-				$line= $rules[$index];
+			while ($index < count($ruleLines)) {
+				$line= $ruleLines[$index];
 
 				// anchor-close = "}", but there may be a comment after it, hence match
 				if (!preg_match('/^\s*}(.*)$/', $line, $match)) {
@@ -336,7 +338,7 @@ class RuleSet
 					if (preg_match('/^.*{\s*$/', $line)) {
 						// Do not allow more than $MaxAnchorNesting count of nested inline rules
 						if (++$nesting > $MaxAnchorNesting) {
-							Error("Parse Error: Reached max nesting for inline anchors: <pre>" . htmlentities(print_r($line, TRUE)) . '</pre>');
+							Error(_('Parse Error') . ': ' . _('Reached max nesting for inline anchors') . ': <pre>' . htmlentities(print_r($line, TRUE)) . '</pre>');
 							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parse Error: Reached max nesting for inline anchors: $line");
 							if (!$force) {
 								break;

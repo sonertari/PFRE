@@ -56,9 +56,9 @@ if ($View->RuleSet->filename == '') {
 	$ruleSet= new RuleSet();
 	if ($ruleSet->load($filepath, 0, TRUE)) {
 		$View->RuleSet= $ruleSet;
-		PrintHelpWindow('Rules loaded: ' . $View->RuleSet->filename);
+		PrintHelpWindow(_NOTICE('Rules loaded') . ': ' . $View->RuleSet->filename);
 	} else {
-		PrintHelpWindow("<br>Failed loading: $filepath", NULL, 'ERROR');
+		PrintHelpWindow('<br>' . _NOTICE('Failed loading') . ": $filepath", NULL, 'ERROR');
 	}
 }
 ?>

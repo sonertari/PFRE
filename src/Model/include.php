@@ -95,9 +95,6 @@ $Error= '';
  *
  * Output strings are accumulated in global $Output var and returned to View.
  * 
- * We return the given $msg param as is, so that we can use this function to print
- * the same message in the logs too.
- * 
  * @param string $msg Output message.
  */
 function Output($msg)
@@ -110,17 +107,12 @@ function Output($msg)
 	else {
 		$Output.= "\n".$msg;
 	}
-	// For transparent use of this function
-	return $msg;
 }
 
 /**
  * Sets or updates $Error with the given message.
  *
  * Error strings are accumulated in global $Error var and returned to View.
- * 
- * We return the given $msg param as is, so that we can use this function to print
- * the same message in the logs too.
  * 
  * @param string $msg Error message.
  */
@@ -134,8 +126,6 @@ function Error($msg)
 	else {
 		$Error.= "\n".$msg;
 	}
-	// For transparent use of this function
-	return $msg;
 }
 
 /**

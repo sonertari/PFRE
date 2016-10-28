@@ -44,14 +44,14 @@ class AfTo extends Filter
 	{
 		$this->dispHead($ruleNumber);
 		$this->dispAction();
-		$this->dispValue('direction', 'Direction');
+		$this->dispValue('direction', _TITLE('Direction'));
 		$this->dispInterface();
 		$this->dispLog();
-		$this->dispValue('proto', 'Proto');
+		$this->dispValue('proto', _TITLE('Proto'));
 		$this->dispSrcDest();
-		$this->dispValue('rediraf', 'Redirect Address Family');
-		$this->dispValues('redirhost', 'From Redirect Host');
-		$this->dispValues('toredirhost', 'To Redirect Host');
+		$this->dispValue('rediraf', _TITLE('Redirect Address Family'));
+		$this->dispValues('redirhost', _TITLE('From Redirect Host'));
+		$this->dispValues('toredirhost', _TITLE('To Redirect Host'));
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -90,11 +90,11 @@ class AfTo extends Filter
 		$this->editFilterHead();
 
 		$this->editLog();
-		$this->editCheckbox('quick', 'Quick');
+		$this->editCheckbox('quick', _TITLE('Quick'));
 
 		$this->editRedirAf();
-		$this->editValues('redirhost', 'From Redirect Host', 'delRedirHost', 'addRedirHost', 'ip, host, table or macro', 'Nat', NULL);
-		$this->editValues('toredirhost', 'To Redirect Host', 'delToRedirHost', 'addToRedirHost', 'ip, host, table or macro', 'Nat', NULL);
+		$this->editValues('redirhost', _TITLE('From Redirect Host'), 'delRedirHost', 'addRedirHost', _CONTROL('ip, host, table or macro'), 'Nat', NULL);
+		$this->editValues('toredirhost', _TITLE('To Redirect Host'), 'delToRedirHost', 'addToRedirHost', _CONTROL('ip, host, table or macro'), 'Nat', NULL);
 
 		$this->editPoolType();
 

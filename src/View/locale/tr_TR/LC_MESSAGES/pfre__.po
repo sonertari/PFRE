@@ -1,0 +1,199 @@
+# Copyright (c) 2016 Soner Tari, The PFRE project
+# This file is distributed under the same license as PFRE.
+# Soner Tari <sonertari@gmail.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: PFRE 5.9\n"
+"Last-Translator: Soner Tari <sonertari@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Team: Turkish <>\n"
+"PO-Revision-Date: 2016-10-27 22:49+0300\n"
+
+msgid "Arg type check failed"
+msgstr "Parametre tip kontrolü başarısız oldu"
+
+msgid "Authentication failed"
+msgstr "Kullanıcı doğrulama başarısız oldu"
+
+msgid "Cannot fork pfctl process"
+msgstr "Pfctl süreci fork edilemedi"
+
+msgid "Cannot install pf rule file"
+msgstr "Pf kural dosyası kurulamadı"
+
+msgid "Cannot load pf rules"
+msgstr "Pf kuralları yüklenemedi"
+
+msgid "Cannot remove tmp pf file"
+msgstr "Geçici pf dosyası silinemedi"
+
+msgid "Cannot write to tmp pf file"
+msgstr "Geçici pf dosyasına yazılamadı"
+
+msgid "Check authentication"
+msgstr "Kullanıcı doğrulama"
+
+msgid "Delete pf rule file"
+msgstr "Pf kural dosyası silme"
+
+msgid "English"
+msgstr "İngilizce"
+
+msgid "Error in include file"
+msgstr "Eklenen dosyada hata"
+
+msgid "Error loading, rule load forced"
+msgstr "Yüklemede hata, kural hatalara rağmen yüklendi"
+
+msgid "Error loading, rule loaded partially"
+msgstr "Yüklemede hata, kural sorunlu olarak yüklendi"
+
+msgid "Failed creating or attaching to message queue"
+msgstr "Mesaj kuyruğu yaratılamadı veya bağlantı başarısız oldu"
+
+msgid "Failed loading pf rules"
+msgstr "Pf kural yüklemesi başarısız oldu"
+
+msgid "Failed removing message queue"
+msgstr "Mesaj kuyruğunun silinmesi başarısız oldu"
+
+msgid "Failed testing pf rules"
+msgstr "Pf kurallarının testi başarısız oldu"
+
+msgid "Filename not accepted"
+msgstr "Dosya adı kabul edilmedi"
+
+msgid "Filepath wrong"
+msgstr "Dosya yolu yanlış"
+
+msgid "Generate pf rule"
+msgstr "Pf kural üretimi"
+
+msgid "Generate pf rules"
+msgstr "Pf kural listesi üretimi"
+
+msgid "Get pf rule files"
+msgstr "Pf kural dosyalarını alma"
+
+msgid "Get pf rules"
+msgstr "Pf kurallarını alma"
+
+msgid "Install pf rules"
+msgstr "Pf kurallarını kurma"
+
+msgid "Invalid inline rules, parser output"
+msgstr "Geçersiz satıriçi kurallar, işleme çıktısı"
+
+msgid "Invalid value for"
+msgstr "Geçersiz değer"
+
+msgid "Line"
+msgstr "Satır"
+
+msgid "Load Error"
+msgstr "Yükleme Hatası"
+
+msgid "Method does not exist"
+msgstr "Böyle bir yöntem yok"
+
+msgid "Multiple values not allowed for"
+msgstr "Birden fazla değer kullanılamaz"
+
+msgid "Name wrong"
+msgstr "Ad yanlış"
+
+msgid "No regex or func def for"
+msgstr "Regex veya fonksiyon tanımlanmamış"
+
+msgid "No such file"
+msgstr "Böyle bir dosya yok"
+
+msgid "Not JSON encoded string"
+msgstr "JSON ile kodlanmış bir metin değil"
+
+msgid "Not boolean"
+msgstr "Boolean değir"
+
+msgid "Not enough args"
+msgstr "Parametre sayısı yetersiz"
+
+msgid "Not running command"
+msgstr "Komut çalıştırılmadı"
+
+msgid "Not sha1 encrypted string"
+msgstr "Sha1 ile şifrelenmiş bir metin değil"
+
+msgid "Number wrong"
+msgstr "Sayı yanlış"
+
+msgid "Output not in correct format"
+msgstr "Çıktı doğru yapıda değil"
+
+msgid "Parse Error"
+msgstr "İşleme Hatası"
+
+msgid "Reached max nesting for inline anchors"
+msgstr "Satıriçi çapalar için en fazla içiçe sayıya ulaşıldı"
+
+msgid "Required element missing"
+msgstr "Gerekli eleman yok"
+
+msgid "Rule"
+msgstr "Kural"
+
+msgid "Ruleset contains errors"
+msgstr "Kural listesinde hata var"
+
+msgid "Set default locale"
+msgstr "Öntanımlı dili ayarla"
+
+msgid "Set force HTTPs"
+msgstr "HTTPs uygulamayı ayarla"
+
+msgid "Set help boxes"
+msgstr "Yardım kutularını ayarla"
+
+msgid "Set log level"
+msgstr "Kayıt seviyesini ayarla"
+
+msgid "Set max anchor nesting"
+msgstr "En fazla içiçe çapa sayısını ayarla"
+
+msgid "Set pfctl timeout"
+msgstr "Pfctl zaman aşımını ayarla"
+
+msgid "Set session timeout"
+msgstr "Oturum zaman aşımını ayarla"
+
+msgid "Set user password"
+msgstr "Kullanıcı parolasını ayarla"
+
+msgid "Test pf rules"
+msgstr "Pf kurallarını test et"
+
+msgid "Timed out running pfctl command"
+msgstr "Pfctl komutu zaman aşımına uğradı"
+
+msgid "Too many args, truncating"
+msgstr "Fazla parametreler atıldı"
+
+msgid "Turkish"
+msgstr "Türkçe"
+
+msgid "Unexpected elements"
+msgstr "Beklenmeyen elemanlar"
+
+msgid "Unsupported command"
+msgstr "Desteklenmeyen komut"
+
+msgid "Validation Error"
+msgstr "Doğrulama Hatası"
+
+msgid "Will not load rules with errors"
+msgstr "Hatalı kurallar yüklenmez"
+
+msgid "Will not test rules with errors"
+msgstr "Hatalı kurallar test edilmez"

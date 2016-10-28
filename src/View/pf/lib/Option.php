@@ -45,7 +45,7 @@ class Option extends Rule
 	function dispOption()
 	{
 		?>
-		<td title="Option" colspan="12">
+		<td title="<?php echo _TITLE('Option') ?>" colspan="12">
 			<?php
 			$value= $this->rule[$this->rule['type']];
 			if (in_array($this->rule['type'], array('loginterface', 'optimization', 'ruleset-optimization', 'block-policy', 'state-policy', 'debug', 'fingerprints', 'hostid'))) {
@@ -236,7 +236,7 @@ class Option extends Rule
 					<?php echo _TITLE('Fingerprints File').':' ?>
 				</td>
 				<td>
-					<input type="text" size="50" id="fingerprints" name="fingerprints" value="<?php echo $this->rule['fingerprints']; ?>" placeholder="filename"/>
+					<input type="text" size="50" id="fingerprints" name="fingerprints" value="<?php echo $this->rule['fingerprints']; ?>" placeholder="<?php echo _CONTROL('filename') ?>"/>
 					<?php $this->editHelp('fingerprints') ?>
 				</td>
 			</tr>
@@ -253,7 +253,7 @@ class Option extends Rule
 					<?php echo _TITLE('Host Id').':' ?>
 				</td>
 				<td>
-					<input type="text" size="20" id="hostid" name="hostid" value="<?php echo $this->rule['hostid']; ?>"  placeholder="number"/>
+					<input type="text" size="20" id="hostid" name="hostid" value="<?php echo $this->rule['hostid']; ?>"  placeholder="<?php echo _CONTROL('number') ?>"/>
 					<?php $this->editHelp('hostid') ?>
 				</td>
 			</tr>
@@ -270,7 +270,7 @@ class Option extends Rule
 					<?php echo _TITLE('Log Interface').':' ?>
 				</td>
 				<td>
-					<input type="text" size="10" id="loginterface" name="loginterface" value="<?php echo $this->rule['loginterface']; ?>"  placeholder="interface"/>
+					<input type="text" size="10" id="loginterface" name="loginterface" value="<?php echo $this->rule['loginterface']; ?>"  placeholder="<?php echo _CONTROL('interface') ?>"/>
 					<?php $this->editHelp('loginterface') ?>
 				</td>
 			</tr>
@@ -315,7 +315,7 @@ class Option extends Rule
 				<td>
 					<?php
 					$this->editDeleteValueLinks($this->rule['skip'], 'delSkip');
-					$this->editAddValueBox('addSkip', NULL, 'if or macro', 40);
+					$this->editAddValueBox('addSkip', NULL, _CONTROL('if or macro'), 40);
 					$this->editHelp('skip');
 					?>
 				</td>
@@ -334,8 +334,8 @@ class Option extends Rule
 				</td>
 				<td>
 					<select id="reassemble" name="reassemble">
-						<option value="yes" <?php echo ($this->rule['reassemble'] == 'yes' ? 'selected' : ''); ?>>yes</option>
-						<option value="no" <?php echo ($this->rule['reassemble'] == 'no' ? 'selected' : ''); ?>>no</option>
+						<option value="yes" <?php echo ($this->rule['reassemble'] == 'yes' ? 'selected' : ''); ?>><?php echo _CONTROL('yes') ?></option>
+						<option value="no" <?php echo ($this->rule['reassemble'] == 'no' ? 'selected' : ''); ?>><?php echo _CONTROL('no') ?></option>
 					</select>
 					<?php $this->editHelp('reassemble') ?>
 					<input type="checkbox" id="no-df" name="no-df" value="no-df" <?php echo ($this->rule['no-df'] ? 'checked' : ''); ?> />

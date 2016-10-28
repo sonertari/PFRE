@@ -54,6 +54,9 @@ class setupCest
 
 		$I->seeInCurrentUrl('pf/conf.php');
 
+		$I->selectOption('#Locale', 'English');
+		$I->seeOptionIsSelected('#Locale', 'English');
+
 		$I->click('Setup');
 	}
 

@@ -45,7 +45,7 @@ class Timeout extends Rule
 	function dispTimeout()
 	{
 		?>
-		<td title="Timeout" colspan="12">
+		<td title="<?php echo _TITLE('Timeout') ?>" colspan="12">
 			<?php
 			$this->arr= array();
 			$this->dispTimeoutOpts();
@@ -146,7 +146,7 @@ class Timeout extends Rule
 				<?php echo _TITLE('Fragment').':' ?>
 			</td>
 			<td>
-				<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['timeout']['all']['frag']; ?>" placeholder="number" />
+				<input type="text" id="frag" name="frag" size="10" value="<?php echo $this->rule['timeout']['all']['frag']; ?>" placeholder="<?php echo _CONTROL('number') ?>" />
 				<?php $this->editHelp('frag') ?>
 			</td>
 		</tr>
@@ -161,7 +161,7 @@ class Timeout extends Rule
 				<?php echo _TITLE('Interval').':' ?>
 			</td>
 			<td>
-				<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['timeout']['all']['interval']; ?>" placeholder="number" />
+				<input type="text" id="interval" name="interval" size="10" value="<?php echo $this->rule['timeout']['all']['interval']; ?>" placeholder="<?php echo _CONTROL('number') ?>" />
 				<?php $this->editHelp('interval') ?>
 			</td>
 		</tr>
@@ -173,10 +173,10 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php echo _TITLE('Source track timeout').':' ?>
+				<?php echo _TITLE('Source Track Timeout').':' ?>
 			</td>
 			<td>
-				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['timeout']['all']['src.track']; ?>" placeholder="number" />
+				<input type="text" id="src_track" name="src_track" size="10" value="<?php echo $this->rule['timeout']['all']['src.track']; ?>" placeholder="<?php echo _CONTROL('number') ?>" />
 				<?php $this->editHelp('src.track') ?>
 			</td>
 		</tr>
@@ -188,7 +188,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->editHelp('tcp_timeout') ?><?php echo _TITLE('TCP timeouts').':' ?>
+				<?php $this->editHelp('tcp_timeout') ?><?php echo _TITLE('TCP Timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -211,7 +211,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->editHelp('udp_timeout') ?><?php echo _TITLE('UDP timeouts').':' ?>
+				<?php $this->editHelp('udp_timeout') ?><?php echo _TITLE('UDP Timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -231,7 +231,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->editHelp('icmp_timeout') ?><?php echo _TITLE('ICMP timeouts').':' ?>
+				<?php $this->editHelp('icmp_timeout') ?><?php echo _TITLE('ICMP Timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -250,7 +250,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->editHelp('other_timeout') ?><?php echo _TITLE('Other timeouts').':' ?>
+				<?php $this->editHelp('other_timeout') ?><?php echo _TITLE('Other Timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -270,7 +270,7 @@ class Timeout extends Rule
 		?>
 		<tr class="<?php echo ($this->editIndex++ % 2 ? 'evenline' : 'oddline'); ?>">
 			<td class="title">
-				<?php $this->editHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive timeouts').':' ?>
+				<?php $this->editHelp('adaptive_timeout') ?><?php echo _TITLE('Adaptive Timeouts').':' ?>
 			</td>
 			<td>
 				<table style="width: auto;">
@@ -289,7 +289,7 @@ class Timeout extends Rule
 		?>
 		<tr>
 			<td class="ifs">
-				<input type="text" size="10" id="<?php echo $timeout ?>_<?php echo $key ?>" name="<?php echo $timeout ?>_<?php echo $key ?>" value="<?php echo $this->rule['timeout'][$timeout][$key]; ?>" placeholder="number" />
+				<input type="text" size="10" id="<?php echo $timeout ?>_<?php echo $key ?>" name="<?php echo $timeout ?>_<?php echo $key ?>" value="<?php echo $this->rule['timeout'][$timeout][$key]; ?>" placeholder="<?php echo _CONTROL('number') ?>" />
 			</td>
 			<td class="optitle"><?php echo $key ?></td>
 		</tr>

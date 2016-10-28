@@ -31,6 +31,10 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+/** @file
+ * Edit page.
+ */
+
 require_once ('pf.php');
 
 if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
@@ -57,13 +61,14 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 
 	$generateResult= $View->Controller($Output, 'GeneratePfRule', json_encode($ruleObj), $ruleNumber, $force);
 	if ($generateResult || $force) {
-		/// @attention Inline anchor rules are multi-line, hence implode
+		/// @attention Inline anchor rules are multi-line, hence implode.
 		$ruleStr= implode("\n", $Output);
 	} else {
-		$ruleStr= 'ERROR: Cannot generate rule';
+		$ruleStr= _NOTICE('ERROR') . ': ' . _NOTICE('Cannot generate rule');
 	}
 
 	require_once($VIEW_PATH.'/header.php');
+	/// @attention $ruleStr is passed as a global var.
 	$ruleObj->edit($ruleNumber, $modified, $testResult, $generateResult, $action);
 	require_once($VIEW_PATH.'/footer.php');
 

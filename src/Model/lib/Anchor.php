@@ -199,7 +199,7 @@ function IsInlineAnchor($str, $force= FALSE)
 	// Do not allow more than $MaxAnchorNesting count of nested inline rules
 	$max= $Nesting + 1 > $MaxAnchorNesting;
 	if ($max) {
-		Error("Validation Error: Reached max nesting for inline anchors: <pre>" . htmlentities(print_r($str, TRUE)) . '</pre>');
+		Error(_('Validation Error') . ': ' . _('Reached max nesting for inline anchors') . ': <pre>' . htmlentities(print_r($str, TRUE)) . '</pre>');
 		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Validation Error: Reached max nesting for inline anchors: $str");
 	}
 
@@ -209,7 +209,7 @@ function IsInlineAnchor($str, $force= FALSE)
 		$result= $ruleSet->parse($str, $force);
 		if (!$result) {
 			if (LOG_DEBUG <= $LOG_LEVEL) {
-				Error('Validation Error: Invalid inline rules, parser output: <pre>' . htmlentities(print_r(json_decode(json_encode($ruleSet), TRUE), TRUE)) . '</pre>');
+				Error(_('Validation Error') . ': ' . _('Invalid inline rules, parser output') . ': <pre>' . htmlentities(print_r(json_decode(json_encode($ruleSet), TRUE), TRUE)) . '</pre>');
 			}
 			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Validation Error: Invalid inline rules: ' . print_r(json_decode(json_encode($ruleSet), TRUE), TRUE));
 		}

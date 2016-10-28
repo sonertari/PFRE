@@ -38,14 +38,14 @@ class Queue extends Rule
 	function display($ruleNumber, $count)
 	{
 		$this->dispHead($ruleNumber);
-		$this->dispValue('name', 'Name');
+		$this->dispValue('name', _TITLE('Name'));
 		$this->dispInterface();
-		$this->dispValue('parent', 'Parent');
-		$this->dispBandwidth('bandwidth', 'bw', 'Bandwidth', 3);
-		$this->dispBandwidth('min', 'min', 'Min', 2);
-		$this->dispBandwidth('max', 'max', 'Max', 2);
-		$this->dispValue('qlimit', 'Qlimit');
-		$this->dispKey('default', 'Default');
+		$this->dispValue('parent', _TITLE('Parent'));
+		$this->dispBandwidth('bandwidth', 'bw', _TITLE('Bandwidth'), 3);
+		$this->dispBandwidth('min', 'min', _TITLE('Min'), 2);
+		$this->dispBandwidth('max', 'max', _TITLE('Max'), 2);
+		$this->dispValue('qlimit', _TITLE('Qlimit'));
+		$this->dispKey('default', _TITLE('Default'));
 		$this->dispTail($ruleNumber, $count);
 	}
 	
@@ -86,14 +86,14 @@ class Queue extends Rule
 
 		$this->editHead($modified);
 
-		$this->editText('name', 'Name', FALSE, NULL, 'string');
-		$this->editText('interface', 'Interface', 'queue-interface', 10, 'if or macro');
-		$this->editText('parent', 'Parent', NULL, NULL, 'string');
-		$this->editBandwidth('bandwidth', 'bw', 'Bandwidth');
-		$this->editBandwidth('min', 'min', 'Min');
-		$this->editBandwidth('max', 'max', 'Max');
-		$this->editText('qlimit', 'Qlimit', NULL, NULL, 'number');
-		$this->editCheckbox('default', 'Default');
+		$this->editText('name', _TITLE('Name'), FALSE, NULL, _CONTROL('string'));
+		$this->editText('interface', _TITLE('Interface'), 'queue-interface', 10, _CONTROL('if or macro'));
+		$this->editText('parent', _TITLE('Parent'), NULL, NULL, _CONTROL('string'));
+		$this->editBandwidth('bandwidth', 'bw', _TITLE('Bandwidth'));
+		$this->editBandwidth('min', 'min', _TITLE('Min'));
+		$this->editBandwidth('max', 'max', _TITLE('Max'));
+		$this->editText('qlimit', _TITLE('Qlimit'), NULL, NULL, _CONTROL('number'));
+		$this->editCheckbox('default', _TITLE('Default'));
 
 		$this->editComment();
 		$this->editTail($modified, $testResult, $generateResult, $action);
@@ -110,21 +110,21 @@ class Queue extends Rule
 				<table style="width: auto;">
 					<tr>
 						<td class="ifs">
-							<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" size="15" value="<?php echo $this->rule[$key]; ?>" placeholder="number[(K|M|G)]" />
+							<input type="text" id="<?php echo $key ?>" name="<?php echo $key ?>" size="15" value="<?php echo $this->rule[$key]; ?>" placeholder="<?php echo _CONTROL('number[(K|M|G)]') ?>" />
 						</td>
 						<td class="optitle"><?php echo $key ?><?php $this->editHelp('bandwidth') ?></td>
 					</tr>
 					<tr>
 						<td class="ifs">
 							<input type="text" id="<?php echo $pre ?>-burst" name="<?php echo $pre ?>-burst" size="15" value="<?php echo $this->rule["$pre-burst"]; ?>"
-								   placeholder="number[(K|M|G)]" <?php echo isset($this->rule[$key]) ? '' : 'disabled'; ?> />
+								   placeholder="<?php echo _CONTROL('number[(K|M|G)]') ?>" <?php echo isset($this->rule[$key]) ? '' : 'disabled'; ?> />
 						</td>
 						<td class="optitle">burst</td>
 					</tr>
 					<tr>
 						<td class="ifs">
 							<input type="text" id="<?php echo $pre ?>-time" name="<?php echo $pre ?>-time" size="15" value="<?php echo $this->rule["$pre-time"]; ?>"
-								   placeholder="number(ms)" <?php echo isset($this->rule[$key]) ? '' : 'disabled'; ?> />
+								   placeholder="<?php echo _CONTROL('number(ms)') ?>" <?php echo isset($this->rule[$key]) ? '' : 'disabled'; ?> />
 						</td>
 						<td class="optitle">time</td>
 					</tr>
