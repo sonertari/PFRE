@@ -40,7 +40,7 @@ if (count($_POST) && !filter_has_var(INPUT_POST, 'numbers')) {
 
 $testResult= $View->Controller($Output, 'TestPfRules', json_encode($View->RuleSet->rules));
 if ($testResult) {
-	if (filter_has_var(INPUT_POST, 'install') && filter_input(INPUT_POST, 'install') == "Install") {
+	if (filter_has_var(INPUT_POST, 'install') && filter_input(INPUT_POST, 'install') == _CONTROL('Install')) {
 		if ($View->Controller($Output, 'InstallPfRules', json_encode($View->RuleSet->rules))) {
 			PrintHelpWindow(_NOTICE('Installed successfully'));
 		} else {
