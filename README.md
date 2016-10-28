@@ -2,6 +2,8 @@
 
 Packet Filter Rule Editor, or simply PFRE is a pf rule editor for OpenBSD 5.9. PFRE is expected to be used by beginners and system administrators alike.
 
+You can find a couple of screenshots on the [wiki](https://github.com/sonertari/PFRE/wiki).
+
 ## Features
 
 Using PFRE, you can develop rules from scratch or modify existing ones:
