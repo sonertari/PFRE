@@ -85,6 +85,11 @@ class Model
 					'desc'	=>	_('Set session timeout'),
 					),
 
+				'SetDefaultLocale'=>	array(
+					'argv'	=>	array(NAME),
+					'desc'	=>	_('Set default locale'),
+					),
+
 				'SetForceHTTPs'=>	array(
 					'argv'	=>	array(NAME),
 					'desc'	=>	_('Set force HTTPs'),
@@ -208,6 +213,20 @@ class Model
 		
 		// Append semi-colon to new value, this setting is a PHP line
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/View/lib/setup.php', '\$SessionTimeout', $timeout.';');
+	}
+
+	/**
+	 * Sets default locale.
+	 * 
+	 * @param string $locale Locale.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
+	function SetDefaultLocale($locale)
+	{
+		global $ROOT, $TEST_DIR_SRC;
+
+		// Append semi-colon to new value, this setting is a PHP line
+		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/lib/setup.php', '\$DefaultLocale', $locale.';');
 	}
 
 	/**

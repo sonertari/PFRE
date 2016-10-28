@@ -93,6 +93,9 @@ include "/etc/pfre/include.conf" # Test
 		$I->click('Login');
 
 		$I->seeInCurrentUrl('pf/conf.php');
+
+		$I->selectOption('#Locale', 'English');
+		$I->seeOptionIsSelected('#Locale', 'English');
 	}
 
 	/**

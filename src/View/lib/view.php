@@ -59,7 +59,8 @@ class View
 			$argv= array_slice($argv, 1);
 
 			if ($this->EscapeArgs($argv, $cmdline)) {
-				$cmdline= "/usr/bin/doas $pfrec $cmdline";
+				$locale= $_SESSION['Locale'];
+				$cmdline= "/usr/bin/doas $pfrec $locale $cmdline";
 				
 				// Init command output
 				$outputArray= array();
@@ -150,18 +151,6 @@ function _TITLE($str)
 
 /// For classifying gettext strings into files.
 function _HELPBOX($str)
-{
-	return _($str);
-}
-
-/// For classifying gettext strings into files.
-function _HELPWINDOW($str)
-{
-	return _($str);
-}
-
-/// For classifying gettext strings into files.
-function _TITLE2($str)
 {
 	return _($str);
 }

@@ -362,7 +362,7 @@ class RuleSet
 	 */
 	function cancel()
 	{
-		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == 'Cancel')) {
+		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == _CONTROL('Cancel'))) {
 			unset($_SESSION['edit']);
 			header('Location: /pf/conf.php');
 			exit;
@@ -387,7 +387,7 @@ class RuleSet
 	 */
 	function save($action, $ruleNumber, $ruleObj, $testResult)
 	{
-		if (filter_has_var(INPUT_POST, 'save') && filter_input(INPUT_POST, 'save') == 'Save') {
+		if (filter_has_var(INPUT_POST, 'save') && filter_input(INPUT_POST, 'save') == _CONTROL('Save')) {
 			if ($testResult || filter_input(INPUT_POST, 'forcesave')) {
 				if ($action == 'create') {
 					$this->add($ruleNumber);

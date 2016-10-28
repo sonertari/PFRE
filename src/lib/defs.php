@@ -63,6 +63,25 @@ $USER= array('user');
 /// All valid users
 $ALL_USERS= array_merge($ADMIN, $USER);
 
+/**
+ * Locale definitions used by both View and Controller.
+ *
+ * It is recommended that all translations use UTF-8 codeset.
+ *
+ * @param string Name Title string
+ * @param string Codeset Locale codeset
+ */
+$LOCALES = array(
+    'en_EN' => array(
+        'Name' => _('English'),
+        'Codeset' => 'UTF-8'
+		),
+    'tr_TR' => array(
+        'Name' => _('Turkish'),
+        'Codeset' => 'UTF-8'
+		),
+	);
+
 $PF_CONFIG_PATH= '/etc/pfre';
 $TMP_PATH= '/tmp';
 

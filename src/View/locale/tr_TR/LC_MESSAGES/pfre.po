@@ -1,0 +1,1104 @@
+# Copyright (c) 2016 Soner Tari, The PFRE project
+# This file is distributed under the same license as PFRE.
+# Soner Tari <sonertari@gmail.com>, 2016.
+msgid ""
+msgstr ""
+"Project-Id-Version: PFRE 5.9\n"
+"Last-Translator: Soner Tari <sonertari@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Language-Team: Turkish <>\n"
+"PO-Revision-Date: 2016-10-27 22:49+0300\n"
+
+#, php-format
+msgid "0-100% or 0-1"
+msgstr "0-100% veya 0-1"
+
+msgid "<RULE_TYPE> rule"
+msgstr "<RULE_TYPE> kuralı"
+
+msgid "Action"
+msgstr "İşlem"
+
+msgid "Adaptive Timeouts"
+msgstr "Değişken Zaman Aşımları"
+
+msgid "Add"
+msgstr "Ekle"
+
+msgid "Address Family"
+msgstr "Adres Ailesi"
+
+msgid "Af Translate"
+msgstr "Af Çevirisi"
+
+msgid "All"
+msgstr "Hepsi"
+
+msgid "All rights reserved."
+msgstr "Tüm hakları saklıdır."
+
+msgid "Allow Opts"
+msgstr "Seçeneklere İzin Ver"
+
+msgid "Anchor"
+msgstr "Çapa"
+
+msgid "Antispoof"
+msgstr "Taklit Engelleme"
+
+msgid "Apply"
+msgstr "Uygula"
+
+msgid "Are you sure you want to <BUTTON_VALUE> secure HTTP?"
+msgstr "Kriptolu HTTP <BUTTON_VALUE>ılacak, emin misiniz?"
+
+msgid "Are you sure you want to delete <RULE_TYPE> rule number <RULE_NUMBER>?"
+msgstr "<RULE_TYPE> kuralı numara <RULE_NUMBER> silinecek, emin misiniz?"
+
+msgid "Are you sure you want to delete the entire ruleset?"
+msgstr "Tüm kural listesi silinecek, emin misiniz?"
+
+msgid "Are you sure you want to delete the rule?"
+msgstr "Kural silinecek, emin misiniz?"
+
+msgid "Are you sure you want to delete the rules file?"
+msgstr "Kural dosyası silinecek, emin misiniz?"
+
+msgid "Arg type check failed"
+msgstr "Parametre tip kontrolü başarısız oldu"
+
+msgid "Assign Priority"
+msgstr "Öncelik Ata"
+
+msgid "Assign Tag"
+msgstr "Tag Ata"
+
+msgid "Authentication failed"
+msgstr "Kullanıcı doğrulama başarısız oldu"
+
+msgid "Bandwidth"
+msgstr "Band Genişliği"
+
+msgid "Binat"
+msgstr "Çift Yönlü Çeviri"
+
+msgid "Blank Line"
+msgstr "Boş Satır"
+
+msgid "Block Option"
+msgstr "Engelleme Seçenekleri"
+
+msgid "Block Policy"
+msgstr "Engelleme Kuralı"
+
+msgid "Cancel"
+msgstr "İptal"
+
+msgid "Cannot fork pfctl process"
+msgstr "Pfctl süreci fork edilemedi"
+
+msgid "Cannot generate rule"
+msgstr "Kural üretilemiyor"
+
+msgid "Cannot install pf rule file"
+msgstr "Pf kural dosyası kurulamadı"
+
+msgid "Cannot load pf rules"
+msgstr "Pf kuralları yüklenemedi"
+
+msgid "Cannot remove tmp pf file"
+msgstr "Geçici pf dosyası silinemedi"
+
+msgid "Cannot write to tmp pf file"
+msgstr "Geçici pf dosyasına yazılamadı"
+
+msgid "Category"
+msgstr "Sınıf"
+
+msgid "Check authentication"
+msgstr "Kullanıcı doğrulama"
+
+msgid "Comment"
+msgstr "Yorum"
+
+msgid "Copyright"
+msgstr "Telif hakkı"
+
+msgid "Current Password"
+msgstr "Mevcut Parola"
+
+msgid "Debug"
+msgstr "Hata Ayıklama"
+
+msgid "Default"
+msgstr "Öntanım"
+
+msgid "Delete"
+msgstr "Sil"
+
+msgid "Delete All"
+msgstr "Hepsini Sil"
+
+msgid "Delete pf rule file"
+msgstr "Pf kural dosyası silme"
+
+msgid "Delete rules file"
+msgstr "Kural dosyasını sil"
+
+msgid "Delete ruleset"
+msgstr "Kural listesini sil"
+
+msgid "Destination"
+msgstr "Hedef"
+
+msgid "Destination Port"
+msgstr "Hedef Kapı"
+
+msgid "Direction"
+msgstr "Yön"
+
+msgid "Disable"
+msgstr "Kapat"
+
+msgid "Display & Install"
+msgstr "Görüntüle ve Kur"
+
+msgid "Display line numbers"
+msgstr "Satır sayılarını göster"
+
+msgid "Display with errors"
+msgstr "Hatalara rağmen göster"
+
+msgid "Divert"
+msgstr "Yön Değiştirme"
+
+msgid "Divert Host"
+msgstr "Yön Değiştirme Adresi"
+
+msgid "Divert Packet"
+msgstr "Paket Yön Değiştirme"
+
+msgid "Divert Port"
+msgstr "Yön Değiştirme Kapısı"
+
+msgid "Divert Reply"
+msgstr "Yön Değiştirmeye Cevap"
+
+msgid "Download"
+msgstr "İndir"
+
+msgid "Download ruleset"
+msgstr "Kural listesini indir"
+
+msgid "Download with errors"
+msgstr "Hatalara rağmen indir"
+
+msgid "ERROR"
+msgstr "HATA"
+
+msgid "Edit"
+msgstr "Düzenle"
+
+msgid "Edit <RULE_TYPE> Rule <RULE_NUMBER>"
+msgstr "<RULE_TYPE> Kuralı <RULE_NUMBER> Düzenleme"
+
+msgid "Enable"
+msgstr "Aç"
+
+msgid "Enable Source Track"
+msgstr "Kaynak Takibini Aç"
+
+msgid "Enforce TOS"
+msgstr "TOS Uygula"
+
+msgid "English"
+msgstr "İngilizce"
+
+msgid "Enter blank lines here"
+msgstr "Buraya boş satır girin"
+
+msgid "Enter comment here"
+msgstr "Buraya yorum girin"
+
+msgid "Enter inline rules here"
+msgstr "Buraya satıriçi kuralları girin"
+
+msgid "Error in include file"
+msgstr "Eklenen dosyada hata"
+
+msgid "Error loading, rule load forced"
+msgstr "Yüklemede hata, kural hatalara rağmen yüklendi"
+
+msgid "Error loading, rule loaded partially"
+msgstr "Yüklemede hata, kural sorunlu olarak yüklendi"
+
+msgid "Export To pflow"
+msgstr "Pflow'a Aktar"
+
+msgid "FAILED"
+msgstr "BAŞARISIZ"
+
+msgid "Failed creating or attaching to message queue"
+msgstr "Mesaj kuyruğu yaratılamadı veya bağlantı başarısız oldu"
+
+msgid "Failed deleting"
+msgstr "Silme işlemli başarısız oldu"
+
+msgid "Failed downloading, cannot generate pf rules"
+msgstr "İndirme işlemi başarısız oldu, pf kuralları üretilemiyor"
+
+msgid "Failed loading"
+msgstr "Yükleme işlemi başarısız oldu"
+
+msgid "Failed loading main pf rules"
+msgstr "Ana pf kurallarının yüklenmesi başarısız oldu"
+
+msgid "Failed loading pf rules"
+msgstr "Pf kural yüklemesi başarısız oldu"
+
+msgid "Failed removing message queue"
+msgstr "Mesaj kuyruğunun silinmesi başarısız oldu"
+
+msgid "Failed saving"
+msgstr "Kayıt işlemi başarısız oldu"
+
+msgid "Failed testing pf rules"
+msgstr "Pf kurallarının testi başarısız oldu"
+
+msgid "Failed testing ruleset"
+msgstr "Kural listesinin testi başarısız oldu"
+
+msgid "Failed uploading"
+msgstr "Karşıya yükleme işlemi başarısız oldu"
+
+msgid "File"
+msgstr "Dosya"
+
+msgid "File uploaded"
+msgstr "Dosya karşıya yüklendi"
+
+msgid "Filename not accepted"
+msgstr "Dosya adı kabul edilmedi"
+
+msgid "Filepath wrong"
+msgstr "Dosya yolu yanlış"
+
+msgid "Filter"
+msgstr "Elek"
+
+msgid "Fingerprints File"
+msgstr "Parmakizi Dosyası"
+
+msgid "Flag"
+msgstr "Bayrak"
+
+msgid "Flags"
+msgstr "Bayraklar"
+
+msgid "Force HTTPs"
+msgstr "HTTPs Uygula"
+
+msgid "Fragment"
+msgstr "Parça"
+
+msgid "Frags"
+msgstr "Parçalar"
+
+msgid "From Redirect Host"
+msgstr "Tekrar Yönlendirme Adresinden"
+
+msgid "Generate pf rule"
+msgstr "Pf kural üretimi"
+
+msgid "Generate pf rules"
+msgstr "Pf kural listesi üretimi"
+
+msgid "Generate with errors"
+msgstr "Hatalara rağmen üret"
+
+msgid "Get pf rule files"
+msgstr "Pf kural dosyalarını alma"
+
+msgid "Get pf rules"
+msgstr "Pf kurallarını alma"
+
+msgid "Group"
+msgstr "Grup"
+
+msgid "Help Boxes"
+msgstr "Yardım Kutuları"
+
+msgid ""
+"Here you can change the web administration interface passwords for admin and "
+"user. Passwords should have at least 8 alphanumeric characters.\n"
+"\n"
+"Admin can change the user password without knowing the current user "
+"password. But if you forget the admin password, you should run the following "
+"on the command line to set the password to soner123:\n"
+"<code>/usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/"
+"echo -n soner123 | sha1 -)</code>"
+msgstr ""
+"Buradan admin ve user kullanıcılarının web arayüzü parolasını "
+"değiştirebilirsiniz. Parolalarda toplam en az 8 harf veya rakam olmalıdır.\n"
+"\n"
+"Admin kullanıcısı user kullanıcısının mevcut parolasını bilmiyor olsa da "
+"değiştirebilir. Ama admin parolasını unutursanız, aşağıdaki komutu "
+"çalıştırarak parolayı soner123 olarak ayarlayabilirsiniz:\n"
+"<code>/usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/"
+"echo -n soner123 | sha1 -)</code>"
+
+msgid "Host Id"
+msgstr "Adres Kimliği"
+
+msgid "ICMP Timeouts"
+msgstr "ICMP Zaman Aşımları"
+
+msgid "ICMP Type"
+msgstr "ICMP Türü"
+
+msgid "ICMP6 Type"
+msgstr "ICMP6 Türü"
+
+msgid "INFORMATION"
+msgstr "BİLGİ"
+
+msgid "Id"
+msgstr "Kimlik"
+
+msgid "Identifier"
+msgstr "Tanımlayıcı"
+
+msgid ""
+"If enabled, authentication pages are forced to use secure connections. Make "
+"sure you have a working SSL setup in the web server configuration, otherwise "
+"you cannot even log in to the web user interface. It is advised to use "
+"secure HTTP."
+msgstr ""
+"Bu ayar açıksa parola giriş sayfaları sadece şifreli bağlantı kullanır. Web "
+"sunucusunda doğru çalışan bir SSL ayarı olduğundan emin olun, aksi taktirde "
+"bu ayar nedeniyle web arayüzüne giriş yapamazsınız. Güvenli HTTP kullanmanız "
+"tavsiye edilir."
+
+msgid "Include"
+msgstr "Ekleme"
+
+msgid "Inline Rules"
+msgstr "Aynısatır Kuralları"
+
+msgid ""
+"Inline anchor rules can be nested. It is advised to limit the number of "
+"nesting allowed. Parsing and validation stop at this many number of nesting."
+msgstr ""
+"Satıriçi çapa kuralları içiçe olabilir. Bu içiçe çapa sayısının sınırlanması "
+"tavsiye edilir. Bu ayardaki içiçe çapa sayısına ulaşıldığında kural işleme "
+"ve doğrulama işlemleri durur."
+
+msgid "Inline rules"
+msgstr "Aynısatır kuralları"
+
+msgid "Install"
+msgstr "Kur"
+
+msgid "Install as main ruleset"
+msgstr "Ana kural listesi olarak kur"
+
+msgid "Install pf rules"
+msgstr "Pf kurallarını kurma"
+
+msgid "Installed successfully"
+msgstr "Başarıyla kuruldu"
+
+msgid "Interface"
+msgstr "Arayüz"
+
+msgid "Interface Binding"
+msgstr "Arayüz Bağlantısı"
+
+msgid "Interval"
+msgstr "Zaman Aralığı"
+
+msgid "Invalid destination rule number"
+msgstr "Geçersiz hedef kural numarası"
+
+msgid "Invalid inline rules, parser output"
+msgstr "Geçersiz satıriçi kurallar, işleme çıktısı"
+
+msgid "Invalid rule number"
+msgstr "Geçersiz kural numarası"
+
+msgid "Invalid value for"
+msgstr "Geçersiz değer"
+
+msgid "Label"
+msgstr "Etiket"
+
+msgid "Language"
+msgstr "Dil"
+
+msgid "Limit"
+msgstr "Sınırlar"
+
+msgid "Line"
+msgstr "Satır"
+
+msgid "Line number"
+msgstr "Satır numarası"
+
+msgid "Load"
+msgstr "Yükle"
+
+msgid "Load & Save"
+msgstr "Yükle ve Kaydet"
+
+msgid "Load Anchor"
+msgstr "Yükleme Çapası"
+
+msgid "Load Error"
+msgstr "Yükleme Hatası"
+
+msgid "Load rules from file"
+msgstr "Kuralları dosyadan yükle"
+
+msgid "Load ruleset"
+msgstr "Kural listesini yükle"
+
+msgid "Load with errors"
+msgstr "Hatalara rağmen yükle"
+
+msgid "Log Interface"
+msgstr "Kayıt Arayüzü"
+
+msgid "Log Level"
+msgstr "Kayıt Seviyesi"
+
+msgid "Log in"
+msgstr "Gir"
+
+msgid "Logging"
+msgstr "Kayıt"
+
+msgid "Logout"
+msgstr "Çıkış"
+
+msgid "Macro"
+msgstr "Makro"
+
+msgid "Main pf rules reloaded"
+msgstr "Ana pf kuralları yeniden yüklendi"
+
+msgid "Match All"
+msgstr "Hepsini Eşle"
+
+msgid "Match Priority"
+msgstr "Öncelik Eşle"
+
+msgid "Match TOS"
+msgstr "TOS Eşle"
+
+msgid "Match Tagged"
+msgstr "Tag Eşle"
+
+msgid "Max"
+msgstr "En fazla"
+
+msgid "Max Addresses"
+msgstr "En Fazla Adres Sayısı"
+
+msgid "Max Anchor Nesting"
+msgstr "En Fazla İçiçe Çapa Sayısı"
+
+msgid "Max Connection"
+msgstr "En Fazla Bağlantı"
+
+msgid "Max Connection Rate"
+msgstr "En Yüksek Bağlantı Hızı"
+
+msgid "Max MSS"
+msgstr "En Yüksek MSS"
+
+msgid "Max Single Host States"
+msgstr "Tek Adres için En Fazla Durum Sayısı"
+
+msgid "Max States"
+msgstr "En Fazla Durum Sayısı"
+
+msgid "Max-mss"
+msgstr "En yüksek-mss"
+
+msgid "Method does not exist"
+msgstr "Böyle bir yöntem yok"
+
+msgid "Min"
+msgstr "En az"
+
+msgid "Min TTL"
+msgstr "En düşük TTL"
+
+msgid "Min-ttl"
+msgstr "En düşük-ttl"
+
+msgid "Move"
+msgstr "Taşı"
+
+msgid "Move down"
+msgstr "Aşağı taşı"
+
+msgid "Move up"
+msgstr "Yukarı taşı"
+
+msgid "Multiple values not allowed for"
+msgstr "Birden fazla değer kullanılamaz"
+
+msgid "Name"
+msgstr "Ad"
+
+msgid "Name wrong"
+msgstr "Ad yanlış"
+
+msgid "Nat"
+msgstr "Adres Çevirisi"
+
+msgid "New Password"
+msgstr "Yeni Parola"
+
+msgid "New Password Again"
+msgstr "Tekrar Yeni Parola"
+
+msgid "No Queues defined"
+msgstr "Kuyruk tanımlanmamış"
+
+msgid "No pfsync"
+msgstr "Pfsync olmadan"
+
+msgid "No regex or func def for"
+msgstr "Regex veya fonksiyon tanımlanmamış"
+
+msgid "No such file"
+msgstr "Böyle bir dosya yok"
+
+msgid "Not JSON encoded string"
+msgstr "JSON ile kodlanmış bir metin değil"
+
+msgid "Not a valid password"
+msgstr "Geçerli bir parola değil"
+
+msgid "Not boolean"
+msgstr "Boolean değir"
+
+msgid "Not enough args"
+msgstr "Parametre sayısı yetersiz"
+
+msgid "Not running command"
+msgstr "Komut çalıştırılmadı"
+
+msgid "Not sha1 encrypted string"
+msgstr "Sha1 ile şifrelenmiş bir metin değil"
+
+msgid "Number of lines"
+msgstr "Satır sayısı"
+
+msgid "Number wrong"
+msgstr "Sayı yanlış"
+
+msgid "OS"
+msgstr "Sistem"
+
+msgid "Once"
+msgstr "Bir Defa"
+
+msgid "Optimization"
+msgstr "Optimizasyon"
+
+msgid "Option"
+msgstr "Seçenekler"
+
+msgid "Options"
+msgstr "Seçenekler"
+
+msgid "Other Timeouts"
+msgstr "Diğer Zaman Aşımları"
+
+msgid "Output not in correct format"
+msgstr "Çıktı doğru yapıda değil"
+
+msgid "Overload"
+msgstr "Aşırı yükleme"
+
+msgid "PF RULE EDITOR"
+msgstr "PF KURAL DÜZENLEYİCİ"
+
+msgid "PF Rule Editor"
+msgstr "PF Kural Düzenleyici"
+
+msgid "Parent"
+msgstr "Veli"
+
+msgid "Parse Error"
+msgstr "İşleme Hatası"
+
+msgid "Password"
+msgstr "Parola"
+
+msgid "Passwords do not match"
+msgstr "Parolalar uyuşmuyor"
+
+msgid "Pfctl Timeout"
+msgstr "Pfctl Zaman Aşımı"
+
+msgid ""
+"Pfctl commands are executed in a separate process, which returns pfctl "
+"output in a message. Parent process times out waiting for an output message "
+"after this many seconds. This approach is necessary in case pfctl is stuck "
+"or taking too long (and it is on certain cases).\n"
+"\n"
+"<b>Setting this timeout to 0 may fail the execution of all pfctl commands, "
+"effectively disabling rule tests.<b>"
+msgstr ""
+"Pfctl komutları ayrı bir süreç içinde çalıştırılır ve çıktıları bir mesaj "
+"ile geri iletilir. Ana süreç bu ayarla belirlenen saniye cinsinden süre "
+"kadar bu mesajı bekler. Bu yöntem pfctl'in takıldığı veya çok uzun süre "
+"aldığı durumlarda gereklidir (böyle durumlar olduğu görülmüştür).\n"
+"\n"
+"<b>Bu zaman aşımını 0'a ayarlarsanız tüm pfctl komutları başarısız olabilir; "
+"bu da kural testlerini devredışı bırakır.<b>"
+
+msgid "Probability"
+msgstr "Olasılık"
+
+msgid "Proto"
+msgstr "Proto"
+
+msgid "Protocol"
+msgstr "Protokol"
+
+msgid "Qlimit"
+msgstr "Kuyruk Boyu"
+
+msgid "Queue"
+msgstr "Kuyruk"
+
+msgid "Quick"
+msgstr "Hemen Uygula"
+
+msgid "Reached max nesting for inline anchors"
+msgstr "Satıriçi çapalar için en fazla içiçe sayıya ulaşıldı"
+
+msgid "Reassemble"
+msgstr "Birleştir"
+
+msgid "Received on Interface"
+msgstr "Alınan Arayüz"
+
+msgid "Redirect"
+msgstr "Tekrar Yönlendirme"
+
+msgid "Redirect Address Family"
+msgstr "Tekrar Yönlendirme Adres Ailesi"
+
+msgid "Redirect Host"
+msgstr "Tekrar Yönlendirme Adresi"
+
+msgid "Redirect Options"
+msgstr "Tekrar Yönlendirme Seçenekleri"
+
+msgid "Redirect Port"
+msgstr "Tekrar Yönlendirme Kapısı"
+
+msgid "Reload"
+msgstr "Tekrar Yükle"
+
+msgid "Reload main ruleset"
+msgstr "Ana kural listesini tekrar yükle"
+
+msgid "Required element missing"
+msgstr "Gerekli eleman yok"
+
+msgid "Resource not available"
+msgstr "Kaynağa ulaşılamıyor"
+
+msgid "Route"
+msgstr "Yönlendirme"
+
+msgid "Route Host"
+msgstr "Yönlendirme Adresi"
+
+msgid "Route Type"
+msgstr "Yönlendirme Türü"
+
+msgid "Routing Table"
+msgstr "Yönlendirme Tablosu"
+
+msgid "Rule"
+msgstr "Kural"
+
+msgid "Rule number"
+msgstr "Kural numarası"
+
+msgid "Rules"
+msgstr "Kurallar"
+
+msgid "Rules file"
+msgstr "Kural dosyası"
+
+msgid "Rules file deleted"
+msgstr "Kural dosyası silindi"
+
+msgid "Rules loaded"
+msgstr "Kurallar yüklendi"
+
+msgid "Ruleset Optimization"
+msgstr "Kural Listesi Optimizasyonu"
+
+msgid "Ruleset contains errors"
+msgstr "Kural listesinde hata var"
+
+msgid "Ruleset deleted"
+msgstr "Kural listesi silindi"
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Save ruleset"
+msgstr "Kural listesini kaydet"
+
+msgid "Save ruleset to file"
+msgstr "Kural lıstesını dosyaya kaydet"
+
+msgid "Save with errors"
+msgstr "Hatalara rağmen kaydet"
+
+msgid "Saved"
+msgstr "Kaydedildi"
+
+msgid "Scrub"
+msgstr "Kazıma"
+
+msgid "Scrub Options"
+msgstr "Kazıma Seçenekleri"
+
+msgid "Select Option Type"
+msgstr "Seçenek Türünü Seçin"
+
+msgid "Session Timeout"
+msgstr "Oturum Zaman Aşımı"
+
+msgid "Set default locale"
+msgstr "Öntanımlı dili ayarla"
+
+msgid "Set force HTTPs"
+msgstr "HTTPs uygulamayı ayarla"
+
+msgid "Set help boxes"
+msgstr "Yardım kutularını ayarla"
+
+msgid "Set log level"
+msgstr "Kayıt seviyesini ayarla"
+
+msgid "Set max anchor nesting"
+msgstr "En fazla içiçe çapa sayısını ayarla"
+
+msgid "Set pfctl timeout"
+msgstr "Pfctl zaman aşımını ayarla"
+
+msgid "Set session timeout"
+msgstr "Oturum zaman aşımını ayarla"
+
+msgid "Set user password"
+msgstr "Kullanıcı parolasını ayarla"
+
+msgid "Setup"
+msgstr "Ayarlar"
+
+msgid "Show"
+msgstr "Göster"
+
+msgid "Skip Interfaces"
+msgstr "Atlanacak Arayüzler"
+
+msgid "Sloppy Tracker"
+msgstr "Detaysız Takip"
+
+msgid "Source"
+msgstr "Kaynak"
+
+msgid "Source Port"
+msgstr "Kaynak Kapısı"
+
+msgid "Source Track Timeout"
+msgstr "Kaynak Takip Zaman Aşımı"
+
+msgid "Source->Destination"
+msgstr "Kaynak->Hedef"
+
+msgid "Src Nodes"
+msgstr "Kaynak Noktalar"
+
+msgid "State"
+msgstr "Durum"
+
+msgid "State Defaults"
+msgstr "Durum Öntanımları"
+
+msgid "State Policy"
+msgstr "Durum Kuralları"
+
+msgid "Stateful Filtering"
+msgstr "Durum Takip Eden Elek"
+
+msgid "States"
+msgstr "Durumlar"
+
+msgid "Static Port"
+msgstr "Sabit Kapı"
+
+msgid "TCP Flags"
+msgstr "TCP Bayrakları"
+
+msgid "TCP Timeouts"
+msgstr "TCP Zaman Aşımları"
+
+msgid "Table"
+msgstr "Tablo"
+
+msgid "Table Entries"
+msgstr "Tablo Girdileri"
+
+msgid "Tables"
+msgstr "Tablolar"
+
+msgid "Test pf rules"
+msgstr "Pf kurallarını test et"
+
+msgid "There was an error while installing"
+msgstr "Kurulum sırasında bir hata oluştu"
+
+msgid ""
+"These defaults are permanently stored in web user interface settings, i.e. "
+"they are <em>not</em> specific to your current session only."
+msgstr ""
+"Bu öntanımlar web arayüzünün sabit ayarlarında saklanır, yani sadece şu anki "
+"oturumunuza özel <em>değildir</em>."
+
+msgid "This is the default language for the WUI."
+msgstr "Bu web arayüzünün öntanımlı dilidir."
+
+msgid ""
+"This is the log level for the pfre web interface. Logs at this level and up "
+"will be recorded in WUI and Controller log files. This setting does not "
+"effect other services."
+msgstr ""
+"Bu ayar pfre web arayüzünün kayıt seviyesini belirler. Bu seviye ve "
+"üzerindeki kayıtlar WUI ve Controller kayıt dosyalarına kaydedilir. Bu ayar "
+"diğer servisleri etkilemez."
+
+msgid ""
+"This setting enables or disables help boxes, such as this one and the help "
+"window at the bottom. Disabling help boxes does not disable error or warning "
+"help windows."
+msgstr ""
+"Bu ayar sayesinde bunun ve sayfanın sonundaki gibi yardım pencerelerini açıp "
+"kapatabilirsiniz. Yardım pencerelerini kapatmak hata veya uyarı "
+"pencerelerini devredışı bırakmaz."
+
+msgid "Timed out running pfctl command"
+msgstr "Pfctl komutu zaman aşımına uğradı"
+
+msgid "Timeout"
+msgstr "Zaman Aşımları"
+
+msgid "To Redirect Host"
+msgstr "Tekrar Yönlendirme Hedef Adresi"
+
+msgid "Too many args, truncating"
+msgstr "Fazla parametreler atıldı"
+
+msgid "Turkish"
+msgstr "Türkçe"
+
+msgid "Type"
+msgstr "Tür"
+
+msgid "UDP Timeouts"
+msgstr "UDP Zaman Aşımları"
+
+msgid "Unexpected elements"
+msgstr "Beklenmeyen elemanlar"
+
+msgid "Unsupported command"
+msgstr "Desteklenmeyen komut"
+
+msgid "Upload"
+msgstr "Karşıya Yükle"
+
+msgid "Upload rules file"
+msgstr "Kural dosyasını karşıya yükle"
+
+msgid "Upload ruleset"
+msgstr "Kural listesini karşıya yükle"
+
+msgid "Upload with errors"
+msgstr "Hatalara rağmen karşıya yükle"
+
+msgid "User"
+msgstr "Kullanıcı"
+
+msgid "User name"
+msgstr "Kullanıcı adı"
+
+msgid "User password changed"
+msgstr "Kullanıcı parolası değiştirildi"
+
+msgid ""
+"User sessions expire after an idle period defined by this value. The unit is "
+"in seconds. You cannot set a value less than 10 seconds."
+msgstr ""
+"Kullanıcı oturumu burada tanımlanan boş geçen süreden sonra sonlandırılır. "
+"Birimi saniyedir. 10 saniyeden daha kısa bir süre tanımlamanıza izin "
+"verilmez."
+
+msgid "Validation Error"
+msgstr "Doğrulama Hatası"
+
+msgid "Value"
+msgstr "Değer"
+
+msgid "Values"
+msgstr "Değerler"
+
+msgid "WARNING"
+msgstr "UYARI"
+
+msgid "Will not load rules with errors"
+msgstr "Hatalı kurallar yüklenmez"
+
+msgid "Will not test rules with errors"
+msgstr "Hatalı kurallar test edilmez"
+
+msgid "add file"
+msgstr "dosya ekle"
+
+msgid "add host or network"
+msgstr "adres veya ağ ekle"
+
+msgid "add value"
+msgstr "değer ekle"
+
+msgid "as rule number"
+msgstr "kural numarası"
+
+msgid "defaults to S/SA"
+msgstr "öntanım S/SA"
+
+msgid "delete"
+msgstr "sil"
+
+msgid "enter comment, such as a description of the rule"
+msgstr "yorum girin, örneğin kural tanımı"
+
+msgid "filename"
+msgstr "dosya adı"
+
+msgid "groupname or groupid"
+msgstr "grup adı veya kimliği"
+
+msgid "host or network"
+msgstr "bilgisayar veya ağ"
+
+msgid "if or macro"
+msgstr "arayüz veya makro"
+
+msgid "interface"
+msgstr "arayüz"
+
+msgid "ip, host, table or macro"
+msgstr "ip, bilgisayar, tablo veya makro"
+
+msgid "label"
+msgstr "etiket"
+
+msgid "logging interface"
+msgstr "kayıt arayüzü"
+
+msgid "modified"
+msgstr "değişmiş"
+
+msgid "move to"
+msgstr "taşınacak yer"
+
+msgid "name, may be nested"
+msgstr "ad, içiçe olabilir"
+
+msgid "negated"
+msgstr "ters çevir"
+
+msgid "no"
+msgstr "hayır"
+
+msgid "none"
+msgstr "boş"
+
+msgid "number"
+msgstr "sayı"
+
+msgid "number 0-7"
+msgstr "0-7 arası sayı"
+
+msgid "number or abbrev."
+msgstr "sayı veya kısaltma"
+
+msgid "number or name"
+msgstr "sayı veya ad"
+
+msgid "number(ms)"
+msgstr "sayı(ms)"
+
+msgid "number, name, table or macro"
+msgstr "sayı, ad, tablo veya makro"
+
+msgid "number/number"
+msgstr "sayı/sayı"
+
+msgid "number[(K|M|G)]"
+msgstr "sayı[(K|M|G)]"
+
+msgid "os name or macro"
+msgstr "sistem adı veya makro"
+
+msgid "pfre currently supports only admin and user usernames"
+msgstr "pfre şimdilik sadece admin ve user kullanıcı adlarını destekler"
+
+msgid "primary"
+msgstr "birincil"
+
+msgid "protocol"
+msgstr "protokol"
+
+msgid "ruleset has errors"
+msgstr "kural listesinde hata var"
+
+msgid "secondary"
+msgstr "ikincil"
+
+msgid "string"
+msgstr "metin"
+
+msgid "string or number"
+msgstr "metin veya sayı"
+
+msgid "to"
+msgstr "hedef"
+
+msgid "uploaded"
+msgstr "karşıdan yüklenmiş"
+
+msgid "username or userid"
+msgstr "kullanıcı adı veya kimliği"
+
+msgid "valid string"
+msgstr "geçerli bir metin"
+
+msgid "yes"
+msgstr "evet"

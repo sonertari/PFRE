@@ -120,6 +120,13 @@ if (count($_POST)) {
 				pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, 'SessionTimeout set: '.filter_input(INPUT_POST, 'SessionTimeout'));
 			}
 		}
+		else if (filter_has_var(INPUT_POST, 'DefaultLocale')) {
+			if ($View->Controller($Output, 'SetDefaultLocale', filter_input(INPUT_POST, 'DefaultLocale'))) {
+				pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, 'DefaultLocale set: '.filter_input(INPUT_POST, 'DefaultLocale'));
+				// Reset $DefaultLocale to its new value
+				require($SRC_ROOT . '/lib/setup.php');
+			}
+		}
 		else if (filter_input(INPUT_POST, 'DisableForceHTTPs') || filter_input(INPUT_POST, 'EnableForceHTTPs')) {
 			if (filter_has_var(INPUT_POST, 'DisableForceHTTPs')) {
 				if ($View->Controller($Output, 'SetForceHTTPs', 'FALSE')) {
@@ -248,6 +255,31 @@ Admin can change the user password without knowing the current user password. Bu
 	</tr>
 	<tr class="oddline">
 		<td class="title">
+			<?php echo _TITLE('Language').':' ?>
+		</td>
+		<td>
+			<form action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
+				<select name="DefaultLocale">
+					<?php
+					foreach ($LOCALES as $Locale => $Conf) {
+						$Selected= $Locale === $DefaultLocale ? 'selected' : '';
+						?>
+						<option <?php echo $Selected ?> value="<?php echo $Locale ?>"><?php echo _($Conf['Name']) ?></option>
+						<?php
+					}
+					?>
+				</select>
+				<input type="submit" id="ApplyDefaultLocale" name="Apply" value="<?php echo _CONTROL('Apply') ?>"/>
+			</form>
+		</td>
+		<td class="none">
+			<?php
+			PrintHelpBox(_HELPBOX('This is the default language for the WUI.'));
+			?>
+		</td>
+	</tr>
+	<tr class="evenline">
+		<td class="title">
 			<?php echo _TITLE('Force HTTPs').':' ?>
 		</td>
 		<td>
@@ -266,7 +298,7 @@ Admin can change the user password without knowing the current user password. Bu
 			?>
 		</td>
 	</tr>
-	<tr class="evenline">
+	<tr class="oddline">
 		<td class="title">
 			<?php echo _TITLE('Max Anchor Nesting').':' ?>
 		</td>
@@ -282,7 +314,7 @@ Admin can change the user password without knowing the current user password. Bu
 			?>
 		</td>
 	</tr>
-	<tr class="oddline">
+	<tr class="evenline">
 		<td class="title">
 			<?php echo _TITLE('Pfctl Timeout').':' ?>
 		</td>
@@ -302,6 +334,6 @@ Admin can change the user password without knowing the current user password. Bu
 	</tr>
 </table>
 <?php
-PrintHelpWindow(_HELPWINDOW('These defaults are permanently stored in web user interface settings, i.e. they are <em>not</em> specific to your current session only.'));
+PrintHelpWindow(_HELPBOX('These defaults are permanently stored in web user interface settings, i.e. they are <em>not</em> specific to your current session only.'));
 require_once($VIEW_PATH.'/footer.php');
 ?>

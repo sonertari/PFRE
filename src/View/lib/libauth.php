@@ -46,6 +46,24 @@ if (filter_has_var(INPUT_GET, 'logout')) {
 	LogUserOut();
 }
 
+if (filter_has_var(INPUT_POST, 'Locale')) {
+	$_SESSION['Locale'] = filter_input(INPUT_POST, 'Locale');
+	// To refresh the page after language change
+	header('Location: '.$_SERVER['REQUEST_URI']);
+	exit;
+}
+
+if (!isset($_SESSION['Locale'])) {
+	$_SESSION['Locale']= $DefaultLocale;
+}
+putenv('LC_ALL='.$_SESSION['Locale']);
+putenv('LANG='.$_SESSION['Locale']);
+
+$Domain= 'pfre';
+bindtextdomain($Domain, $VIEW_PATH.'/locale');
+bind_textdomain_codeset($Domain, $LOCALES[$_SESSION['Locale']]['Codeset']);
+textdomain($Domain);
+
 /**
  * Wrapper for syslog().
  *
@@ -158,12 +176,13 @@ function Authentication($passwd)
  */
 function HTMLHeader($color= 'white')
 {
+	global $LOCALES;
 	?>
 	<!DOCTYPE html>
 	<html>
 		<head>
 			<title><?php echo _MENU('PF Rule Editor') ?></title>
-			<meta http-equiv="content-type" content="text/html" />
+			<meta http-equiv="content-type" content="text/html; charset=<?php echo $LOCALES[$_SESSION['Locale']]['Codeset'] ?>" />
 			<meta name="description" content="PF Rule Editor" />
 			<meta name="author" content="Soner Tari"/>
 			<meta name="keywords" content="PF, Rule, Editor, :)" />

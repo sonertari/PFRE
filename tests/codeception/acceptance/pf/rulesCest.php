@@ -106,6 +106,9 @@ class rulesCest
 		$I->click('Login');
 
 		$I->seeInCurrentUrl('pf/conf.php');
+
+		$I->selectOption('#Locale', 'English');
+		$I->seeOptionIsSelected('#Locale', 'English');
 	}
 
 	protected function loadTestRules(AcceptanceTester $I)

@@ -60,7 +60,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= 'LOG_DEBUG';
-		$cmdline= $this->pfrec . " -t SetLogLevel $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetLogLevel $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -74,7 +74,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= 'LOG_INFO';
-		$cmdline= $this->pfrec . " -t SetLogLevel $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetLogLevel $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -92,7 +92,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= 'FALSE';
-		$cmdline= $this->pfrec . " -t SetHelpBox $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetHelpBox $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -106,7 +106,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= 'TRUE';
-		$cmdline= $this->pfrec . " -t SetHelpBox $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetHelpBox $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -124,7 +124,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= '123';
-		$cmdline= $this->pfrec . " -t SetSessionTimeout $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetSessionTimeout $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -138,7 +138,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= '300';
-		$cmdline= $this->pfrec . " -t SetSessionTimeout $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetSessionTimeout $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -156,7 +156,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= 'TRUE';
-		$cmdline= $this->pfrec . " -t SetForceHTTPs $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetForceHTTPs $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -170,7 +170,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= 'FALSE';
-		$cmdline= $this->pfrec . " -t SetForceHTTPs $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetForceHTTPs $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -188,7 +188,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= '10';
-		$cmdline= $this->pfrec . " -t SetMaxAnchorNesting $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetMaxAnchorNesting $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -202,7 +202,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= '2';
-		$cmdline= $this->pfrec . " -t SetMaxAnchorNesting $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetMaxAnchorNesting $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -220,7 +220,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= '10';
-		$cmdline= $this->pfrec . " -t SetPfctlTimeout $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetPfctlTimeout $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -234,7 +234,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= '5';
-		$cmdline= $this->pfrec . " -t SetPfctlTimeout $expected";
+		$cmdline= $this->pfrec . " -t en_EN SetPfctlTimeout $expected";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -253,7 +253,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_DIR_PATH . '/etc/pfre/pf.conf';
 
-		$cmdline= $this->pfrec . " -t GetPfRules '$file' 0 0";
+		$cmdline= $this->pfrec . " -t en_EN GetPfRules '$file' 0 0";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -274,17 +274,21 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 	{
 		global $TEST_DIR_PATH;
 
-		$cmdline= $this->pfrec . " -t GetPfRuleFiles";
+		$cmdline= $this->pfrec . " -t en_EN GetPfRuleFiles";
 
 		exec($cmdline, $outputArray, $retval);
 
 		$this->assertEquals(0, $retval);
 
-		$actual= json_decode($outputArray[0])[0];
+		$actual= explode("\n", json_decode($outputArray[0])[0]);
+		sort($actual);
+		$actual= implode("\n", $actual);
 
 		exec("ls -1 $TEST_DIR_PATH/etc/pfre/", $output);
 
-		$expected= implode("\n", $output);
+		$expected= $output;
+		sort($expected);
+		$expected= implode("\n", $expected);
 
 		$this->assertEquals($expected, $actual);
 	}
@@ -303,7 +307,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($file);
 		
-		$cmdline= $this->pfrec . " -t DeletePfRuleFile $file";
+		$cmdline= $this->pfrec . " -t en_EN DeletePfRuleFile $file";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -330,7 +334,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($destFile);
 
 		$json= json_encode($ruleSet->rules);
-		$cmdline= $this->pfrec . " -t InstallPfRules '$json' $destFile 0";
+		$cmdline= $this->pfrec . " -t en_EN InstallPfRules '$json' $destFile 0";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -356,7 +360,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($ruleDef);
-		$cmdline= $this->pfrec . " -t GeneratePfRule '$json' 0";
+		$cmdline= $this->pfrec . " -t en_EN GeneratePfRule '$json' 0";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -381,7 +385,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($rulesArray);
-		$cmdline= $this->pfrec . " -t GeneratePfRules '$json'";
+		$cmdline= $this->pfrec . " -t en_EN GeneratePfRules '$json'";
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -406,7 +410,7 @@ class pfrecTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($rulesArray);
-		$cmdline= $this->pfrec . " -t GeneratePfRules '$json' 1";
+		$cmdline= $this->pfrec . " -t en_EN GeneratePfRules '$json' 1";
 
 		exec($cmdline, $outputArray, $retval);
 

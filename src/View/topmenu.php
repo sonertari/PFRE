@@ -54,20 +54,40 @@ HTMLHeader();
 
 					if (isset($Submenu)) {
 						?>
-						<div id="menu">
-							<b><?php echo _MENU('PF RULE EDITOR') ?></b>
-							<ul id="tabs">
-							<?php
-							foreach ($SubMenus as $Name => $SubMenuConf) {
-								if (in_array($_SESSION['USER'], $SubMenuConf['Perms'])) {
+						<form method="post" id="languageForm" name="languageForm" action="<?php echo preg_replace("/&/", "&amp;", $_SERVER['REQUEST_URI'], -1) ?>">
+							<div id="menu">
+								<b><?php echo _MENU('PF RULE EDITOR') ?></b>
+								<ul id="tabs">
+								<?php
+								foreach ($SubMenus as $Name => $SubMenuConf) {
+									if (in_array($_SESSION['USER'], $SubMenuConf['Perms'])) {
+										?>
+										<li<?php echo ($Submenu == $Name ? ' class="active"' : '') ?>><a href="?submenu=<?php echo $Name ?>"><?php echo _($SubMenuConf['Name']) ?></a></li>
+										<?php
+									}
+								}
+								?>
+								</ul>
+
+								<?php echo _MENU('Language').': ' ?>
+								<select id="Locale" name="Locale" onchange="document.languageForm.submit()">
+								<?php
+								foreach ($LOCALES as $Locale => $Conf) {
+									$Selected= ($_SESSION['Locale'] == $Locale) ? 'selected' : '';
+									if ($_SESSION['Locale'] !== 'en_EN') {
+										$LocaleDisplayName= _($Conf['Name']).' ('.$Conf['Name'].')';
+									}
+									else {
+										$LocaleDisplayName= _($Conf['Name']);
+									}
 									?>
-									<li<?php echo ($Submenu == $Name ? ' class="active"' : '') ?>><a href="?submenu=<?php echo $Name ?>"><?php echo _($SubMenuConf['Name']) ?></a></li>
+									<option value="<?php echo $Locale ?>" <?php echo $Selected ?>><?php echo $LocaleDisplayName ?></option>
 									<?php
 								}
-							}
-							?>
-							</ul>
-						</div>
+								?>
+								</select>
+							</div>
+						</form>
 						<?php
 					}
 					?>

@@ -84,7 +84,7 @@ function AuthHTMLFooter()
 				<?php echo $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR') ?>
 			</td>
 			<td>
-				<?php echo _TITLE2('Copyright') ?> (c) 2016 Soner Tari. <?php echo _TITLE2('All rights reserved.') ?>
+				<?php echo _TITLE('Copyright') ?> (c) 2016 Soner Tari. <?php echo _TITLE('All rights reserved.') ?>
 			</td>
 		</tr>
 	<?php
@@ -103,7 +103,7 @@ function CheckPageActivation($active)
 	global $VIEW_PATH, $Submenu;
 
 	if (!$active) {
-		echo _TITLE2('Resource not available').': '.$Submenu;
+		echo _TITLE('Resource not available').': '.$Submenu;
 
 		require_once($VIEW_PATH.'/footer.php');
 		pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Page not active.');

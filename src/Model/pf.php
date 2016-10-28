@@ -395,7 +395,7 @@ class Pf extends Model
 	 * 
 	 * We create a sysv message queue before forking the child process. The parent process
 	 * waits for a message from the child. The child process runs the pfctl command, packs
-	 * its ouput and return value in an array, and returns it in a message.
+	 * its output and return value in an array, and returns it in a message.
 	 * 
 	 * The parent loops waiting for a message from the child. In the loop we use a sleep interval
 	 * obtained by an equation involving $PfctlTimeout, instead of a constant like 0.1,
