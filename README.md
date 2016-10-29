@@ -49,8 +49,9 @@ Here are possible steps to obtain a working PFRE installation:
 - Copy the files in PFRE src folder under /var/www/htdocs/pfre/.
 - Configure a Virtual Host in httpd.conf for PFRE, preferably an SSL Virtual Host.
 - Enable pfrec.php in doas by adding the following line in /etc/doas.conf:
-	+ permit nopass www as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
+	+ `permit nopass www as root cmd /var/www/htdocs/pfre/Controller/pfrec.php`
+	+ Make sure pfrec.php is executable
 - Set the admin password for the web user interface by running the following command:
-	+ /usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)
+	+ `/usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)`
 - Point your web browser to the web server and log in as admin:soner123.
 
