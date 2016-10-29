@@ -42,7 +42,7 @@ namespace Model;
  */
 class Rule
 {
-    /**
+	/**
 	 * Rule category.
 	 */
 	public $cat= '';
@@ -62,7 +62,7 @@ class Rule
 
 	protected $ruleNumber= 0;
 
-    /**
+	/**
 	 * The keywords possible in this type of rule are accumulated in this array.
 	 * 
 	 * We search for such keywords while parsing the given strings. The parser functions are
@@ -103,7 +103,7 @@ class Rule
 			),
 		);
 
-    /**
+	/**
 	 * Type definitions for the rule category are accumulated in this member var.
 	 */
 	protected $typedef= array();
@@ -121,7 +121,7 @@ class Rule
 			),
 		);
 
-    /**
+	/**
 	 * Log can be of type either bool or array of values.
 	 * 
 	 * @attention Validate functions can handle multi-type values like this.
@@ -158,7 +158,7 @@ class Rule
 			),
 		);
 
-    /**
+	/**
 	 * Represents nesting number while reporting errors in anchor inline rules.
 	 * 
 	 * We allow for nested anchors in inline rules. If there are errors in such nested anchor rules,
@@ -399,7 +399,7 @@ class Rule
 		return TRUE;
 	}
 
-    /**
+	/**
 	 * Parses the given rule string.
 	 * 
 	 * We first fetch any inline comments and sanitize the given string.
@@ -439,7 +439,7 @@ class Rule
 		$this->rule= array();
 	}
 
-    /**
+	/**
 	 * Parses inline comments.
 	 * 
 	 * We get any inline comments and update the string by removing the comment. Such comments
@@ -454,7 +454,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Sanitizes rule string.
 	 * 
 	 * Sanitization step prepares the given strings by making them obey certain standards, so that we only
@@ -472,7 +472,7 @@ class Rule
 		$this->str= preg_replace('/"/', ' " ', $this->str);
 	}
 
-    /**
+	/**
 	 * Splits rule string into words.
 	 * 
 	 * The string is split into words at certain types of chars, such as spaces, commas, and tabs.
@@ -485,7 +485,7 @@ class Rule
 		$this->words= preg_split('/[\s,\t]+/', $this->str, -1, PREG_SPLIT_NO_EMPTY);
 	}
 
-    /**
+	/**
 	 * Checks if the index points at the last word in the list.
 	 * 
 	 * @attention This is a very important check used in while loops advancing the index. If we
@@ -497,7 +497,7 @@ class Rule
 		return $this->index >= count($this->words);
 	}
 
-    /**
+	/**
 	 * Assigns the current word to the given key.
 	 * 
 	 * @param string $key Key in the rule array to assign value to.
@@ -507,7 +507,7 @@ class Rule
 		$this->rule[$key]= $this->words[$this->index];
 	}
 
-    /**
+	/**
 	 * Assigns the current word to the given key and increments the index.
 	 * 
 	 * @param string $key Key in the rule array to assign value to.
@@ -517,7 +517,7 @@ class Rule
 		$this->rule[$key]= $this->words[$this->index++];
 	}
 
-    /**
+	/**
 	 * Assigns the next word to the current word as key and increments the index.
 	 * 
 	 * Removes any quotes.
@@ -527,7 +527,7 @@ class Rule
 		$this->rule[$this->words[$this->index]]= preg_replace('/"/', '', $this->words[++$this->index]);
 	}
 
-    /**
+	/**
 	 * Assigns the next word to the given key and increments the index.
 	 * 
 	 * @param string $key Key in the rule array to assign value to.
@@ -537,7 +537,7 @@ class Rule
 		$this->rule[$key]= $this->words[++$this->index];
 	}
 
-    /**
+	/**
 	 * Assigns TRUE to the current word as key.
 	 */
 	function parseBool()
@@ -545,7 +545,7 @@ class Rule
 		$this->rule[$this->words[$this->index]]= TRUE;
 	}
 	
-    /**
+	/**
 	 * Assigns the items in delimiters to the given key.
 	 * 
 	 * Note that each item may span multiple words: parseParenthesized().
@@ -559,7 +559,7 @@ class Rule
 		$this->rule[$key]= $this->parseItem($delimPre, $delimPost);		
 	}
 	
-    /**
+	/**
 	 * Gets the items in delimiters and increments the index once for each word.
 	 * 
 	 * There may be only one item between delimiters. In this case, we may need to convert
@@ -585,7 +585,7 @@ class Rule
 		return $value;
 	}
 
-    /**
+	/**
 	 * Gets the items in parentheses and increments the index once for each word.
 	 * 
 	 * Items may have more complex structures than simple words.
@@ -622,7 +622,7 @@ class Rule
 		return $retval;
 	}
 
-    /**
+	/**
 	 * Gets port item(s) and increments the index once for each word.
 	 * 
 	 * Items may have more complex structures than simple words.
@@ -641,7 +641,7 @@ class Rule
 		return $value;
 	}
 
-    /**
+	/**
 	 * Gets a port item and increments the index once for each word.
 	 * 
 	 * This methods gets only one item, which may have a more complex structure than a simple word.
@@ -661,7 +661,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Gets the string in delimiters and assign it to the given key.
 	 * 
  	 * @param string $key Key in the rule array to assign value to.
@@ -674,7 +674,7 @@ class Rule
 		$this->rule[$key]= $this->parseString($delimPre, $delimPost);		
 	}
 
-    /**
+	/**
 	 * Gets the string in delimiters and increments the index once for each word.
 	 * 
 	 * The string may contain single or multiple words.
@@ -697,7 +697,7 @@ class Rule
 		return trim($value);
 	}
 
-    /**
+	/**
 	 * Assigns any to from or to keys.
 	 * 
 	 * This is the method called when an 'any' key is found in the words list.
@@ -713,7 +713,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Gets source or destination addresses and/or ports in the rule string.
 	 * 
 	 * This method is called if the parser finds a 'from' or 'to' keyword in the rule string.
@@ -746,7 +746,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Gets OS in host definition in the rule string.
 	 * 
 	 * This method is called if the parser finds an 'os' keyword in the rule string.
@@ -765,7 +765,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Gets log specification in the rule string.
 	 * 
 	 * This method is called if the parser finds a 'log' keyword in the rule string.
@@ -794,7 +794,7 @@ class Rule
 		}
 	}
 	
-    /**
+	/**
 	 * Prints the given key.
 	 * 
  	 * @param string $key Key to print.
@@ -806,7 +806,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Prints the value of the given key.
 	 * 
 	 * Caller may supply a leading and/or a trailing string to print.
@@ -822,7 +822,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Prints the values of the given key.
 	 * 
 	 * Puts the values between opening and closing delimiters.
@@ -839,7 +839,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Prints the given values in delimiters.
 	 * 
  	 * @param array $items Values to print.
@@ -857,7 +857,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Prints interfaces with a leading 'on' keyword.
 	 */
 	function genInterface()
@@ -865,7 +865,7 @@ class Rule
 		$this->genItems('interface', 'on');
 	}
 
-    /**
+	/**
 	 * Prints inline comment with a leading # char.
 	 */
 	function genComment()
@@ -875,7 +875,7 @@ class Rule
 		}
 	}
 
-    /**
+	/**
 	 * Prints log definition of the rule.
 	 */
 	function genLog()
