@@ -65,7 +65,6 @@ Line2
 Line3
 Line4 e u d x';
 
-		$this->editPageTitle= 'Edit ' . $this->type . ' ' . $this->ruleNumber;
 		$this->dLink= NULL;
 	}
 

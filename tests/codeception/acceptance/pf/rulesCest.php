@@ -59,31 +59,6 @@ class rulesCest
 		'comment' => 'Comment',
 		);
 
-	private $ruleType2Class= array(
-		'filter' => 'Filter',
-		'antispoof' => 'Antispoof',
-		'anchor' => 'Anchor',
-		'macro' => 'Macro',
-		'table' => 'Table',
-		'afto' => 'AfTo',
-		'natto' => 'NatTo',
-		'binatto' => 'BinatTo',
-		'divertto' => 'DivertTo',
-		'divertpacket' => 'DivertPacket',
-		'rdrto' => 'RdrTo',
-		'route' => 'Route',
-		'queue' => 'Queue',
-		'scrub' => 'Scrub',
-		'option' => 'Option',
-		'timeout' => 'Timeout',
-		'limit' => 'Limit',
-		'state' => 'State',
-		'loadanchor' => 'LoadAnchor',
-		'include' => '_Include',
-		'blank' => 'Blank',
-		'comment' => 'Comment',
-	);
-
 	public function _before(Helper\ConfigureWebDriver $config)
 	{
 		/// @attention Disable clear_cookies before each test
@@ -140,7 +115,7 @@ class rulesCest
 			$I->click('Show');
 
 			$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 1);
-			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => ltrim($this->ruleType2Class[$sender], '_') . ' rule']), 1);
+			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => "$type rule"]), 1);
 
 			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
 
@@ -165,7 +140,7 @@ class rulesCest
 			$I->selectOption('#category', $type);
 			$I->click('Add');
 
-			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see("Edit $type", 'h2');
 			$I->see($ruleNumber . ' (modified)', 'h2');
 
 			$I->checkOption('#forcesave');
@@ -194,7 +169,7 @@ class rulesCest
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Add');
 
-			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see("Edit $type", 'h2');
 			$I->see($ruleNumber . ' (modified)', 'h2');
 
 			$I->checkOption('#forcesave');
@@ -226,7 +201,7 @@ class rulesCest
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Add');
 
-			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see("Edit $type", 'h2');
 			$I->see($ruleNumber . ' (modified)', 'h2');
 
 			$I->checkOption('#forcesave');
@@ -275,7 +250,7 @@ class rulesCest
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Edit');
 
-			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see("Edit $type", 'h2');
 			$I->see($ruleNumber, 'h2');
 			$I->dontSee('(modified)', 'h2');
 
@@ -345,7 +320,7 @@ class rulesCest
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Add');
 
-			$I->see('Edit ' . ltrim($this->ruleType2Class[$sender], '_'), 'h2');
+			$I->see("Edit $type", 'h2');
 			$I->see($ruleNumber . ' (modified)', 'h2');
 
 			$I->checkOption('#forcesave');

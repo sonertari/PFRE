@@ -151,11 +151,7 @@ if (filter_has_var(INPUT_POST, 'download')) {
 		header('Content-Type: application/octet-stream');
 
 		if ($View->RuleSet->filename != '') {
-			if (preg_match('/^(.*)\s+\(uploaded\)$/', $View->RuleSet->filename, $match)) {
-				$filename= $match[1];
-			} else {
-				$filename= basename($View->RuleSet->filename);
-			}
+			$filename= basename($View->RuleSet->filename);
 		} else {
 			$filename= 'pf.conf';
 		}

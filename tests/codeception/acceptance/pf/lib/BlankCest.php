@@ -62,8 +62,6 @@ e u d x';
 
 
 e u d x';
-
-		$this->editPageTitle= 'Edit ' . $this->type . ' ' . $this->ruleNumber;
 	}
 
 	/**

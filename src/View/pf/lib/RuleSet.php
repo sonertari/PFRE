@@ -66,6 +66,11 @@ class RuleSet
 	public $filename= '';
 
 	/**
+	 * Whether the file is uploaded or not.
+	 */
+	public $uploaded= FALSE;
+
+	/**
 	 * The list holding the ruleset.
 	 */
 	public $rules= array();
@@ -96,10 +101,13 @@ class RuleSet
 		}
 
 		if ($retval !== FALSE || $force) {
-			$this->filename= $filename;
 			if ($tmp && $tmpFilename !== '') {
-				// Mark uploaded files
-				$this->filename= "$tmpFilename (" . _TITLE('uploaded') . ')';
+				$this->filename= $tmpFilename;
+				// Mark uploaded files as such
+				$this->uploaded= TRUE;
+			} else {
+				$this->filename= $filename;
+				$this->uploaded= FALSE;
 			}
 			$rulesArray= json_decode($Output[0], TRUE)['rules'];
 		} else {

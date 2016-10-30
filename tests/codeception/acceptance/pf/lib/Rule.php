@@ -57,8 +57,36 @@ class Rule
 	/// @todo Make this an option
 	protected $QUICK= FALSE;
 
+	/// @todo Reuse this table from rules.php in View
+	private $ruleTypes= array(
+		'filter' => 'Filter',
+		'antispoof' => 'Antispoof',
+		'anchor' => 'Anchor',
+		'macro' => 'Macro',
+		'table' => 'Table',
+		'afto' => 'Af Translate',
+		'natto' => 'Nat',
+		'binatto' => 'Binat',
+		'divertto' => 'Divert',
+		'divertpacket' => 'Divert Packet',
+		'rdrto' => 'Redirect',
+		'route' => 'Route',
+		'queue' => 'Queue',
+		'scrub' => 'Scrub',
+		'option' => 'Option',
+		'timeout' => 'Timeout',
+		'limit' => 'Limit',
+		'state' => 'State Defaults',
+		'loadanchor' => 'Load Anchor',
+		'include' => 'Include',
+		'blank' => 'Blank Line',
+		'comment' => 'Comment',
+		);
+
 	function __construct()
 	{
+		$this->type= $this->ruleTypes[strtolower(ltrim($this->type, '_'))];
+
 		$this->QUICK= QUICK;
 
 		$this->revertedRule= $this->origRule;

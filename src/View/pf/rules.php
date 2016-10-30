@@ -190,7 +190,7 @@ require_once($VIEW_PATH.'/header.php');
         </form>
     </fieldset>
 	<?php
-	echo _TITLE('Rules file') . ': ' . $View->RuleSet->filename;
+	echo _TITLE('Rules file') . ': ' . $View->RuleSet->filename . ($View->RuleSet->uploaded ? ' (' . _TITLE('uploaded') . ')' : '');
 	?>
     <table>
         <tr>

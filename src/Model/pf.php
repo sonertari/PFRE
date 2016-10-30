@@ -478,13 +478,13 @@ class Pf extends Model
 						$retval= $msg['retval'];
 						$output= $msg['output'];
 
-						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Received pfctl output: $msg");
+						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Received pfctl output: ' . print_r($msg, TRUE));
 
 						$return= TRUE;
 						break;
 					} else {
-						Error(_('Output not in correct format') . ": $msg");
-						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Output not in correct format: $msg");
+						Error(_('Output not in correct format') . ': ' . print_r($msg, TRUE));
+						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Output not in correct format: ' . print_r($msg, TRUE));
 						break;
 					}
 				} else {
@@ -524,9 +524,9 @@ class Pf extends Model
 				);
 
 			if (!msg_send($queue, $sendtype, $msg, TRUE, TRUE, $error)) {
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . $msg . ', error: ' . posix_strerror($error));
+				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . print_r($msg, TRUE) . ', error: ' . posix_strerror($error));
 			} else {
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . $msg);
+				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . print_r($msg, TRUE));
 			}
 
 			// Child exits
