@@ -53,6 +53,11 @@ class Rule
 	public $rule= array();
 
 	/**
+	 * Name used in href.
+	 */
+	protected $ref= '';
+
+	/**
 	 * Common part of edit links.
 	 */
 	protected $href= '';
@@ -82,7 +87,8 @@ class Rule
 	function __construct()
 	{
 		$this->cat= str_replace(__NAMESPACE__ . '\\', '', get_called_class());
-		$this->href= 'conf.php?sender=' . strtolower(ltrim($this->cat, '_')) . '&amp;rulenumber=';
+		$this->ref= strtolower(ltrim($this->cat, '_'));
+		$this->href= 'conf.php?sender=' . $this->ref . '&amp;rulenumber=';
 		$this->setType();
 	}
 
@@ -119,18 +125,19 @@ class Rule
 	 */
 	function dispHead($ruleNumber)
 	{
-		global $lineNumber;
+		global $lineNumber, $ruleCategoryNames;
 
+		$ruleType= $ruleCategoryNames[$this->ref];
 		$lineCount= $this->countLines();
 		$title= _TITLE('<RULE_TYPE> rule');
-		$title= str_replace('<RULE_TYPE>', ltrim($this->cat, '_'), $title);
+		$title= str_replace('<RULE_TYPE>', $ruleType, $title);
 		?>
 		<tr title="<?php echo $title ?>"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : '') ?>>
 			<td title="<?php echo _TITLE('Rule number') ?>" class="center">
 				<?php echo $ruleNumber; ?>
 			</td>
 			<td title="<?php echo _TITLE('Category') ?>" class="category">
-				<?php echo ltrim($this->cat, '_'); ?>
+				<?php echo $ruleType; ?>
 			</td>
 			<td title="<?php echo _TITLE('Line number') ?>" class="center">
 				<?php
@@ -193,7 +200,7 @@ class Rule
 	function dispTailEditLinks($ruleNumber, $count)
 	{
 		?>
-			<td class="edit">
+			<td class="<?php echo ($ruleNumber % 2 ? 'editoddline' : 'edit') ?>">
 				<?php
 				$this->dispEditLinks($ruleNumber, $count);
 				?>
@@ -215,6 +222,7 @@ class Rule
 	 */
 	function dispEditLinks($ruleNumber, $count, $up= 'up', $down= 'down', $del= 'del')
 	{
+		global $ruleCategoryNames;
 		?>
 		<a href="<?php echo $this->href . $ruleNumber ?>" title="<?php echo _TITLE('Edit') ?>">e</a>
 		<?php
@@ -233,8 +241,9 @@ class Rule
 			echo ' d ';
 		}
 
+		$ruleType= $ruleCategoryNames[$this->ref];
 		$confirmMsg= _CONTROL('Are you sure you want to delete <RULE_TYPE> rule number <RULE_NUMBER>?');
-		$confirmMsg= str_replace('<RULE_TYPE>', ltrim($this->cat, '_'), $confirmMsg);
+		$confirmMsg= str_replace('<RULE_TYPE>', $ruleType, $confirmMsg);
 		$confirmMsg= str_replace('<RULE_NUMBER>', $ruleNumber, $confirmMsg);
 		?>
 		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $del ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Delete') ?>" onclick="return confirm('<?php echo $confirmMsg ?>')">x</a>
@@ -751,9 +760,9 @@ class Rule
 	 */
 	function editHead($modified)
 	{
-		global $ruleStr;
+		global $ruleStr, $ruleCategoryNames;
 
-		$ruleType= ltrim($this->cat, '_');
+		$ruleType= $ruleCategoryNames[$this->ref];
 		$editHeader= _TITLE('Edit <RULE_TYPE> Rule <RULE_NUMBER>');
 		$editHeader= str_replace('<RULE_TYPE>', $ruleType, $editHeader);
 		$editHeader= str_replace('<RULE_NUMBER>', $this->ruleNumber, $editHeader);

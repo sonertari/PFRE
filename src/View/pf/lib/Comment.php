@@ -84,8 +84,11 @@ class Comment extends Rule
 	 */
 	function edit($ruleNumber, $modified, $testResult, $generateResult, $action)
 	{
+		global $ruleCategoryNames;
+
+		$ruleType= $ruleCategoryNames[$this->ref];
 		$editHeader= _TITLE('Edit <RULE_TYPE> Rule <RULE_NUMBER>');
-		$editHeader= str_replace('<RULE_TYPE>', 'Comment', $editHeader);
+		$editHeader= str_replace('<RULE_TYPE>', $ruleType, $editHeader);
 		$editHeader= str_replace('<RULE_NUMBER>', $ruleNumber, $editHeader);
 		?>
 		<h2><?php echo $editHeader . ($modified ? ' (' . _TITLE('modified') . ')' : ''); ?></h2>

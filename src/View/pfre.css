@@ -375,6 +375,14 @@ td.infobox
 	white-space: nowrap;
 }
 
+.editoddline
+{
+	background-color: #ebebeb;
+	border: none;
+	text-align: center;
+	white-space: nowrap;
+}
+
 /*
  * Edit pages
  */
