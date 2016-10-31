@@ -767,7 +767,7 @@ class Rule
 		$editHeader= str_replace('<RULE_TYPE>', $ruleType, $editHeader);
 		$editHeader= str_replace('<RULE_NUMBER>', $this->ruleNumber, $editHeader);
 		?>
-		<h2><?php echo $editHeader . ($modified ? ' (' . _TITLE('modified') . ')' : '') ?><?php $this->editHelp($ruleType) ?></h2>
+		<h2><?php echo $editHeader . ($modified ? ' (' . _TITLE('modified') . ')' : '') ?><?php $this->editHelp(ltrim($this->cat, '_')) ?></h2>
 		<h4><?php echo str_replace("\t", "<code>\t</code><code>\t</code>", nl2br(htmlentities($ruleStr))) ?></h4>
 		<form id="editForm" name="editForm" action="<?php echo $this->href . $this->ruleNumber ?>" method="post">
 			<table id="nvp">
