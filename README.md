@@ -56,9 +56,11 @@ Here are the basic steps to obtain a working PFRE installation:
 	+ Pick a better password than soner123 though.
 - Point your web browser to the web server and log in as admin:soner123.
 
-The following sections contain the details.
+The following sections provide the details.
 
 ### Install OpenBSD
+
+The OpenBSD installation guide is in [faq4](http://www.openbsd.org/faq/faq4.html).
 
 Here are a couple of guidelines:
 
