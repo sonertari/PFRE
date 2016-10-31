@@ -39,5 +39,5 @@
 $ShowHelpBox= TRUE;
 
 /// Default session timeout in secs.
-$SessionTimeout= 30000;
+$SessionTimeout= 300;
 ?>
