@@ -36,7 +36,7 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ Pfctl is executed in a separate process, which times out if pfctl takes too long.
 	+ As the sole gatekeeper for the Model, PFRE controller, pfrec is the only executable enabled in doas configuration. Pfrec validates all commands and their arguments given to it.
 	+ The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep).
-	+ All system executables are called using their full path.
+	+ All system executables are called using their full pathnames.
 	+ The number of anchors in inline rules is restricted to a configurable maximum.
 	+ JavaScript use is kept to a minimum.
 
@@ -79,13 +79,12 @@ Create a package cache folder:
 
 	# cd /var/db/
 	# mkdir pkg_cache
-	# cd pkg_cache/
 
 Set the $PKG\_PATH env variable to the cache folder you have just created:
 
 	# export PKG_PATH=/var/db/pkg_cache/
 
-Copy the required packages under $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
+Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
 	apache-httpd-common-2.4.18.tgz
 	apache-httpd-openbsd-1.3.20140502p6.tgz
@@ -100,7 +99,7 @@ Copy the required packages under $PKG\_PATH. The following is the list of files 
 
 Install Apache, PHP, and php-pcntl by running the following commands, which should install their dependencies as well:
 
-	# pkg_add -v apache-httpd
+	# pkg_add -v apache-httpd-openbsd
 	# pkg_add -v php
 	# pkg_add -v php-pcntl
 
