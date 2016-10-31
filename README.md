@@ -23,7 +23,7 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ You can insert blank lines between rules: Blank lines are a separate rule type.
 	+ Comments are a separate rule type too.
 	+ All other rule types support inline comments.
-- Almost all edit features provide help links to pf.conf man page, which opens in a separate tab.
+- The edit page provides help links to relevant sections on the pf.conf(5) man page, which opens in a separate tab on your browser.
 - User interface is developed using gettext, such that different languages can be supported, currently only English and Turkish.
 - All important messages and test results are reported in error and information boxes.
 - PFRE writes detailed logs to syslog, which you can filter into separate log files.
@@ -217,7 +217,7 @@ If you want the web server to be started automatically after a reboot, first cop
 Then add the following lines to it:
 
 	if [ -x /usr/local/sbin/httpd ]; then
-	        echo -n '\nStarting web server\n'
+	        echo 'starting apache web server.'
 	        /usr/local/sbin/httpd -u -DSSL >/dev/null 2>&1
 	fi
 
