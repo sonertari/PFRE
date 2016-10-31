@@ -77,49 +77,49 @@ Reboot the system after installation is complete and log in as root.
 
 Create a package cache folder:
 
-		# cd /var/db/
-		# mkdir pkg_cache
-		# cd pkg_cache/
+	# cd /var/db/
+	# mkdir pkg_cache
+	# cd pkg_cache/
 
 Set the $PKG\_PATH env variable to the cache folder you have just created:
 
-		# export PKG_PATH=/var/db/pkg_cache/
+	# export PKG_PATH=/var/db/pkg_cache/
 
 Copy the required packages under $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
-		apache-httpd-common-2.4.18.tgz
-		apache-httpd-openbsd-1.3.20140502p6.tgz
-		femail-1.0p1.tgz
-		femail-chroot-1.0p2.tgz
-		gettext-0.19.7.tgz
-		libiconv-1.14p3.tgz
-		libxml-2.9.3.tgz
-		php-5.6.18.tgz
-		php-pcntl-5.6.18.tgz
-		xz-5.2.2p0.tgz
+	apache-httpd-common-2.4.18.tgz
+	apache-httpd-openbsd-1.3.20140502p6.tgz
+	femail-1.0p1.tgz
+	femail-chroot-1.0p2.tgz
+	gettext-0.19.7.tgz
+	libiconv-1.14p3.tgz
+	libxml-2.9.3.tgz
+	php-5.6.18.tgz
+	php-pcntl-5.6.18.tgz
+	xz-5.2.2p0.tgz
 
 Install Apache, PHP, and php-pcntl by running the following commands, which should install their dependencies as well:
 
-		# pkg_add -v apache-httpd
-		# pkg_add -v php
-		# pkg_add -v php-pcntl
+	# pkg_add -v apache-httpd
+	# pkg_add -v php
+	# pkg_add -v php-pcntl
 
 If you want to see if all required packages are installed successfully, run the following command:
 
-		# pkg_info -a
+	# pkg_info -a
 
 Here is the expected output of that command:
 
-		apache-httpd-common-2.4.18 shared files for Apache 1 and 2
-		apache-httpd-openbsd-1.3.20140502p6 OpenBSD improved and secured version of Apache 1.3
-		femail-1.0p1        simple SMTP client
-		femail-chroot-1.0p2 simple SMTP client for chrooted web servers
-		gettext-0.19.7      GNU gettext runtime libraries and programs
-		libiconv-1.14p3     character set conversion library
-		libxml-2.9.3        XML parsing library
-		php-5.6.18          server-side HTML-embedded scripting language
-		php-pcntl-5.6.18    PCNTL extensions for php5
-		xz-5.2.2p0          LZMA compression and decompression tools
+	apache-httpd-common-2.4.18 shared files for Apache 1 and 2
+	apache-httpd-openbsd-1.3.20140502p6 OpenBSD improved and secured version of Apache 1.3
+	femail-1.0p1        simple SMTP client
+	femail-chroot-1.0p2 simple SMTP client for chrooted web servers
+	gettext-0.19.7      GNU gettext runtime libraries and programs
+	libiconv-1.14p3     character set conversion library
+	libxml-2.9.3        XML parsing library
+	php-5.6.18          server-side HTML-embedded scripting language
+	php-pcntl-5.6.18    PCNTL extensions for php5
+	xz-5.2.2p0          LZMA compression and decompression tools
 
 ### Install PFRE
 
@@ -127,115 +127,115 @@ Create a 'pfre' folder under /var/www/htdocs/ and copy all the contents of the P
 
 Make sure /var/www/htdocs/pfre/Controller/pfrec.php is executable. If not, go to /var/www/htdocs/pfre/Controller/ and make it executable:
 
-		# cd /var/www/htdocs/pfre/Controller/
-		# chmod u+x pfrec.php
+	# cd /var/www/htdocs/pfre/Controller/
+	# chmod u+x pfrec.php
 
 #### Configure Apache
 
 Configure Virtual Host setups for PFRE in httpd.conf. Your configuration might look like the following:
 
-		<VirtualHost _default_:80>
-		    DocumentRoot /var/www/htdocs/pfre/View
-		    ServerName pfre
-		    ErrorLog logs/pfre_error_log
-		    TransferLog logs/pfre_access_log
-		</VirtualHost>
+	<VirtualHost _default_:80>
+	    DocumentRoot /var/www/htdocs/pfre/View
+	    ServerName pfre
+	    ErrorLog logs/pfre_error_log
+	    TransferLog logs/pfre_access_log
+	</VirtualHost>
 
-You are advised to repeat the same configuration for SSL Vitual Host `<VirtualHost _default_:443>` also.
+You are advised to repeat the same configuration for SSL Virtual Host `<VirtualHost _default_:443>` also.
 
 Create a self-signed server certificate. Run the following commands to generate your own CA:
 
-		# openssl genrsa -des3 -out ca.key 4096
-		# openssl req -new -x509 -days 365 -key ca.key -out ca.crt
+	# openssl genrsa -des3 -out ca.key 4096
+	# openssl req -new -x509 -days 365 -key ca.key -out ca.crt
 
 Next, to generate a server key and request for signing, run the following:
 
-		# openssl genrsa -des3 -out server.key 4096
-		# openssl req -new -key server.key -out server.csr
+	# openssl genrsa -des3 -out server.key 4096
+	# openssl req -new -key server.key -out server.csr
 
 You should sign the certificate signing request (csr) with the self-created certificate authority (CA) that you
 made earlier:
 
-		# openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
+	# openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
 
 To make a server.key which doesn't cause apache to prompt for a password:
 
-		# openssl rsa -in server.key -out server.key.insecure
-		# mv server.key server.key.secure
-		# mv server.key.insecure server.key
+	# openssl rsa -in server.key -out server.key.insecure
+	# mv server.key server.key.secure
+	# mv server.key.insecure server.key
 
 Finally, you should copy server.crt and server.key files to the locations defined in httpd.conf:
 
-		# cp server.key /etc/ssl/private/        
-		# cp server.crt /etc/ssl/ 
+	# cp server.key /etc/ssl/private/        
+	# cp server.crt /etc/ssl/ 
 
 Set the admin password for the web user interface to soner123 by running the following commands:
 
-		# cd /var/www/conf
-		# touch .htpasswd
-		# /usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)
+	# cd /var/www/conf
+	# touch .htpasswd
+	# /usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)
 
 #### Configure PHP
 
 Go to /usr/local/bin/ and create a link to php executable:
 
-		# cd /usr/local/bin
-		# ln -s php-5.6 php
+	# cd /usr/local/bin
+	# ln -s php-5.6 php
 
 Go to /var/www/conf/modules and copy the sample php configuration file to it:
 
-		# cd /var/www/conf/modules/
-		# cp ../modules.sample/php-5.6.conf .
+	# cd /var/www/conf/modules/
+	# cp ../modules.sample/php-5.6.conf .
 
 To enable pcntl, go to /etc/php-5.6/ and create the pcntl.ini file:
 
-		# cd /etc/php-5.6/
-		# touch pcntl.ini
+	# cd /etc/php-5.6/
+	# touch pcntl.ini
 
 And add the following line to it:
 
-		extension=pcntl.so
+	extension=pcntl.so
 
 #### Configure doas
 
 Go to /etc/ and create the doas.conf file:
 
-		# cd /etc/
-		# touch doas.conf
+	# cd /etc/
+	# touch doas.conf
 
 And add the following lines to it:
 
-		permit nopass www as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
-		permit nopass keepenv root as root
+	permit nopass www as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
+	permit nopass keepenv root as root
 
 #### Configure the system
 
 If you want the web server to be started automatically after a reboot, first copy the sample rc.local file to /etc/:
 
-		# cd /etc/
-		# cp examples/rc.local .
+	# cd /etc/
+	# cp examples/rc.local .
 
 Then add the following lines to it:
 
-		if [ -x /usr/local/sbin/httpd ]; then
-		        echo -n '\nStarting web server\n'
-		        /usr/local/sbin/httpd -u -DSSL >/dev/null 2>&1
-		fi
+	if [ -x /usr/local/sbin/httpd ]; then
+	        echo -n '\nStarting web server\n'
+	        /usr/local/sbin/httpd -u -DSSL >/dev/null 2>&1
+	fi
 
 Also, if you want to use this PFRE test system as a firewall, you should enable packet forwarding between interfaces in /etc/sysctl.conf. So, copy the sample sysctl.conf file under /etc/examples/ to /etc/:
 
-		# cd /etc/
-		# cp examples/sysctl.conf .
+	# cd /etc/
+	# cp examples/sysctl.conf .
 
 And uncomment the line which enables forwarding of IPv4 packets:
 
-		net.inet.ip.forwarding=1
+	net.inet.ip.forwarding=1
 
 ### Start PFRE
 
 Now you can either reboot the system or start the Apache web server manually using the following command line:
 
-		# /usr/local/sbin/httpd -u -DSSL 
+	# /usr/local/sbin/httpd -u -DSSL 
 
 Note that you should fully stop any httpd already running for the changes to take effect.
 
