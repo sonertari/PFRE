@@ -34,9 +34,12 @@ if (count($_POST)) {
 		if (in_array(filter_input(INPUT_POST, 'User'), $ALL_USERS)) {
 			if (filter_input(INPUT_POST, 'NewPassword') === filter_input(INPUT_POST, 'ReNewPassword')) {
 				if (preg_match('/^\w{8,}$/', filter_input(INPUT_POST, 'NewPassword'))) {
-					/// @attention Admin can change other users' passwords without needing to know their passwords
-					if (($_SESSION['USER'] == 'admin' && filter_input(INPUT_POST, 'User') != 'admin') ||
-						$View->Controller($Output, 'CheckAuthentication', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'CurrentPassword')))) {
+
+					/// @attention Admin can change other users' passwords without needing to know their current passwords
+					if (($_SESSION['USER'] == 'admin' && filter_input(INPUT_POST, 'User') != 'admin')
+							|| $View->CheckAuthentication(filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'CurrentPassword')))) {
+
+						// Encrypt passwords before passing down, plaintext passwords should never be visible, not even in the doas logs
 						if ($View->Controller($Output, 'SetPassword', filter_input(INPUT_POST, 'User'), sha1(filter_input(INPUT_POST, 'NewPassword')))) {
 							PrintHelpWindow(_NOTICE('User password changed') . ': ' . filter_input(INPUT_POST, 'User'));
 							pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'User password changed: '.filter_input(INPUT_POST, 'User'));
@@ -149,8 +152,8 @@ require_once($VIEW_PATH.'/header.php');
 				<?php
 				PrintHelpBox(_HELPBOX('Here you can change the web administration interface passwords for admin and user. Passwords should have at least 8 alphanumeric characters.
 
-Admin can change the user password without knowing the current user password. But if you forget the admin password, you should run the following on the command line to set the password to soner123:
-<code>/usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)</code>'));
+Admin can change the user password without knowing the current user password. But if you forget the admin password, you should login to the system as root and run the following on the command line to set the password to soner123:
+<code>/usr/bin/chpass -a "admin:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1000:1000::0:0:PFRE admin:/home/admin:/bin/ksh"</code>'));
 				?>
 			</td>
 		</tr>

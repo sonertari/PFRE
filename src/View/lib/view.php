@@ -22,6 +22,8 @@
  * View base class.
  */
 
+require_once $VIEW_PATH.'/lib/phpseclib/Net/SSH2.php';
+
 class View
 {
 	/**
@@ -35,7 +37,7 @@ class View
 	 */
 	function Controller(&$output)
 	{
-		global $SRC_ROOT;
+		global $SRC_ROOT, $LoginPasswd;
 
 		$return= FALSE;
 		try {
@@ -51,33 +53,64 @@ class View
 				
 				// Init command output
 				$outputArray= array();
-				/// @bug http://bugs.php.net/bug.php?id=49847, fixed/closed in SVN on 141009
-				exec($cmdline, $outputArray, $retval);
 
-				// (exit status 0 in shell) == (TRUE in php)
-				if ($retval === 0) {
-					$return= TRUE;
+				if (isset($LoginPasswd)) {
+					// The user has just typed in her password to log in to the WUI, so we use it.
+					// Note that we cannot use the password stored in the cookie here.
+					$passwd= $LoginPasswd;
+					unset($LoginPasswd);
+				} else {
+					// Subsequent calls use the encrypted password in the cookie, so we should decrypt it first.
+					$ciphertext_base64= $_COOKIE['passwd'];
+					$ciphertext_dec = base64_decode($ciphertext_base64);
+
+					$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+					$iv_dec = substr($ciphertext_dec, 0, $iv_size);
+
+					$ciphertext_dec = substr($ciphertext_dec, $iv_size);
+
+					$passwd = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
 				}
 
-				$output= array();
-				$errorStr= '';
+				$ssh = new Net_SSH2(gethostname());
 
-				$decoded= json_decode($outputArray[0]);
-				if ($decoded !== NULL && is_array($decoded)) {
-					$output= explode("\n", $decoded[0]);
-					$errorStr= $decoded[1];
+				if ($ssh->login($_SESSION['USER'], $passwd)) {
+					/// @bug http://bugs.php.net/bug.php?id=49847, fixed/closed in SVN on 141009
+					$outputArray[0]= $ssh->exec($cmdline);
+ 
+					$output= array();
+					$errorStr= '';
+					$retval= 1;
+
+					$decoded= json_decode($outputArray[0]);
+					if ($decoded !== NULL && is_array($decoded)) {
+						$output= explode("\n", $decoded[0]);
+						$errorStr= $decoded[1];
+						$retval= $decoded[2];
+					} else {
+						$msg= "Failed decoding output: $outputArray[0]";
+						pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
+						PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
+					}
+
+					// Show error, if any
+					if ($errorStr !== '') {
+						$error= explode("\n", $errorStr);
+
+						pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: (" . implode(', ', $error) . "), ($cmdline)");
+						PrintHelpWindow(_NOTICE('FAILED') . ':<br>' . implode('<br>', $error), 'auto', 'ERROR');
+					}
+
+					// (exit status 0 in shell) == (TRUE in php)
+					if ($retval === 0) {
+						$return= TRUE;
+					} else {
+						pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: ($cmdline)");
+					}
 				} else {
-					$msg= "Failed decoding output: $outputArray[0]";
+					$msg= 'SSH login failed';
 					pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
 					PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
-				}
-
-				// Show error, if any
-				if ($errorStr !== '') {
-					$error= explode("\n", $errorStr);
-
-					pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: (" . implode(', ', $error) . "), ($cmdline)");
-					PrintHelpWindow(_NOTICE('FAILED') . ':<br>' . implode('<br>', $error), 'auto', 'ERROR');
 				}
 			}
 		}
@@ -87,7 +120,36 @@ class View
 		}
 		return $return;
 	}
-	
+
+	/**
+	 * Checks the given user:password pair by testing login.
+	 * 
+	 * @param string $user User name.
+	 * @param string $passwd SHA encrypted password.
+	 * @return bool TRUE if passwd matches, FALSE otherwise.
+	 */
+	function CheckAuthentication($user, $passwd)
+	{
+		$hostname= gethostname();
+
+		$ssh = new Net_SSH2($hostname);
+
+		if ($ssh->login($user, $passwd)) {
+			/// @attention Trim the newline
+			$output= trim($ssh->exec('hostname'));
+			if ($hostname == $output) {
+				return TRUE;
+			} else {
+				pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "SSH test command failed: $hostname == $output");
+			}
+		} else {
+			$msg= 'Authentication failed';
+			pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $msg);
+			PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
+		}
+		return FALSE;
+	}
+
 	/**
 	 * Escapes the arguments passed to Controller() and builds the command line.
 	 *

@@ -115,12 +115,16 @@ function LogUserOut($reason= 'User logged out')
 /**
  * Authenticates session user with the password supplied.
  *
- * Passwords are sha1 encrypted before passed to Controller,
- * so the password string is never passed around plain text.
- * This means double encryption in the password file,
- * because Model encrypts again while storing into the file.
+ * Passwords are never passed around plaintext, but are always encrypted.
+ * 
+ * In fact, passwords are double encrypted using:
+ * - sha1() right after the user types her password in
+ * - encrypt(1) while saving to the password file using chpass(1).
+ * - mcrypt_*() while saving as a cookie var.
+ * 
+ * Also, we always use SSH connections to execute all Controller commands.
  *
- * @param string $passwd Password submitted by user.
+ * @param string $passwd SHA encrypted password.
  */
 function Authentication($passwd)
 {
@@ -135,7 +139,25 @@ function Authentication($passwd)
 		LogUserOut('Authentication failed');
 	}
 
-	if (!$View->Controller($Output, 'CheckAuthentication', $_SESSION['USER'], sha1($passwd))) {
+	// Encrypt the password to save as a cookie var.
+	$random= exec('(dmesg; sysctl; route -n show; df; ifconfig -A; hostname) | cksum -q -a sha256 -');
+
+	$cryptKey = pack('H*', $random);
+
+	$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+	$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+
+	$ciphertext = mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $cryptKey, $passwd, MCRYPT_MODE_CBC, $iv);
+	$ciphertext = $iv . $ciphertext;
+
+	$ciphertext_base64 = base64_encode($ciphertext);
+
+	// Save password to the cookie
+	setcookie('passwd', $ciphertext_base64);
+	// Save key to the session, so we can decrypt the password from the cookie later on to log in to the SSH server
+	$_SESSION['cryptKey']= $cryptKey;
+
+	if (!$View->CheckAuthentication($_SESSION['USER'], $passwd)) {
 		pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Password mismatch');
 		// Throttle authentication failures
 		exec('/bin/sleep 5');
