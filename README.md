@@ -34,8 +34,10 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ All input is untainted.
 	+ Invalid rules are never tested using pfctl.
 	+ Pfctl is executed in a separate process, which times out if pfctl takes too long.
-	+ As the sole gatekeeper for the Model, PFRE controller, pfrec is the only executable enabled in doas configuration. Pfrec validates all commands and their arguments given to it.
-	+ The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep).
+	+ As the sole gatekeeper for the Model, PFRE controller, pfrec is the only executable enabled in the doas configuration. Pfrec validates all commands and their arguments given to it.
+	+ The View executes all controller commands over an SSH connection.
+	+ Passwords are never visible plain text anywhere.
+	+ The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep and /bin/date).
 	+ All system executables are called using their full pathnames.
 	+ The number of nested anchors in inline rules is restricted to a configurable maximum.
 	+ JavaScript use is kept to a minimum.
@@ -45,15 +47,11 @@ A couple of notes about the requirements, design decisions, and implementation o
 Here are the basic steps to obtain a working PFRE installation:
 
 - Install OpenBSD 5.9, perhaps in a VM.
-- Install Apache 1.3.29, PHP 5.6.18, and php-pcntl 5.6.18.
+- Install Apache 1.3.29, PHP 5.6.18, php-pcntl 5.6.18, and php-mcrypt 5.6.18.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure a Virtual Host in httpd.conf for PFRE, preferably an SSL Virtual Host too.
-- Enable pfrec.php in doas by adding the following line in /etc/doas.conf:
-	+ `permit nopass www as root cmd /var/www/htdocs/pfre/Controller/pfrec.php`
-	+ Make sure pfrec.php is executable.
-- Set the admin password for the web user interface by running the following command:
-	+ `/usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)`
-	+ Pick a better password than soner123 though.
+- Create admin and user users, and set their passwords.
+- Enable pfrec.php in doas for admin and user users, and make sure pfrec.php is executable.
 - Point your web browser to the web server and log in as admin:soner123.
 
 The following sections provide the details.
@@ -94,16 +92,19 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 	femail-chroot-1.0p2.tgz
 	gettext-0.19.7.tgz
 	libiconv-1.14p3.tgz
+	libmcrypt-2.5.8p2.tgz
 	libxml-2.9.3.tgz
 	php-5.6.18.tgz
+	php-mcrypt-5.6.18.tgz
 	php-pcntl-5.6.18.tgz
 	xz-5.2.2p0.tgz
 
-Install Apache, PHP, and php-pcntl by running the following commands, which should install their dependencies as well:
+Install Apache, PHP, php-pcntl, and php-mcrypt by running the following commands, which should install their dependencies as well:
 
 	# pkg_add -v apache-httpd-openbsd
 	# pkg_add -v php
 	# pkg_add -v php-pcntl
+	# pkg_add -v php-mcrypt
 
 If you want to see if all required packages are installed successfully, run the following command:
 
@@ -117,8 +118,10 @@ Here is the expected output of that command:
 	femail-chroot-1.0p2 simple SMTP client for chrooted web servers
 	gettext-0.19.7      GNU gettext runtime libraries and programs
 	libiconv-1.14p3     character set conversion library
+	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
 	libxml-2.9.3        XML parsing library
 	php-5.6.18          server-side HTML-embedded scripting language
+	php-mcrypt-5.6.18   mcrypt encryption/decryption extensions for php5
 	php-pcntl-5.6.18    PCNTL extensions for php5
 	xz-5.2.2p0          LZMA compression and decompression tools
 
@@ -170,11 +173,34 @@ Finally, you should copy server.crt and server.key files to the locations define
 	# cp server.key /etc/ssl/private/        
 	# cp server.crt /etc/ssl/ 
 
-Set the admin password for the web user interface to soner123 by running the following commands:
+Run adduser(8) to create admin and user users, for example with the following values:
 
-	# cd /var/www/conf
-	# touch .htpasswd
-	# /usr/local/bin/htpasswd -b -s /var/www/conf/.htpasswd admin $(/bin/echo -n soner123 | sha1 -)
+	Name:        admin
+	Password:    ****
+	Fullname:    PFRE admin
+	Uid:         1000
+	Gid:         1000 (admin)
+	Groups:      admin 
+	Login Class: default
+	HOME:        /home/admin
+	Shell:       /bin/ksh
+
+	Name:        user
+	Password:    ****
+	Fullname:    PFRE user
+	Uid:         1001
+	Gid:         1001 (user)
+	Groups:      user 
+	Login Class: default
+	HOME:        /home/user
+	Shell:       /bin/ksh
+
+Then set their passswords to soner123 by running the following commands:
+
+	# /usr/bin/chpass -a "admin:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1000:1000::0:0:PFRE admin:/home/admin:/bin/ksh"
+	# /usr/bin/chpass -a "user:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1001:1001::0:0:PFRE user:/home/user:/bin/ksh"
+
+However, you are advised to pick a better password than soner123.
 
 #### Configure PHP
 
@@ -188,14 +214,19 @@ Go to /var/www/conf/modules and copy the sample php configuration file to it:
 	# cd /var/www/conf/modules/
 	# cp ../modules.sample/php-5.6.conf .
 
-To enable pcntl, go to /etc/php-5.6/ and create the pcntl.ini file:
+To enable pcntl and mcrypt, go to /etc/php-5.6/ and create the pcntl.ini and mcrypt.ini files:
 
 	# cd /etc/php-5.6/
 	# touch pcntl.ini
+	# touch mcrypt.ini
 
-And add the following line to it:
+And add the following line to pcntl.ini:
 
 	extension=pcntl.so
+
+Then add the following line to mcrypt.ini:
+
+	extension=mcrypt.so
 
 #### Configure doas
 
@@ -206,7 +237,8 @@ Go to /etc/ and create the doas.conf file:
 
 And add the following lines to it:
 
-	permit nopass www as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
+	permit nopass admin as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
+	permit nopass user as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
 	permit nopass keepenv root as root
 
 #### Configure the system
