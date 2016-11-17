@@ -52,10 +52,13 @@ $View= new View();
 
 if (filter_has_var(INPUT_POST, 'Login')) {
 	$_SESSION['USER']= filter_input(INPUT_POST, 'UserName');
+
+	// The user has just typed in her password to log in to the WUI, so we use it.
+	// Note that we cannot use the password stored in the cookie here, so unset it.
+	setcookie('passwd', 'unset');
+
 	// Encrypt the password immediately
-	// We need a global var here, because we will use it while calling the controller: $View->Controller().
-	$LoginPasswd= sha1(filter_input(INPUT_POST, 'Password'));
-	Authentication($LoginPasswd);
+	Authentication(sha1(filter_input(INPUT_POST, 'Password')));
 } elseif ($_SESSION['Timeout']) {
 	// If user was already logged out, do not check timeout, LogUserOut() sets timeout to -1
 	// Otherwise results in a loop

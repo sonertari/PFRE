@@ -139,6 +139,14 @@ function Authentication($passwd)
 		LogUserOut('Authentication failed');
 	}
 
+	if (!$View->CheckAuthentication($_SESSION['USER'], $passwd)) {
+		pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Password mismatch');
+		// Throttle authentication failures
+		exec('/bin/sleep 5');
+		LogUserOut('Authentication failed');
+	}
+	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Authentication succeeded');
+
 	// Encrypt the password to save as a cookie var.
 	$random= exec('(dmesg; sysctl; route -n show; df; ifconfig -A; hostname) | cksum -q -a sha256 -');
 
@@ -154,16 +162,9 @@ function Authentication($passwd)
 
 	// Save password to the cookie
 	setcookie('passwd', $ciphertext_base64);
+
 	// Save key to the session, so we can decrypt the password from the cookie later on to log in to the SSH server
 	$_SESSION['cryptKey']= $cryptKey;
-
-	if (!$View->CheckAuthentication($_SESSION['USER'], $passwd)) {
-		pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Password mismatch');
-		// Throttle authentication failures
-		exec('/bin/sleep 5');
-		LogUserOut('Authentication failed');
-	}
-	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Authentication succeeded');
 
 	// Update session timeout now, otherwise in the worst case scenario, vars.php may log user out on very close session timeout
 	$_SESSION['Timeout']= time() + $SessionTimeout;

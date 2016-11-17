@@ -37,7 +37,7 @@ class View
 	 */
 	function Controller(&$output)
 	{
-		global $SRC_ROOT, $LoginPasswd;
+		global $SRC_ROOT;
 
 		$return= FALSE;
 		try {
@@ -54,23 +54,16 @@ class View
 				// Init command output
 				$outputArray= array();
 
-				if (isset($LoginPasswd)) {
-					// The user has just typed in her password to log in to the WUI, so we use it.
-					// Note that we cannot use the password stored in the cookie here.
-					$passwd= $LoginPasswd;
-					unset($LoginPasswd);
-				} else {
-					// Subsequent calls use the encrypted password in the cookie, so we should decrypt it first.
-					$ciphertext_base64= $_COOKIE['passwd'];
-					$ciphertext_dec = base64_decode($ciphertext_base64);
+				// Subsequent calls use the encrypted password in the cookie, so we should decrypt it first.
+				$ciphertext_base64= $_COOKIE['passwd'];
+				$ciphertext_dec = base64_decode($ciphertext_base64);
 
-					$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-					$iv_dec = substr($ciphertext_dec, 0, $iv_size);
+				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+				$iv_dec = substr($ciphertext_dec, 0, $iv_size);
 
-					$ciphertext_dec = substr($ciphertext_dec, $iv_size);
+				$ciphertext_dec = substr($ciphertext_dec, $iv_size);
 
-					$passwd = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
-				}
+				$passwd = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
 
 				$ssh = new Net_SSH2(gethostname());
 
