@@ -27,4 +27,7 @@ $ShowHelpBox= TRUE;
 
 /// Default session timeout in secs.
 $SessionTimeout= 300;
+
+/// Whether to run Controller commands over SSH.
+$UseSSH= FALSE;
 ?>

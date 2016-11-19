@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Soner Tari, The PFRE project
+# Copyright (C) 2016 Soner Tari, The PFRE project
 # This file is distributed under the same license as PFRE.
 # Soner Tari <sonertari@gmail.com>, 2016.
 msgid ""
@@ -807,6 +807,9 @@ msgstr "Pfctl zaman aşımını ayarla"
 msgid "Set session timeout"
 msgstr "Oturum zaman aşımını ayarla"
 
+msgid "Set use SSH"
+msgstr "SSH kullanımını ayarla"
+
 msgid "Set user password"
 msgstr "Kullanıcı parolasını ayarla"
 
@@ -896,6 +899,18 @@ msgstr ""
 "diğer servisleri etkilemez."
 
 msgid ""
+"This setting allows you to choose the method used while running the "
+"controller. Controller commands can be executed using either of the "
+"following two methods: (1) Executing the controller directly on the command "
+"line or (2) Openning an SSH connection to the system and calling the "
+"controller over this secure channel."
+msgstr ""
+"Bu ayar sayesine controller'ın çalıştırılacağı yöntemi seçebilirsiniz."
+"Controller komutları iki yöntemden birini kullanarak çalıştırılabilir: (1) "
+"Controller'ı doğrudan komut satırında çalıştırarak veya (2) Sisteme bır SSH "
+"bağlantısı açıp controller'ı bu güvenli kanal üzerinden çalıştırarak."
+
+msgid ""
 "This setting enables or disables help boxes, such as this one and the help "
 "window at the bottom. Disabling help boxes does not disable error or warning "
 "help windows."
@@ -942,6 +957,9 @@ msgstr "Kural listesini karşıya yükle"
 
 msgid "Upload with errors"
 msgstr "Hatalara rağmen karşıya yükle"
+
+msgid "Use SSH"
+msgstr "SSH Kullan"
 
 msgid "User"
 msgstr "Kullanıcı"

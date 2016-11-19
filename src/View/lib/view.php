@@ -37,7 +37,7 @@ class View
 	 */
 	function Controller(&$output)
 	{
-		global $SRC_ROOT;
+		global $SRC_ROOT, $UseSSH;
 
 		$return= FALSE;
 		try {
@@ -54,23 +54,35 @@ class View
 				// Init command output
 				$outputArray= array();
 
-				// Subsequent calls use the encrypted password in the cookie, so we should decrypt it first.
-				$ciphertext_base64= $_COOKIE['passwd'];
-				$ciphertext_dec = base64_decode($ciphertext_base64);
+				$executed= TRUE;
+				if ($UseSSH) {
+					// Subsequent calls use the encrypted password in the cookie, so we should decrypt it first.
+					$ciphertext_base64= $_COOKIE['passwd'];
+					$ciphertext_dec = base64_decode($ciphertext_base64);
 
-				$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
-				$iv_dec = substr($ciphertext_dec, 0, $iv_size);
+					$iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+					$iv_dec = substr($ciphertext_dec, 0, $iv_size);
 
-				$ciphertext_dec = substr($ciphertext_dec, $iv_size);
+					$ciphertext_dec = substr($ciphertext_dec, $iv_size);
 
-				$passwd = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
+					$passwd = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
 
-				$ssh = new Net_SSH2(gethostname());
+					$ssh = new Net_SSH2(gethostname());
 
-				if ($ssh->login($_SESSION['USER'], $passwd)) {
+					if ($ssh->login($_SESSION['USER'], $passwd)) {
+						$outputArray[0]= $ssh->exec($cmdline);
+					} else {
+						$msg= 'SSH login failed';
+						pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
+						PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
+						$executed= FALSE;
+					}
+				} else {
 					/// @bug http://bugs.php.net/bug.php?id=49847, fixed/closed in SVN on 141009
-					$outputArray[0]= $ssh->exec($cmdline);
+					exec($cmdline, $outputArray);
+				}
  
+				if ($executed) {
 					$output= array();
 					$errorStr= '';
 					$retval= 1;
@@ -100,10 +112,6 @@ class View
 					} else {
 						pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: ($cmdline)");
 					}
-				} else {
-					$msg= 'SSH login failed';
-					pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
-					PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
 				}
 			}
 		}

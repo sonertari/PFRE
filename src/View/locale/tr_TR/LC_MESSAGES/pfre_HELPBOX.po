@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Soner Tari, The PFRE project
+# Copyright (C) 2016 Soner Tari, The PFRE project
 # This file is distributed under the same license as PFRE.
 # Soner Tari <sonertari@gmail.com>, 2016.
 msgid ""
@@ -86,6 +86,18 @@ msgstr ""
 "Bu ayar pfre web arayüzünün kayıt seviyesini belirler. Bu seviye ve "
 "üzerindeki kayıtlar WUI ve Controller kayıt dosyalarına kaydedilir. Bu ayar "
 "diğer servisleri etkilemez."
+
+msgid ""
+"This setting allows you to choose the method used while running the "
+"controller. Controller commands can be executed using either of the "
+"following two methods: (1) Executing the controller directly on the command "
+"line or (2) Openning an SSH connection to the system and calling the "
+"controller over this secure channel."
+msgstr ""
+"Bu ayar sayesine controller'ın çalıştırılacağı yöntemi seçebilirsiniz."
+"Controller komutları iki yöntemden birini kullanarak çalıştırılabilir: (1) "
+"Controller'ı doğrudan komut satırında çalıştırarak veya (2) Sisteme bır SSH "
+"bağlantısı açıp controller'ı bu güvenli kanal üzerinden çalıştırarak."
 
 msgid ""
 "This setting enables or disables help boxes, such as this one and the help "

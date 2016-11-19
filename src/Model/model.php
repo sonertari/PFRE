@@ -74,6 +74,11 @@ class Model
 					'desc'	=>	_('Set force HTTPs'),
 					),
 
+				'SetUseSSH'=>	array(
+					'argv'	=>	array(NAME),
+					'desc'	=>	_('Set use SSH'),
+					),
+
 				'SetMaxAnchorNesting'=>	array(
 					'argv'	=>	array(NUM),
 					'desc'	=>	_('Set max anchor nesting'),
@@ -195,6 +200,20 @@ class Model
 		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/lib/setup.php', '\$ForceHTTPs', $bool.';');
 	}
 
+	/**
+	 * Enables or disables SSH.
+	 * 
+	 * @param bool $bool TRUE to enable, FALSE otherwise.
+	 * @return bool TRUE on success, FALSE on fail.
+	 */
+	function SetUseSSH($bool)
+	{
+		global $ROOT, $TEST_DIR_SRC;
+		
+		// Append semi-colon to new value, this setting is a PHP line
+		return $this->SetNVP($ROOT . $TEST_DIR_SRC . '/View/lib/setup.php', '\$UseSSH', $bool.';');
+	}
+	
 	/**
 	 * Sets the max number of nested anchors allowed.
 	 * 

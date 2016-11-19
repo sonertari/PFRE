@@ -1,4 +1,4 @@
-# Copyright (c) 2016 Soner Tari, The PFRE project
+# Copyright (C) 2016 Soner Tari, The PFRE project
 # This file is distributed under the same license as PFRE.
 # Soner Tari <sonertari@gmail.com>, 2016.
 msgid ""
