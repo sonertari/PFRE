@@ -92,6 +92,7 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 	femail-chroot-1.0p2.tgz
 	gettext-0.19.7.tgz
 	libiconv-1.14p3.tgz
+	libltdl-2.4.2p1.tgz
 	libmcrypt-2.5.8p2.tgz
 	libxml-2.9.3.tgz
 	php-5.6.18.tgz
@@ -118,6 +119,7 @@ Here is the expected output of that command:
 	femail-chroot-1.0p2 simple SMTP client for chrooted web servers
 	gettext-0.19.7      GNU gettext runtime libraries and programs
 	libiconv-1.14p3     character set conversion library
+	libltdl-2.4.2p1     GNU libtool system independent dlopen wrapper
 	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
 	libxml-2.9.3        XML parsing library
 	php-5.6.18          server-side HTML-embedded scripting language
