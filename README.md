@@ -52,7 +52,7 @@ Here are the basic steps to obtain a working PFRE installation:
 - Configure a Virtual Host in httpd.conf for PFRE, preferably an SSL Virtual Host too.
 - Create admin and user users, and set their passwords.
 - Enable pfrec.php in doas for admin and user users, and make sure pfrec.php is executable.
-- Point your web browser to the web server and log in as admin:soner123.
+- Point your web browser to the web server and log in.
 
 The following sections provide the details.
 
