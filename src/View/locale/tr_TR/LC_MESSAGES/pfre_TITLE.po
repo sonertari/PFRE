@@ -87,6 +87,9 @@ msgstr "Yön Değiştirme Adresi"
 msgid "Divert Port"
 msgstr "Yön Değiştirme Kapısı"
 
+msgid "Download ruleset"
+msgstr "Kural listesini indir"
+
 msgid "Divert Reply"
 msgstr "Yön Değiştirmeye Cevap"
 
