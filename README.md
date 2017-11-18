@@ -46,7 +46,7 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.2, perhaps in a VM.
+- Install OpenBSD 6.2, perhaps on a VM.
 - Install PHP 5.6.31, php-pcntl, php-mcrypt, and php-fastcgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
@@ -134,15 +134,13 @@ Make sure /var/www/htdocs/pfre/Controller/ctlr.php is executable. If not, go to 
 	# cd /var/www/htdocs/pfre/Controller/
 	# chmod u+x ctlr.php
 
-And create the folders for configuration files:
+And create the folder for configuration files:
 
 	# mkdir /etc/pfre/
 
-#### Configure Web Server
+#### Configure web server
 
 Configure PFRE in httpd.conf. Note that we should disable chroot by chrooting to /. Your configuration might look like the following:
-
-	# OpenBSD/httpd configuration for PFRE
 
 	chroot "/"
 	#prefork 3
@@ -222,7 +220,7 @@ Go to /usr/local/bin/ and create a link to php executable:
 	# cd /usr/local/bin
 	# ln -s php-5.6 php
 
-Edit /etc/php-5.6.ini file to disable NOTICE messages, otherwise they can disturb the reporting of pfctl test results:
+Edit the /etc/php-5.6.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
 
 	error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
 
@@ -244,7 +242,7 @@ Disable chroot in /etc/php-fpm.conf by commenting out the chroot line:
 
 	;chroot = /var/www
 
-If you want to use Turkish translations, you should first install the gettext-tools-0.19.8.1.tgz package, then go to /var/www/htdocs/pfre/View/locale/tr\_TR/LC\_MESSAGES/ and generate the gettext mo file:
+If you want to use Turkish translations, you should first install the gettext-tools-0.19.8.1.tgz package to generate the gettext mo file:
 
 	# cd /var/www/htdocs/pfre/View/locale/tr_TR/LC_MESSAGES/
 	# msgfmt -o pfre.mo pfre.po
@@ -262,7 +260,7 @@ And add the following lines to it:
 	permit nopass user as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass keepenv root as root
 
-#### Configure the system
+#### Configure system
 
 If you want the web server to be started automatically after a reboot, first copy the sample rc.local file to /etc/:
 
@@ -271,7 +269,6 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	# Start PHP FastCGI server
 	if [ -x /usr/local/sbin/php-fpm-5.6 ]; then
 		echo 'PHP FastCGI server'
 		/usr/local/sbin/php-fpm-5.6
