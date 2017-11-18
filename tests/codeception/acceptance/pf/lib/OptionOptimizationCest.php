@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -48,12 +48,12 @@ class OptionOptimizationCest extends Rule
 		$I->wait(STALE_ELEMENT_INTERVAL);
 
 		/// @todo Check why the following 3 methods do not work, a bug in xpath locator?
-		//$I->click(\Codeception\Util\Locator::href('conf.php?del=14'));
-		//$aLink = $I->grabMultiple(['xpath' => '//a[contains(@href, "conf.php?del=14")]'], 'href');
+		//$I->click(\Codeception\Util\Locator::href('conf.editor.php?del=14'));
+		//$aLink = $I->grabMultiple(['xpath' => '//a[contains(@href, "conf.editor.php?del=14")]'], 'href');
 		//$I->click(\Codeception\Util\Locator::href($aLink[0]));
-		//$I->click(['xpath' => '//a[@href="http://pfre/pf/conf.php?del=14"]']);
+		//$I->click(['xpath' => '//a[@href="http://pfre/pf/conf.editor.php?del=14"]']);
 
-		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
+		$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?del=14")]']);
 		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete Option rule number 14?');
 		$I->acceptPopup();

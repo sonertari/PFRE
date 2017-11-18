@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -24,7 +24,7 @@ require_once('Rule.php');
 
 class QueueTest extends Rule
 {
-	protected $inQueue= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default';
+	protected $inQueue= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default';
 	protected $ruleQueue= array(
 		'name' => 'test',
 		'interface' => 'em0',
@@ -38,6 +38,8 @@ class QueueTest extends Rule
 		'max' => '100M',
 		'max-burst' => '1M',
 		'max-time' => '10ms',
+		'flows' => '1024',
+		'quantum' => '1',
 		'qlimit' => '100',
 		'default' => TRUE,
 		);

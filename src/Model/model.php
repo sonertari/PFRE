@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -36,8 +36,8 @@ class Model
 	 */
 	public $Commands= array();
 
-	private $NVPS= '=';
-	private $COMC= '#';
+	public $NVPS= '=';
+	public $COMC= '#';
 
 	function __construct()
 	{
@@ -109,7 +109,7 @@ class Model
 			if (preg_match("/^$user:[^:]+(:.+)$/", $line, $match)) {
 				unset($output);
 				$cmdline= '/usr/bin/chpass -a "' . $user . ':$(/usr/bin/encrypt ' . $passwd . ')' . $match[1] . '"';
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "cmdline: $cmdline");
+				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "cmdline: $cmdline");
 
 				exec($cmdline, $output, $retval);
 				if ($retval === 0) {
@@ -120,7 +120,7 @@ class Model
 
 		$errout= implode("\n", $output);
 		Error($errout);
-		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Set password failed: $errout");
+		ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Set password failed: $errout");
 		return FALSE;
 	}
 
@@ -307,11 +307,11 @@ class Model
 			else {
 				$errout= implode("\n", $output);
 				Error($errout);
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Failed deleting: $path, $errout");
+				ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Failed deleting: $path, $errout");
 			}
 		}
 		else {
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "File path does not exist: $path");
+			ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "File path does not exist: $path");
 		}
 		return FALSE;
 	}
@@ -353,15 +353,15 @@ class Model
 					return TRUE;
 				}
 				else {
-					pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot set new value $file, $name, $newvalue");
+					ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot set new value $file, $name, $newvalue");
 				}
 			}
 			else {
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot find NVP: $file, $name");
+				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot find NVP: $file, $name");
 			}
 		}
 		else {
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot copy file $file");
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot copy file $file");
 		}
 		return FALSE;
 	}

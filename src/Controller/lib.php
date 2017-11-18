@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -90,7 +90,7 @@ function IsBool($str)
 }
 
 /**
- * Compute and fill arg count variables.
+ * Computes and fills arg count variables.
  *
  * @param array $commands Available commands for the current model
  * @param array $argv Argument vector
@@ -159,7 +159,7 @@ function ValidateArgs($commands, $command, $argv, $check)
 
 							$errormsg= "$command: $arg";
 							Error(_('No such file').": $errormsg");
-							pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, "No such file: $errormsg");
+							ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, "No such file: $errormsg");
 						}
 					}
 
@@ -186,7 +186,7 @@ function ValidateArgs($commands, $command, $argv, $check)
 	
 	if (!$valid) {
 		Error(_('Arg type check failed').": $helpmsg");
-		pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, "Arg type check failed: $logmsg");
+		ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, "Arg type check failed: $logmsg");
 	}
 	return $valid;
 }

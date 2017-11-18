@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -121,14 +121,13 @@ class Pf extends Model
 	 * 
 	 * @todo Should we return success or fail status, instead of TRUE?
 	 *
-	 * @return bool TRUE always.
+	 * @return string List of rule files.
 	 */
 	function GetPfRuleFiles()
 	{
 		global $PF_CONFIG_PATH, $TEST_DIR_PATH;
 
-		Output($this->GetFiles("$TEST_DIR_PATH$PF_CONFIG_PATH"));
-		return TRUE;
+		return Output($this->GetFiles("$TEST_DIR_PATH$PF_CONFIG_PATH"));
 	}
 	
 	/**
@@ -184,7 +183,7 @@ class Pf extends Model
 		$loadResult= $ruleSet->load($rulesArray, $force);
 
 		if (!$loadResult && !$force) {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
+			ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
 			return FALSE;
 		}
 
@@ -208,26 +207,26 @@ class Pf extends Model
 
 						if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
 							Error(_('Failed loading pf rules') . ": $file");
-							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Failed loading pf rules: $file");
+							ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Failed loading pf rules: $file");
 							$return= FALSE;
 						}
 
 						if ($retval !== 0) {
 							Error(_('Cannot load pf rules') . "\n" . implode("\n", $output));
-							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Cannot load pf rules');
+							ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Cannot load pf rules');
 							$return= FALSE;
 						}
 					} else {
 						// Install button on the View is disabled if the ruleset has errors, so we should never reach here
 						// But this method can be called on the command line too, that's why we check $loadResult
 						Error(_('Will not load rules with errors') . ": $file");
-						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Will not load rules with errors: $file");
+						ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Will not load rules with errors: $file");
 						$return= FALSE;
 					}
 				}
 			} else {
 				Error(_('Cannot install pf rule file') . ": $file\n" . implode("\n", $output));
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot install pf rule file: $file");
+				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot install pf rule file: $file");
 				$return= FALSE;
 			}
 
@@ -235,12 +234,12 @@ class Pf extends Model
 			exec("/bin/rm '$tmpFile' 2>&1", $output, $retval);
 			if ($retval !== 0) {
 				Error(_('Cannot remove tmp pf file') . ": $tmpFile\n" . implode("\n", $output));
-				pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Cannot remove tmp pf file: $tmpFile");
+				ctlr_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Cannot remove tmp pf file: $tmpFile");
 				$return= FALSE;
 			}
 		} else {
 			Error(_('Cannot write to tmp pf file') . ": $tmpFile\n" . implode("\n", $output));
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot write to tmp pf file: $tmpFile");
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot write to tmp pf file: $tmpFile");
 			$return= FALSE;
 		}
 		
@@ -263,7 +262,7 @@ class Pf extends Model
 		}
 
 		Error(_('Filename not accepted') . ": $file");
-		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Filename not accepted: $file");
+		ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Filename not accepted: $file");
 		return FALSE;
 	}
 
@@ -273,7 +272,7 @@ class Pf extends Model
 	 * @param string $json JSON encoded rule array.
 	 * @param int $ruleNumber Rule number.
 	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
-	 * @return bool TRUE on success, FALSE on fail.
+	 * @return string Generated rule.
 	 */
 	function GeneratePfRule($json, $ruleNumber, $force= FALSE)
 	{
@@ -286,7 +285,7 @@ class Pf extends Model
 		if ($retval || $force) {
 			Output($ruleObj->generate());
 		} else {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rule with errors');
+			ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rule with errors');
 		}
 
 		return $retval;
@@ -298,7 +297,7 @@ class Pf extends Model
 	 * @param string $json JSON encoded rules array.
 	 * @param bool $lines Whether to print line numbers in front of each line.
 	 * @param bool $force Used to override validation or other types of errors, hence forces loading of rules.
-	 * @return bool TRUE on success, FALSE on fail.
+	 * @return string Generated rules.
 	 */
 	function GeneratePfRules($json, $lines= FALSE, $force= FALSE)
 	{
@@ -310,7 +309,7 @@ class Pf extends Model
 		if ($retval || $force) {
 			Output($ruleSet->generate($lines));
 		} else {
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
+			ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not generate rules with errors');
 		}
 
 		return $retval;
@@ -323,7 +322,7 @@ class Pf extends Model
 	 * because we never run pfctl with rules failed validation.
 	 * 
 	 * @param string $json JSON encoded rules array.
-	 * @return bool TRUE on success, FALSE on fail.
+	 * @return bool Test result, TRUE on success, FALSE on fail.
 	 */
 	function TestPfRules($json)
 	{
@@ -332,7 +331,7 @@ class Pf extends Model
 		$ruleSet= new RuleSet();
 		if (!$ruleSet->load($rulesArray)) {
 			Error(_('Will not test rules with errors'));
-			pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not test rules with errors');
+			ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Will not test rules with errors');
 			return FALSE;
 		}
 
@@ -343,7 +342,7 @@ class Pf extends Model
 
 		if (!$this->RunPfctlCmd($cmd, $output, $retval)) {
 			Error(_('Failed testing pf rules'));
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed testing pf rules');
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed testing pf rules');
 			return FALSE;
 		}
 
@@ -409,7 +408,7 @@ class Pf extends Model
 	 * Therefore, we need to use a function which returns upon timeout, hence this method.
 	 * 
 	 * @param string $cmd pfctl command to run.
-	 * @param string $output Output of pfctl.
+	 * @param array $output Output of pfctl.
 	 * @param int $retval Return value of pfctl.
 	 * @return bool TRUE on success, FALSE on fail.
 	 */
@@ -428,7 +427,7 @@ class Pf extends Model
 		
 		if (!msg_queue_exists($mqid)) {
 			Error(_('Failed creating or attaching to message queue'));
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed creating or attaching to message queue');
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed creating or attaching to message queue');
 			return FALSE;
 		}
 		
@@ -438,7 +437,7 @@ class Pf extends Model
 
 		if ($pid == -1) {
 			Error(_('Cannot fork pfctl process'));
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Cannot fork pfctl process');
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Cannot fork pfctl process');
 		} elseif ($pid) {
 			// This is the parent!
 
@@ -455,7 +454,7 @@ class Pf extends Model
 
 			do {
 				exec("/bin/sleep $interval");
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count, sleep interval: $interval");
+				ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Receive message wait count: $count, sleep interval: $interval");
 
 				/// @attention Do not wait for a message, loop instead: MSG_IPC_NOWAIT
 				$received= msg_receive($queue, 0, $recvtype, 10000, $msg, TRUE, MSG_NOERROR|MSG_IPC_NOWAIT, $error);
@@ -465,30 +464,30 @@ class Pf extends Model
 						$retval= $msg['retval'];
 						$output= $msg['output'];
 
-						pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Received pfctl output: ' . print_r($msg, TRUE));
+						ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Received pfctl output: ' . print_r($msg, TRUE));
 
 						$return= TRUE;
 						break;
 					} else {
 						Error(_('Output not in correct format') . ': ' . print_r($msg, TRUE));
-						pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Output not in correct format: ' . print_r($msg, TRUE));
+						ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Output not in correct format: ' . print_r($msg, TRUE));
 						break;
 					}
 				} else {
-					pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Failed receiving pfctl output: ' . posix_strerror($error));
+					ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Failed receiving pfctl output: ' . posix_strerror($error));
 				}
 
 			} while ($count++ < $PfctlTimeout * 10);
 
 			if (!$return) {
 				Error(_('Timed out running pfctl command'));
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Timed out running pfctl command');
+				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Timed out running pfctl command');
 			}
 
 			// Parent removes the queue
 			if (!msg_remove_queue($queue)) {
 				Error(_('Failed removing message queue'));
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed removing message queue');
+				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed removing message queue');
 			}
 
 			/// @attention Make sure the child is terminated, otherwise the parent gets stuck too.
@@ -502,7 +501,7 @@ class Pf extends Model
 			// This is the child!
 
 			// Child should run the command and send the result in a message
-			pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Running pfctl command');
+			ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Running pfctl command');
 			exec($cmd, $output, $retval);
 
 			$msg= array(
@@ -511,9 +510,9 @@ class Pf extends Model
 				);
 
 			if (!msg_send($queue, $sendtype, $msg, TRUE, TRUE, $error)) {
-				pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . print_r($msg, TRUE) . ', error: ' . posix_strerror($error));
+				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed sending pfctl output: ' . print_r($msg, TRUE) . ', error: ' . posix_strerror($error));
 			} else {
-				pfrec_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . print_r($msg, TRUE));
+				ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Sent pfctl output: ' . print_r($msg, TRUE));
 			}
 
 			// Child exits

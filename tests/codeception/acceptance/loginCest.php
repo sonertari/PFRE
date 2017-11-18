@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -38,7 +38,9 @@ class loginCest
 		$I->fillField('Password', $example['Password']);
 		$I->click('Login');
 
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.editor.php');
+		$I->click('#rightmenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->see($example['UserName'] . '@');
 
 		$I->seeLink('Logout');
@@ -67,9 +69,6 @@ class loginCest
 		$I->click('Login');
 
 		$I->waitForElement('#authbox', 10);
-
-		$I->dontSeeInCurrentUrl('pf/conf.php');
-		$I->dontSee($example['UserName'] . '@');
 
 		$I->seeInCurrentUrl('login.php');
 	}

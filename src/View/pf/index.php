@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -18,6 +18,6 @@
  * along with PFRE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-header('Location: /pf/conf.php');
+header('Location: /pf/conf.editor.php');
 exit;
 ?>

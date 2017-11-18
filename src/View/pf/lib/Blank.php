@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -32,7 +32,7 @@ class Blank extends Rule
 	/**
 	 * Counts lines in the rule.
 	 * 
-	 * @attention Decrement one more time for the rule itself (already incremented in the main display loop in rules.php).
+	 * @attention Decrement one more time for the rule itself (already incremented in the main display loop in conf.editor.php).
 	 */
 	function countLines()
 	{

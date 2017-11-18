@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -38,14 +38,14 @@
  */
 namespace Model;
 
-/** 
+/**
  * Loads, validates, parses, and generates a list of rules.
  */
 class RuleSet
 {
 	public $rules= array();
 	
-	/** 
+	/**
 	 * Loads the rule definitions given in an array.
 	 * 
 	 * The rule definitions in $rulesArray contains the type and NVP elements of the rule.
@@ -80,10 +80,10 @@ class RuleSet
 			if (!$ruleObj->load($ruleDef['rule'], $ruleNumber, $force)) {
 				if (!$force) {
 					Error($nestingStr . _('Rule') . " $ruleNumber: " . _('Error loading, rule loaded partially'));
-					pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $ruleNumber: Error loading, rule loaded partially");
+					ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $ruleNumber: Error loading, rule loaded partially");
 				} else {
 					Error($nestingStr . _('Rule') . " $ruleNumber: " . _('Error loading, rule load forced'));
-					pfrec_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $ruleNumber: Error loading, rule load forced");
+					ctlr_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, $nestingStr . "Rule $ruleNumber: Error loading, rule load forced");
 				}
 				$retval= FALSE;
 			}
@@ -93,7 +93,7 @@ class RuleSet
 		return $retval;
 	}
 	
-	/** 
+	/**
 	 * Deletes all the rules in the ruleset.
 	 */
 	function deleteRules()
@@ -101,7 +101,7 @@ class RuleSet
 		$this->rules= array();
 	}
 	
-	/** 
+	/**
 	 * Parses the given rule string.
 	 * 
 	 * These are the steps:
@@ -255,10 +255,10 @@ class RuleSet
 		return $this->validate($force);
 	}
 
-	/** 
+	/**
 	 * Validates the ruleset.
 	 * 
-	 * Since encoding and decoding the rules array produces an array with the elements we need,
+	 * Since encoding and decoding the rules array produce an array with the elements we need,
 	 * we reload the already loaded ruleset using json encode and decode functions. The load
 	 * method validates the rules in the ruleset.
 	 *
@@ -270,13 +270,13 @@ class RuleSet
 		$rulesArray= json_decode(json_encode($this->rules), TRUE);
 		if (!$this->load($rulesArray, $force)) {
 			Error(_('Load Error') . ': ' . _('Ruleset contains errors'));
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Load Error: Ruleset contains errors');
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Load Error: Ruleset contains errors');
 			return FALSE;
 		}
 		return TRUE;
 	}
 
-	/** 
+	/**
 	 * Collects inline anchor rules spanning multiple lines.
 	 * 
 	 * Inline rule starts with an opening brace at the end of the anchor line and ends with
@@ -326,7 +326,7 @@ class RuleSet
 						// Do not allow more than $MaxAnchorNesting count of nested inline rules
 						if (++$nesting > $MaxAnchorNesting) {
 							Error(_('Parse Error') . ': ' . _('Reached max nesting for inline anchors') . ': <pre>' . htmlentities(print_r($line, TRUE)) . '</pre>');
-							pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parse Error: Reached max nesting for inline anchors: $line");
+							ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Parse Error: Reached max nesting for inline anchors: $line");
 							if (!$force) {
 								break;
 							}
@@ -347,7 +347,7 @@ class RuleSet
 		}
 	}
 	
-	/** 
+	/**
 	 * Prints the ruleset.
 	 * 
 	 * We iterate over all the rule objects and ask them to return string representations of themselves.

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -33,10 +33,11 @@ if (filter_has_var(INPUT_GET, 'logout')) {
 	LogUserOut();
 }
 
-if (filter_has_var(INPUT_POST, 'Locale')) {
-	$_SESSION['Locale'] = filter_input(INPUT_POST, 'Locale');
+if (filter_has_var(INPUT_GET, 'locale')) {
+	$_SESSION['Locale'] = filter_input(INPUT_GET, 'locale');
 	// To refresh the page after language change
-	header('Location: '.$_SERVER['REQUEST_URI']);
+	// @attention Remove the trailing locale, otherwise the page goes into a redirection loop
+	header('Location: '.preg_replace('/\?.*/', '', $_SERVER['REQUEST_URI'], -1));
 	exit;
 }
 
@@ -63,12 +64,12 @@ textdomain($Domain);
  * @param int $line Line number within the function.
  * @param string $msg Log message.
  */
-function pfrewui_syslog($prio, $file, $func, $line, $msg)
+function wui_syslog($prio, $file, $func, $line, $msg)
 {
 	global $LOG_LEVEL, $LOG_PRIOS;
 
 	try {
-		openlog('pfrewui', LOG_PID, LOG_LOCAL0);
+		openlog('wui', LOG_PID, LOG_LOCAL0);
 		
 		if ($prio <= $LOG_LEVEL) {
 			$useratip= $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR');
@@ -84,7 +85,7 @@ function pfrewui_syslog($prio, $file, $func, $line, $msg)
 	}
 	catch (Exception $e) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
-		echo "pfrewui_syslog() failed: $prio, $file, $func, $line, $msg\n";
+		echo "wui_syslog() failed: $prio, $file, $func, $line, $msg\n";
 		// No need to closelog(), it is optional
 	}
 }
@@ -98,7 +99,7 @@ function pfrewui_syslog($prio, $file, $func, $line, $msg)
  */
 function LogUserOut($reason= 'User logged out')
 {
-	pfrewui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, $reason);
+	wui_syslog(LOG_INFO, __FILE__, __FUNCTION__, __LINE__, $reason);
 
 	// Save USER to check if the user changes in the next session
 	$_SESSION['PREVIOUS_USER']= $_SESSION['USER'];
@@ -130,22 +131,22 @@ function Authentication($passwd)
 {
 	global $ALL_USERS, $SessionTimeout, $View;
 
-	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Login attempt');
+	wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Login attempt');
 
 	if (!in_array($_SESSION['USER'], $ALL_USERS)) {
-		pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Not a valid user');
+		wui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Not a valid user');
 		// Throttle authentication failures
 		exec('/bin/sleep 5');
 		LogUserOut('Authentication failed');
 	}
 
 	if (!$View->CheckAuthentication($_SESSION['USER'], $passwd)) {
-		pfrewui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Password mismatch');
+		wui_syslog(LOG_NOTICE, __FILE__, __FUNCTION__, __LINE__, 'Password mismatch');
 		// Throttle authentication failures
 		exec('/bin/sleep 5');
 		LogUserOut('Authentication failed');
 	}
-	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Authentication succeeded');
+	wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Authentication succeeded');
 
 	// Encrypt the password to save as a cookie var.
 	$random= exec('(dmesg; sysctl; route -n show; df; ifconfig -A; hostname) | cksum -q -a sha256 -');
@@ -187,49 +188,18 @@ function Authentication($passwd)
 function HTMLHeader($color= 'white')
 {
 	global $LOCALES;
-	?>
-	<!DOCTYPE html>
-	<html>
-		<head>
-			<title><?php echo _MENU('PF Rule Editor') ?></title>
-			<meta http-equiv="content-type" content="text/html; charset=<?php echo $LOCALES[$_SESSION['Locale']]['Codeset'] ?>" />
-			<meta name="description" content="PF Rule Editor" />
-			<meta name="author" content="Soner Tari"/>
-			<meta name="keywords" content="PF, Rule, Editor, :)" />
-			<link rel="stylesheet" href="../pfre.css" type="text/css" media="screen" />
-		</head>
-		<body style="background: <?php echo $color ?>">
-			<table>
-			<?php
-}
-
-function HTMLFooter()
-{
-			?>
-			</table>
-		</body>
-	</html>
-	<?php
-}
-
-/**
- * Sets session submenu variable.
- *
- * @param string $default Default submenu selected.
- * @return string Selected submenu.
- */
-function SetSubmenu($default)
-{
-	global $View, $SubMenus;
-
-	if (filter_has_var(INPUT_GET, 'submenu') && array_key_exists(filter_input(INPUT_GET, 'submenu'), $SubMenus)) {
-		$submenu= filter_input(INPUT_GET, 'submenu');
-	} elseif ($_SESSION['submenu']) {
-		$submenu= $_SESSION['submenu'];
-	} else {
-		$submenu= $default;
-	}
-
-	return $submenu;
+?>
+<!DOCTYPE html>
+<html>
+	<head>
+		<title><?php echo _MENU('PF Rule Editor') ?></title>
+		<meta http-equiv="content-type" content="text/html; charset=<?php echo $LOCALES[$_SESSION['Locale']]['Codeset'] ?>" />
+		<meta name="description" content="PF Rule Editor" />
+		<meta name="author" content="Soner Tari"/>
+		<meta name="keywords" content="PF, Rule, Editor, :)" />
+		<link rel="stylesheet" href="../pfre.css" type="text/css" media="screen" />
+	</head>
+	<body style="background: <?php echo $color ?>">
+<?php
 }
 ?>

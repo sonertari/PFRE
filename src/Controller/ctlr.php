@@ -1,7 +1,7 @@
 #!/usr/local/bin/php
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -37,14 +37,15 @@ require_once($SRC_ROOT . '/lib/setup.php');
 // chdir is for PCRE, libraries
 chdir(dirname(__FILE__));
 
+// Include constant definitions here, otherwise command arg validation fails
 require_once($MODEL_PATH . '/pf.php');
 
 require_once('lib.php');
 
 /// This is a command line tool, should never be requested on the web interface.
 if (filter_has_var(INPUT_SERVER, 'SERVER_ADDR')) {
-	/// @attention pfrec_syslog() is in the Model, use after including model
-	pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Requested on the wui, exiting...');
+	/// @attention ctlr_syslog() is in the Model, use after including model
+	ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Requested on the wui, exiting...');
 	header('Location: /index.php');
 	exit;
 }
@@ -106,7 +107,7 @@ if (method_exists($Model, $Command)) {
 		else {
 			$ErrorStr= "[$AcceptableArgC]: $ActualArgC";
 			Error(_('Not enough args')." $ErrorStr");
-			pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Not enough args $ErrorStr");
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Not enough args $ErrorStr");
 		}
 
 		if ($run) {
@@ -117,7 +118,7 @@ if (method_exists($Model, $Command)) {
 				$ArgV= array_slice($ArgV, 0, $ExpectedArgC);
 
 				Error(_('Too many args, truncating')." $ErrorStr");
-				pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Too many args, truncating $ErrorStr");
+				ctlr_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Too many args, truncating $ErrorStr");
 			}
 
 			if (call_user_func_array(array($Model, $Command), $ArgV)) {
@@ -126,19 +127,18 @@ if (method_exists($Model, $Command)) {
 		}
 		else {
 			Error(_('Not running command').": $Command");
-			pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Not running command: $Command");
+			ctlr_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Not running command: $Command");
 		}
 	}
 	else {
 		Error(_('Unsupported command').": $Command");
-		pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Unsupported command: $Command");
+		ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Unsupported command: $Command");
 	}
 }
 else {
-	
 	$ErrorStr= "Pf->$Command()";
 	Error(_('Method does not exist').": $ErrorStr");
-	pfrec_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Method does not exist: $ErrorStr");
+	ctlr_syslog(LOG_WARNING, __FILE__, __FUNCTION__, __LINE__, "Method does not exist: $ErrorStr");
 }
 
 /// @attention Always return errors, success or fail.
@@ -150,7 +150,7 @@ $encoded= json_encode($msg);
 if ($encoded !== NULL) {
 	echo $encoded;
 } else {
-	pfrec_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed encoding output and error: ' . print_r($msg, TRUE));
+	ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Failed encoding output and error: ' . print_r($msg, TRUE));
 }
 
 exit($retval);

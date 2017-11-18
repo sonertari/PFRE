@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -54,11 +54,21 @@ if (isset($edit) && array_key_exists($edit, $ruleType2Class)) {
 		$ruleStr= _NOTICE('ERROR') . ': ' . _NOTICE('Cannot generate rule');
 	}
 
+	$TopMenu= 'conf.editor';
 	require_once($VIEW_PATH.'/header.php');
-	/// @attention $ruleStr is passed as a global var.
-	$ruleObj->edit($ruleNumber, $modified, $testResult, $generateResult, $action);
+	?>
+	<table class="shadowbox">
+		<tr>
+			<td>
+			<?php
+				/// @attention $ruleStr is passed as a global var.
+				$ruleObj->edit($ruleNumber, $modified, $testResult, $generateResult, $action);
+			?>
+			</td>
+		</tr>
+	</table>
+	<?php
 	require_once($VIEW_PATH.'/footer.php');
-
 	exit;
 }
 ?>

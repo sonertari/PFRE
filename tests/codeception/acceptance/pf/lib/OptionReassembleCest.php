@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -47,7 +47,7 @@ class OptionReassembleCest extends Rule
 		$I->click('Rules');
 		$I->wait(STALE_ELEMENT_INTERVAL);
 
-		$I->click(['xpath' => '//a[contains(@href, "conf.php?del=14")]']);
+		$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?del=14")]']);
 		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete Option rule number 14?');
 		$I->acceptPopup();

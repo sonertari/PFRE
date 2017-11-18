@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -18,7 +18,7 @@
  * along with PFRE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class rulesCest
+class confeditorCest
 {
 	/// @todo Reuse these tables from rules.php in View
 	private $ruleTypes= array(
@@ -67,17 +67,24 @@ class rulesCest
 		$I->fillField('Password', 'soner123');
 		$I->click('Login');
 
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.editor.php');
 
-		$I->selectOption('#Locale', 'English');
-		$I->seeOptionIsSelected('#Locale', 'English');
+		// @attention Don't use moveMouseOver(), dropdown menu appears too late sometimes and the test fails
+		//$I->moveMouseOver('#rightmenu');
+		$I->click('#rightmenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
+		$I->see('Language');
+		$I->click('#languagemenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
+		$I->see('English');
+		$I->click('English');
 	}
 
 	protected function loadTestRules(AcceptanceTester $I)
 	{
 		$I->click('Load & Save');
 		$I->wait(STALE_ELEMENT_INTERVAL);
-		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
+		$I->seeInCurrentUrl('conf.files.php');
 		$I->see('Load ruleset');
 
 		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
@@ -101,10 +108,10 @@ class rulesCest
 			$I->selectOption('category', $type);
 			$I->click('Show');
 
-			$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 1);
+			$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], 1);
 			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => "$type rule"]), 1);
 
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
 		}
@@ -133,7 +140,7 @@ class rulesCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
 		}
@@ -162,10 +169,10 @@ class rulesCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			/// @attention No need to delete the new rule
-			//$I->click(['xpath' => '//a[contains(@href, "conf.php?del=' . $ruleNumber . '")]']);
+			//$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?del=' . $ruleNumber . '")]']);
 			//$I->wait(POPUP_DISPLAY_INTERVAL);
 			//$I->acceptPopup();
 		}
@@ -194,7 +201,7 @@ class rulesCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 		}
 	}
 
@@ -218,7 +225,7 @@ class rulesCest
 		$I->checkOption('#forcesave');
 		$I->click('Save');
 
-		$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$count");
+		$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$count");
 	}
 
 	/**
@@ -266,7 +273,7 @@ class rulesCest
 		$I->checkOption('#forcesave');
 		$I->click('Save');
 
-		$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$count");
+		$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$count");
 	}
 
 	/**
@@ -292,7 +299,7 @@ class rulesCest
 			$I->expect("clicking the Delete button deletes a $type rule $ruleNumber");
 
 			$I->seeInField('#ruleNumber', $count);
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Delete');
@@ -301,7 +308,7 @@ class rulesCest
 			$I->seeInPopup('Are you sure you want to delete the rule?');
 			$I->acceptPopup();
 
-			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$I->selectOption('#category', $type);
 			$I->fillField('#ruleNumber', $ruleNumber);
@@ -313,7 +320,7 @@ class rulesCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 			$ruleNumber++;
 		}
 	}
@@ -329,7 +336,7 @@ class rulesCest
 		$delta= 1;
 		$moveTo= 0;
 		while ($ruleNumber < $count) {
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 
 			$moveTo= $ruleNumber + $delta;
 
@@ -340,11 +347,11 @@ class rulesCest
 			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => 'Filter rule']), 1);
 
 			if ($moveTo < $count) {
-				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
-				$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$moveTo");
+				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
+				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$moveTo");
 			} else {
-				$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
-				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$moveTo");
+				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
+				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$moveTo");
 			}
 
 			$ruleNumber= $moveTo;
@@ -362,7 +369,7 @@ class rulesCest
 		$ruleNumber= $count - 1;
 		$delta= 1;
 		while ($ruleNumber >= 0) {
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 
 			$moveTo= $ruleNumber - $delta;
 
@@ -373,11 +380,11 @@ class rulesCest
 			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => 'Filter rule']), 1);
 
 			if ($moveTo >= 0) {
-				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
-				$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$moveTo");
+				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
+				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$moveTo");
 			} else {
-				$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
-				$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$moveTo");
+				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
+				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$moveTo");
 			}
 
 			$ruleNumber= $moveTo;
@@ -392,7 +399,7 @@ class rulesCest
 	{		
 		$count= count($this->ruleTypes);
 
-		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], $count);
 
 		$I->click('Delete All');
 
@@ -400,7 +407,7 @@ class rulesCest
 		$I->seeInPopup('Are you sure you want to delete the entire ruleset?');
 		$I->acceptPopup();
 
-		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], 0);
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], 0);
 	}
 
 	/**
@@ -410,7 +417,7 @@ class rulesCest
 	{		
 		$count= count($this->ruleTypes);
 
-		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], $count);
 
 		$I->click('Delete All');
 
@@ -418,7 +425,7 @@ class rulesCest
 		$I->seeInPopup('Are you sure you want to delete the entire ruleset?');
 		$I->cancelPopup();
 
-		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.php?del=")]'], $count);
+		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], $count);
 	}
 
 	/**
@@ -430,15 +437,15 @@ class rulesCest
 	
 		$ruleNumber= 0;
 		while ($ruleNumber < $count - 1) {
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 
-			$I->click(['xpath' => '//a[contains(@href, "conf.php?down=' . $ruleNumber . '")]']);
+			$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?down=' . $ruleNumber . '")]']);
 
 			$I->wait(STALE_ELEMENT_INTERVAL);
-			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+			$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=filter&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 		}
 	}
 
@@ -451,21 +458,23 @@ class rulesCest
 	
 		$ruleNumber= $count - 1;
 		while ($ruleNumber > 0) {
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 
-			$I->click(['xpath' => '//a[contains(@href, "conf.php?up=' . $ruleNumber . '")]']);
+			$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?up=' . $ruleNumber . '")]']);
 
 			$I->wait(STALE_ELEMENT_INTERVAL);
-			$I->dontSeeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+			$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 
 			$ruleNumber--;
-			$I->seeLink('e', "http://pfre/pf/conf.php?sender=comment&rulenumber=$ruleNumber");
+			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 		}
 	}
 
 	/// @attention Make logout a test too, so that we always logout in the end
 	public function logout(AcceptanceTester $I)
 	{
+		$I->click('#rightmenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeLink('Logout');
 		$I->click('Logout');
 

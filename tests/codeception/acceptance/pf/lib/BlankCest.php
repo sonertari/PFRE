@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -216,7 +216,7 @@ e u d x';
 
 		$I->click('Display & Install');
 		$I->wait(STALE_ELEMENT_INTERVAL);
-		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
+		$I->seeInCurrentUrl('conf.write.php');
 		$I->see('Display line numbers');
 
 		$I->dontSee(' ' . $this->lineNumber . ': 

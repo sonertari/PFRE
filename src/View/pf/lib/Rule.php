@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -75,7 +75,8 @@ class Rule
 	{
 		$this->cat= str_replace(__NAMESPACE__ . '\\', '', get_called_class());
 		$this->ref= strtolower(ltrim($this->cat, '_'));
-		$this->href= 'conf.php?sender=' . $this->ref . '&amp;rulenumber=';
+		/// @todo Make conf.editor.php a parameter
+		$this->href= 'conf.editor.php?sender=' . $this->ref . '&amp;rulenumber=';
 		$this->setType();
 	}
 
@@ -119,7 +120,7 @@ class Rule
 		$title= _TITLE('<RULE_TYPE> rule');
 		$title= str_replace('<RULE_TYPE>', $ruleType, $title);
 		?>
-		<tr title="<?php echo $title ?>"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : '') ?>>
+		<tr title="<?php echo $title ?>"<?php echo ($ruleNumber % 2 ? ' class="oddline"' : ' class="evenline"') ?>>
 			<td title="<?php echo _TITLE('Rule number') ?>" class="center">
 				<?php echo $ruleNumber; ?>
 			</td>
@@ -215,14 +216,14 @@ class Rule
 		<?php
 		if ($ruleNumber > 0) {
 			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $up ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Move up') ?>">u</a>
+			<a href="conf.editor.php?<?php echo $up ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Move up') ?>">u</a>
 			<?php
 		} else {
 			echo ' u ';
 		}
 		if ($ruleNumber < $count) {
 			?>
-			<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $down ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Move down') ?>">d</a>
+			<a href="conf.editor.php?<?php echo $down ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Move down') ?>">d</a>
 			<?php
 		} else {
 			echo ' d ';
@@ -233,7 +234,7 @@ class Rule
 		$confirmMsg= str_replace('<RULE_TYPE>', $ruleType, $confirmMsg);
 		$confirmMsg= str_replace('<RULE_NUMBER>', $ruleNumber, $confirmMsg);
 		?>
-		<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?<?php echo $del ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Delete') ?>" onclick="return confirm('<?php echo $confirmMsg ?>')">x</a>
+		<a href="conf.editor.php?<?php echo $del ?>=<?php echo $ruleNumber ?>" title="<?php echo _TITLE('Delete') ?>" onclick="return confirm('<?php echo $confirmMsg ?>')">x</a>
 		<?php
 	}
 

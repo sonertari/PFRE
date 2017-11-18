@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -23,89 +23,13 @@
  */
 
 /**
- * Common HTML footer lines.
- *
- * @todo This could be in a separate file to include, not a function.
- */
-function AuthHTMLFooter()
-{
-	global $ADMIN, $SessionTimeout, $View;
-
-	$_SESSION['Timeout']= time() + $SessionTimeout;
-	?>
-	</table>
-	<table>
-		<tr id="footer">
-			<td class="user">
-				<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?logout"><?php echo _TITLE('Logout') ?></a>
-
-				(<label id="timeout"></label>)
-				<script language="javascript" type="text/javascript">
-					<!--
-					// Add one to session timeout start, to LogUserOut() after redirect below (it's PHP's task)
-					// Otherwise session timeout restarts from max
-					var timeout= <?php echo $_SESSION['Timeout'] - time() ?> + 1;
-					function countdown()
-					{
-						if (timeout > 0) {
-							timeout-= 1;
-							min= Math.floor(timeout / 60);
-							sec= timeout % 60;
-							// Pad left
-							if (sec.toString().length < 2) {
-								sec= "0" + sec;
-							}
-							document.getElementById("timeout").innerHTML= min + ":" + sec;
-						}
-						else {
-							// redirect
-							window.location= "/index.php";
-							return;
-						}
-						setTimeout("countdown()", 1000);
-					}
-					countdown();
-					// -->
-				</script>
-
-				<?php echo $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR') ?>
-			</td>
-			<td>
-				<?php echo _TITLE('Copyright') ?> (c) 2016 Soner Tari. <?php echo _TITLE('All rights reserved.') ?>
-			</td>
-		</tr>
-	<?php
-	HTMLFooter();
-}
-
-/**
- * Checks and prints a warning if the page is not active.
- *
- * $active is set during left and top menu creation according to logged in user.
- *
- * @param bool $active Whether the page was active or not.
- */
-function CheckPageActivation($active)
-{
-	global $VIEW_PATH, $Submenu;
-
-	if (!$active) {
-		echo _TITLE('Resource not available').': '.$Submenu;
-
-		require_once($VIEW_PATH.'/footer.php');
-		pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Page not active.');
-		exit(1);
-	}
-}
-
-/**
  * Prints the message in a simple box, without an image.
  *
  * Used in simple info boxes on the right of components.
  * New lines are replaced with html breaks before displaying.
  *
  * @warning Checks if $msg is empty, because some automatized functions may
- * not pass a non-empth string (such as on configuration pages), thus the box
+ * not pass a non-empty string (such as on configuration pages), thus the box
  * should not be displayed. Just take debug logs.
  *
  * @param string $msg Message to display.
@@ -133,7 +57,7 @@ function PrintHelpBox($msg= '', $width= 300)
 			return;
 		}
 		else {
-			pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, '$msg empty');
+			wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, '$msg empty');
 		}
 	}
 }

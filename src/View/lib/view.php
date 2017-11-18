@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -41,7 +41,7 @@ class View
 
 		$return= FALSE;
 		try {
-			$pfrec= $SRC_ROOT . '/Controller/pfrec.php';
+			$ctlr= $SRC_ROOT . '/Controller/ctlr.php';
 
 			$argv= func_get_args();
 			// Arg 0 is $output, skip it
@@ -49,7 +49,7 @@ class View
 
 			if ($this->EscapeArgs($argv, $cmdline)) {
 				$locale= $_SESSION['Locale'];
-				$cmdline= "/usr/bin/doas $pfrec $locale $cmdline";
+				$cmdline= "/usr/bin/doas $ctlr $locale $cmdline";
 				
 				// Init command output
 				$outputArray= array();
@@ -65,16 +65,27 @@ class View
 
 					$ciphertext_dec = substr($ciphertext_dec, $iv_size);
 
-					$passwd = mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec);
+					/// @attention Use trim(), since the mcrypt_decrypt() in php-mcrypt-5.6.31 returns with trailing white space of size 8!
+					/// @todo Check why mcrypt_decrypt() returns with trailing white space now
+					$passwd = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_128, $_SESSION['cryptKey'], $ciphertext_dec, MCRYPT_MODE_CBC, $iv_dec));
 
 					$ssh = new Net_SSH2(gethostname());
 
+					// Give more time to all requests, the default timeout is 10 seconds
+					$ssh->setTimeout(30);
+
 					if ($ssh->login($_SESSION['USER'], $passwd)) {
 						$outputArray[0]= $ssh->exec($cmdline);
+						if ($ssh->isTimeout()) {
+							$msg= 'SSH exec timed out';
+							wui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
+							PrintHelpWindow($msg, 'auto', 'ERROR');
+							$executed= FALSE;
+						}
 					} else {
 						$msg= 'SSH login failed';
-						pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
-						PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
+						wui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
+						PrintHelpWindow($msg, 'auto', 'ERROR');
 						$executed= FALSE;
 					}
 				} else {
@@ -87,37 +98,37 @@ class View
 					$errorStr= '';
 					$retval= 1;
 
-					$decoded= json_decode($outputArray[0]);
+					$decoded= json_decode($outputArray[0], TRUE);
 					if ($decoded !== NULL && is_array($decoded)) {
 						$output= explode("\n", $decoded[0]);
 						$errorStr= $decoded[1];
 						$retval= $decoded[2];
 					} else {
 						$msg= "Failed decoding output: $outputArray[0]";
-						pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
-						PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
+						wui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "$msg, ($cmdline)");
+						PrintHelpWindow($msg, 'auto', 'ERROR');
 					}
 
 					// Show error, if any
 					if ($errorStr !== '') {
 						$error= explode("\n", $errorStr);
 
-						pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: (" . implode(', ', $error) . "), ($cmdline)");
-						PrintHelpWindow(_NOTICE('FAILED') . ':<br>' . implode('<br>', $error), 'auto', 'ERROR');
+						wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: (" . implode(', ', $error) . "), ($cmdline)");
+						PrintHelpWindow(implode('<br>', $error), 'auto', 'ERROR');
 					}
 
 					// (exit status 0 in shell) == (TRUE in php)
 					if ($retval === 0) {
 						$return= TRUE;
 					} else {
-						pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: ($cmdline)");
+						wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Shell command exit status: $retval: ($cmdline)");
 					}
 				}
 			}
 		}
 		catch (Exception $e) {
 			echo 'Exception: '.__FILE__.' '.__FUNCTION__.' ('.__LINE__.'): '.$e->getMessage()."\n";
-			pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Exception: '.$e->getMessage());
+			wui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, 'Exception: '.$e->getMessage());
 		}
 		return $return;
 	}
@@ -141,11 +152,11 @@ class View
 			if ($hostname == $output) {
 				return TRUE;
 			} else {
-				pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "SSH test command failed: $hostname == $output");
+				wui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "SSH test command failed: $hostname == $output");
 			}
 		} else {
 			$msg= 'Authentication failed';
-			pfrewui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $msg);
+			wui_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, $msg);
 			PrintHelpWindow(_NOTICE('FAILED') . ":<br>$msg", 'auto', 'ERROR');
 		}
 		return FALSE;
@@ -170,7 +181,7 @@ class View
 			}
 			return TRUE;
 		}
-		pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, '$argv is empty');
+		wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, '$argv is empty');
 		return FALSE;
 	}
 }

@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -18,7 +18,7 @@
  * along with PFRE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-class setupCest
+class confsetupCest
 {
 	public function _before(Helper\ConfigureWebDriver $config)
 	{
@@ -39,10 +39,15 @@ class setupCest
 		$I->fillField('Password', 'soner123');
 		$I->click('Login');
 
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.editor.php');
 
-		$I->selectOption('#Locale', 'English');
-		$I->seeOptionIsSelected('#Locale', 'English');
+		$I->click('#rightmenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
+		$I->see('Language');
+		$I->click('#languagemenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
+		$I->see('English');
+		$I->click('English');
 
 		$I->click('Setup');
 	}
@@ -65,7 +70,7 @@ class setupCest
 		$I->fillField('Password', 'soner124');
 		$I->click('Login');
 
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.editor.php');
 
 		$I->click('Setup');
 
@@ -93,15 +98,14 @@ class setupCest
 		$I->click('#ApplyPassword');
 
 		$I->see('User password changed: user');
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.setup.php');
 		$this->logout($I);
 
 		$I->fillField('UserName', 'user');
 		$I->fillField('Password', 'soner124');
 		$I->click('Login');
 
-		$I->seeInCurrentUrl('pf/conf.php');
-		$I->See('Resource not available: setup');
+		$I->seeInCurrentUrl('pf/conf.editor.php');
 		$this->logout($I);
 	}
 
@@ -120,14 +124,14 @@ class setupCest
 		$I->click('#ApplyPassword');
 
 		$I->see('User password changed: user');
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.setup.php');
 		$this->logout($I);
 
 		$I->fillField('UserName', 'user');
 		$I->fillField('Password', 'soner123');
 		$I->click('Login');
 
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.editor.php');
 		$this->logout($I);
 	}
 
@@ -145,7 +149,7 @@ class setupCest
 		$I->click('#ApplyPassword');
 
 		$I->see('Authentication failed');
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.setup.php');
 	}
 
 	/**
@@ -161,7 +165,7 @@ class setupCest
 		$I->click('#ApplyPassword');
 
 		$I->see('Not a valid password');
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.setup.php');
 	}
 
 	/**
@@ -177,7 +181,7 @@ class setupCest
 		$I->click('#ApplyPassword');
 
 		$I->see('Passwords do not match');
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.setup.php');
 	}
 
 	/**
@@ -190,7 +194,7 @@ class setupCest
 		$I->click('#ApplyPassword');
 
 		$I->see('pfre currently supports only admin and user usernames');
-		$I->seeInCurrentUrl('pf/conf.php');
+		$I->seeInCurrentUrl('pf/conf.setup.php');
 	}
 
 	public function testSetLogLevel(AcceptanceTester $I)
@@ -231,14 +235,14 @@ class setupCest
 		$I->click('#ApplySessionTimeout');
 
 		$I->seeInField('SessionTimeout', '10');
-		$I->see('Logout (0:10) admin@');
+		$I->see('0:10');
 
 		$I->fillField('SessionTimeout', '300');
 
 		$I->click('#ApplySessionTimeout');
 
 		$I->seeInField('SessionTimeout', '300');
-		$I->see('Logout (5:00) admin@');
+		$I->see('5:00');
 	}
 
 	public function testSetMaxAnchorNesting(AcceptanceTester $I)
@@ -274,6 +278,8 @@ class setupCest
 	/// @attention Make logout a test too, so that we always logout in the end
 	public function logout(AcceptanceTester $I)
 	{
+		$I->click('#rightmenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeLink('Logout');
 		$I->click('Logout');
 

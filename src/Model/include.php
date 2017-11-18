@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -61,7 +61,7 @@ require_once($MODEL_PATH.'/lib/Blank.php');
 /**
  * Shell command argument types.
  *
- * @attention PHP is not compiled, otherwise would use bindec()
+ * @attention PHP is not compiled, otherwise would use bindec().
  * 
  * @warning Do not use bitwise shift operator either, would mean 100+ shifts for constant values!
  */
@@ -82,18 +82,28 @@ $Error= '';
  *
  * Output strings are accumulated in global $Output var and returned to View.
  * 
+ * $msg may be the output of another function call. So, we first check
+ * to see if it is FALSE, meaning the function had failed or not.
+ * 
+ * @attention Note that we never send bool messages.
+ * 
  * @param string $msg Output message.
+ * @return bool TRUE on success, FALSE on fail.
  */
 function Output($msg)
 {
 	global $Output;
 
-	if ($Output === '') {
-		$Output= $msg;
+	if ($msg !== FALSE) {
+		if ($Output === '') {
+			$Output= $msg;
+		}
+		else {
+			$Output.= "\n".$msg;
+		}
+		return TRUE;
 	}
-	else {
-		$Output.= "\n".$msg;
-	}
+	return FALSE;
 }
 
 /**
@@ -126,12 +136,12 @@ function Error($msg)
  * @param int $line	Line number within the function
  * @param string $msg Log message
  */
-function pfrec_syslog($prio, $file, $func, $line, $msg)
+function ctlr_syslog($prio, $file, $func, $line, $msg)
 {
 	global $LOG_LEVEL, $LOG_PRIOS;
 
 	try {
-		openlog('pfrec', LOG_PID, LOG_LOCAL0);
+		openlog('ctlr', LOG_PID, LOG_LOCAL0);
 		
 		if ($prio <= $LOG_LEVEL) {
 			$func= $func == '' ? 'NA' : $func;
@@ -146,40 +156,8 @@ function pfrec_syslog($prio, $file, $func, $line, $msg)
 	}
 	catch (Exception $e) {
 		echo 'Caught exception: ',  $e->getMessage(), "\n";
-		echo "pfrec_syslog() failed: $prio, $file, $func, $line, $msg\n";
+		echo "ctlr_syslog() failed: $prio, $file, $func, $line, $msg\n";
 		// No need to closelog(), it is optional
 	}
-}
-
-/**
- * Escapes chars.
- *
- * Prevents double escapes by default.
- *
- * preg_quote() double escapes, thus is not suitable. It is not possible to
- * make sure that strings contain no escapes, because this function is used
- * over strings obtained from config files too, which we don't have any control over.
- *
- * Example: $no_double_escapes as FALSE is used in the code to double escape the $ char.
- *
- * @param string $str String to process.
- * @param string $chars Chars to escape.
- * @param bool $no_double_escapes Whether to prevent double escapes.
- * @return string Escaped string.
- */
-function Escape($str, $chars, $no_double_escapes= TRUE)
-{
-	if ($chars !== '') {
-		$chars_array= str_split($chars);
-		foreach ($chars_array as $char) {
-			$esc_char= preg_quote($char, '/');
-			if ($no_double_escapes) {
-				/// First remove existing escapes
-				$str= preg_replace("/\\\\$esc_char/", $char, $str);
-			}
-			$str= preg_replace("/$esc_char/", "\\\\$char", $str);
-		}
-	}
- 	return $str;
 }
 ?>

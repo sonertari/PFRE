@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -43,24 +43,29 @@ if (filter_has_var(INPUT_POST, 'forcedisplay')) {
 	$force= 1;
 }
 
+$StrRules= array();
 if ($testResult || $force) {
 	/// @todo Check why we cannot pass FALSE as numbers param
-	$generated= $View->Controller($Output, 'GeneratePfRules', json_encode($View->RuleSet->rules), $printNumbers ? 1 : 0, $force);
+	$generated= $View->Controller($StrRules, 'GeneratePfRules', json_encode($View->RuleSet->rules), $printNumbers ? 1 : 0, $force);
 }
 
+$TopMenu= 'conf.write';
 require_once($VIEW_PATH.'/header.php');
 ?>
-<fieldset>
-	<form id="installForm" name="installForm" action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
-		<input type="checkbox" id="numbers" name="numbers" <?php echo $printNumbers ? 'checked' : '' ?> onclick="document.installForm.apply.click()" />
-		<label for="numbers"><?php echo _CONTROL('Display line numbers') ?></label>
-		<input type="checkbox" id="forcedisplay" name="forcedisplay" <?php echo filter_has_var(INPUT_POST, 'forcedisplay') ? 'checked' : ''; ?> <?php echo $testResult ? 'disabled' : ''; ?> onclick="document.installForm.apply.click()" />
-		<label for="forcedisplay"><?php echo _CONTROL('Display with errors') ?></label>
-		<input type="submit" id="apply" name="apply" value="<?php echo _CONTROL('Apply') ?>" />
-		<input type="submit" id="install" name="install" value="<?php echo _CONTROL('Install') ?>" <?php echo $testResult ? '' : 'disabled' ?> />
-		<label for="install"><?php echo _CONTROL('Install as main ruleset') ?>: /etc/pf.conf</label>
-	</form>
-</fieldset>
+<table class="shadowbox">
+	<tr>
+		<td>
+			<fieldset>
+				<form id="installForm" name="installForm" action="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>" method="post">
+					<input type="checkbox" id="numbers" name="numbers" <?php echo $printNumbers ? 'checked' : '' ?> onclick="document.installForm.apply.click()" />
+					<label for="numbers"><?php echo _CONTROL('Display line numbers') ?></label>
+					<input type="checkbox" id="forcedisplay" name="forcedisplay" <?php echo filter_has_var(INPUT_POST, 'forcedisplay') ? 'checked' : ''; ?> <?php echo $testResult ? 'disabled' : ''; ?> onclick="document.installForm.apply.click()" />
+					<label for="forcedisplay"><?php echo _CONTROL('Display with errors') ?></label>
+					<input type="submit" id="apply" name="apply" value="<?php echo _CONTROL('Apply') ?>" />
+					<input type="submit" id="install" name="install" value="<?php echo _CONTROL('Install') ?>" <?php echo $testResult ? '' : 'disabled' ?> />
+					<label for="install"><?php echo _CONTROL('Install as main ruleset') ?>: /etc/pf.conf</label>
+				</form>
+			</fieldset>
 <?php
 echo _TITLE('Rules file') . ': ' . $View->RuleSet->filename . ($View->RuleSet->uploaded ? ' (' . _TITLE('uploaded') . ')' : '');
 ?>
@@ -69,10 +74,13 @@ echo _TITLE('Rules file') . ': ' . $View->RuleSet->filename . ($View->RuleSet->u
 <pre id="rules">
 <?php
 if ($generated || $force) {
-	echo htmlentities(implode("\n", $Output));
+	echo htmlentities(implode("\n", $StrRules));
 }
 ?>
 </pre>
+		</td>
+	</tr>
+</table>
 <?php
 require_once($VIEW_PATH.'/footer.php');
 ?>

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -21,18 +21,12 @@
 /** @file
  * Page footer.
  */
-	
-	?>
-	</td>
-</tr>
-<tr>
-	<td id="bottomhelpregion">
-		<?php
-		$InHelpRegion= TRUE;
-		PrintHelpWindow('', 'auto', 'PRINT');
-		?>
-	</td>
-</tr>
-<?php
-AuthHTMLFooter();
+
+$InHelpRegion= TRUE;
+PrintHelpWindow('', 'auto', 'PRINT');
 ?>
+		<div>
+			<?php echo _TITLE('Copyright') ?> (C) 2017 Soner Tari. <?php echo _TITLE('All rights reserved.'); ?>
+		</div>
+	</body>
+</html>

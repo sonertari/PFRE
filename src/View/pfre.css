@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with PFRE.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
+
 /*
  * Defaults
  */
@@ -39,6 +39,10 @@ h3
 body
 {
 	font-size: 75%;
+	padding: 0;
+	margin: 10px;
+	text-align: left;
+	vertical-align: top;
 }
 
 fieldset
@@ -58,7 +62,7 @@ table
 th
 {
 	color: white;
-	background: #004a4a;
+	background: #01466b;
 	padding: 0.25em;
 	border: 1px solid white;
 	font-size: 90%;
@@ -93,144 +97,152 @@ a:hover
 }
 
 /*
- * Main display area
+ * Menu
  */
-#infobox
-{
-	text-align: left;
-}
 
-td.infobox
-{
-	padding: 0;
-	padding-left: 0.5em;
-	margin: 0;
-	vertical-align: top;
-}
-
-#main td {
-	border: 1px solid #CCC;
-	padding: 1px;
-	font-size: 95%;
-}
-
-/*
- * Top menu
- */
 #menu
 {
- 	margin-top: 3px;
-	padding-bottom: 0.2em;
+	margin-bottom: 6px;
 }
 
-#menu #tabs
+#menu td
 {
 	padding: 0;
-	margin-top: 10px;
-	margin-left: 10px;
+	margin: 0;
 }
 
-#menu ul, #menu li
+#menu a.menuwithimage
 {
+	padding: 4.2px;
+	margin: 0;
+	vertical-align: middle;
+}
+
+#menu span.menuwithimage
+{
+	vertical-align: middle;
+}
+
+#timeout
+{
+	vertical-align: middle;
+	text-align: right;
+}
+
+#menu img.menuwithimage
+{
+	height: 22px;
+	width: 22px;
+}
+
+#wrapper
+{
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+#nav
+{
+	position: relative;
+}
+
+ul#navigation
+{
+	margin: 0px auto;
+	position: relative;
 	padding: 0;
+}
+
+ul#navigation li
+{
+	display: inline;
+	font-size: 12px;
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+	float: left;
+	position: relative;
+	background: #eaeff1;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+ul#navigation li a
+{
+	padding: 8px 5px;
+	color: black;
+	text-decoration: none;
+	display: inline-block;
+	background: none;
+	-webkit-transition: color 0.2s linear, background 0.2s linear;	
+	-moz-transition: color 0.2s linear, background 0.2s linear;	
+	-o-transition: color 0.2s linear, background 0.2s linear;	
+	transition: color 0.2s linear, background 0.2s linear;	
+}
+
+ul#navigation li a:hover
+{
+	background: none;
+	color: white;
+}
+
+ul#navigation li:hover
+{
+	background: gray;
+}
+
+/* Drop-Down Navigation */
+ul#navigation li:hover > ul
+{
+	visibility: visible;
+	opacity: 0.95;
+}
+
+ul#navigation ul, ul#navigation ul li ul
+{
 	list-style: none;
 	margin: 0;
-	display: inline;
-	vertical-align: bottom;
-}
-
-#menu #tabs a
-{
 	padding: 0;
-	padding: 0.2em 0.6em;
-	color: white;
-	font-weight: bold;
-	border-top: 1px solid gray;
-	border-right: 1px solid gray;
-	border-left: 1px solid gray;
-	background-color: #b0b0b0;
+	visibility: hidden;
+	position: absolute;
+	z-index: 99999;
+	background: #eaeff1;
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear, visibility 0.2s linear; 
+	-moz-transition: opacity 0.2s linear, visibility 0.2s linear; 
+	-o-transition: opacity 0.2s linear, visibility 0.2s linear; 
+	transition: opacity 0.2s linear, visibility 0.2s linear; 	
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 }
 
-#menu #tabs a:hover
+ul#navigation ul
 {
-	background-color: #505050;
+	top: 31px;
+	left: 0px;
 }
 
-#menu #tabs li.active a
+ul#navigation ul li ul
 {
-	color: white;
-	font-weight: bold;
-  	background-color: #004a4a;
-	border-top: 1px solid black;
-	border-right: 1px solid black;
-	border-left: 1px solid black;
+	top: 0;
+	left: -50px;
 }
 
-#menu .links
+ul#navigation ul li
 {
+	clear: both;
+	width: 100%;
+	border: 0 none;
 }
 
-#menu .links li
+ul#navigation ul li a
 {
-	margin-left: 0.5em;
-}
-
-#menu #links a, #menu #links a:hover
-{
+	background: none;
+	padding: 4px 10px;
 	color: black;
-	background-color: black;
-}
-
-#top td
-{
-	padding: 0;
-}
-
-.topmenu
-{
-	background: #f0f0f0;
-}
-
-#top .title
-{
-	color: #004a4a;
-	text-align: center;
-}
-
-#menuunderline
-{
-	padding: 0.25em;
-	background: #004a4a;
-}
-
-/*
- * Page footer
- */
-#bottomhelpregion
-{
-	padding: 0em 0em 0.5em 0.5em;
-	vertical-align: bottom;
-}
-
-#footer td
-{
-	padding: 0.2em 0.6em;
-	border-top: 1px solid #004a4a;
-	text-align: right;
 	text-decoration: none;
-	background-color: #f0f0f0;
-}
-
-#footer .user
-{
-	color: red;
-	text-align: left;
-}
-
-#footer .cvs
-{
-	color: #004a4a;
-	text-align: center;
+	display: inline-block;
+	border: 0 none;
+	clear: both;
+	/* @todo Check why we need to shrink the width of a */
+	width: 90%;
 }
 
 /*
@@ -239,19 +251,24 @@ td.infobox
 #window
 {
 	width: auto;
-	background: white;
-	border-top: 2px solid #ccc;
-	border-left: 2px solid #ccc;
-	border-bottom: 2px solid black;
-	border-right: 2px solid black;
+	background: #eaeff1;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 #window .titlebar
 {
 	text-align: center;
 	color: white;
-	background: #004a4a;
+	background: #01466b;
 	font-weight: bold;
+	-webkit-border-radius: 5px 5px 0px 0px;
+	-moz-border-radius: 5px 5px 0px 0px;
+	border-radius: 5px 5px 0px 0px;
 }
 
 #window .authbox
@@ -274,10 +291,6 @@ td.infobox
 	width: auto;
 	margin-top: 0.5em;
 	padding: 1px 1px 1px 1px;
-	background: #ccc;
-	border: 1px solid #eee;
-	border-bottom: 1px solid gray;
-	border-right: 1px solid gray;
 }
 
 #authbox .label
@@ -299,19 +312,14 @@ td.infobox
 /*
  * Rules page
  */
-.oddline
-{
-	background-color: #ebebeb;
-}
-
 .block
 {
-	background-color: #FF6264;
+	background-color: #ff6264;
 }
 
 .pass
 {
-	background-color: #64FF62;
+	background-color: #64ff62;
 }
 
 .match
@@ -323,7 +331,7 @@ td.infobox
 {
 	border-bottom: 1px solid #CCC;
 	border-right: 1px solid #CCC;
-	background-color: #ffddc0;
+	background-color: #fff8f1;
 	padding-left: 1em;
 	padding-right: 1em;
 	text-align: left;
@@ -343,7 +351,7 @@ td.infobox
 {
 	border-bottom: 1px solid #CCC;
 	border-right: 1px solid #CCC;
-	background-color: #ffffff;
+	background-color: white;
 	padding-left: 1em;
 	padding-right: 1em;
 	text-align: left;
@@ -351,7 +359,7 @@ td.infobox
 
 .category
 {
-	background-color: #ffffff;
+	background-color: white;
 }
 
 .edit
@@ -368,6 +376,11 @@ td.infobox
 	border: none;
 	text-align: center;
 	white-space: nowrap;
+}
+
+.oddline
+{
+	background-color: #ebebeb;
 }
 
 /*
@@ -491,20 +504,26 @@ td.infobox
 {
 	text-align: left;
 	font-size: 90%;
-	border-top: 1px solid #ddd;
-	border-left: 1px solid #ddd;
-	border-bottom: 1px solid gray;
-	border-right: 1px solid gray;
-	background: #ffede4;
-	margin-top: 0.25em;
+	background: #eaeff1;
+	margin: 6px 0 4px 0;
+}
+
+table#mainhelpbox
+{
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 #mainhelpbox th
 {
 	color: white;
-  	background: #004a4a;
+	background: #01466b;
 	font-size: 100%;
-	border: none;
+	border: 0px none;
 	padding: 0.25em 0.25em 0.25em 5px;
 }
 
@@ -537,7 +556,7 @@ td.infobox
 	border-left: 1px solid #ddd;
 	border-bottom: 1px solid gray;
 	border-right: 1px solid gray;
-	background: #ffede4;
+	background: #eaeff1;
 }
 
 #helpbox td
@@ -549,6 +568,53 @@ td.infobox
 #helpbox td.leftbar
 {
 	width: 3px;
-	background: #004a4a;
+	background: #01466b;
 	padding: 0;
+}
+
+/*
+ * Log header and lines
+ */
+table#logline
+{
+	border: 0px none;
+	margin-bottom: 4px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+}
+
+#logline td
+{
+	padding: 1px;
+	font-size: 90%;
+	border-top: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+}
+
+#logline th
+{
+	color: white;
+	background: #01466b;
+	border: 0px none;
+	line-height: 1em;
+	text-align: center;
+}
+
+/*
+ * Misc
+ */
+.shadowbox
+{
+	width: auto;
+	display: inline-block;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	-webkit-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	-moz-box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
 }

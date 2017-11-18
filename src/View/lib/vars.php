@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -54,20 +54,20 @@ require_once($VIEW_PATH.'/lib/view.php');
 
 /** Sub menu configuration, caption and permissions.
  */
-$SubMenus = array(
-	'rules' => array(
+$Menu = array(
+	'conf.editor' => array(
 		'Name' => _MENU('Rules'),
 		'Perms' => $ALL_USERS,
 		),
-	'displayinstall' => array(
+	'conf.write' => array(
 		'Name' => _MENU('Display & Install'),
 		'Perms' => $ALL_USERS,
 		),
-	'loadsave' => array(
+	'conf.files' => array(
 		'Name' => _MENU('Load & Save'),
 		'Perms' => $ALL_USERS,
 		),
-	'setup' => array(
+	'conf.setup' => array(
 		'Name' => _MENU('Setup'),
 		'Perms' => $ADMIN,
 		),

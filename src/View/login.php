@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -62,7 +62,7 @@ if (filter_has_var(INPUT_POST, 'Login')) {
 } elseif ($_SESSION['Timeout']) {
 	// If user was already logged out, do not check timeout, LogUserOut() sets timeout to -1
 	// Otherwise results in a loop
-	pfrewui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Session timeout: ' . $_SESSION['Timeout'] . ', time: ' . time());
+	wui_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, 'Session timeout: ' . $_SESSION['Timeout'] . ', time: ' . time());
 
 	if ($_SESSION['Timeout'] > 0) {
 		if ($_SESSION['Timeout'] <= time()) {
@@ -74,10 +74,8 @@ if (filter_has_var(INPUT_POST, 'Login')) {
 	}
 }
 
-HTMLHeader('gray');
+HTMLHeader('whitesmoke');
 ?>
-<tr>
-	<td>
 		<table style="height: 400px;">
 			<tr>
 				<td>
@@ -122,8 +120,5 @@ HTMLHeader('gray');
 				</td>
 			</tr>
 		</table>
-	</td>
-</tr>
-<?php
-HTMLFooter();
-?>
+	</body>
+</html>

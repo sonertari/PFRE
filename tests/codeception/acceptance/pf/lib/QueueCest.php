@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -27,7 +27,7 @@ class QueueCest extends Rule
 	protected $lineNumber= 18;
 	protected $sender= 'queue';
 
-	protected $origRule= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test';
+	protected $origRule= 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test';
 	protected $expectedDispOrigRule= 'test
 em0
 rootq
@@ -37,7 +37,9 @@ time: 100ms 5M
 burst: 10M
 time: 50ms 100M
 burst: 1M
-time: 10ms 100
+time: 10ms 1024
+1
+100
 default Test e u d x';
 
 	protected $modifiedRule= 'queue test1 # Test1';
@@ -48,39 +50,45 @@ Test1 e u d x';
 	protected function modifyRule(AcceptanceTester $I)
 	{
 		$I->fillField('#name', 'test1');
-		$this->clickApplySeeResult($I, 'queue test1 on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#interface', '');
-		$this->clickApplySeeResult($I, 'queue test1 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#parent', '');
-		$this->clickApplySeeResult($I, 'queue test1 bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#bw-time', '');
-		$this->clickApplySeeResult($I, 'queue test1 bandwidth 20M burst 90M min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 bandwidth 20M burst 90M min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#bw-burst', '');
-		$this->clickApplySeeResult($I, 'queue test1 bandwidth 20M min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 bandwidth 20M min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#bandwidth', '');
-		$this->clickApplySeeResult($I, 'queue test1 min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#min-time', '');
-		$this->clickApplySeeResult($I, 'queue test1 min 5M burst 10M max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 min 5M burst 10M max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#min-burst', '');
-		$this->clickApplySeeResult($I, 'queue test1 min 5M max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 min 5M max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#min', '');
-		$this->clickApplySeeResult($I, 'queue test1 max 100M burst 1M for 10ms qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#max-time', '');
-		$this->clickApplySeeResult($I, 'queue test1 max 100M burst 1M qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 max 100M burst 1M flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#max-burst', '');
-		$this->clickApplySeeResult($I, 'queue test1 max 100M qlimit 100 default # Test');
+		$this->clickApplySeeResult($I, 'queue test1 max 100M flows 1024 quantum 1 qlimit 100 default # Test');
 
 		$I->fillField('#max', '');
+		$this->clickApplySeeResult($I, 'queue test1 flows 1024 quantum 1 qlimit 100 default # Test');
+
+		$I->fillField('#flows', '');
+		$this->clickApplySeeResult($I, 'queue test1 quantum 1 qlimit 100 default # Test');
+
+		$I->fillField('#quantum', '');
 		$this->clickApplySeeResult($I, 'queue test1 qlimit 100 default # Test');
 
 		$I->fillField('#qlimit', '');
@@ -131,11 +139,17 @@ Test1 e u d x';
 		$I->fillField('#max-time', '10ms');
 		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms # Test1');
 
+		$I->fillField('#flows', '1024');
+		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 # Test1');
+
+		$I->fillField('#quantum', '1');
+		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 # Test1');
+
 		$I->fillField('#qlimit', '100');
-		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 # Test1');
+		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 # Test1');
 
 		$I->checkOption('#default');
-		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms qlimit 100 default # Test1');
+		$this->clickApplySeeResult($I, 'queue test on em0 parent rootq bandwidth 20M burst 90M for 100ms min 5M burst 10M for 50ms max 100M burst 1M for 10ms flows 1024 quantum 1 qlimit 100 default # Test1');
 
 		$I->fillField('#comment', 'Test');
 		$this->clickApplySeeResult($I, $this->revertedRule);
@@ -155,6 +169,8 @@ Test1 e u d x';
 		$I->fillField('#max-time', '');
 		$I->fillField('#max-burst', '');
 		$I->fillField('#max', '');
+		$I->fillField('#flows', '');
+		$I->fillField('#quantum', '');
 		$I->fillField('#qlimit', '');
 		$I->uncheckOption('#default');
 		$I->fillField('#comment', 'Test1');
@@ -181,6 +197,8 @@ Test1 e u d x';
 
 		$I->fillField('#max-burst', '1M');
 		$I->fillField('#max-time', '10ms');
+		$I->fillField('#flows', '1024');
+		$I->fillField('#quantum', '1');
 		$I->fillField('#qlimit', '100');
 		$I->checkOption('#default');
 		$I->fillField('#comment', 'Test');

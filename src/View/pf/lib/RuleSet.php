@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -359,7 +359,8 @@ class RuleSet
 	{
 		if (filter_has_var(INPUT_POST, 'cancel') && (filter_input(INPUT_POST, 'cancel') == _CONTROL('Cancel'))) {
 			unset($_SESSION['edit']);
-			header('Location: /pf/conf.php');
+			/// @todo Make conf.editor.php a parameter
+			header('Location: /pf/conf.editor.php');
 			exit;
 		}
 	}
@@ -389,7 +390,8 @@ class RuleSet
 				}
 				$this->rules[$ruleNumber]= $ruleObj;
 				unset($_SESSION['edit']);
-				header('Location: /pf/conf.php');
+				/// @todo Make conf.editor.php a parameter
+				header('Location: /pf/conf.editor.php');
 				exit;
 			}
 		}

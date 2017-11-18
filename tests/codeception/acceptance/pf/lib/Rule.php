@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2016 Soner Tari
+ * Copyright (C) 2004-2017 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -86,10 +86,10 @@ class Rule
 		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' ' . $this->expectedDispOrigRule;
 		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' ' . $this->expectedDispModifiedRule;
 
-		$this->eLink= 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber;
-		$this->uLink= 'http://pfre/pf/conf.php?up=' . $this->ruleNumber;
-		$this->dLink= 'http://pfre/pf/conf.php?down=' . $this->ruleNumber;
-		$this->xLink= 'http://pfre/pf/conf.php?del=' . $this->ruleNumber;
+		$this->eLink= 'http://pfre/pf/conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber;
+		$this->uLink= 'http://pfre/pf/conf.editor.php?up=' . $this->ruleNumber;
+		$this->dLink= 'http://pfre/pf/conf.editor.php?down=' . $this->ruleNumber;
+		$this->xLink= 'http://pfre/pf/conf.editor.php?del=' . $this->ruleNumber;
 	}
 
 	public function _before(AcceptanceTester $I, Helper\ConfigureWebDriver $config)
@@ -122,10 +122,15 @@ class Rule
 			$I->fillField('Password', 'soner123');
 			$I->click('Login');
 
-			$I->seeInCurrentUrl('pf/conf.php');
+			$I->seeInCurrentUrl('pf/conf.editor.php');
 
-			$I->selectOption('#Locale', 'English');
-			$I->seeOptionIsSelected('#Locale', 'English');
+			$I->click('#rightmenu');
+			$I->wait(POPUP_DISPLAY_INTERVAL);
+			$I->see('Language');
+			$I->click('#languagemenu');
+			$I->wait(POPUP_DISPLAY_INTERVAL);
+			$I->see('English');
+			$I->click('English');
 		}
 	}
 
@@ -133,7 +138,7 @@ class Rule
 	{
 		$I->click('Load & Save');
 		$I->wait(STALE_ELEMENT_INTERVAL);
-		$I->seeInCurrentUrl('conf.php?submenu=loadsave');
+		$I->seeInCurrentUrl('conf.files.php');
 		$I->see('Load ruleset');
 
 		$I->attachFile(\Codeception\Util\Locator::find('input', ['type' => 'file']), 'test.conf');
@@ -149,7 +154,7 @@ class Rule
 	{
 		$I->click('Rules');
 		$I->wait(STALE_ELEMENT_INTERVAL);
-		$I->seeInCurrentUrl('conf.php?submenu=rules');
+		$I->seeInCurrentUrl('conf.editor.php');
 
 		$I->seeOptionIsSelected('category', 'All');
 
@@ -189,17 +194,17 @@ class Rule
 		//$I->click('Rules');
 		$I->wait(STALE_ELEMENT_INTERVAL);
 		// @attention Do not check the URL, it changes depending on where you have come from
-		//$I->seeInCurrentUrl('conf.php?submenu=rules');
+		//$I->seeInCurrentUrl('conf.editor.php');
 
 		// These methods work too
 		//$I->click(['xpath' => '//a[contains(@href, "rulenumber=' . $this->ruleNumber . '")]']);
 		//$I->click('//a[contains(@href, "rulenumber=' . $this->ruleNumber . '")]');
 
-		$I->seeLink('e', 'http://pfre/pf/conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
-		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));
+		$I->seeLink('e', 'http://pfre/pf/conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
+		$I->click(\Codeception\Util\Locator::href('conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));
 
 		$I->wait(STALE_ELEMENT_INTERVAL);
-		$I->seeInCurrentUrl('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
+		$I->seeInCurrentUrl('conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->see($this->editPageTitle, 'h2');
 	}
 
@@ -340,7 +345,7 @@ class Rule
 
 		$I->click('Display & Install');
 		$I->wait(STALE_ELEMENT_INTERVAL);
-		$I->seeInCurrentUrl('conf.php?submenu=displayinstall');
+		$I->seeInCurrentUrl('conf.write.php');
 		$I->see('Display line numbers');
 
 		$I->dontSee(' ' . $this->lineNumber . ': ' . $this->generatedRule, '#rules');
@@ -353,6 +358,8 @@ class Rule
 	/// @attention Make logout a test too, so that we always logout in the end
 	public function logout(AcceptanceTester $I)
 	{
+		$I->click('#rightmenu');
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeLink('Logout');
 		$I->click('Logout');
 
@@ -361,7 +368,7 @@ class Rule
 
 	protected function clickDeleteLink(AcceptanceTester $I, $delId, $value)
 	{
-		$I->click(\Codeception\Util\Locator::href('conf.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber . '&' . $delId . '=' . $value . '&state=edit'));
+		$I->click(\Codeception\Util\Locator::href('conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber . '&' . $delId . '=' . $value . '&state=edit'));
 	}
 
 	protected function clickApplySeeResult(AcceptanceTester $I, $expectedRule)

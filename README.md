@@ -1,6 +1,6 @@
 # PFRE
 
-PFRE is a pf rule editor for OpenBSD 5.9. PFRE is expected to be used by beginners and system administrators alike.
+PFRE is a pf rule editor for OpenBSD. PFRE is expected to be used by beginners and system administrators alike.
 
 You can find a couple of screenshots on the [wiki](https://github.com/sonertari/PFRE/wiki).
 
@@ -34,7 +34,7 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ All input is untainted.
 	+ Invalid rules are never tested using pfctl.
 	+ Pfctl is executed in a separate process, which times out if pfctl takes too long.
-	+ As the sole gatekeeper for the Model, PFRE controller, pfrec is the only executable enabled in the doas configuration. Pfrec validates all commands and their arguments given to it.
+	+ As the sole gatekeeper for the Model, PFRE controller, ctlr is the only executable enabled in the doas configuration. Ctlr validates all commands and their arguments given to it.
 	+ The View executes all controller commands over an SSH connection.
 	+ Passwords are never visible plain text anywhere.
 	+ The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep and /bin/date).
@@ -46,12 +46,12 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 5.9, perhaps in a VM.
-- Install Apache 1.3.29, PHP 5.6.18, php-pcntl 5.6.18, and php-mcrypt 5.6.18.
+- Install OpenBSD 6.2, perhaps in a VM.
+- Install PHP 5.6.31, php-pcntl, php-mcrypt, and php-fastcgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
-- Configure a Virtual Host in httpd.conf for PFRE, preferably an SSL Virtual Host too.
+- Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
-- Enable pfrec.php in doas for admin and user users, and make sure pfrec.php is executable.
+- Enable ctlr.php in doas for admin and user users, and make sure ctlr.php is executable.
 - Point your web browser to the web server and log in.
 
 The following sections provide the details.
@@ -62,9 +62,9 @@ The OpenBSD installation guide is in [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install59.iso available at OpenBSD ftp or http mirrors.
+- You can download install62.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
-- 1GB RAM and 8GB HD should be more than enough.
+- 512MB RAM and 8GB HD should be more than enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
 	+ The external interface may obtain its IP address over DHCP
 	+ The internal interface should have a static IP address
@@ -86,26 +86,25 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
-	apache-httpd-common-2.4.18.tgz
-	apache-httpd-openbsd-1.3.20140502p6.tgz
+	php-5.6.31.tgz
+	libiconv-1.14p3.tgz
+	gettext-0.19.7.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p2.tgz
-	gettext-0.19.7.tgz
-	libiconv-1.14p3.tgz
+	xz-5.2.3p0.tgz
+	libxml-2.9.5.tgz
+	php-pcntl-5.6.31.tgz
+	php-mcrypt-5.6.31.tgz
 	libltdl-2.4.2p1.tgz
 	libmcrypt-2.5.8p2.tgz
-	libxml-2.9.3.tgz
-	php-5.6.18.tgz
-	php-mcrypt-5.6.18.tgz
-	php-pcntl-5.6.18.tgz
-	xz-5.2.2p0.tgz
+	php-fastcgi-5.6.31.tgz
 
-Install Apache, PHP, php-pcntl, and php-mcrypt by running the following commands, which should install their dependencies as well:
+Install PHP, php-pcntl, php-mcrypt, and php-fastcgi by running the following commands, which should install their dependencies as well:
 
-	# pkg_add -v apache-httpd-openbsd
 	# pkg_add -v php
 	# pkg_add -v php-pcntl
 	# pkg_add -v php-mcrypt
+	# pkg_add -v php-fastcgi
 
 If you want to see if all required packages are installed successfully, run the following command:
 
@@ -113,41 +112,53 @@ If you want to see if all required packages are installed successfully, run the 
 
 Here is the expected output of that command:
 
-	apache-httpd-common-2.4.18 shared files for Apache 1 and 2
-	apache-httpd-openbsd-1.3.20140502p6 OpenBSD improved and secured version of Apache 1.3
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p2 simple SMTP client for chrooted web servers
-	gettext-0.19.7      GNU gettext runtime libraries and programs
+	gettext-0.19.8.1p1  GNU gettext runtime libraries and programs
 	libiconv-1.14p3     character set conversion library
 	libltdl-2.4.2p1     GNU libtool system independent dlopen wrapper
 	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
-	libxml-2.9.3        XML parsing library
-	php-5.6.18          server-side HTML-embedded scripting language
-	php-mcrypt-5.6.18   mcrypt encryption/decryption extensions for php5
-	php-pcntl-5.6.18    PCNTL extensions for php5
-	xz-5.2.2p0          LZMA compression and decompression tools
+	libxml-2.9.5        XML parsing library
+	php-5.6.31          server-side HTML-embedded scripting language
+	php-fastcgi-5.6.31  stand-alone FastCGI version of PHP
+	php-mcrypt-5.6.31   mcrypt encryption/decryption extensions for php5
+	php-pcntl-5.6.31    PCNTL extensions for php5
+	xz-5.2.3p0          LZMA compression and decompression tools
 
 ### Install PFRE
 
 Create a 'pfre' folder under /var/www/htdocs/ and copy all the contents of the PFRE src folder to /var/www/htdocs/pfre/. Their user permissions should be root:daemon.
 
-Make sure /var/www/htdocs/pfre/Controller/pfrec.php is executable. If not, go to /var/www/htdocs/pfre/Controller/ and make it executable:
+Make sure /var/www/htdocs/pfre/Controller/ctlr.php is executable. If not, go to /var/www/htdocs/pfre/Controller/ and make it executable:
 
 	# cd /var/www/htdocs/pfre/Controller/
-	# chmod u+x pfrec.php
+	# chmod u+x ctlr.php
 
-#### Configure Apache
+And create the folders for configuration files:
 
-Configure Virtual Host setups for PFRE in httpd.conf. Your configuration might look like the following:
+	# mkdir /etc/pfre/
 
-	<VirtualHost _default_:80>
-	    DocumentRoot /var/www/htdocs/pfre/View
-	    ServerName pfre
-	    ErrorLog logs/pfre_error_log
-	    TransferLog logs/pfre_access_log
-	</VirtualHost>
+#### Configure Web Server
 
-You are advised to repeat the same configuration for SSL Virtual Host `<VirtualHost _default_:443>` also.
+Configure PFRE in httpd.conf. Note that we should disable chroot by chrooting to /. Your configuration might look like the following:
+
+	# OpenBSD/httpd configuration for PFRE
+
+	chroot "/"
+	#prefork 3
+
+	server "pfre" {
+		listen on * port 80
+		listen on * tls port 443
+		directory index "index.php"
+
+		location "*.php" {
+			fastcgi socket "/var/www/run/php-fpm.sock"
+		}
+
+		log syslog
+		root "/var/www/htdocs/pfre/View/"
+	}
 
 Create a self-signed server certificate. Run the following commands to generate your own CA:
 
@@ -164,7 +175,7 @@ made earlier:
 
 	# openssl x509 -req -days 365 -in server.csr -CA ca.crt -CAkey ca.key -set_serial 01 -out server.crt
 
-To make a server.key which doesn't cause apache to prompt for a password:
+To make a server.key which doesn't cause httpd to prompt for a password:
 
 	# openssl rsa -in server.key -out server.key.insecure
 	# mv server.key server.key.secure
@@ -211,10 +222,9 @@ Go to /usr/local/bin/ and create a link to php executable:
 	# cd /usr/local/bin
 	# ln -s php-5.6 php
 
-Go to /var/www/conf/modules and copy the sample php configuration file to it:
+Edit /etc/php-5.6.ini file to disable NOTICE messages, otherwise they can disturb the reporting of pfctl test results:
 
-	# cd /var/www/conf/modules/
-	# cp ../modules.sample/php-5.6.conf .
+	error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
 
 To enable pcntl and mcrypt, go to /etc/php-5.6/ and create the pcntl.ini and mcrypt.ini files:
 
@@ -230,6 +240,15 @@ Then add the following line to mcrypt.ini:
 
 	extension=mcrypt.so
 
+Disable chroot in /etc/php-fpm.conf by commenting out the chroot line:
+
+	;chroot = /var/www
+
+If you want to use Turkish translations, you should first install the gettext-tools-0.19.8.1.tgz package, then go to /var/www/htdocs/pfre/View/locale/tr\_TR/LC\_MESSAGES/ and generate the gettext mo file:
+
+	# cd /var/www/htdocs/pfre/View/locale/tr_TR/LC_MESSAGES/
+	# msgfmt -o pfre.mo pfre.po
+
 #### Configure doas
 
 Go to /etc/ and create the doas.conf file:
@@ -239,8 +258,8 @@ Go to /etc/ and create the doas.conf file:
 
 And add the following lines to it:
 
-	permit nopass admin as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
-	permit nopass user as root cmd /var/www/htdocs/pfre/Controller/pfrec.php
+	permit nopass admin as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
+	permit nopass user as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass keepenv root as root
 
 #### Configure the system
@@ -252,10 +271,20 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	if [ -x /usr/local/sbin/httpd ]; then
-	        echo 'starting apache web server.'
-	        /usr/local/sbin/httpd -u -DSSL >/dev/null 2>&1
+	# Start PHP FastCGI server
+	if [ -x /usr/local/sbin/php-fpm-5.6 ]; then
+		echo 'PHP FastCGI server'
+		/usr/local/sbin/php-fpm-5.6
 	fi
+
+Create the rc.conf.local file under /etc/
+
+	# cd /etc/
+	# touch rc.conf.local
+
+And add the following line to it:
+
+	httpd_flags=
 
 Also, if you want to use this PFRE test system as a firewall, you should enable packet forwarding between interfaces in /etc/sysctl.conf. So, copy the sample sysctl.conf file under /etc/examples/ to /etc/:
 
@@ -268,11 +297,10 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 ### Start PFRE
 
-Now you can either reboot the system or start the Apache web server manually using the following command line:
+Now you can either reboot the system or start the php fastcgi server and the web server manually using the following commands:
 
-	# /usr/local/sbin/httpd -u -DSSL 
-
-Note that you should fully stop any httpd already running for the changes to take effect.
+	# /usr/local/sbin/php-fpm-5.6
+	# /usr/sbin/httpd 
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.
 
