@@ -47,7 +47,7 @@ A couple of notes about the requirements, design decisions, and implementation o
 Here are the basic steps to obtain a working PFRE installation:
 
 - Install OpenBSD 6.2, perhaps on a VM.
-- Install PHP 5.6.31, php-pcntl, php-mcrypt, and php-fastcgi.
+- Install PHP 7.0.23, php-pcntl, php-mcrypt, and php-fastcgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -86,18 +86,18 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
-	php-5.6.31.tgz
+	php-7.0.23.tgz
 	libiconv-1.14p3.tgz
 	gettext-0.19.7.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p2.tgz
 	xz-5.2.3p0.tgz
 	libxml-2.9.5.tgz
-	php-pcntl-5.6.31.tgz
-	php-mcrypt-5.6.31.tgz
+	php-pcntl-7.0.23.tgz
+	php-mcrypt-7.0.23.tgz
 	libltdl-2.4.2p1.tgz
 	libmcrypt-2.5.8p2.tgz
-	php-fastcgi-5.6.31.tgz
+	php-fastcgi-7.0.23.tgz
 
 Install PHP, php-pcntl, php-mcrypt, and php-fastcgi by running the following commands, which should install their dependencies as well:
 
@@ -119,10 +119,10 @@ Here is the expected output of that command:
 	libltdl-2.4.2p1     GNU libtool system independent dlopen wrapper
 	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
 	libxml-2.9.5        XML parsing library
-	php-5.6.31          server-side HTML-embedded scripting language
-	php-fastcgi-5.6.31  stand-alone FastCGI version of PHP
-	php-mcrypt-5.6.31   mcrypt encryption/decryption extensions for php5
-	php-pcntl-5.6.31    PCNTL extensions for php5
+	php-7.0.23          server-side HTML-embedded scripting language
+	php-fastcgi-7.0.23  stand-alone FastCGI version of PHP
+	php-mcrypt-7.0.23   mcrypt encryption/decryption extensions for php5 (yes, should be php7)
+	php-pcntl-7.0.23    PCNTL extensions for php5
 	xz-5.2.3p0          LZMA compression and decompression tools
 
 ### Install PFRE
@@ -218,15 +218,15 @@ However, you are advised to pick a better password than soner123.
 Go to /usr/local/bin/ and create a link to php executable:
 
 	# cd /usr/local/bin
-	# ln -s php-5.6 php
+	# ln -s php-7.0 php
 
-Edit the /etc/php-5.6.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
+Edit the /etc/php-7.0.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
 
 	error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
 
-To enable pcntl and mcrypt, go to /etc/php-5.6/ and create the pcntl.ini and mcrypt.ini files:
+To enable pcntl and mcrypt, go to /etc/php-7.0/ and create the pcntl.ini and mcrypt.ini files:
 
-	# cd /etc/php-5.6/
+	# cd /etc/php-7.0/
 	# touch pcntl.ini
 	# touch mcrypt.ini
 
@@ -269,9 +269,9 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	if [ -x /usr/local/sbin/php-fpm-5.6 ]; then
+	if [ -x /usr/local/sbin/php-fpm-7.0 ]; then
 		echo 'PHP FastCGI server'
-		/usr/local/sbin/php-fpm-5.6
+		/usr/local/sbin/php-fpm-7.0
 	fi
 
 Create the rc.conf.local file under /etc/
@@ -296,7 +296,7 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 Now you can either reboot the system or start the php fastcgi server and the web server manually using the following commands:
 
-	# /usr/local/sbin/php-fpm-5.6
+	# /usr/local/sbin/php-fpm-7.0
 	# /usr/sbin/httpd 
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.
