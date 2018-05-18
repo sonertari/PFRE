@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2017 Soner Tari
+ * Copyright (C) 2004-2018 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -46,7 +46,7 @@ class FilterBase extends StateTest
 		'toport' => 'ssh',
 		);
 
-	protected $inFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 probability 10% prio 4 set tos 5 !received-on em0 keep state';
+	protected $inFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 max-pkt-rate 100/10 probability 10% prio 4 set tos 5 !received-on em0 keep state';
 	protected $ruleFilterOpts= array(
 		'user' => 'root',
 		'group' => 'wheel',
@@ -65,6 +65,7 @@ class FilterBase extends StateTest
 			'service',
 			),
 		'rtable' => '3',
+		'max-pkt-rate' => '100/10',
 		'probability' => '10%',
 		'prio' => '4',
 		'set-tos' => '5',

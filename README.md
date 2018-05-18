@@ -34,6 +34,7 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ All input is untainted.
 	+ Invalid rules are never tested using pfctl.
 	+ Pfctl is executed in a separate process, which times out if pfctl takes too long.
+	+ The Model is similar to the server of a privilege separation design. It defines and supports only a set of commands from the View.
 	+ As the sole gatekeeper for the Model, PFRE controller, ctlr is the only executable enabled in the doas configuration. Ctlr validates all commands and their arguments given to it.
 	+ The View executes all controller commands over an SSH connection.
 	+ Passwords are never visible plain text anywhere.
@@ -46,8 +47,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.2, perhaps on a VM.
-- Install PHP 7.0.23, php-pcntl, php-mcrypt, and php-fastcgi.
+- Install OpenBSD 6.3, perhaps on a VM.
+- Install PHP 7.0.28, php-pcntl, php-mcrypt, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -58,11 +59,11 @@ The following sections provide the details.
 
 ### Install OpenBSD
 
-The OpenBSD installation guide is in [faq4](http://www.openbsd.org/faq/faq4.html).
+The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html).
 
 Here are a couple of guidelines:
 
-- You can download install62.iso available at OpenBSD mirrors.
+- You can download install63.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
 - 512MB RAM and 8GB HD should be more than enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
@@ -86,25 +87,25 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
-	php-7.0.23.tgz
-	libiconv-1.14p3.tgz
-	gettext-0.19.7.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p2.tgz
-	xz-5.2.3p0.tgz
-	libxml-2.9.5.tgz
-	php-pcntl-7.0.23.tgz
-	php-mcrypt-7.0.23.tgz
+	gettext-0.19.8.1p1.tgz
+	libiconv-1.14p3.tgz
 	libltdl-2.4.2p1.tgz
 	libmcrypt-2.5.8p2.tgz
-	php-fastcgi-7.0.23.tgz
+	libxml-2.9.8.tgz
+	php-7.0.28.tgz
+	php-cgi-7.0.28.tgz
+	php-mcrypt-7.0.28.tgz
+	php-pcntl-7.0.28.tgz
+	xz-5.2.3p0.tgz
 
-Install PHP, php-pcntl, php-mcrypt, and php-fastcgi by running the following commands, which should install their dependencies as well:
+Install PHP, php-pcntl, php-mcrypt, and php-cgi by running the following commands, which should install their dependencies as well:
 
 	# pkg_add -v php
 	# pkg_add -v php-pcntl
 	# pkg_add -v php-mcrypt
-	# pkg_add -v php-fastcgi
+	# pkg_add -v php-cgi
 
 If you want to see if all required packages are installed successfully, run the following command:
 
@@ -118,11 +119,11 @@ Here is the expected output of that command:
 	libiconv-1.14p3     character set conversion library
 	libltdl-2.4.2p1     GNU libtool system independent dlopen wrapper
 	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
-	libxml-2.9.5        XML parsing library
-	php-7.0.23          server-side HTML-embedded scripting language
-	php-fastcgi-7.0.23  stand-alone FastCGI version of PHP
-	php-mcrypt-7.0.23   mcrypt encryption/decryption extensions for php5 (yes, should be php7)
-	php-pcntl-7.0.23    PCNTL extensions for php5
+	libxml-2.9.8        XML parsing library
+	php-7.0.28          server-side HTML-embedded scripting language
+	php-cgi-7.0.28      cgi sapi for php
+	php-mcrypt-7.0.28   mcrypt encryption/decryption extensions for php
+	php-pcntl-7.0.28    PCNTL extensions for php
 	xz-5.2.3p0          LZMA compression and decompression tools
 
 ### Install PFRE
@@ -179,10 +180,10 @@ To make a server.key which doesn't cause httpd to prompt for a password:
 	# mv server.key server.key.secure
 	# mv server.key.insecure server.key
 
-Finally, you should copy server.crt and server.key files to the locations defined in httpd.conf:
+Finally, you should copy server.crt and server.key files to the default locations defined in httpd.conf(5):
 
-	# cp server.key /etc/ssl/private/        
-	# cp server.crt /etc/ssl/ 
+	# cp server.key /etc/ssl/private/
+	# cp server.crt /etc/ssl/
 
 Run adduser(8) to create admin and user users, for example with the following values:
 
@@ -206,7 +207,7 @@ Run adduser(8) to create admin and user users, for example with the following va
 	HOME:        /home/user
 	Shell:       /bin/ksh
 
-Then set their passswords to soner123 by running the following commands:
+Then set their passswords to soner123 by running the following commands (actually, to the sha1 hash of soner123, because passwords are double encrypted on PFRE):
 
 	# /usr/bin/chpass -a "admin:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1000:1000::0:0:PFRE admin:/home/admin:/bin/ksh"
 	# /usr/bin/chpass -a "user:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1001:1001::0:0:PFRE user:/home/user:/bin/ksh"
@@ -270,7 +271,7 @@ If you want the web server to be started automatically after a reboot, first cop
 Then add the following lines to it:
 
 	if [ -x /usr/local/sbin/php-fpm-7.0 ]; then
-		echo 'PHP FastCGI server'
+		echo 'PHP CGI server'
 		/usr/local/sbin/php-fpm-7.0
 	fi
 
@@ -294,7 +295,7 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 ### Start PFRE
 
-Now you can either reboot the system or start the php fastcgi server and the web server manually using the following commands:
+Now you can either reboot the system or start the php cgi server and the web server manually using the following commands:
 
 	# /usr/local/sbin/php-fpm-7.0
 	# /usr/sbin/httpd 

@@ -20,18 +20,18 @@
 
 require_once ('Rule.php');
 
-class OptionRulesetOptimizationCest extends Rule
+class OptionSyncookiesCest extends Rule
 {
 	protected $type= 'Option';
 	protected $ruleNumber= 21;
 	protected $lineNumber= 29;
 	protected $sender= 'option';
 
-	protected $origRule= 'set ruleset-optimization none # Test';
-	protected $expectedDispOrigRule= 'ruleset-optimization: none Test e u d x';
+	protected $origRule= 'set syncookies adaptive (start 25%, end 12%) # Test';
+	protected $expectedDispOrigRule= 'syncookies: adaptive (start 25%, end 12%) Test e u d x';
 
-	protected $modifiedRule= 'set ruleset-optimization basic # Test1';
-	protected $expectedDispModifiedRule= 'ruleset-optimization: basic Test1 e u d x';
+	protected $modifiedRule= 'set syncookies always # Test1';
+	protected $expectedDispModifiedRule= 'syncookies: always Test1 e u d x';
 
 	function __construct()
 	{
@@ -55,11 +55,15 @@ class OptionRulesetOptimizationCest extends Rule
 		$I->selectOption('#category', 'Option');
 		$I->click('Add');
 
-		$I->selectOption('#type', 'ruleset-optimization');
+		$I->selectOption('#type', 'syncookies');
 		$I->click('Apply');
 
-		$I->selectOption('#ruleset-optimization', 'none');
+		$I->selectOption('#syncookies', 'adaptive');
 		$I->fillField('#comment', 'Test');
+		$this->clickApplySeeResult($I, 'set syncookies adaptive (start , end ) # Test');
+
+		$I->fillField('#start', '25%');
+		$I->fillField('#end', '12%');
 
 		$I->checkOption('#forcesave');
 		$I->click('Save');
@@ -67,8 +71,8 @@ class OptionRulesetOptimizationCest extends Rule
 
 	protected function modifyRule(AcceptanceTester $I)
 	{
-		$I->selectOption('#ruleset-optimization', 'basic');
-		$this->clickApplySeeResult($I, 'set ruleset-optimization basic # Test');
+		$I->selectOption('#syncookies', 'always');
+		$this->clickApplySeeResult($I, 'set syncookies always # Test');
 
 		$I->fillField('#comment', 'Test1');
 		$this->clickApplySeeResult($I, $this->modifiedRule);
@@ -76,8 +80,12 @@ class OptionRulesetOptimizationCest extends Rule
 
 	protected function revertModifications(AcceptanceTester $I)
 	{
-		$I->selectOption('#ruleset-optimization', 'none');
-		$this->clickApplySeeResult($I, 'set ruleset-optimization none # Test1');
+		$I->selectOption('#syncookies', 'adaptive');
+		$this->clickApplySeeResult($I, 'set syncookies adaptive (start , end ) # Test1');
+
+		$I->fillField('#start', '25%');
+		$I->fillField('#end', '12%');
+		$this->clickApplySeeResult($I, 'set syncookies adaptive (start 25%, end 12%) # Test1');
 
 		$I->fillField('#comment', 'Test');
 		$this->clickApplySeeResult($I, $this->revertedRule);
@@ -85,14 +93,19 @@ class OptionRulesetOptimizationCest extends Rule
 
 	protected function modifyRuleQuick(AcceptanceTester $I)
 	{
-		$I->selectOption('#ruleset-optimization', 'basic');
+		$I->selectOption('#syncookies', 'always');
 		$I->fillField('#comment', 'Test1');
+		$I->click('Apply');
+		// Click Apply twice, so the start and end boxes are cleared
 		$I->click('Apply');
 	}
 
 	protected function revertModificationsQuick(AcceptanceTester $I)
 	{
-		$I->selectOption('#ruleset-optimization', 'none');
+		$I->selectOption('#syncookies', 'adaptive');
+		$I->click('Apply');
+		$I->fillField('#start', '25%');
+		$I->fillField('#end', '12%');
 		$I->fillField('#comment', 'Test');
 		$I->click('Apply');
 	}

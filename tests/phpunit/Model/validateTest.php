@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2017 Soner Tari
+ * Copyright (C) 2004-2018 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -770,6 +770,27 @@ class validateTest extends \PHPUnit_Framework_TestCase
 			);
 	}
 
+	function testMAXPKTRATE() {
+		$this->assertTrue(
+			$this->runTests(
+				RE_MAXPKTRATE,
+				array(
+					'1/2',
+					'0123456789/0123456789',
+					),
+				array(
+					'',
+					'1',
+					'a0',
+					'01234567890/0123456789',
+					'0123456789/01234567890',
+					// '5000000000/10', // pfctl: "only positive values permitted"
+					// '10/5000000000', // pfctl: "only positive values permitted"
+					)
+				)
+			);
+	}
+
 	function testPROBABILITY() {
 		$this->assertTrue(
 			$this->runTests(
@@ -1043,6 +1064,41 @@ class validateTest extends \PHPUnit_Framework_TestCase
 				array(
 					'',
 					'a0',
+					)
+				)
+			);
+	}
+
+	function testSYNCOOKIES() {
+		$this->assertTrue(
+			$this->runTests(
+				RE_SYNCOOKIES,
+				array(
+					'never',
+					'always',
+					'adaptive',
+					),
+				array(
+					'',
+					'a0',
+					)
+				)
+			);
+	}
+
+	function testPERCENT() {
+		$this->assertTrue(
+			$this->runTests(
+				RE_PERCENT,
+				array(
+					'0.1%',
+					'10%',
+					),
+				array(
+					'',
+					// '.1%', pfctl: "syntax error"
+					'%10',
+					'01234567890',
 					)
 				)
 			);

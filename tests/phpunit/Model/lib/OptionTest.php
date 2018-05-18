@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2017 Soner Tari
+ * Copyright (C) 2004-2018 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -86,6 +86,14 @@ class OptionTest extends Rule
 		'type' => 'reassemble',
 		'reassemble' => 'yes',
 		'no-df' => TRUE,
+		);
+
+	protected $inSyncookies= 'set syncookies adaptive (start 25%, end 12%)';
+	protected $ruleSyncookies= array(
+		'type' => 'syncookies',
+		'syncookies' => 'adaptive',
+		'start' => '25%',
+		'end' => '12%',
 		);
 
 	function __construct()
@@ -355,6 +363,35 @@ class OptionTest extends Rule
 
 	function testParserGeneratorReassemble() {
 		$this->in= $this->inReassemble . $this->inComment;
+		$this->out= $this->in . "\n";
+
+		$this->testParserGenerator();
+	}
+
+	function testParserSyncookies() {
+		$this->in= $this->inSyncookies . $this->inComment;
+		$this->rule = array_merge(
+			$this->ruleSyncookies,
+			$this->ruleComment
+			);
+		$this->out= $this->in . "\n";
+
+		$this->testParser();
+	}
+
+	function testGeneratorSyncookies() {
+		$this->in= $this->inSyncookies . $this->inComment;
+		$this->rule = array_merge(
+			$this->ruleSyncookies,
+			$this->ruleComment
+			);
+		$this->out= $this->in . "\n";
+
+		$this->testGenerator();
+	}
+
+	function testParserGeneratorSyncookies() {
+		$this->in= $this->inSyncookies . $this->inComment;
 		$this->out= $this->in . "\n";
 
 		$this->testParserGenerator();

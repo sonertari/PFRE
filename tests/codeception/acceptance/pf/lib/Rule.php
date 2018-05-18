@@ -1,6 +1,6 @@
 <?php 
 /*
- * Copyright (C) 2004-2017 Soner Tari
+ * Copyright (C) 2004-2018 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -99,7 +99,7 @@ class Rule
 		$config->setClearCookies(FALSE);
 
 		// This is to resume failed tests, otherwise this should never happen between tests
-		$this->authenticate($I);
+		//$this->authenticate($I);
 	}
 
 	protected function login(AcceptanceTester $I)

@@ -1,20 +1,23 @@
-# Copyright (C) 2016 Soner Tari, The PFRE project
+# Copyright (C) 2018 Soner Tari, The PFRE project
 # This file is distributed under the same license as PFRE.
-# Soner Tari <sonertari@gmail.com>, 2016.
+# Soner Tari <sonertari@gmail.com>, 2018.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: PFRE 5.9\n"
+"Project-Id-Version: PFRE 6.3\n"
 "Last-Translator: Soner Tari <sonertari@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"Language-Team: Turkish <>\n"
-"PO-Revision-Date: 2016-10-27 22:49+0300\n"
+"Language: Turkish\n"
+"Language-Team: Turkish <sonertari@gmail.com>\n"
+"PO-Revision-Date: 2018-05-18 15:08+0300\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #, php-format
 msgid "0-100% or 0-1"
-msgstr "0-100% veya 0-1"
+msgstr "%0-100 ya da 0-1"
 
 msgid "Add"
 msgstr "Ekle"
@@ -202,8 +205,14 @@ msgstr "Karşıya Yükle"
 msgid "Upload with errors"
 msgstr "Hatalara rağmen karşıya yükle"
 
+msgid "adaptive"
+msgstr "değişken"
+
 msgid "add value"
 msgstr "değer ekle"
+
+msgid "always"
+msgstr "her zaman"
 
 msgid "as rule number"
 msgstr "kural numarası"
@@ -247,6 +256,9 @@ msgstr "taşınacak yer"
 msgid "name, may be nested"
 msgstr "ad, içiçe olabilir"
 
+msgid "never"
+msgstr "asla"
+
 msgid "no"
 msgstr "hayır"
 
@@ -265,6 +277,9 @@ msgstr "sayı veya kısaltma"
 msgid "number or name"
 msgstr "sayı veya ad"
 
+msgid "number%"
+msgstr "sayı%"
+
 msgid "number(ms)"
 msgstr "sayı(ms)"
 
@@ -273,6 +288,9 @@ msgstr "sayı, ad, tablo veya makro"
 
 msgid "number/number"
 msgstr "sayı/sayı"
+
+msgid "number/seconds"
+msgstr "sayı/saniye"
 
 msgid "number[(K|M|G)]"
 msgstr "sayı[(K|M|G)]"
