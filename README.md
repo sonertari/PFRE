@@ -1,4 +1,4 @@
-# PFRE
+# PFRE [![Build Status](https://travis-ci.org/sonertari/PFRE.svg?branch=master)](https://travis-ci.org/sonertari/PFRE)
 
 PFRE is a pf rule editor for OpenBSD. PFRE is expected to be used by beginners and system administrators alike.
 

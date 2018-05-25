@@ -34,7 +34,8 @@ $TEST_DIR_SRC= $TEST_DIR . '/var/www/htdocs/pfre';
 /// @todo Is it better to use exec('whoami')?
 $INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
 
-/// @todo Delete these after fixing NOTICEs
-PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-PHPUnit_Framework_Error_Notice::$enabled = FALSE;
+// Forward compatibility
+if (class_exists('\PHPUnit\Framework\TestCase') && !class_exists('\PHPUnit_Framework_TestCase')) {
+	class_alias('\PHPUnit\Framework\TestCase', '\PHPUnit_Framework_TestCase');
+}
 ?>

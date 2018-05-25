@@ -94,6 +94,9 @@ class Option extends Rule
 
 		if (!isset($this->rule['type'])) {
 			$this->editSelectOption();
+			/// @todo Should we disable the Save button by turning $modified off?
+			// Otherwise, the user can save a blank option rule. But this may not be a mistake.
+			//$modified= FALSE;
 		}
 
 		$this->editBlockPolicy();
