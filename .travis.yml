@@ -1,4 +1,4 @@
 language: php
 php:
   - '7.0'
-
+script: phpunit --bootstrap tests/phpunit/bootstrap.php tests/phpunit
