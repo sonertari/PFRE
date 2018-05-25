@@ -35,8 +35,17 @@ $TEST_DIR_SRC= $TEST_DIR . '/var/www/htdocs/pfre';
 $INSTALL_USER= posix_getpwuid(posix_getuid())['name'];
 
 /// @todo Delete these after fixing NOTICEs
-//PHPUnit_Framework_Error_Warning::$enabled = FALSE;
-//PHPUnit_Framework_Error_Notice::$enabled = FALSE;
+// Forward compatibility
+if (class_exists('\PHPUnit\Framework\Error\Warning') && !class_exists('\PHPUnit_Framework_Error_Warning')) {
+	class_alias('\PHPUnit\Framework\Error\Warning', '\PHPUnit_Framework_Error_Warning');
+}
+
+if (class_exists('\PHPUnit\Framework\Error\Notice') && !class_exists('\PHPUnit_Framework_Error_Notice')) {
+	class_alias('\PHPUnit\Framework\Error\Notice', '\PHPUnit_Framework_Error_Notice');
+}
+
+PHPUnit_Framework_Error_Warning::$enabled = FALSE;
+PHPUnit_Framework_Error_Notice::$enabled = FALSE;
 
 // Forward compatibility
 if (class_exists('\PHPUnit\Framework\TestCase') && !class_exists('\PHPUnit_Framework_TestCase')) {
