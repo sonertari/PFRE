@@ -29,7 +29,7 @@ class AnchorTest extends FilterBase
 		'identifier' => 'test',
 		);
 
-	// This is the same rule inline anchor rule in pf.conf(5)
+	// This is the same inline anchor rule in pf.conf(5)
 	protected $inInline= 'inline 	block
 	anchor out {
 		pass proto tcp from any to port { 25, 80, 443 }

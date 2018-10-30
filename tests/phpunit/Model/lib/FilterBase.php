@@ -46,7 +46,7 @@ class FilterBase extends StateTest
 		'toport' => 'ssh',
 		);
 
-	protected $inFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 set queue (std, service) rtable 3 max-pkt-rate 100/10 probability 10% prio 4 set tos 5 !received-on em0 keep state';
+	protected $inFilterOpts= 'user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set delay 1000 set prio 2 set queue (std, service) rtable 3 max-pkt-rate 100/10 probability 10% prio 4 set tos 5 !received-on em0 keep state';
 	protected $ruleFilterOpts= array(
 		'user' => 'root',
 		'group' => 'wheel',
@@ -59,6 +59,7 @@ class FilterBase extends StateTest
 		'tag' => 'test',
 		'tagged' => 'test',
 		'not-tagged' => TRUE,
+		'set-delay' => '1000',
 		'set-prio' => '2',
 		'queue' => array(
 			'std',
