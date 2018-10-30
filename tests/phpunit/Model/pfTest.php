@@ -34,6 +34,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GetPfRules('/etc/pfre/pf.conf');
 
 		$ruleStr= file_get_contents($TEST_DIR_PATH . '/etc/pfre/pf.conf');
@@ -52,6 +53,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GetPfRules('/tmp/tmp.conf', TRUE);
 
 		$ruleStr= file_get_contents($TEST_DIR_PATH . '/tmp/tmp.conf');
@@ -70,6 +72,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GetPfRules('/tmp/tmp.conf');
 
 		$expected= '';
@@ -84,6 +87,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GetPfRules('/etc/pfre/none.conf');
 
 		$expected= '';
@@ -98,6 +102,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GetPfRules('/etc/pfre/pf$.conf');
 
 		$expected= '';
@@ -112,6 +117,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GetPfRules('/etc/invalid.conf');
 
 		$expected= '';
@@ -126,6 +132,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
+		$Output= '';
 		$pf->GetPfRuleFiles();
 
 		exec("ls -1 $TEST_DIR_PATH/etc/pfre/", $output);
@@ -283,6 +290,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GeneratePfRule(json_encode($ruleDef), 0);
 
 		$this->assertTrue($result);
@@ -303,6 +311,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GeneratePfRules(json_encode($rulesArray));
 
 		$this->assertTrue($result);
@@ -323,6 +332,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$pf= new \Pf();
+		$Output= '';
 		$result= $pf->GeneratePfRules(json_encode($rulesArray), TRUE);
 
 		$this->assertTrue($result);
