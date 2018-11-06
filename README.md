@@ -47,8 +47,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.3, perhaps on a VM.
-- Install PHP 7.0.28, php-pcntl, php-mcrypt, and php-cgi.
+- Install OpenBSD 6.4, perhaps on a VM.
+- Install PHP 7.0.32, php-pcntl, php-mcrypt, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -63,7 +63,7 @@ The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install63.iso available at OpenBSD mirrors.
+- You can download install64.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
 - 512MB RAM and 8GB HD should be more than enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
@@ -88,17 +88,17 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
 	femail-1.0p1.tgz
-	femail-chroot-1.0p2.tgz
+	femail-chroot-1.0p3.tgz
 	gettext-0.19.8.1p1.tgz
 	libiconv-1.14p3.tgz
 	libltdl-2.4.2p1.tgz
 	libmcrypt-2.5.8p2.tgz
-	libxml-2.9.8.tgz
-	php-7.0.28.tgz
-	php-cgi-7.0.28.tgz
-	php-mcrypt-7.0.28.tgz
-	php-pcntl-7.0.28.tgz
-	xz-5.2.3p0.tgz
+	libxml-2.9.8p0.tgz
+	php-7.0.32p1.tgz
+	php-cgi-7.0.32p1.tgz
+	php-mcrypt-7.0.32p1.tgz
+	php-pcntl-7.0.32p1.tgz
+	xz-5.2.4.tgz
 
 Install PHP, php-pcntl, php-mcrypt, and php-cgi by running the following commands, which should install their dependencies as well:
 
@@ -114,17 +114,17 @@ If you want to see if all required packages are installed successfully, run the 
 Here is the expected output of that command:
 
 	femail-1.0p1        simple SMTP client
-	femail-chroot-1.0p2 simple SMTP client for chrooted web servers
+	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
 	gettext-0.19.8.1p1  GNU gettext runtime libraries and programs
 	libiconv-1.14p3     character set conversion library
 	libltdl-2.4.2p1     GNU libtool system independent dlopen wrapper
 	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
-	libxml-2.9.8        XML parsing library
-	php-7.0.28          server-side HTML-embedded scripting language
-	php-cgi-7.0.28      cgi sapi for php
-	php-mcrypt-7.0.28   mcrypt encryption/decryption extensions for php
-	php-pcntl-7.0.28    PCNTL extensions for php
-	xz-5.2.3p0          LZMA compression and decompression tools
+	libxml-2.9.8p0      XML parsing library
+	php-7.0.32p1        server-side HTML-embedded scripting language
+	php-cgi-7.0.32p1    php CGI binary
+	php-mcrypt-7.0.32p1 mcrypt encryption/decryption extensions for php
+	php-pcntl-7.0.32p1  PCNTL extensions for php
+	xz-5.2.4            LZMA compression and decompression tools
 
 ### Install PFRE
 
@@ -161,12 +161,12 @@ Configure PFRE in httpd.conf. Note that we should disable chroot by chrooting to
 
 Create a self-signed server certificate. Run the following commands to generate your own CA:
 
-	# openssl genrsa -des3 -out ca.key 4096
+	# openssl genrsa -des3 -out ca.key 2048
 	# openssl req -new -x509 -days 365 -key ca.key -out ca.crt
 
 Next, to generate a server key and request for signing, run the following:
 
-	# openssl genrsa -des3 -out server.key 4096
+	# openssl genrsa -des3 -out server.key 2048
 	# openssl req -new -key server.key -out server.csr
 
 You should sign the certificate signing request (csr) with the self-created certificate authority (CA) that you

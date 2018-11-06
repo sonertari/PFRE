@@ -1,4 +1,4 @@
-#!/usr/local/bin/php
+#!/usr/bin/env php
 <?php
 /*
  * Copyright (C) 2004-2018 Soner Tari
@@ -145,7 +145,7 @@ else {
 /// @attention We need to include $retval in the array too, because phpseclib exec() does not provide access to retval.
 // Return an encoded array, so that the caller can easily separate output, error, and retval
 $msg= array($Output, $Error, $retval);
-$encoded= json_encode($msg);
+$encoded= json_encode($msg, JSON_UNESCAPED_SLASHES);
 
 if ($encoded !== NULL) {
 	echo $encoded;

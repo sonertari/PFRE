@@ -81,7 +81,7 @@ if ! xgettext -L "PHP" -s \
 		--copyright-holder="Soner Tari, The PFRE project" \
 		--msgid-bugs-address="sonertari@gmail.com" \
 		--package-name="PFRE" \
-		--package-version="6.3" \
+		--package-version="6.4" \
 		-j -o $LOCALE_FILE \
 		-f files.txt; then
 	echo "FAILED generating $LOCALE_FILE"
