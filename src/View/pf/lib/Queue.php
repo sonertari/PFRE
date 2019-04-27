@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2018 Soner Tari
+ * Copyright (C) 2004-2019 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -75,7 +75,7 @@ class Queue extends Rule
 		$this->editIndex= 0;
 		$this->ruleNumber= $ruleNumber;
 
-		$this->editHead($modified);
+		$this->editHead($modified, $testResult, $generateResult, $action);
 
 		$this->editText('name', _TITLE('Name'), FALSE, NULL, _CONTROL('string'));
 		$this->editText('interface', _TITLE('Interface'), 'queue-interface', 10, _CONTROL('if or macro'));
@@ -89,7 +89,7 @@ class Queue extends Rule
 		$this->editCheckbox('default', _TITLE('Default'));
 
 		$this->editComment();
-		$this->editTail($modified, $testResult, $generateResult, $action);
+		$this->editTail();
 	}
 
 	function editBandwidth($key, $pre, $title)

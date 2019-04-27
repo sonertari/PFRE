@@ -1,4 +1,4 @@
 language: php
 php:
-  - '7.0'
+  - '7.3'
 script: phpunit --bootstrap tests/phpunit/bootstrap.php --globals-backup tests/phpunit

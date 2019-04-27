@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2018 Soner Tari
+ * Copyright (C) 2004-2019 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -40,7 +40,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$LOG_LEVEL', ';');
+		$actual= $model->GetNVP($file, '\$LOG_LEVEL', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -49,7 +49,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$LOG_LEVEL', ';');
+		$actual= $model->GetNVP($file, '\$LOG_LEVEL', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -69,7 +69,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$ShowHelpBox', ';');
+		$actual= $model->GetNVP($file, '\$ShowHelpBox', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -78,7 +78,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$ShowHelpBox', ';');
+		$actual= $model->GetNVP($file, '\$ShowHelpBox', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -98,7 +98,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$SessionTimeout', ';');
+		$actual= $model->GetNVP($file, '\$SessionTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -107,7 +107,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$SessionTimeout', ';');
+		$actual= $model->GetNVP($file, '\$SessionTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -127,7 +127,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		$this->assertTrue($result);
 
 		$expected= '10';
-		$actual= $model->GetNVP($file, '\$SessionTimeout', ';');
+		$actual= $model->GetNVP($file, '\$SessionTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -136,7 +136,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$SessionTimeout', ';');
+		$actual= $model->GetNVP($file, '\$SessionTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -156,7 +156,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$ForceHTTPs', ';');
+		$actual= $model->GetNVP($file, '\$ForceHTTPs', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -165,7 +165,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$ForceHTTPs', ';');
+		$actual= $model->GetNVP($file, '\$ForceHTTPs', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -185,7 +185,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', ';');
+		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -194,7 +194,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', ';');
+		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -214,7 +214,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 		
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$PfctlTimeout', ';');
+		$actual= $model->GetNVP($file, '\$PfctlTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -223,7 +223,7 @@ class modelTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertTrue($result);
 
-		$actual= $model->GetNVP($file, '\$PfctlTimeout', ';');
+		$actual= $model->GetNVP($file, '\$PfctlTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 

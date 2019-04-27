@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2018 Soner Tari
+ * Copyright (C) 2004-2019 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -56,7 +56,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/lib/setup.php';
 
 		$model= new \Model();
-		$actual= $model->GetNVP($file, '\$LOG_LEVEL', ';');
+		$actual= $model->GetNVP($file, '\$LOG_LEVEL', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -67,7 +67,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(0, $retval);
 
-		$actual= $model->GetNVP($file, '\$LOG_LEVEL', ';');
+		$actual= $model->GetNVP($file, '\$LOG_LEVEL', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -88,7 +88,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/View/lib/setup.php';
 
 		$model= new \Model();
-		$actual= $model->GetNVP($file, '\$ShowHelpBox', ';');
+		$actual= $model->GetNVP($file, '\$ShowHelpBox', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -99,7 +99,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(0, $retval);
 
-		$actual= $model->GetNVP($file, '\$ShowHelpBox', ';');
+		$actual= $model->GetNVP($file, '\$ShowHelpBox', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -120,7 +120,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/View/lib/setup.php';
 
 		$model= new \Model();
-		$actual= $model->GetNVP($file, '\$SessionTimeout', ';');
+		$actual= $model->GetNVP($file, '\$SessionTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -131,7 +131,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(0, $retval);
 
-		$actual= $model->GetNVP($file, '\$SessionTimeout', ';');
+		$actual= $model->GetNVP($file, '\$SessionTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -152,7 +152,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/lib/setup.php';
 
 		$model= new \Model();
-		$actual= $model->GetNVP($file, '\$ForceHTTPs', ';');
+		$actual= $model->GetNVP($file, '\$ForceHTTPs', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -163,7 +163,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(0, $retval);
 
-		$actual= $model->GetNVP($file, '\$ForceHTTPs', ';');
+		$actual= $model->GetNVP($file, '\$ForceHTTPs', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -184,7 +184,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/lib/setup.php';
 
 		$model= new \Model();
-		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', ';');
+		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -195,7 +195,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(0, $retval);
 
-		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', ';');
+		$actual= $model->GetNVP($file, '\$MaxAnchorNesting', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -216,7 +216,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$file= $TEST_DIR_PATH . '/var/www/htdocs/pfre/lib/setup.php';
 
 		$model= new \Model();
-		$actual= $model->GetNVP($file, '\$PfctlTimeout', ';');
+		$actual= $model->GetNVP($file, '\$PfctlTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 
@@ -227,7 +227,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertEquals(0, $retval);
 
-		$actual= $model->GetNVP($file, '\$PfctlTimeout', ';');
+		$actual= $model->GetNVP($file, '\$PfctlTimeout', 0, ';');
 
 		$this->assertEquals($expected, $actual);
 

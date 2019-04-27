@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2018 Soner Tari
+ * Copyright (C) 2004-2019 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -52,7 +52,7 @@ $IMG_PATH= '/images/';
 require_once($VIEW_PATH.'/lib/libwui.php');
 require_once($VIEW_PATH.'/lib/view.php');
 
-/** Sub menu configuration, caption and permissions.
+/** Submenu configuration, caption and permissions.
  */
 $Menu = array(
 	'conf.editor' => array(

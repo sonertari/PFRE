@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2018 Soner Tari
+ * Copyright (C) 2004-2019 Soner Tari
  *
  * This file is part of PFRE.
  *
@@ -109,8 +109,6 @@ class Model
 			if (preg_match("/^$user:[^:]+(:.+)$/", $line, $match)) {
 				unset($output);
 				$cmdline= '/usr/bin/chpass -a "' . $user . ':$(/usr/bin/encrypt ' . $passwd . ')' . $match[1] . '"';
-				ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "cmdline: $cmdline");
-
 				exec($cmdline, $output, $retval);
 				if ($retval === 0) {
 					return TRUE;
@@ -362,7 +360,7 @@ class Model
 			}
 		}
 		else {
-			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot copy file $file");
+			ctlr_syslog(LOG_ERR, __FILE__, __FUNCTION__, __LINE__, "Cannot copy file: $file");
 		}
 		return FALSE;
 	}
@@ -372,12 +370,13 @@ class Model
 	 *
 	 * @param string $file Config file.
 	 * @param string $name Name of NVP.
+	 * @param int $set There may be multiple parentheses in $re, which one to return.
 	 * @param string $trimchars Chars to trim in the results.
 	 * @return mixed Value of NVP or NULL on failure.
 	 */
-	function GetNVP($file, $name, $trimchars= '')
+	function GetNVP($file, $name, $set= 0, $trimchars= '')
 	{
-		return $this->SearchFile($file, "/^\h*$name\b\h*$this->NVPS\h*([^$this->COMC'\"\n]*|'[^'\n]*'|\"[^\"\n]*\"|[^$this->COMC\n]*)(\h*|\h*$this->COMC.*)$/m", 1, $trimchars);
+		return $this->SearchFile($file, "/^\h*$name\b\h*$this->NVPS\h*([^$this->COMC'\"\n]*|'[^'\n]*'|\"[^\"\n]*\"|[^$this->COMC\n]*)(\h*|\h*$this->COMC.*)$/m", $set, $trimchars);
 	}
 
 	/**
@@ -389,11 +388,12 @@ class Model
 	 * @param string $trimchars If given, these chars are trimmed on the left or right.
 	 * @return mixed String found or FALSE if no match.
 	 */
-	function SearchFile($file, $re, $set= 1, $trimchars= '')
+	function SearchFile($file, $re, $set= 0, $trimchars= '')
 	{
-		/// @todo What to do with multiple matching NVPs
-		if (preg_match($re, file_get_contents($file), $match)) {
-			$retval= $match[$set];
+		// There may be multiple matching NVPs
+		if (preg_match_all($re, file_get_contents($file), $match)) {
+			// Index 0 always gives full matches, so use index 1
+			$retval= $match[1][$set];
 			if ($trimchars !== '') {
 				$retval= trim($retval, $trimchars);
 			}

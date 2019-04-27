@@ -47,8 +47,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.4, perhaps on a VM.
-- Install PHP 7.0.32, php-pcntl, php-mcrypt, and php-cgi.
+- Install OpenBSD 6.5, perhaps on a VM.
+- Install PHP 7.3.4, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -63,7 +63,7 @@ The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install64.iso available at OpenBSD mirrors.
+- You can download install65.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
 - 512MB RAM and 8GB HD should be more than enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
@@ -89,22 +89,21 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
-	gettext-0.19.8.1p1.tgz
+	gettext-0.19.8.1p3.tgz
 	libiconv-1.14p3.tgz
 	libltdl-2.4.2p1.tgz
-	libmcrypt-2.5.8p2.tgz
-	libxml-2.9.8p0.tgz
-	php-7.0.32p1.tgz
-	php-cgi-7.0.32p1.tgz
-	php-mcrypt-7.0.32p1.tgz
-	php-pcntl-7.0.32p1.tgz
+	libsodium-1.0.17.tgz
+	libxml-2.9.8p1.tgz
+	oniguruma-6.9.1.tgz
+	php-7.3.4.tgz
+	php-cgi-7.3.4.tgz
+	php-pcntl-7.3.4.tgz
 	xz-5.2.4.tgz
 
-Install PHP, php-pcntl, php-mcrypt, and php-cgi by running the following commands, which should install their dependencies as well:
+Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
 
 	# pkg_add -v php
 	# pkg_add -v php-pcntl
-	# pkg_add -v php-mcrypt
 	# pkg_add -v php-cgi
 
 If you want to see if all required packages are installed successfully, run the following command:
@@ -115,15 +114,14 @@ Here is the expected output of that command:
 
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
-	gettext-0.19.8.1p1  GNU gettext runtime libraries and programs
+	gettext-0.19.8.1p3  GNU gettext runtime libraries and programs
 	libiconv-1.14p3     character set conversion library
-	libltdl-2.4.2p1     GNU libtool system independent dlopen wrapper
-	libmcrypt-2.5.8p2   interface to access block/stream encryption algorithms
-	libxml-2.9.8p0      XML parsing library
-	php-7.0.32p1        server-side HTML-embedded scripting language
-	php-cgi-7.0.32p1    php CGI binary
-	php-mcrypt-7.0.32p1 mcrypt encryption/decryption extensions for php
-	php-pcntl-7.0.32p1  PCNTL extensions for php
+	libsodium-1.0.17    library for network communications and cryptography
+	libxml-2.9.8p1      XML parsing library
+	oniguruma-6.9.1     regular expressions library
+	php-7.3.4           server-side HTML-embedded scripting language
+	php-cgi-7.3.4       php CGI binary
+	php-pcntl-7.3.4     PCNTL extensions for php
 	xz-5.2.4            LZMA compression and decompression tools
 
 ### Install PFRE
@@ -141,7 +139,7 @@ And create the folder for configuration files:
 
 #### Configure web server
 
-Configure PFRE in httpd.conf. Note that we should disable chroot by chrooting to /. Your configuration might look like the following:
+Configure PFRE in httpd.conf under /etc. Note that we should disable chroot by chrooting to /. Your configuration might look like the following:
 
 	chroot "/"
 	#prefork 3
@@ -219,25 +217,20 @@ However, you are advised to pick a better password than soner123.
 Go to /usr/local/bin/ and create a link to php executable:
 
 	# cd /usr/local/bin
-	# ln -s php-7.0 php
+	# ln -s php-7.3 php
 
-Edit the /etc/php-7.0.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
+Edit the /etc/php-7.3.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
 
 	error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
 
-To enable pcntl and mcrypt, go to /etc/php-7.0/ and create the pcntl.ini and mcrypt.ini files:
+To enable pcntl, go to /etc/php-7.3/ and create the pcntl.ini file:
 
-	# cd /etc/php-7.0/
+	# cd /etc/php-7.3/
 	# touch pcntl.ini
-	# touch mcrypt.ini
 
 And add the following line to pcntl.ini:
 
 	extension=pcntl.so
-
-Then add the following line to mcrypt.ini:
-
-	extension=mcrypt.so
 
 Disable chroot in /etc/php-fpm.conf by commenting out the chroot line:
 
@@ -257,6 +250,7 @@ Go to /etc/ and create the doas.conf file:
 
 And add the following lines to it:
 
+	permit nopass www as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass admin as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass user as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass keepenv root as root
@@ -270,9 +264,9 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	if [ -x /usr/local/sbin/php-fpm-7.0 ]; then
+	if [ -x /usr/local/sbin/php-fpm-7.3 ]; then
 		echo 'PHP CGI server'
-		/usr/local/sbin/php-fpm-7.0
+		/usr/local/sbin/php-fpm-7.3
 	fi
 
 Create the rc.conf.local file under /etc/
@@ -297,7 +291,7 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 Now you can either reboot the system or start the php cgi server and the web server manually using the following commands:
 
-	# /usr/local/sbin/php-fpm-7.0
+	# /usr/local/sbin/php-fpm-7.3
 	# /usr/sbin/httpd 
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.
