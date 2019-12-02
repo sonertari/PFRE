@@ -47,8 +47,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.5, perhaps on a VM.
-- Install PHP 7.3.4, php-pcntl, and php-cgi.
+- Install OpenBSD 6.6, perhaps on a VM.
+- Install PHP 7.3.10, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -63,7 +63,7 @@ The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install65.iso available at OpenBSD mirrors.
+- You can download install66.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
 - 512MB RAM and 8GB HD should be more than enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
@@ -87,17 +87,18 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
+	argon2-20171227.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
-	gettext-0.19.8.1p3.tgz
-	libiconv-1.14p3.tgz
+	gettext-runtime-0.20.1p0.tgz
+	libiconv-1.16p0.tgz
 	libltdl-2.4.2p1.tgz
-	libsodium-1.0.17.tgz
-	libxml-2.9.8p1.tgz
-	oniguruma-6.9.1.tgz
-	php-7.3.4.tgz
-	php-cgi-7.3.4.tgz
-	php-pcntl-7.3.4.tgz
+	libsodium-1.0.18.tgz
+	libxml-2.9.9.tgz
+	oniguruma-6.9.3.tgz
+	php-7.3.10.tgz
+	php-cgi-7.3.10.tgz
+	php-pcntl-7.3.10.tgz
 	xz-5.2.4.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
@@ -112,16 +113,17 @@ If you want to see if all required packages are installed successfully, run the 
 
 Here is the expected output of that command:
 
+	argon2-20171227     C implementation of Argon2 - password hashing function
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
-	gettext-0.19.8.1p3  GNU gettext runtime libraries and programs
-	libiconv-1.14p3     character set conversion library
-	libsodium-1.0.17    library for network communications and cryptography
-	libxml-2.9.8p1      XML parsing library
-	oniguruma-6.9.1     regular expressions library
-	php-7.3.4           server-side HTML-embedded scripting language
-	php-cgi-7.3.4       php CGI binary
-	php-pcntl-7.3.4     PCNTL extensions for php
+	gettext-runtime-0.20.1p0 GNU gettext runtime libraries and programs
+	libiconv-1.16p0     character set conversion library
+	libsodium-1.0.18    library for network communications and cryptography
+	libxml-2.9.9        XML parsing library
+	oniguruma-6.9.3     regular expressions library
+	php-7.3.10          server-side HTML-embedded scripting language
+	php-cgi-7.3.10      php CGI binary
+	php-pcntl-7.3.10    PCNTL extensions for php
 	xz-5.2.4            LZMA compression and decompression tools
 
 ### Install PFRE
@@ -236,7 +238,7 @@ Disable chroot in /etc/php-fpm.conf by commenting out the chroot line:
 
 	;chroot = /var/www
 
-If you want to use Turkish translations, you should first install the gettext-tools-0.19.8.1.tgz package to generate the gettext mo file:
+If you want to use Turkish translations, you should first install the gettext-tools package to generate the gettext mo file:
 
 	# cd /var/www/htdocs/pfre/View/locale/tr_TR/LC_MESSAGES/
 	# msgfmt -o pfre.mo pfre.po

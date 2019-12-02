@@ -59,19 +59,14 @@ $ArgTypes= array(
 		),
 );
 
-function IsNumber($str)
-{
-	return preg_match('/' . RE_NUM . '/', $str);
-}
-
 function IsName($str)
 {
 	return preg_match('/' . RE_NAME . '/', $str);
 }
 
-function IsJson($str)
+function IsNumber($str)
 {
-	return json_decode($str) !== NULL;
+	return preg_match('/' . RE_NUM . '/', $str);
 }
 
 function IsSha1Str($str)
@@ -79,14 +74,19 @@ function IsSha1Str($str)
 	return preg_match('/' . RE_SHA1 . '/', $str);
 }
 
-function IsEmpty($str)
-{
-	return empty($str);
-}
-
 function IsBool($str)
 {
 	return preg_match('/' . RE_BOOL . '/', $str);
+}
+
+function IsJson($str)
+{
+	return json_decode($str) !== NULL;
+}
+
+function IsEmpty($str)
+{
+	return empty($str);
 }
 
 /**

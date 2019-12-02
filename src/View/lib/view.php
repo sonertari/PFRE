@@ -200,13 +200,13 @@ function _NOTICE($str)
 }
 
 /// For classifying gettext strings into files.
-function _TITLE($str)
+function _HELPBOX($str)
 {
 	return _($str);
 }
 
 /// For classifying gettext strings into files.
-function _HELPBOX($str)
+function _TITLE($str)
 {
 	return _($str);
 }
