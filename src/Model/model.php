@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (C) 2004-2019 Soner Tari
+ * Copyright (C) 2004-2020 Soner Tari
  *
  * This file is part of UTMFW.
  *
@@ -36,6 +36,7 @@ class Model
 	 */
 	public $Commands= array();
 
+	private $confDir= '/etc/';
 	public $NVPS= '=';
 	public $COMC= '#';
 
@@ -88,6 +89,10 @@ class Model
 					'argv'	=>	array(NUM),
 					'desc'	=>	_('Set pfctl timeout'),
 					),
+				'GetMyName'		=>	array(
+					'argv'	=>	array(),
+					'desc'	=>	_('Read system hostname'),
+					),
 				)
 			);
 	}
@@ -139,7 +144,7 @@ class Model
 	/**
 	 * Enables or disables help boxes.
 	 * 
-	 * @param bool $bool TRUE to enable, FALSE otherwise.
+	 * @param string $bool 'TRUE' to enable, 'FALSE' otherwise.
 	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetHelpBox($bool)
@@ -187,7 +192,7 @@ class Model
 	/**
 	 * Enables or disables HTTPs.
 	 * 
-	 * @param bool $bool TRUE to enable, FALSE to disable HTTPs.
+	 * @param string $bool 'TRUE' to enable, 'FALSE' otherwise.
 	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetForceHTTPs($bool)
@@ -201,7 +206,7 @@ class Model
 	/**
 	 * Enables or disables SSH.
 	 * 
-	 * @param bool $bool TRUE to enable, FALSE otherwise.
+	 * @param string $bool 'TRUE' to enable, 'FALSE' otherwise.
 	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetUseSSH($bool)
@@ -334,7 +339,7 @@ class Model
 	 *
 	 * @param string $file Config file.
 	 * @param string $name Name of NVP.
-	 * @param mixed $newvalue New value to set.
+	 * @param string $newvalue New value to set.
 	 * @return bool TRUE on success, FALSE on fail.
 	 */
 	function SetNVP($file, $name, $newvalue)
@@ -372,7 +377,7 @@ class Model
 	 * @param string $name Name of NVP.
 	 * @param int $set There may be multiple parentheses in $re, which one to return.
 	 * @param string $trimchars Chars to trim in the results.
-	 * @return mixed Value of NVP or NULL on failure.
+	 * @return mixed Value of NVP or FALSE on failure.
 	 */
 	function GetNVP($file, $name, $set= 0, $trimchars= '')
 	{
@@ -400,6 +405,21 @@ class Model
 			return rtrim($retval);
 		}
 		return FALSE;
+	}
+
+	/**
+	 * Reads hostname.
+	 *
+	 * @return string System name, output of hostname too.
+	 */
+	function GetMyName()
+	{
+		return Output($this->_getMyName());
+	}
+
+	function _getMyName()
+	{
+		return $this->GetFile($this->confDir.'myname');
 	}
 }
 ?>

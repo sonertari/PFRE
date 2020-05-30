@@ -34,10 +34,13 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ All input is untainted.
 	+ Invalid rules are never tested using pfctl.
 	+ Pfctl is executed in a separate process, which times out if pfctl takes too long.
-	+ The Model is similar to the server of a privilege separation design. It defines and supports only a set of commands from the View.
-	+ As the sole gatekeeper for the Model, PFRE controller, ctlr is the only executable enabled in the doas configuration. Ctlr validates all commands and their arguments given to it.
+	+ The Model is similar to the server of a privilege separation design. It defines and supports only a set of commands which can be executed by the View.
+	+ As the sole gatekeeper for the Model, PFRE controller, ctlr.php is the only executable enabled in the doas configuration.
 	+ The View executes all controller commands over an SSH connection.
-	+ Passwords are never visible plain text anywhere.
+	+ The login shells of admin and user users are set to sh.php. Also, they don't have a home folder. So the admin and user users can log in to the system and pass arguments to sh.php, but cannot drop to a command line shell.
+	+ The login shell sh.php of admin and user users validates all commands and their arguments given to it, and then runs them using ctlr.php.
+	+ No argument passed to sh.php or ctlr.php is ever expanded before being executed.
+	+ Passwords are never visible plain text anywhere, not even in the doas logs.
 	+ The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep and /bin/date).
 	+ All system executables are called using their full pathnames.
 	+ The number of nested anchors in inline rules is restricted to a configurable maximum.
@@ -47,8 +50,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.6, perhaps on a VM.
-- Install PHP 7.3.10, php-pcntl, and php-cgi.
+- Install OpenBSD 6.7, perhaps on a VM.
+- Install PHP 7.4.5, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -63,7 +66,7 @@ The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install66.iso available at OpenBSD mirrors.
+- You can download install67.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
 - 512MB RAM and 8GB HD should be more than enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
@@ -88,18 +91,17 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
 	argon2-20171227.tgz
+	bzip2-1.0.8.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
-	gettext-runtime-0.20.1p0.tgz
-	libiconv-1.16p0.tgz
-	libltdl-2.4.2p1.tgz
 	libsodium-1.0.18.tgz
-	libxml-2.9.9.tgz
-	oniguruma-6.9.3.tgz
-	php-7.3.10.tgz
-	php-cgi-7.3.10.tgz
-	php-pcntl-7.3.10.tgz
-	xz-5.2.4.tgz
+	libxml-2.9.10p0.tgz
+	oniguruma-6.9.5pl1.tgz
+	pcre2-10.34.tgz
+	php-7.4.5p0.tgz
+	php-cgi-7.4.5p0.tgz
+	php-pcntl-7.4.5p0.tgz
+	xz-5.2.5.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
 
@@ -114,17 +116,17 @@ If you want to see if all required packages are installed successfully, run the 
 Here is the expected output of that command:
 
 	argon2-20171227     C implementation of Argon2 - password hashing function
+	bzip2-1.0.8         block-sorting file compressor, unencumbered
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
-	gettext-runtime-0.20.1p0 GNU gettext runtime libraries and programs
-	libiconv-1.16p0     character set conversion library
 	libsodium-1.0.18    library for network communications and cryptography
-	libxml-2.9.9        XML parsing library
-	oniguruma-6.9.3     regular expressions library
-	php-7.3.10          server-side HTML-embedded scripting language
-	php-cgi-7.3.10      php CGI binary
-	php-pcntl-7.3.10    PCNTL extensions for php
-	xz-5.2.4            LZMA compression and decompression tools
+	libxml-2.9.10p0     XML parsing library
+	oniguruma-6.9.5pl1  regular expressions library
+	pcre2-10.34         perl-compatible regular expression library, version 2
+	php-7.4.5p0         server-side HTML-embedded scripting language
+	php-cgi-7.4.5p0     php CGI binary
+	php-pcntl-7.4.5p0   PCNTL extensions for php
+	xz-5.2.5            LZMA compression and decompression tools
 
 ### Install PFRE
 
@@ -185,32 +187,15 @@ Finally, you should copy server.crt and server.key files to the default location
 	# cp server.key /etc/ssl/private/
 	# cp server.crt /etc/ssl/
 
-Run adduser(8) to create admin and user users, for example with the following values:
+Run useradd(8) to create admin and user users (you can omit the -c, -d, and -s options, as we will set them with the chpass command next):
 
-	Name:        admin
-	Password:    ****
-	Fullname:    PFRE admin
-	Uid:         1000
-	Gid:         1000 (admin)
-	Groups:      admin 
-	Login Class: default
-	HOME:        /home/admin
-	Shell:       /bin/ksh
-
-	Name:        user
-	Password:    ****
-	Fullname:    PFRE user
-	Uid:         1001
-	Gid:         1001 (user)
-	Groups:      user 
-	Login Class: default
-	HOME:        /home/user
-	Shell:       /bin/ksh
+	# useradd -c "PFRE admin" -d /var/empty -s /var/www/htdocs/pfre/Controller/sh.php admin
+	# useradd -c "PFRE user" -d /var/empty -s /var/www/htdocs/pfre/Controller/sh.php user
 
 Then set their passswords to soner123 by running the following commands (actually, to the sha1 hash of soner123, because passwords are double encrypted on PFRE):
 
-	# /usr/bin/chpass -a "admin:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1000:1000::0:0:PFRE admin:/home/admin:/bin/ksh"
-	# /usr/bin/chpass -a "user:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):1001:1001::0:0:PFRE user:/home/user:/bin/ksh"
+	# /usr/bin/chpass -a "admin:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):$(id -u admin):$(id -g admin)::0:0:PFRE admin:/var/empty:/var/www/htdocs/pfre/Controller/sh.php"
+	# /usr/bin/chpass -a "user:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):$(id -u user):$(id -g user)::0:0:PFRE user:/var/empty:/var/www/htdocs/pfre/Controller/sh.php"
 
 However, you are advised to pick a better password than soner123.
 
@@ -219,15 +204,15 @@ However, you are advised to pick a better password than soner123.
 Go to /usr/local/bin/ and create a link to php executable:
 
 	# cd /usr/local/bin
-	# ln -s php-7.3 php
+	# ln -s php-7.4 php
 
-Edit the /etc/php-7.3.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
+Edit the /etc/php-7.4.ini file to disable NOTICE messages, otherwise they may disturb pfctl test reports:
 
 	error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
 
-To enable pcntl, go to /etc/php-7.3/ and create the pcntl.ini file:
+To enable pcntl, go to /etc/php-7.4/ and create the pcntl.ini file:
 
-	# cd /etc/php-7.3/
+	# cd /etc/php-7.4/
 	# touch pcntl.ini
 
 And add the following line to pcntl.ini:
@@ -266,9 +251,9 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	if [ -x /usr/local/sbin/php-fpm-7.3 ]; then
+	if [ -x /usr/local/sbin/php-fpm-7.4 ]; then
 		echo 'PHP CGI server'
-		/usr/local/sbin/php-fpm-7.3
+		/usr/local/sbin/php-fpm-7.4
 	fi
 
 Create the rc.conf.local file under /etc/
@@ -293,7 +278,7 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 Now you can either reboot the system or start the php cgi server and the web server manually using the following commands:
 
-	# /usr/local/sbin/php-fpm-7.3
+	# /usr/local/sbin/php-fpm-7.4
 	# /usr/sbin/httpd 
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.
