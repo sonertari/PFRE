@@ -83,7 +83,7 @@ if (!ValidateCommand($ArgV, $Locale, $Command, $ValidateArgs, $Model)) {
 	goto out;
 }
 
-if (!call_user_func_array([$Model, $Command], $ArgV)) {
+if (!call_user_func_array(array($Model, $Command), $ArgV)) {
 	ctlr_syslog(LOG_DEBUG, __FILE__, __FUNCTION__, __LINE__, "Command failed: $Command");
 	goto out;
 }

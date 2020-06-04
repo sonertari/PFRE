@@ -2,6 +2,7 @@
 /nbproject/
 /src/files.txt
 /tests/codeception/_output/
+/tests/codeception/_support/
 
 # CVS default ignores begin
 tags

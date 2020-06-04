@@ -51,6 +51,7 @@ class OptionStatePolicyCest extends Rule
 		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete Option rule number 14?');
 		$I->acceptPopup();
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 
 		$I->selectOption('#category', 'Option');
 		$I->click('Add');

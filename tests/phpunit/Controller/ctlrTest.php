@@ -47,7 +47,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= 'LOG_DEBUG';
-		$cmdline= $this->ctlr . " -t en_EN SetLogLevel $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetLogLevel', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -61,7 +61,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= 'LOG_INFO';
-		$cmdline= $this->ctlr . " -t en_EN SetLogLevel $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetLogLevel', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -79,7 +79,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= 'FALSE';
-		$cmdline= $this->ctlr . " -t en_EN SetHelpBox $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetHelpBox', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -93,7 +93,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= 'TRUE';
-		$cmdline= $this->ctlr . " -t en_EN SetHelpBox $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetHelpBox', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -111,7 +111,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= '123';
-		$cmdline= $this->ctlr . " -t en_EN SetSessionTimeout $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetSessionTimeout', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -125,7 +125,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= '300';
-		$cmdline= $this->ctlr . " -t en_EN SetSessionTimeout $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetSessionTimeout', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -143,7 +143,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= 'TRUE';
-		$cmdline= $this->ctlr . " -t en_EN SetForceHTTPs $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetForceHTTPs', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -157,7 +157,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= 'FALSE';
-		$cmdline= $this->ctlr . " -t en_EN SetForceHTTPs $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetForceHTTPs', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -175,7 +175,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= '10';
-		$cmdline= $this->ctlr . " -t en_EN SetMaxAnchorNesting $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetMaxAnchorNesting', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -189,7 +189,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= '2';
-		$cmdline= $this->ctlr . " -t en_EN SetMaxAnchorNesting $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetMaxAnchorNesting', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -207,7 +207,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		global $TEST_DIR_PATH;
 
 		$expected= '10';
-		$cmdline= $this->ctlr . " -t en_EN SetPfctlTimeout $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetPfctlTimeout', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -221,7 +221,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 
 		$expected= '5';
-		$cmdline= $this->ctlr . " -t en_EN SetPfctlTimeout $expected";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'SetPfctlTimeout', $expected], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -240,7 +240,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$file= $TEST_DIR_PATH . '/etc/pfre/pf.conf';
 
-		$cmdline= $this->ctlr . " -t en_EN GetPfRules '$file' 0 0";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GetPfRules', $file, 0, 0], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -261,7 +261,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 	{
 		global $TEST_DIR_PATH;
 
-		$cmdline= $this->ctlr . " -t en_EN GetPfRuleFiles";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GetPfRuleFiles'], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -294,7 +294,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($file);
 		
-		$cmdline= $this->ctlr . " -t en_EN DeletePfRuleFile $file";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'DeletePfRuleFile', $file], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -321,7 +321,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($destFile);
 
 		$json= json_encode($ruleSet->rules);
-		$cmdline= $this->ctlr . " -t en_EN InstallPfRules '$json' $destFile 0";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'InstallPfRules', $json, $destFile, 0], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -347,7 +347,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($ruleDef);
-		$cmdline= $this->ctlr . " -t en_EN GeneratePfRule '$json' 0";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GeneratePfRule', $json, 0], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -372,7 +372,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($rulesArray);
-		$cmdline= $this->ctlr . " -t en_EN GeneratePfRules '$json'";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GeneratePfRules', $json], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -397,7 +397,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($rulesArray);
-		$cmdline= $this->ctlr . " -t en_EN GeneratePfRules '$json' 1";
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GeneratePfRules', $json, 1], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 

@@ -307,6 +307,7 @@ class confeditorCest
 			$I->wait(POPUP_DISPLAY_INTERVAL);
 			$I->seeInPopup('Are you sure you want to delete the rule?');
 			$I->acceptPopup();
+			$I->wait(POPUP_DISPLAY_INTERVAL);
 
 			$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
@@ -406,6 +407,7 @@ class confeditorCest
 		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete the entire ruleset?');
 		$I->acceptPopup();
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 
 		$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], 0);
 	}

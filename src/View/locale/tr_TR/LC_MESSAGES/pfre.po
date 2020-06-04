@@ -1,10 +1,10 @@
-# Copyright (C) 2019 Soner Tari, The PFRE project
+# Copyright (C) 2020 Soner Tari, The PFRE project
 # This file is distributed under the same license as PFRE.
-# Soner Tari <sonertari@gmail.com>, 2019.
+# Soner Tari <sonertari@gmail.com>, 2020.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PFRE 6.6\n"
+"Project-Id-Version: PFRE 6.7\n"
 "Last-Translator: Soner Tari <sonertari@gmail.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language: Turkish\n"
 "Language-Team: Turkish <sonertari@gmail.com>\n"
-"PO-Revision-Date: 2018-11-06 22:57+0300\n"
+"PO-Revision-Date: 2020-06-04 23:00+0300\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
 #, php-format
@@ -279,6 +279,9 @@ msgstr "Kural listesinin testi başarısız oldu"
 
 msgid "Failed uploading"
 msgstr "Karşıya yükleme işlemi başarısız oldu"
+
+msgid "Failed validating command line"
+msgstr "Komut satırı doğrulaması başarısız oldu"
 
 msgid "File"
 msgstr "Dosya"
@@ -702,6 +705,9 @@ msgstr "Hemen Uygula"
 msgid "Reached max nesting for inline anchors"
 msgstr "Satıriçi çapalar için en fazla içiçe sayıya ulaşıldı"
 
+msgid "Read system hostname"
+msgstr "Sistem adını getir"
+
 msgid "Reassemble"
 msgstr "Birleştir"
 
@@ -948,6 +954,9 @@ msgstr "Zaman Aşımları"
 
 msgid "To Redirect Host"
 msgstr "Tekrar Yönlendirme Hedef Adresi"
+
+msgid "Too many args"
+msgstr "Argüman sayısı fazla"
 
 msgid "Too many args, truncating"
 msgstr "Fazla argümanlar atıldı"

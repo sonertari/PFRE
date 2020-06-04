@@ -180,6 +180,7 @@ include "/etc/pfre/include.conf" # Test
 		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete the rules file?');
 		$I->acceptPopup();
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 
 		$I->see('Rules file deleted: /etc/pfre/test.conf');
 
@@ -326,6 +327,7 @@ include "/etc/pfre/include.conf" # Test
 		$I->wait(POPUP_DISPLAY_INTERVAL);
 		$I->seeInPopup('Are you sure you want to delete the rules file?');
 		$I->acceptPopup();
+		$I->wait(POPUP_DISPLAY_INTERVAL);
 
 		$I->see('Rules file deleted: /etc/pfre/dump.conf');
 

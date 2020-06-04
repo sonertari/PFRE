@@ -147,6 +147,7 @@ class confsetupCest
 		$I->fillField('ReNewPassword', 'soner123');
 
 		$I->click('#ApplyPassword');
+		$I->wait(STALE_ELEMENT_INTERVAL);
 
 		$I->see('Authentication failed');
 		$I->seeInCurrentUrl('pf/conf.setup.php');

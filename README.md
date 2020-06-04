@@ -94,6 +94,8 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 	bzip2-1.0.8.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
+	gettext-runtime-0.20.1p1.tgz
+	libiconv-1.16p0.tgz
 	libsodium-1.0.18.tgz
 	libxml-2.9.10p0.tgz
 	oniguruma-6.9.5pl1.tgz
@@ -119,6 +121,8 @@ Here is the expected output of that command:
 	bzip2-1.0.8         block-sorting file compressor, unencumbered
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
+	gettext-runtime-0.20.1p1 GNU gettext runtime libraries and programs
+	libiconv-1.16p0     character set conversion library
 	libsodium-1.0.18    library for network communications and cryptography
 	libxml-2.9.10p0     XML parsing library
 	oniguruma-6.9.5pl1  regular expressions library
