@@ -18,6 +18,9 @@
  * along with PFRE.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+$SRC_ROOT= dirname(dirname(dirname(__FILE__)));
+require_once($SRC_ROOT . '/lib/setup.php');
+
 /// Force https
 if ($ForceHTTPs) {
 	if (!filter_has_var(INPUT_SERVER, 'HTTPS')) {
