@@ -210,11 +210,8 @@ Go to /usr/local/bin/ and create a link to php executable:
 	# cd /usr/local/bin
 	# ln -s php-8.0 php
 
-Edit the /etc/php-8.0.ini file to disable NOTICE messages and write error messages to syslog, otherwise they may disturb pfctl test reports:
+Edit the /etc/php-8.0.ini file to write error messages to syslog, otherwise they may disturb pfctl test reports:
 
-	error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_NOTICE
-	ignore_repeated_errors = On
-	ignore_repeated_source = On
 	error_log = syslog
 
 Also, edit the /etc/php-fpm.conf file to write error messages to syslog:
