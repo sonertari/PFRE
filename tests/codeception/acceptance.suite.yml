@@ -11,9 +11,9 @@ modules:
             url: http://pfre/
 # firefox works, but we have to manually handle file download dialogs
 # TODO: Configure WebDriver to save files to disk without asking
-            browser: firefox
-# chrome does not work anymore, it cannot even see text in current url
-#            browser: chrome
+#            browser: firefox
+# chrome saves files to disk without asking
+            browser: chrome
 # PhantomJS works, but runs about 3 times slower
 #            browser: phantomjs
         - \Helper\Acceptance
