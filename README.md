@@ -46,6 +46,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 	+ The number of nested anchors in inline rules is restricted to a configurable maximum.
 	+ JavaScript use is kept to a minimum.
 
+![UI Design](https://github.com/sonertari/UTMFW/blob/master/screenshots/UIDesign.png)
+
 ## How to install
 
 Here are the basic steps to obtain a working PFRE installation:
