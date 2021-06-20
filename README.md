@@ -30,21 +30,23 @@ A couple of notes about the requirements, design decisions, and implementation o
 - PFRE uses MVC design to separate business logic from presentation, e.g. the View does not know how to parse, generate, validate or test pf rules (it is as thin or dumb as possible).
 - PFRE has been tested using PHPUnit and Codeception.
 - Source code is documented using Doxygen.
-- PFRE takes security seriously:
-	+ All input is untainted.
-	+ Invalid rules are never tested using pfctl.
-	+ Pfctl is executed in a separate process, which times out if pfctl takes too long.
-	+ The Model is similar to the server of a privilege separation design. It defines and supports only a set of commands which can be executed by the View.
-	+ As the sole gatekeeper for the Model, PFRE controller, ctlr.php is the only executable enabled in the doas configuration.
-	+ The View executes all controller commands over an SSH connection.
-	+ The login shells of admin and user users are set to sh.php. Also, they don't have a home folder. So the admin and user users can log in to the system and pass arguments to sh.php, but cannot drop to a command line shell.
-	+ The login shell sh.php of admin and user users validates all commands and their arguments given to it, and then runs them using ctlr.php.
-	+ No argument passed to sh.php or ctlr.php is ever expanded before being executed.
-	+ Passwords are never visible plain text anywhere, not even in the doas logs.
-	+ The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep and /bin/date).
-	+ All system executables are called using their full pathnames.
-	+ The number of nested anchors in inline rules is restricted to a configurable maximum.
-	+ JavaScript use is kept to a minimum.
+
+PFRE takes security seriously:
+
+- All input is untainted.
+- Invalid rules are never tested using pfctl.
+- Pfctl is executed in a separate process, which times out if pfctl takes too long.
+- The Model is similar to the server of a privilege separation design. It defines and supports only a set of commands which can be executed by the View.
+- As the sole gatekeeper for the Model, PFRE controller, ctlr.php is the only executable enabled in the doas configuration.
+- The View executes all controller commands over an SSH connection.
+- The login shells of admin and user users are set to sh.php. Also, they don't have a home folder. So the admin and user users can log in to the system and pass arguments to sh.php, but cannot drop to a command line shell.
+- The login shell sh.php of admin and user users validates all commands and their arguments given to it, and then runs them using ctlr.php.
+- No argument passed to sh.php or ctlr.php is ever expanded before being executed.
+- Passwords are never visible plain text anywhere, not even in the doas logs.
+- The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep and /bin/date).
+- All system executables are called using their full pathnames.
+- The number of nested anchors in inline rules is restricted to a configurable maximum.
+- JavaScript use is kept to a minimum.
 
 ![UI Design](https://github.com/sonertari/UTMFW/blob/master/screenshots/UIDesign.png)
 
