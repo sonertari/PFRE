@@ -1,8 +1,8 @@
 # PFRE [![Build Status](https://travis-ci.org/sonertari/PFRE.svg?branch=master)](https://travis-ci.org/sonertari/PFRE)
 
-PFRE is a pf rule editor for OpenBSD. PFRE is expected to be used by beginners and system administrators alike.
+PFRE is a packet filter rule editor for OpenBSD/pf. PFRE is expected to be used by beginners and system administrators alike.
 
-You can find a couple of screenshots on the [wiki](https://github.com/sonertari/PFRE/wiki).
+The [UTMFW](https://github.com/sonertari/UTMFW) and [PFFW](https://github.com/sonertari/PFFW) projects use PFRE on their web administration interfaces. If you don't want to [install PFRE](https://github.com/sonertari/PFRE#how-to-install) yourself, you can download the installation iso file of [UTMFW](https://github.com/sonertari/UTMFW#download) or [PFFW](https://github.com/sonertari/PFFW#download) to test drive PFRE easily.
 
 ## Features
 
@@ -31,6 +31,8 @@ A couple of notes about the requirements, design decisions, and implementation o
 - PFRE has been tested using PHPUnit and Codeception.
 - Source code is documented using Doxygen.
 
+![UI Design](https://github.com/sonertari/UTMFW/blob/master/screenshots/UIDesign.png)
+
 PFRE takes security seriously:
 
 - All input is untainted.
@@ -48,7 +50,9 @@ PFRE takes security seriously:
 - The number of nested anchors in inline rules is restricted to a configurable maximum.
 - JavaScript use is kept to a minimum.
 
-![UI Design](https://github.com/sonertari/UTMFW/blob/master/screenshots/UIDesign.png)
+![PFRE](https://github.com/sonertari/PFRE/blob/master/screenshots/PFRE.png)
+
+You can find a couple of screenshots on the [wiki](https://github.com/sonertari/PFRE/wiki).
 
 ## How to install
 
