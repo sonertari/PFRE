@@ -28,10 +28,10 @@ class LimitCest extends Rule
 	protected $sender= 'limit';
 
 	protected $origRule= 'set limit { states 1, frags 2, src-nodes 3, tables 4, table-entries 5 } # Test';
-	protected $expectedDispOrigRule= 'states: 1, frags: 2, src-nodes: 3, tables: 4, table-entries: 5 Test e u d x';
+	protected $expectedDispOrigRule= 'states: 1, frags: 2, src-nodes: 3, tables: 4, table-entries: 5 Test';
 
 	protected $modifiedRule= ' # Test1';
-	protected $expectedDispModifiedRule= 'Test1 e u d x';
+	protected $expectedDispModifiedRule= 'Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

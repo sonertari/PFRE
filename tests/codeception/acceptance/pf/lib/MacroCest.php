@@ -31,14 +31,14 @@ class MacroCest extends Rule
 	protected $expectedDispOrigRule= 'test
 ssh
 2222
-Test e u d x';
+Test';
 
 	protected $modifiedRule= 'test1 = "{ ssh, 2222, 1111 }" # Test1';
 	protected $expectedDispModifiedRule= 'test1
 ssh
 2222
 1111
-Test1 e u d x';
+Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

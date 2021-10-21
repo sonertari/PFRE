@@ -12,7 +12,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "Language: Turkish\n"
 "Language-Team: Turkish <sonertari@gmail.com>\n"
-"PO-Revision-Date: 2020-06-21 19:41+0300\n"
+"PO-Revision-Date: 2018-11-06 22:57+0300\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
 #, php-format
@@ -100,29 +100,32 @@ msgstr "Engelleme Kuralı"
 msgid "Cancel"
 msgstr "İptal"
 
-msgid "Cannot fork pfctl process"
-msgstr "Pfctl süreci fork edilemedi"
+msgid "Cannot fork process"
+msgstr "Süreç fork edilemedi"
 
 msgid "Cannot generate rule"
 msgstr "Kural üretilemiyor"
 
-msgid "Cannot install pf rule file"
-msgstr "Pf kural dosyası kurulamadı"
+msgid "Cannot generate rules"
+msgstr "Kurallar üretilemiyor"
 
-msgid "Cannot load pf rules"
-msgstr "Pf kuralları yüklenemedi"
+msgid "Cannot install rule file"
+msgstr "Kural dosyası kurulamadı"
 
-msgid "Cannot remove tmp pf file"
-msgstr "Geçici pf dosyası silinemedi"
+msgid "Cannot load rules"
+msgstr "Kurallar yüklenemedi"
 
-msgid "Cannot write to tmp pf file"
-msgstr "Geçici pf dosyasına yazılamadı"
+msgid "Cannot parse rules"
+msgstr "Kurallar işlenemiyor"
+
+msgid "Cannot remove tmp file"
+msgstr "Geçici dosya silinemedi"
+
+msgid "Cannot write to tmp file"
+msgstr "Geçici dosyaya yazılamadı"
 
 msgid "Category"
 msgstr "Sınıf"
-
-msgid "Check authentication"
-msgstr "Kullanıcı doğrulama"
 
 msgid "Comment"
 msgstr "Yorum"
@@ -148,8 +151,8 @@ msgstr "Sil"
 msgid "Delete All"
 msgstr "Hepsini Sil"
 
-msgid "Delete pf rule file"
-msgstr "Pf kural dosyası silme"
+msgid "Delete rule file"
+msgstr "Kural dosyasını sil"
 
 msgid "Delete rules file"
 msgstr "Kural dosyasını sil"
@@ -262,8 +265,8 @@ msgstr "Yükleme işlemi başarısız oldu"
 msgid "Failed loading main pf rules"
 msgstr "Ana pf kurallarının yüklenmesi başarısız oldu"
 
-msgid "Failed loading pf rules"
-msgstr "Pf kural yüklemesi başarısız oldu"
+msgid "Failed loading rules"
+msgstr "Kural yüklemesi başarısız oldu"
 
 msgid "Failed removing message queue"
 msgstr "Mesaj kuyruğunun silinmesi başarısız oldu"
@@ -271,8 +274,8 @@ msgstr "Mesaj kuyruğunun silinmesi başarısız oldu"
 msgid "Failed saving"
 msgstr "Kayıt işlemi başarısız oldu"
 
-msgid "Failed testing pf rules"
-msgstr "Pf kurallarının testi başarısız oldu"
+msgid "Failed testing rules"
+msgstr "Kuralların testi başarısız oldu"
 
 msgid "Failed testing ruleset"
 msgstr "Kural listesinin testi başarısız oldu"
@@ -322,20 +325,20 @@ msgstr "Parçalar"
 msgid "From Redirect Host"
 msgstr "Yönlendirme Adresinden"
 
-msgid "Generate pf rule"
-msgstr "Pf kural üretimi"
+msgid "Generate rule"
+msgstr "Kural üretimi"
 
-msgid "Generate pf rules"
-msgstr "Pf kural listesi üretimi"
+msgid "Generate rules"
+msgstr "Kural listesi üretimi"
 
 msgid "Generate with errors"
 msgstr "Hatalara rağmen üret"
 
-msgid "Get pf rule files"
-msgstr "Pf kural dosyalarını getir"
+msgid "Get rule files"
+msgstr "Kural dosyalarını getir"
 
-msgid "Get pf rules"
-msgstr "Pf kurallarını getir"
+msgid "Get rules"
+msgstr "Kuralları getir"
 
 msgid "Group"
 msgstr "Grup"
@@ -420,8 +423,8 @@ msgstr "Kur"
 msgid "Install as main ruleset"
 msgstr "Ana kural listesi olarak kur"
 
-msgid "Install pf rules"
-msgstr "Pf kurallarını kurma"
+msgid "Install rules"
+msgstr "Kural kurulumu"
 
 msgid "Installed successfully"
 msgstr "Başarıyla kuruldu"
@@ -546,6 +549,9 @@ msgstr "En Fazla Durum Sayısı"
 msgid "Max-mss"
 msgstr "En yüksek-mss"
 
+msgid "Merges separated comments"
+msgstr "Ayrılmış yorumları birleştirir"
+
 msgid "Method does not exist"
 msgstr "Yöntem bulunamadı"
 
@@ -654,8 +660,14 @@ msgstr "PF Kural Düzenleyici"
 msgid "Parent"
 msgstr "Veli"
 
+msgid "Parse"
+msgstr "İşle"
+
 msgid "Parse Error"
 msgstr "İşleme Hatası"
+
+msgid "Parse rules"
+msgstr "Kuralları işle"
 
 msgid "Password"
 msgstr "Parola"
@@ -740,9 +752,6 @@ msgstr "Ana kural listesini tekrar yükle"
 msgid "Required element missing"
 msgstr "Gerekli eleman yok"
 
-msgid "Resource not available"
-msgstr "Kaynağa ulaşılamıyor"
-
 msgid "Route"
 msgstr "Yönlendirme"
 
@@ -808,6 +817,9 @@ msgstr "Kazıma Seçenekleri"
 
 msgid "Select Option Type"
 msgstr "Seçenek Türünü Seçin"
+
+msgid "Separate"
+msgstr "Ayır"
 
 msgid "Session Timeout"
 msgstr "Oturum Zaman Aşımı"
@@ -902,8 +914,8 @@ msgstr "Tablo Girdileri"
 msgid "Tables"
 msgstr "Tablolar"
 
-msgid "Test pf rules"
-msgstr "Pf kurallarını test et"
+msgid "Test rules"
+msgstr "Kuralları test et"
 
 msgid "There was an error while installing"
 msgstr "Kurulum sırasında bir hata oluştu"
@@ -948,8 +960,8 @@ msgstr ""
 "kapatabilirsiniz. Yardım pencerelerini kapatmak hata veya uyarı "
 "pencerelerini devredışı bırakmaz."
 
-msgid "Timed out running pfctl command"
-msgstr "Pfctl komutu zaman aşımına uğradı"
+msgid "Timed out running command"
+msgstr "Komut zaman aşımına uğradı"
 
 msgid "Timeout"
 msgstr "Zaman Aşımları"
@@ -960,9 +972,6 @@ msgstr "Tekrar Yönlendirme Hedef Adresi"
 msgid "Too many args"
 msgstr "Argüman sayısı fazla"
 
-msgid "Too many args, truncating"
-msgstr "Fazla argümanlar atıldı"
-
 msgid "Turkish"
 msgstr "Türkçe"
 
@@ -971,6 +980,9 @@ msgstr "Tür"
 
 msgid "UDP Timeouts"
 msgstr "UDP Zaman Aşımları"
+
+msgid "Uncomment"
+msgstr "Yorumu Kaldır"
 
 msgid "Unexpected elements"
 msgstr "Beklenmeyen elemanlar"

@@ -43,14 +43,14 @@ Line4';
 
 		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
 ' . ($this->lineNumber + 1) . ' Line1
-Line2 e u d x';
+Line2';
 		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
 ' . ($this->lineNumber + 1) . '
 ' . ($this->lineNumber + 2) . '
 ' . ($this->lineNumber + 3) . ' Line1
 Line2
 Line3
-Line4 e u d x';
+Line4';
 
 		$this->dLink= NULL;
 	}

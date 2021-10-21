@@ -28,10 +28,10 @@ class OptionRulesetOptimizationCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set ruleset-optimization none # Test';
-	protected $expectedDispOrigRule= 'ruleset-optimization: none Test e u d x';
+	protected $expectedDispOrigRule= 'ruleset-optimization: none Test';
 
 	protected $modifiedRule= 'set ruleset-optimization basic # Test1';
-	protected $expectedDispModifiedRule= 'ruleset-optimization: basic Test1 e u d x';
+	protected $expectedDispModifiedRule= 'ruleset-optimization: basic Test1';
 
 	function __construct()
 	{

@@ -28,10 +28,10 @@ class OptionStatePolicyCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set state-policy if-bound # Test';
-	protected $expectedDispOrigRule= 'state-policy: if-bound Test e u d x';
+	protected $expectedDispOrigRule= 'state-policy: if-bound Test';
 
 	protected $modifiedRule= 'set state-policy floating # Test1';
-	protected $expectedDispModifiedRule= 'state-policy: floating Test1 e u d x';
+	protected $expectedDispModifiedRule= 'state-policy: floating Test1';
 
 	function __construct()
 	{

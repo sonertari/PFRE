@@ -28,10 +28,10 @@ class IncludeCest extends Rule
 	protected $sender= 'include';
 
 	protected $origRule= 'include "/etc/pfre/include.conf" # Test';
-	protected $expectedDispOrigRule= 'include /etc/pfre/include.conf Test e u d x';
+	protected $expectedDispOrigRule= 'include /etc/pfre/include.conf Test';
 
 	protected $modifiedRule= 'ERROR: Cannot generate rule';
-	protected $expectedDispModifiedRule= 'include Test1 e u d x';
+	protected $expectedDispModifiedRule= 'include Test1';
 
 	function __construct()
 	{

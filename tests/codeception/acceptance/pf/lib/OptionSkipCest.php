@@ -28,10 +28,10 @@ class OptionSkipCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set skip on { lo, em0 } # Test';
-	protected $expectedDispOrigRule= 'skip on lo, em0 Test e u d x';
+	protected $expectedDispOrigRule= 'skip on lo, em0 Test';
 
 	protected $modifiedRule= ' # Test1';
-	protected $expectedDispModifiedRule= 'skip on Test1 e u d x';
+	protected $expectedDispModifiedRule= 'skip on Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

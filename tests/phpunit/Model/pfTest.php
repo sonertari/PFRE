@@ -29,13 +29,13 @@ require_once($MODEL_PATH.'/pf.php');
 
 class pfTest extends \PHPUnit_Framework_TestCase
 {
-	function testGetPfRules()
+	function testGetRules()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GetPfRules('/etc/pfre/pf.conf');
+		$result= $pf->GetRules('/etc/pfre/pf.conf');
 
 		$ruleStr= file_get_contents($TEST_DIR_PATH . '/etc/pfre/pf.conf');
 		$ruleSet= new RuleSet();
@@ -48,13 +48,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertJsonStringEqualsJsonString($expected, $actual);
 	}
 
-	function testGetPfRulesTmpFile()
+	function testGetRulesTmpFile()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GetPfRules('/tmp/tmp.conf', TRUE);
+		$result= $pf->GetRules('/tmp/tmp.conf', TRUE);
 
 		$ruleStr= file_get_contents($TEST_DIR_PATH . '/tmp/tmp.conf');
 		$ruleSet= new RuleSet();
@@ -67,13 +67,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertJsonStringEqualsJsonString($expected, $actual);
 	}
 
-	function testGetPfRulesTmpFileNoTmpArg()
+	function testGetRulesTmpFileNoTmpArg()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GetPfRules('/tmp/tmp.conf');
+		$result= $pf->GetRules('/tmp/tmp.conf');
 
 		$expected= '';
 		$actual= $Output;
@@ -82,13 +82,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	function testGetPfRulesNonExistentFile()
+	function testGetRulesNonExistentFile()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GetPfRules('/etc/pfre/none.conf');
+		$result= $pf->GetRules('/etc/pfre/none.conf');
 
 		$expected= '';
 		$actual= $Output;
@@ -97,13 +97,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	function testGetPfRulesInvalidFilename()
+	function testGetRulesInvalidFilename()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GetPfRules('/etc/pfre/pf$.conf');
+		$result= $pf->GetRules('/etc/pfre/pf$.conf');
 
 		$expected= '';
 		$actual= $Output;
@@ -112,13 +112,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	function testGetPfRulesInvalidLocation()
+	function testGetRulesInvalidLocation()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GetPfRules('/etc/invalid.conf');
+		$result= $pf->GetRules('/etc/invalid.conf');
 
 		$expected= '';
 		$actual= $Output;
@@ -127,13 +127,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	function testGetPfRuleFiles()
+	function testGetRuleFiles()
 	{
 		global $TEST_DIR_PATH, $Output;
 
 		$pf= new \Pf();
 		$Output= '';
-		$pf->GetPfRuleFiles();
+		$pf->GetRuleFiles();
 
 		exec("ls -1 $TEST_DIR_PATH/etc/pfre/", $output);
 
@@ -143,7 +143,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	function testDeletePfRuleFile()
+	function testDeleteRuleFile()
 	{
 		global $TEST_DIR_PATH;
 
@@ -158,13 +158,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileExists($file);
 		
 		$pf= new \Pf();
-		$result= $pf->DeletePfRuleFile($file);
+		$result= $pf->DeleteRuleFile($file);
 
 		$this->assertTrue($result);
 		$this->assertFileNotExists($file);
 	}
 
-	function testDeletePfRuleFileNonExistentFile()
+	function testDeleteRuleFileNonExistentFile()
 	{
 		global $TEST_DIR_PATH;
 
@@ -177,13 +177,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($file);
 		
 		$pf= new \Pf();
-		$result= $pf->DeletePfRuleFile($file);
+		$result= $pf->DeleteRuleFile($file);
 
 		$this->assertFalse($result);
 		$this->assertFileNotExists($file);
 	}
 
-	function testDeletePfRuleFileInvalidFilename()
+	function testDeleteRuleFileInvalidFilename()
 	{
 		global $TEST_DIR_PATH;
 
@@ -192,13 +192,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileExists($file);
 		
 		$pf= new \Pf();
-		$result= $pf->DeletePfRuleFile('pf$.conf');
+		$result= $pf->DeleteRuleFile('pf$.conf');
 
 		$this->assertFalse($result);
 		$this->assertFileExists($file);
 	}
 
-	function testInstallPfRules()
+	function testInstallRules()
 	{
 		global $TEST_DIR_PATH;
 
@@ -217,7 +217,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($destFile);
 
 		$pf= new \Pf();
-		$result= $pf->InstallPfRules(json_encode($ruleSet->rules), NULL, FALSE);
+		$result= $pf->InstallRules(json_encode($ruleSet->rules), NULL, FALSE);
 
 		$this->assertTrue($result);
 		$this->assertFileExists($destFile);
@@ -226,7 +226,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		unlink($destFile);
 	}
 
-	function testInstallPfRulesInstallConf()
+	function testInstallRulesInstallConf()
 	{
 		global $TEST_DIR_PATH;
 
@@ -245,7 +245,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($destFile);
 
 		$pf= new \Pf();
-		$result= $pf->InstallPfRules(json_encode($ruleSet->rules), $destFile, FALSE);
+		$result= $pf->InstallRules(json_encode($ruleSet->rules), $destFile, FALSE);
 
 		$this->assertTrue($result);
 		$this->assertFileExists($destFile);
@@ -276,7 +276,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals('pf$.conf', $filename);
 	}
 	
-	function testGeneratePfRule()
+	function testGenerateRule()
 	{
 		global $TEST_PATH, $Output;
 
@@ -291,13 +291,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GeneratePfRule(json_encode($ruleDef), 0);
+		$result= $pf->GenerateRule(json_encode($ruleDef), 0);
 
 		$this->assertTrue($result);
 		$this->assertEquals($test->out, $Output);
 	}
 	
-	function testGeneratePfRules()
+	function testGenerateRules()
 	{
 		global $TEST_PATH, $Output;
 
@@ -312,13 +312,13 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GeneratePfRules(json_encode($rulesArray));
+		$result= $pf->GenerateRules(json_encode($rulesArray));
 
 		$this->assertTrue($result);
 		$this->assertEquals($test->out, $Output);
 	}
 	
-	function testGeneratePfRulesLines()
+	function testGenerateRulesLines()
 	{
 		global $TEST_PATH, $Output;
 
@@ -333,7 +333,7 @@ class pfTest extends \PHPUnit_Framework_TestCase
 
 		$pf= new \Pf();
 		$Output= '';
-		$result= $pf->GeneratePfRules(json_encode($rulesArray), TRUE);
+		$result= $pf->GenerateRules(json_encode($rulesArray), TRUE);
 
 		$this->assertTrue($result);
 		$this->assertEquals('   0: ' . $test->out . "   1: \n", $Output);

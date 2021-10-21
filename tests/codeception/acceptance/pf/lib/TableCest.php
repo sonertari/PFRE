@@ -32,7 +32,7 @@ class TableCest extends Rule
 192.168.0.2
 file "/etc/pf.restrictedips1"
 file "/etc/pf.restrictedips2"
-Test e u d x';
+Test';
 
 	protected $modifiedRule= 'table <test1> file "/etc/pf.restrictedips1" file "/etc/pf.restrictedips2" file "/etc/pf.restrictedips3" { 192.168.0.1, 192.168.0.2, 1.1.1.1 } # Test1';
 	protected $expectedDispModifiedRule= 'test1 192.168.0.1
@@ -41,7 +41,7 @@ Test e u d x';
 file "/etc/pf.restrictedips1"
 file "/etc/pf.restrictedips2"
 file "/etc/pf.restrictedips3"
-Test1 e u d x';
+Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

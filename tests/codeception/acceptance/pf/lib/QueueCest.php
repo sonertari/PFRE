@@ -40,12 +40,12 @@ burst: 1M
 time: 10ms 1024
 1
 100
-default Test e u d x';
+default Test';
 
 	protected $modifiedRule= 'queue test1 # Test1';
 	/// @todo Check why we have a new line after test1
 	protected $expectedDispModifiedRule= 'test1
-Test1 e u d x';
+Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

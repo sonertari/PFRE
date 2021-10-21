@@ -28,10 +28,10 @@ class OptionOptimizationCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set optimization normal # Test';
-	protected $expectedDispOrigRule= 'optimization: normal Test e u d x';
+	protected $expectedDispOrigRule= 'optimization: normal Test';
 
 	protected $modifiedRule= 'set optimization high-latency # Test1';
-	protected $expectedDispModifiedRule= 'optimization: high-latency Test1 e u d x';
+	protected $expectedDispModifiedRule= 'optimization: high-latency Test1';
 
 	function __construct()
 	{

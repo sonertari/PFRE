@@ -38,7 +38,7 @@ log all, matches, user, to=pflog0 tcp
 no-df
 random-id
 reassemble tcp
-Test e u d x';
+Test';
 
 	protected $modifiedRule= 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } scrub # Test1';
 	protected $expectedDispModifiedRule= 'match out
@@ -46,7 +46,7 @@ Test e u d x';
 1.1.1.1
 ssh
 1111
-Test1 e u d x';
+Test1';
 
 	function __construct()
 	{

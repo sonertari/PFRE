@@ -28,10 +28,10 @@ class OptionSyncookiesCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set syncookies adaptive (start 25%, end 12%) # Test';
-	protected $expectedDispOrigRule= 'syncookies: adaptive (start 25%, end 12%) Test e u d x';
+	protected $expectedDispOrigRule= 'syncookies: adaptive (start 25%, end 12%) Test';
 
 	protected $modifiedRule= 'set syncookies always # Test1';
-	protected $expectedDispModifiedRule= 'syncookies: always Test1 e u d x';
+	protected $expectedDispModifiedRule= 'syncookies: always Test1';
 
 	function __construct()
 	{

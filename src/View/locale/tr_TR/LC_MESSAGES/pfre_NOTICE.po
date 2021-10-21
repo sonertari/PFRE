@@ -21,6 +21,12 @@ msgstr "Doğrulama başarısız"
 msgid "Cannot generate rule"
 msgstr "Kural üretilemiyor"
 
+msgid "Cannot generate rules"
+msgstr "Kurallar üretilemiyor"
+
+msgid "Cannot parse rules"
+msgstr "Kurallar işlenemiyor"
+
 msgid "ERROR"
 msgstr "HATA"
 

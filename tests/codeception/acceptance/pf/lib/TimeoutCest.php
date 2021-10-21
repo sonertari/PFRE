@@ -28,10 +28,10 @@ class TimeoutCest extends Rule
 	protected $sender= 'timeout';
 
 	protected $origRule= 'set timeout { frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19 } # Test';
-	protected $expectedDispOrigRule= 'frag: 1, interval: 2, src.track: 3, tcp.first: 4, tcp.opening: 5, tcp.established: 6, tcp.closing: 7, tcp.finwait: 8, tcp.closed: 9, udp.first: 10, udp.single: 11, udp.multiple: 12, icmp.first: 13, icmp.error: 14, other.first: 15, other.single: 16, other.multiple: 17, adaptive.start: 18, adaptive.end: 19 Test e u d x';
+	protected $expectedDispOrigRule= 'frag: 1, interval: 2, src.track: 3, tcp.first: 4, tcp.opening: 5, tcp.established: 6, tcp.closing: 7, tcp.finwait: 8, tcp.closed: 9, udp.first: 10, udp.single: 11, udp.multiple: 12, icmp.first: 13, icmp.error: 14, other.first: 15, other.single: 16, other.multiple: 17, adaptive.start: 18, adaptive.end: 19 Test';
 
 	protected $modifiedRule= ' # Test1';
-	protected $expectedDispModifiedRule= 'Test1 e u d x';
+	protected $expectedDispModifiedRule= 'Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

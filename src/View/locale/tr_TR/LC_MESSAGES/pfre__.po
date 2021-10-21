@@ -21,26 +21,23 @@ msgstr "Argüman tür kontrolü başarısız oldu"
 msgid "Authentication failed"
 msgstr "Doğrulama başarısız"
 
-msgid "Cannot fork pfctl process"
-msgstr "Pfctl süreci fork edilemedi"
+msgid "Cannot fork process"
+msgstr "Süreç fork edilemedi"
 
-msgid "Cannot install pf rule file"
-msgstr "Pf kural dosyası kurulamadı"
+msgid "Cannot install rule file"
+msgstr "Kural dosyası kurulamadı"
 
-msgid "Cannot load pf rules"
-msgstr "Pf kuralları yüklenemedi"
+msgid "Cannot load rules"
+msgstr "Kurallar yüklenemedi"
 
-msgid "Cannot remove tmp pf file"
-msgstr "Geçici pf dosyası silinemedi"
+msgid "Cannot remove tmp file"
+msgstr "Geçici dosya silinemedi"
 
-msgid "Cannot write to tmp pf file"
-msgstr "Geçici pf dosyasına yazılamadı"
+msgid "Cannot write to tmp file"
+msgstr "Geçici dosyaya yazılamadı"
 
-msgid "Check authentication"
-msgstr "Kullanıcı doğrulama"
-
-msgid "Delete pf rule file"
-msgstr "Pf kural dosyası silme"
+msgid "Delete rule file"
+msgstr "Kural dosyasını sil"
 
 msgid "English"
 msgstr "İngilizce"
@@ -57,14 +54,14 @@ msgstr "Yüklemede hata, kural sorunlu olarak yüklendi"
 msgid "Failed creating or attaching to message queue"
 msgstr "Mesaj kuyruğu yaratılamadı veya bağlantı başarısız oldu"
 
-msgid "Failed loading pf rules"
-msgstr "Pf kural yüklemesi başarısız oldu"
+msgid "Failed loading rules"
+msgstr "Kural yüklemesi başarısız oldu"
 
 msgid "Failed removing message queue"
 msgstr "Mesaj kuyruğunun silinmesi başarısız oldu"
 
-msgid "Failed testing pf rules"
-msgstr "Pf kurallarının testi başarısız oldu"
+msgid "Failed testing rules"
+msgstr "Kuralların testi başarısız oldu"
 
 msgid "Failed validating command line"
 msgstr "Komut satırı doğrulaması başarısız oldu"
@@ -75,20 +72,20 @@ msgstr "Dosya adı kabul edilmedi"
 msgid "Filepath wrong"
 msgstr "Dosya yolu yanlış"
 
-msgid "Generate pf rule"
-msgstr "Pf kural üretimi"
+msgid "Generate rule"
+msgstr "Kural üretimi"
 
-msgid "Generate pf rules"
-msgstr "Pf kural listesi üretimi"
+msgid "Generate rules"
+msgstr "Kural listesi üretimi"
 
-msgid "Get pf rule files"
-msgstr "Pf kural dosyalarını getir"
+msgid "Get rule files"
+msgstr "Kural dosyalarını getir"
 
-msgid "Get pf rules"
-msgstr "Pf kurallarını getir"
+msgid "Get rules"
+msgstr "Kuralları getir"
 
-msgid "Install pf rules"
-msgstr "Pf kurallarını kurma"
+msgid "Install rules"
+msgstr "Kural kurulumu"
 
 msgid "Invalid inline rules, parser output"
 msgstr "Geçersiz satıriçi kurallar, işleme çıktısı"
@@ -141,6 +138,9 @@ msgstr "Çıktı doğru yapıda değil"
 msgid "Parse Error"
 msgstr "İşleme Hatası"
 
+msgid "Parse rules"
+msgstr "Kuralları işle"
+
 msgid "Reached max nesting for inline anchors"
 msgstr "Satıriçi çapalar için en fazla içiçe sayıya ulaşıldı"
 
@@ -183,17 +183,14 @@ msgstr "SSH kullanımını ayarla"
 msgid "Set user password"
 msgstr "Kullanıcı parolasını ayarla"
 
-msgid "Test pf rules"
-msgstr "Pf kurallarını test et"
+msgid "Test rules"
+msgstr "Kuralları test et"
 
-msgid "Timed out running pfctl command"
-msgstr "Pfctl komutu zaman aşımına uğradı"
+msgid "Timed out running command"
+msgstr "Komut zaman aşımına uğradı"
 
 msgid "Too many args"
 msgstr "Argüman sayısı fazla"
-
-msgid "Too many args, truncating"
-msgstr "Fazla argümanlar atıldı"
 
 msgid "Turkish"
 msgstr "Türkçe"

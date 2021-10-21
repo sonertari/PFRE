@@ -213,9 +213,6 @@ msgstr "Kayıt Seviyesi"
 msgid "Logging"
 msgstr "Kayıt"
 
-msgid "Logout"
-msgstr "Çıkış"
-
 msgid "Match All"
 msgstr "Hepsini Eşle"
 
@@ -257,6 +254,9 @@ msgstr "En Fazla Durum Sayısı"
 
 msgid "Max-mss"
 msgstr "En yüksek-mss"
+
+msgid "Merges separated comments"
+msgstr "Ayrılmış yorumları birleştirir"
 
 msgid "Min"
 msgstr "En az"
@@ -357,9 +357,6 @@ msgstr "Tekrar Yönlendirme Seçenekleri"
 msgid "Redirect Port"
 msgstr "Tekrar Yönlendirme Kapısı"
 
-msgid "Resource not available"
-msgstr "Kaynağa ulaşılamıyor"
-
 msgid "Route Host"
 msgstr "Yönlendirme Adresi"
 
@@ -389,6 +386,9 @@ msgstr "Kazıma Seçenekleri"
 
 msgid "Select Option Type"
 msgstr "Seçenek Türünü Seçin"
+
+msgid "Separate"
+msgstr "Ayır"
 
 msgid "Session Timeout"
 msgstr "Oturum Zaman Aşımı"
@@ -458,6 +458,9 @@ msgstr "Tür"
 
 msgid "UDP Timeouts"
 msgstr "UDP Zaman Aşımları"
+
+msgid "Uncomment"
+msgstr "Yorumu Kaldır"
 
 msgid "Upload rules file"
 msgstr "Kural dosyasını karşıya yükle"

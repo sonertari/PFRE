@@ -36,7 +36,7 @@ log all, matches, user, to=pflog0 quick tcp
 192.168.0.2 ssh route-to
 192.168.0.1
 192.168.0.2
-Test e u d x';
+Test';
 
 	protected $modifiedRule= 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } dup-to 192.168.0.1 # Test1';
 	protected $expectedDispModifiedRule= 'match out
@@ -45,7 +45,7 @@ Test e u d x';
 ssh
 1111
 dup-to
-192.168.0.1 Test1 e u d x';
+192.168.0.1 Test1';
 
 	function __construct()
 	{

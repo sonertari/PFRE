@@ -34,7 +34,7 @@ log all, matches, user, to=pflog0 tcp
 192.168.0.1 ssh
 2222
 192.168.0.2 ssh inet
-192.168.0.1 192.168.0.2 Test e u d x';
+192.168.0.1 192.168.0.2 Test';
 
 	protected $modifiedRule= 'match out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } af-to to { 192.168.0.2, 1.1.1.1 } # Test1';
 	protected $expectedDispModifiedRule= 'match out
@@ -44,7 +44,7 @@ ssh
 1111
 192.168.0.2
 1.1.1.1
-Test1 e u d x';
+Test1';
 
 	function __construct()
 	{

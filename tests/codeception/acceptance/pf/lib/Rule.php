@@ -163,10 +163,10 @@ class Rule
 		$actualDisp = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => $this->trTitle]));
 		$tester->assertEquals($this->expectedDispOrigRule, $actualDisp);
 		
-		$I->seeLink('e', $this->eLink);
-		$I->seeLink('u', $this->uLink);
-		$I->seeLink('d', $this->dLink);
-		$I->seeLink('x', $this->xLink);
+		$I->seeLink('', $this->eLink);
+		$I->seeLink('', $this->uLink);
+		$I->seeLink('', $this->dLink);
+		$I->seeLink('', $this->xLink);
 	}
 
 	/**
@@ -200,7 +200,7 @@ class Rule
 		//$I->click(['xpath' => '//a[contains(@href, "rulenumber=' . $this->ruleNumber . '")]']);
 		//$I->click('//a[contains(@href, "rulenumber=' . $this->ruleNumber . '")]');
 
-		$I->seeLink('e', 'http://pfre/pf/conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
+		$I->seeLink('', 'http://pfre/pf/conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber);
 		$I->click(\Codeception\Util\Locator::href('conf.editor.php?sender=' . $this->sender . '&rulenumber=' . $this->ruleNumber));
 
 		$I->wait(STALE_ELEMENT_INTERVAL);
@@ -285,10 +285,10 @@ class Rule
 		$display = $I->grabTextFrom(\Codeception\Util\Locator::find('tr', ['title' => $this->trTitle]));
 		$tester->assertEquals($this->expectedDispModifiedRule, $display);
 		
-		$I->seeLink('e', $this->eLink);
-		$I->seeLink('u', $this->uLink);
-		$I->seeLink('d', $this->dLink);
-		$I->seeLink('x', $this->xLink);
+		$I->seeLink('', $this->eLink);
+		$I->seeLink('', $this->uLink);
+		$I->seeLink('', $this->dLink);
+		$I->seeLink('', $this->xLink);
 	}
 
 	/**

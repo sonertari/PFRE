@@ -28,10 +28,10 @@ class OptionReassembleCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set reassemble yes # Test';
-	protected $expectedDispOrigRule= 'reassemble: yes Test e u d x';
+	protected $expectedDispOrigRule= 'reassemble: yes Test';
 
 	protected $modifiedRule= 'set reassemble no no-df # Test1';
-	protected $expectedDispModifiedRule= 'reassemble: no no-df Test1 e u d x';
+	protected $expectedDispModifiedRule= 'reassemble: no no-df Test1';
 
 	function __construct()
 	{

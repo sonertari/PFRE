@@ -28,10 +28,10 @@ class OptionHostidCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set hostid 1 # Test';
-	protected $expectedDispOrigRule= 'hostid: 1 Test e u d x';
+	protected $expectedDispOrigRule= 'hostid: 1 Test';
 
 	protected $modifiedRule= 'set hostid 2 # Test1';
-	protected $expectedDispModifiedRule= 'hostid: 2 Test1 e u d x';
+	protected $expectedDispModifiedRule= 'hostid: 2 Test1';
 
 	function __construct()
 	{

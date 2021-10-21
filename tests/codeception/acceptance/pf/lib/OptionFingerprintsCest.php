@@ -28,10 +28,10 @@ class OptionFingerprintsCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set fingerprints "/etc/pf.os" # Test';
-	protected $expectedDispOrigRule= 'fingerprints: /etc/pf.os Test e u d x';
+	protected $expectedDispOrigRule= 'fingerprints: /etc/pf.os Test';
 
 	protected $modifiedRule= 'set fingerprints "/etc/pf.os1" # Test1';
-	protected $expectedDispModifiedRule= 'fingerprints: /etc/pf.os1 Test1 e u d x';
+	protected $expectedDispModifiedRule= 'fingerprints: /etc/pf.os1 Test1';
 
 	function __construct()
 	{

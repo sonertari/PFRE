@@ -28,10 +28,10 @@ class OptionLoginterfaceCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set loginterface em0 # Test';
-	protected $expectedDispOrigRule= 'loginterface: em0 Test e u d x';
+	protected $expectedDispOrigRule= 'loginterface: em0 Test';
 
 	protected $modifiedRule= 'set loginterface em1 # Test1';
-	protected $expectedDispModifiedRule= 'loginterface: em1 Test1 e u d x';
+	protected $expectedDispModifiedRule= 'loginterface: em1 Test1';
 
 	function __construct()
 	{

@@ -883,10 +883,10 @@ class validateTest extends \PHPUnit_Framework_TestCase
 				RE_COMMENT,
 				array(
 					'',
-					str_repeat('0', 1000),
+					str_repeat('0', 2000),
 					),
 				array(
-					str_repeat('0', 1001),
+					str_repeat('0', 2001),
 					),
 				FALSE,
 				FALSE

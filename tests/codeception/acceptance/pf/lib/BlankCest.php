@@ -38,17 +38,11 @@ class BlankCest extends Rule
 		parent::__construct();
 
 		$this->expectedDispOrigRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
-' . ($this->lineNumber + 1) . '
-
-e u d x';
+' . ($this->lineNumber + 1);
 		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . '
 ' . ($this->lineNumber + 1) . '
 ' . ($this->lineNumber + 2) . '
-' . ($this->lineNumber + 3) . '
-
-
-
-e u d x';
+' . ($this->lineNumber + 3);
 	}
 
 	/**

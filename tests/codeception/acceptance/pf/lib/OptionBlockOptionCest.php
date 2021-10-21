@@ -28,10 +28,10 @@ class OptionBlockOptionCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set block-policy drop # Test';
-	protected $expectedDispOrigRule= 'block-policy: drop Test e u d x';
+	protected $expectedDispOrigRule= 'block-policy: drop Test';
 
 	protected $modifiedRule= 'set block-policy return # Test1';
-	protected $expectedDispModifiedRule= 'block-policy: return Test1 e u d x';
+	protected $expectedDispModifiedRule= 'block-policy: return Test1';
 
 	function __construct()
 	{

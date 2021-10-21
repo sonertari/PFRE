@@ -68,13 +68,13 @@ service block
 anchor out {
 pass proto tcp from any to port { 25, 80, 443 }
 }
-pass in proto tcp to any port 22 Test e u d x';
+pass in proto tcp to any port 22 Test';
 		$this->expectedDispModifiedRule= $this->ruleNumber . ' ' . $this->type . ' ' . $this->lineNumber . ' out
 192.168.0.1
 1.1.1.1
 ssh
 1111
-Test1 e u d x';
+Test1';
 		$this->revertedRule= 'anchor "test" in on em0 inet proto tcp from 192.168.0.1 port { ssh, 2222 } os openbsd to 192.168.0.2 port ssh user root group wheel flags S/SA tos 1 allow-opts once label "test" tag "test" !tagged "test" set prio 2 rtable 3 max-pkt-rate 100/10 probability 10% prio 4 set tos 5 !received-on em0 keep state ( max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule, frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19 ) {
 block
 anchor out {

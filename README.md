@@ -58,8 +58,8 @@ You can find a couple of screenshots on the [wiki](https://github.com/sonertari/
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 6.9, perhaps on a VM.
-- Install PHP 8.0.3, php-pcntl, and php-cgi.
+- Install OpenBSD 7.0, perhaps on a VM.
+- Install PHP 8.0.10, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -105,12 +105,12 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 	gettext-runtime-0.21p1.tgz
 	libiconv-1.16p0.tgz
 	libsodium-1.0.18p1.tgz
-	libxml-2.9.10p2.tgz
-	oniguruma-6.9.6.tgz
+	libxml-2.9.12.tgz
+	oniguruma-6.9.7.1.tgz
 	pcre2-10.36.tgz
-	php-8.0.3.tgz
-	php-cgi-8.0.3.tgz
-	php-pcntl-8.0.3.tgz
+	php-8.0.10p0.tgz
+	php-cgi-8.0.10p0.tgz
+	php-pcntl-8.0.10p0.tgz
 	xz-5.2.5.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
@@ -132,12 +132,12 @@ Here is the expected output of that command:
 	gettext-runtime-0.21p1 GNU gettext runtime libraries and programs
 	libiconv-1.16p0     character set conversion library
 	libsodium-1.0.18p1  library for network communications and cryptography
-	libxml-2.9.10p2     XML parsing library
-	oniguruma-6.9.6     regular expressions library
+	libxml-2.9.12       XML parsing library
+	oniguruma-6.9.7.1   regular expressions library
 	pcre2-10.36         perl-compatible regular expression library, version 2
-	php-8.0.3           server-side HTML-embedded scripting language
-	php-cgi-8.0.3       php CGI binary
-	php-pcntl-8.0.3     PCNTL extensions for php
+	php-8.0.10p0        server-side HTML-embedded scripting language
+	php-cgi-8.0.10p0    php CGI binary
+	php-pcntl-8.0.10p0  PCNTL extensions for php
 	xz-5.2.5            LZMA compression and decompression tools
 
 ### Install PFRE
@@ -239,7 +239,7 @@ Disable chroot in /etc/php-fpm.conf by commenting out the chroot line:
 
 	;chroot = /var/www
 
-If you want to use Turkish translations, you should first install the gettext-tools package to generate the gettext mo file:
+If you want to use the Turkish translations, you should first install the gettext-tools package to generate the gettext mo file:
 
 	# cd /var/www/htdocs/pfre/View/locale/tr_TR/LC_MESSAGES/
 	# msgfmt -o pfre.mo pfre.po
@@ -295,6 +295,6 @@ And uncomment the line which enables forwarding of IPv4 packets:
 Now you can either reboot the system or start the php cgi server and the web server manually using the following commands:
 
 	# /usr/local/sbin/php-fpm-8.0
-	# /usr/sbin/httpd 
+	# /usr/sbin/httpd
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.

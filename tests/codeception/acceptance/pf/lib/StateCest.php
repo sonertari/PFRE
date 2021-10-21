@@ -28,10 +28,10 @@ class StateCest extends Rule
 	protected $sender= 'state';
 
 	protected $origRule= 'set state-defaults max 1, max-src-states 2, max-src-nodes 3, max-src-conn 4, max-src-conn-rate 5/5, sloppy, no-sync, pflow, if-bound, overload <over> flush global, source-track rule, frag 1, interval 2, src.track 3, tcp.first 4, tcp.opening 5, tcp.established 6, tcp.closing 7, tcp.finwait 8, tcp.closed 9, udp.first 10, udp.single 11, udp.multiple 12, icmp.first 13, icmp.error 14, other.first 15, other.single 16, other.multiple 17, adaptive.start 18, adaptive.end 19 # Test';
-	protected $expectedDispOrigRule= 'max: 1, max-src-states: 2, max-src-nodes: 3, max-src-conn: 4, max-src-conn-rate: 5/5, sloppy, no-sync, pflow, if-bound, overload: <over> flush global, source-track rule, frag: 1, interval: 2, src.track: 3, tcp.first: 4, tcp.opening: 5, tcp.established: 6, tcp.closing: 7, tcp.finwait: 8, tcp.closed: 9, udp.first: 10, udp.single: 11, udp.multiple: 12, icmp.first: 13, icmp.error: 14, other.first: 15, other.single: 16, other.multiple: 17, adaptive.start: 18, adaptive.end: 19 Test e u d x';
+	protected $expectedDispOrigRule= 'max: 1, max-src-states: 2, max-src-nodes: 3, max-src-conn: 4, max-src-conn-rate: 5/5, sloppy, no-sync, pflow, if-bound, overload: <over> flush global, source-track rule, frag: 1, interval: 2, src.track: 3, tcp.first: 4, tcp.opening: 5, tcp.established: 6, tcp.closing: 7, tcp.finwait: 8, tcp.closed: 9, udp.first: 10, udp.single: 11, udp.multiple: 12, icmp.first: 13, icmp.error: 14, other.first: 15, other.single: 16, other.multiple: 17, adaptive.start: 18, adaptive.end: 19 Test';
 
 	protected $modifiedRule= 'set state-defaults frag 1, interval 2 # Test1';
-	protected $expectedDispModifiedRule= 'frag: 1, interval: 2 Test1 e u d x';
+	protected $expectedDispModifiedRule= 'frag: 1, interval: 2 Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

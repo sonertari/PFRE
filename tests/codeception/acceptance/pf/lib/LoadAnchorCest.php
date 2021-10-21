@@ -28,10 +28,10 @@ class LoadAnchorCest extends Rule
 	protected $sender= 'loadanchor';
 
 	protected $origRule= 'load anchor test from "/etc/pfre/include.conf" # Test';
-	protected $expectedDispOrigRule= 'test /etc/pfre/include.conf Test e u d x';
+	protected $expectedDispOrigRule= 'test /etc/pfre/include.conf Test';
 
 	protected $modifiedRule= 'load anchor test1 from "/etc/pfre/test.conf" # Test1';
-	protected $expectedDispModifiedRule= 'test1 /etc/pfre/test.conf Test1 e u d x';
+	protected $expectedDispModifiedRule= 'test1 /etc/pfre/test.conf Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

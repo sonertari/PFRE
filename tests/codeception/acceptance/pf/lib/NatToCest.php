@@ -34,7 +34,7 @@ log all, matches, user, to=pflog0 quick tcp
 192.168.0.1 ssh
 2222
 192.168.0.2 ssh 192.168.0.1 ssh
-Test e u d x';
+Test';
 
 	protected $modifiedRule= 'pass out from { 192.168.0.1, 1.1.1.1 } to port { ssh, 1111 } nat-to { 192.168.0.1, 1.1.1.1 } # Test1';
 	protected $expectedDispModifiedRule= 'pass out
@@ -44,7 +44,7 @@ ssh
 1111
 192.168.0.1
 1.1.1.1
-Test1 e u d x';
+Test1';
 
 	function __construct()
 	{

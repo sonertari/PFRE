@@ -111,7 +111,7 @@ class confeditorCest
 			$I->seeNumberOfElements(['xpath' => '//a[contains(@href, "conf.editor.php?del=")]'], 1);
 			$I->seeNumberOfElements(\Codeception\Util\Locator::find('tr', ['title' => "$type rule"]), 1);
 
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
 		}
@@ -140,7 +140,7 @@ class confeditorCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
 		}
@@ -169,7 +169,7 @@ class confeditorCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			/// @attention No need to delete the new rule
 			//$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?del=' . $ruleNumber . '")]']);
@@ -201,7 +201,7 @@ class confeditorCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 		}
 	}
 
@@ -225,7 +225,7 @@ class confeditorCest
 		$I->checkOption('#forcesave');
 		$I->click('Save');
 
-		$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$count");
+		$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$count");
 	}
 
 	/**
@@ -273,7 +273,7 @@ class confeditorCest
 		$I->checkOption('#forcesave');
 		$I->click('Save');
 
-		$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$count");
+		$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$count");
 	}
 
 	/**
@@ -299,7 +299,7 @@ class confeditorCest
 			$I->expect("clicking the Delete button deletes a $type rule $ruleNumber");
 
 			$I->seeInField('#ruleNumber', $count);
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 
 			$I->fillField('#ruleNumber', $ruleNumber);
 			$I->click('Delete');
@@ -321,7 +321,7 @@ class confeditorCest
 			$I->checkOption('#forcesave');
 			$I->click('Save');
 
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=$sender&rulenumber=$ruleNumber");
 			$ruleNumber++;
 		}
 	}
@@ -337,7 +337,7 @@ class confeditorCest
 		$delta= 1;
 		$moveTo= 0;
 		while ($ruleNumber < $count) {
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 
 			$moveTo= $ruleNumber + $delta;
 
@@ -349,9 +349,9 @@ class confeditorCest
 
 			if ($moveTo < $count) {
 				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
-				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$moveTo");
+				$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$moveTo");
 			} else {
-				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
+				$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$moveTo");
 			}
 
@@ -370,7 +370,7 @@ class confeditorCest
 		$ruleNumber= $count - 1;
 		$delta= 1;
 		while ($ruleNumber >= 0) {
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 
 			$moveTo= $ruleNumber - $delta;
 
@@ -382,9 +382,9 @@ class confeditorCest
 
 			if ($moveTo >= 0) {
 				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
-				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$moveTo");
+				$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$moveTo");
 			} else {
-				$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
+				$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 				$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$moveTo");
 			}
 
@@ -439,7 +439,7 @@ class confeditorCest
 	
 		$ruleNumber= 0;
 		while ($ruleNumber < $count - 1) {
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 
 			$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?down=' . $ruleNumber . '")]']);
 
@@ -447,7 +447,7 @@ class confeditorCest
 			$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 
 			$ruleNumber++;
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=filter&rulenumber=$ruleNumber");
 		}
 	}
 
@@ -460,7 +460,7 @@ class confeditorCest
 	
 		$ruleNumber= $count - 1;
 		while ($ruleNumber > 0) {
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 
 			$I->click(['xpath' => '//a[contains(@href, "conf.editor.php?up=' . $ruleNumber . '")]']);
 
@@ -468,7 +468,7 @@ class confeditorCest
 			$I->dontSeeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 
 			$ruleNumber--;
-			$I->seeLink('e', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
+			$I->seeLink('', "http://pfre/pf/conf.editor.php?sender=comment&rulenumber=$ruleNumber");
 		}
 	}
 

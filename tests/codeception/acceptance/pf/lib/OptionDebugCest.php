@@ -28,10 +28,10 @@ class OptionDebugCest extends Rule
 	protected $sender= 'option';
 
 	protected $origRule= 'set debug notice # Test';
-	protected $expectedDispOrigRule= 'debug: notice Test e u d x';
+	protected $expectedDispOrigRule= 'debug: notice Test';
 
 	protected $modifiedRule= 'set debug debug # Test1';
-	protected $expectedDispModifiedRule= 'debug: debug Test1 e u d x';
+	protected $expectedDispModifiedRule= 'debug: debug Test1';
 
 	function __construct()
 	{

@@ -31,10 +31,10 @@ class AntispoofCest extends Rule
 	protected $expectedDispOrigRule= 'em0
 quick inet
 log all, matches, user, to=pflog0 test
-Test e u d x';
+Test';
 
 	protected $modifiedRule= 'antispoof # Test1';
-	protected $expectedDispModifiedRule= 'Test1 e u d x';
+	protected $expectedDispModifiedRule= 'Test1';
 
 	protected function modifyRule(AcceptanceTester $I)
 	{

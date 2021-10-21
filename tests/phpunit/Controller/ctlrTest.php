@@ -234,13 +234,13 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		unlink($file . '.bak');
 	}
 
-	function testGetPfRules()
+	function testGetRules()
 	{
 		global $TEST_DIR_PATH;
 
 		$file= $TEST_DIR_PATH . '/etc/pfre/pf.conf';
 
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GetPfRules', $file, 0, 0], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GetRules', $file, 0, 0], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -257,11 +257,11 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertJsonStringEqualsJsonString($expected, $actual);
 	}
 
-	function testGetPfRuleFiles()
+	function testGetRuleFiles()
 	{
 		global $TEST_DIR_PATH;
 
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GetPfRuleFiles'], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GetRuleFiles'], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -280,7 +280,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($expected, $actual);
 	}
 
-	function testDeletePfRuleFile()
+	function testDeleteRuleFile()
 	{
 		global $TEST_DIR_PATH;
 
@@ -294,7 +294,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 
 		$this->assertFileExists($file);
 		
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'DeletePfRuleFile', $file], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'DeleteRuleFile', $file], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -302,7 +302,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($file);
 	}
 
-	function testInstallPfRulesInstallConf()
+	function testInstallRulesInstallConf()
 	{
 		global $TEST_DIR_PATH;
 
@@ -321,7 +321,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertFileNotExists($destFile);
 
 		$json= json_encode($ruleSet->rules);
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'InstallPfRules', $json, $destFile, 0], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'InstallRules', $json, $destFile, 0], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -333,7 +333,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		unlink($destFile);
 	}
 	
-	function testGeneratePfRule()
+	function testGenerateRule()
 	{
 		global $TEST_PATH;
 
@@ -347,7 +347,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($ruleDef);
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GeneratePfRule', $json, 0], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GenerateRule', $json, 0], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -358,7 +358,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($test->out, $actual);
 	}
 	
-	function testGeneratePfRules()
+	function testGenerateRules()
 	{
 		global $TEST_PATH;
 
@@ -372,7 +372,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($rulesArray);
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GeneratePfRules', $json], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GenerateRules', $json], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
@@ -383,7 +383,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 		$this->assertEquals($test->out, $actual);
 	}
 	
-	function testGeneratePfRulesLines()
+	function testGenerateRulesLines()
 	{
 		global $TEST_PATH;
 
@@ -397,7 +397,7 @@ class ctlrTest extends \PHPUnit_Framework_TestCase
 			);
 
 		$json= json_encode($rulesArray);
-		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GeneratePfRules', $json, 1], JSON_UNESCAPED_SLASHES));
+		$cmdline= "$this->ctlr -t ".escapeshellarg(json_encode(['en_EN', 'GenerateRules', $json, 1], JSON_UNESCAPED_SLASHES));
 
 		exec($cmdline, $outputArray, $retval);
 
