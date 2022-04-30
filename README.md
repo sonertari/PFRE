@@ -2,7 +2,7 @@
 
 PFRE is a packet filter rule editor for OpenBSD/pf. PFRE is expected to be used by beginners and system administrators alike.
 
-The [UTMFW](https://github.com/sonertari/UTMFW) and [PFFW](https://github.com/sonertari/PFFW) projects use PFRE on their web administration interfaces. If you don't want to [install PFRE](https://github.com/sonertari/PFRE#how-to-install) yourself, you can download the installation iso file of [UTMFW](https://github.com/sonertari/UTMFW#download) or [PFFW](https://github.com/sonertari/PFFW#download) to test drive PFRE easily.
+The [UTMFW](https://github.com/sonertari/UTMFW) and [PFFW](https://github.com/sonertari/PFFW) projects use PFRE on their web administration interfaces. If you don't want to [install PFRE](https://github.com/sonertari/PFRE#how-to-install) yourself, you can download the installation files of [UTMFW](https://github.com/sonertari/UTMFW#download) or [PFFW](https://github.com/sonertari/PFFW#download) to test drive PFRE easily.
 
 ## Features
 
@@ -58,8 +58,8 @@ You can find a couple of screenshots on the [wiki](https://github.com/sonertari/
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 7.0, perhaps on a VM.
-- Install PHP 8.0.10, php-pcntl, and php-cgi.
+- Install OpenBSD 7.1, perhaps on a VM.
+- Install PHP 8.1.4, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -74,9 +74,9 @@ The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install69.iso available at OpenBSD mirrors.
+- You can download install71.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
-- 512MB RAM and 8GB HD should be more than enough.
+- 256MB RAM and 8GB HD should be enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
 	+ The external interface may obtain its IP address over DHCP
 	+ The internal interface should have a static IP address
@@ -100,18 +100,19 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 
 	argon2-20190702.tgz
 	bzip2-1.0.8p0.tgz
+	capstone-4.0.2.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
 	gettext-runtime-0.21p1.tgz
 	libiconv-1.16p0.tgz
 	libsodium-1.0.18p1.tgz
-	libxml-2.9.12.tgz
+	libxml-2.9.13.tgz
 	oniguruma-6.9.7.1.tgz
-	pcre2-10.36.tgz
-	php-8.0.10p0.tgz
-	php-cgi-8.0.10p0.tgz
-	php-pcntl-8.0.10p0.tgz
-	xz-5.2.5.tgz
+	pcre2-10.37.tgz
+	php-8.1.4p1.tgz
+	php-cgi-8.1.4.tgz
+	php-pcntl-8.1.4.tgz
+	xz-5.2.5p0.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
 
@@ -127,18 +128,19 @@ Here is the expected output of that command:
 
 	argon2-20190702     C implementation of Argon2 - password hashing function
 	bzip2-1.0.8p0       block-sorting file compressor, unencumbered
+	capstone-4.0.2      multi-platform, multi-architecture disassembly framework
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
 	gettext-runtime-0.21p1 GNU gettext runtime libraries and programs
 	libiconv-1.16p0     character set conversion library
 	libsodium-1.0.18p1  library for network communications and cryptography
-	libxml-2.9.12       XML parsing library
+	libxml-2.9.13       XML parsing library
 	oniguruma-6.9.7.1   regular expressions library
-	pcre2-10.36         perl-compatible regular expression library, version 2
-	php-8.0.10p0        server-side HTML-embedded scripting language
-	php-cgi-8.0.10p0    php CGI binary
-	php-pcntl-8.0.10p0  PCNTL extensions for php
-	xz-5.2.5            LZMA compression and decompression tools
+	pcre2-10.37         perl-compatible regular expression library, version 2
+	php-8.1.4p1         server-side HTML-embedded scripting language
+	php-cgi-8.1.4       php CGI binary
+	php-pcntl-8.1.4     PCNTL extensions for php
+	xz-5.2.5p0          LZMA compression and decompression tools
 
 ### Install PFRE
 
@@ -216,9 +218,9 @@ However, you are advised to pick a better password than soner123.
 Go to /usr/local/bin/ and create a link to php executable:
 
 	# cd /usr/local/bin
-	# ln -s php-8.0 php
+	# ln -s php-8.1 php
 
-Edit the /etc/php-8.0.ini file to write error messages to syslog, otherwise they may disturb pfctl test reports:
+Edit the /etc/php-8.1.ini file to write error messages to syslog, otherwise they may disturb pfctl test reports:
 
 	error_log = syslog
 
@@ -226,9 +228,9 @@ Also, edit the /etc/php-fpm.conf file to write error messages to syslog:
 
 	error_log = syslog
 
-To enable pcntl, go to /etc/php-8.0/ and create the pcntl.ini file:
+To enable pcntl, go to /etc/php-8.1/ and create the pcntl.ini file:
 
-	# cd /etc/php-8.0/
+	# cd /etc/php-8.1/
 	# touch pcntl.ini
 
 And add the following line to pcntl.ini:
@@ -267,9 +269,9 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	if [ -x /usr/local/sbin/php-fpm-8.0 ]; then
+	if [ -x /usr/local/sbin/php-fpm-8.1 ]; then
 		echo 'PHP CGI server'
-		/usr/local/sbin/php-fpm-8.0
+		/usr/local/sbin/php-fpm-8.1
 	fi
 
 Create the rc.conf.local file under /etc/
@@ -294,7 +296,7 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 Now you can either reboot the system or start the php cgi server and the web server manually using the following commands:
 
-	# /usr/local/sbin/php-fpm-8.0
+	# /usr/local/sbin/php-fpm-8.1
 	# /usr/sbin/httpd
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.
