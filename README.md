@@ -58,8 +58,8 @@ You can find a couple of screenshots on the [wiki](https://github.com/sonertari/
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 7.1, perhaps on a VM.
-- Install PHP 8.1.4, php-pcntl, and php-cgi.
+- Install OpenBSD 7.2, perhaps on a VM.
+- Install PHP 8.1.10, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -74,7 +74,7 @@ The OpenBSD installation guide is at [faq4](http://www.openbsd.org/faq/faq4.html
 
 Here are a couple of guidelines:
 
-- You can download install71.iso available at OpenBSD mirrors.
+- You can download install72.iso available at OpenBSD mirrors.
 - It may be easier to install a PFRE test system on a VM of your choice, e.g. VMware or VirtualBox, rather than bare hardware.
 - 256MB RAM and 8GB HD should be enough.
 - If you want to obtain a packet filtering firewall, make sure the VM has at least 2 ethernet interfaces:
@@ -104,15 +104,15 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
 	gettext-runtime-0.21p1.tgz
-	libiconv-1.16p0.tgz
+	libiconv-1.17.tgz
 	libsodium-1.0.18p1.tgz
-	libxml-2.9.13.tgz
-	oniguruma-6.9.7.1.tgz
+	libxml-2.10.2.tgz
+	oniguruma-6.9.8.tgz
 	pcre2-10.37.tgz
-	php-8.1.4p1.tgz
-	php-cgi-8.1.4.tgz
-	php-pcntl-8.1.4.tgz
-	xz-5.2.5p0.tgz
+	php-8.1.10p0.tgz
+	php-cgi-8.1.10.tgz
+	php-pcntl-8.1.10.tgz
+	xz-5.2.5p2.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
 
@@ -132,15 +132,15 @@ Here is the expected output of that command:
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
 	gettext-runtime-0.21p1 GNU gettext runtime libraries and programs
-	libiconv-1.16p0     character set conversion library
+	libiconv-1.17       character set conversion library
 	libsodium-1.0.18p1  library for network communications and cryptography
-	libxml-2.9.13       XML parsing library
-	oniguruma-6.9.7.1   regular expressions library
+	libxml-2.10.2       XML parsing library
+	oniguruma-6.9.8     regular expressions library
 	pcre2-10.37         perl-compatible regular expression library, version 2
-	php-8.1.4p1         server-side HTML-embedded scripting language
-	php-cgi-8.1.4       php CGI binary
-	php-pcntl-8.1.4     PCNTL extensions for php
-	xz-5.2.5p0          LZMA compression and decompression tools
+	php-8.1.10p0        server-side HTML-embedded scripting language
+	php-cgi-8.1.10      php CGI binary
+	php-pcntl-8.1.10    PCNTL extensions for php
+	xz-5.2.5p2          LZMA compression and decompression tools
 
 ### Install PFRE
 
