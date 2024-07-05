@@ -58,8 +58,8 @@ You can find a couple of screenshots on the [wiki](https://github.com/sonertari/
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 7.4, perhaps on a VM.
-- Install PHP 8.2.3, php-pcntl, and php-cgi.
+- Install OpenBSD 7.5, perhaps on a VM.
+- Install PHP 8.3.3, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -98,21 +98,21 @@ Set the $PKG\_PATH env variable to the cache folder you have just created:
 
 Download the required packages from an OpenBSD mirror and copy them to $PKG\_PATH. The following is the list of files you should have under $PKG\_PATH:
 
-	argon2-20190702.tgz
+	argon2-20190702p0.tgz
 	bzip2-1.0.8p0.tgz
-	capstone-4.0.2.tgz
+	capstone-5.0.tgz
 	femail-1.0p1.tgz
 	femail-chroot-1.0p3.tgz
-	gettext-runtime-0.22.2.tgz
+	gettext-runtime-0.22.5.tgz
 	libiconv-1.17.tgz
 	libsodium-1.0.19.tgz
-	libxml-2.11.5.tgz
-	oniguruma-6.9.8.tgz
-	pcre2-10.37p1.tgz
-	php-8.2.11.tgz
-	php-cgi-8.2.11.tgz
-	php-pcntl-8.2.11.tgz
-	xz-5.4.4.tgz
+	libxml-2.12.5.tgz
+	oniguruma-6.9.9.tgz
+	pcre2-10.37p2.tgz
+	php-8.3.3.tgz
+	php-cgi-8.3.3.tgz
+	php-pcntl-8.3.3.tgz
+	xz-5.4.5.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
 
@@ -126,21 +126,21 @@ If you want to see if all required packages are installed successfully, run the 
 
 Here is the expected output of that command:
 
-	argon2-20190702     C implementation of Argon2 - password hashing function
+	argon2-20190702p0   C implementation of Argon2 - password hashing function
 	bzip2-1.0.8p0       block-sorting file compressor, unencumbered
-	capstone-4.0.2      multi-platform, multi-architecture disassembly framework
+	capstone-5.0        multi-platform, multi-architecture disassembly framework
 	femail-1.0p1        simple SMTP client
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
-	gettext-runtime-0.22.2 GNU gettext runtime libraries and programs
+	gettext-runtime-0.22.5 GNU gettext runtime libraries and programs
 	libiconv-1.17       character set conversion library
 	libsodium-1.0.19    library for network communications and cryptography
-	libxml-2.11.5       XML parsing library
-	oniguruma-6.9.8     regular expressions library
-	pcre2-10.37p1       perl-compatible regular expression library, version 2
-	php-8.2.11          server-side HTML-embedded scripting language
-	php-cgi-8.2.11      php CGI binary
-	php-pcntl-8.2.11    PCNTL extensions for php
-	xz-5.4.4            library and tools for XZ and LZMA compressed files
+	libxml-2.12.5       XML parsing library
+	oniguruma-6.9.9     regular expressions library
+	pcre2-10.37p2       perl-compatible regular expression library, version 2
+	php-8.3.3           server-side HTML-embedded scripting language
+	php-cgi-8.3.3       php CGI binary
+	php-pcntl-8.3.3     PCNTL extensions for php
+	xz-5.4.5            library and tools for XZ and LZMA compressed files
 
 ### Install PFRE
 
@@ -218,9 +218,9 @@ However, you are advised to pick a better password than soner123.
 Go to /usr/local/bin/ and create a link to php executable:
 
 	# cd /usr/local/bin
-	# ln -s php-8.2 php
+	# ln -s php-8.3 php
 
-Edit the /etc/php-8.2.ini file to write error messages to syslog, otherwise they may disturb pfctl test reports:
+Edit the /etc/php-8.3.ini file to write error messages to syslog, otherwise they may disturb pfctl test reports:
 
 	error_log = syslog
 
@@ -228,9 +228,9 @@ Also, edit the /etc/php-fpm.conf file to write error messages to syslog:
 
 	error_log = syslog
 
-To enable pcntl, go to /etc/php-8.2/ and create the pcntl.ini file:
+To enable pcntl, go to /etc/php-8.3/ and create the pcntl.ini file:
 
-	# cd /etc/php-8.2/
+	# cd /etc/php-8.3/
 	# touch pcntl.ini
 
 And add the following line to pcntl.ini:
@@ -269,9 +269,9 @@ If you want the web server to be started automatically after a reboot, first cop
 
 Then add the following lines to it:
 
-	if [ -x /usr/local/sbin/php-fpm-8.2 ]; then
+	if [ -x /usr/local/sbin/php-fpm-8.3 ]; then
 		echo 'PHP CGI server'
-		/usr/local/sbin/php-fpm-8.2
+		/usr/local/sbin/php-fpm-8.3
 	fi
 
 Create the rc.conf.local file under /etc/
@@ -296,7 +296,7 @@ And uncomment the line which enables forwarding of IPv4 packets:
 
 Now you can either reboot the system or start the php cgi server and the web server manually using the following commands:
 
-	# /usr/local/sbin/php-fpm-8.2
+	# /usr/local/sbin/php-fpm-8.3
 	# /usr/sbin/httpd
 
 Finally, if you point your web browser to the IP address of PFRE, you should see the login page. And you should be able to log in by entering admin:soner123 as user and password.
