@@ -58,8 +58,8 @@ You can find a couple of screenshots on the [wiki](https://github.com/sonertari/
 
 Here are the basic steps to obtain a working PFRE installation:
 
-- Install OpenBSD 7.5, perhaps on a VM.
-- Install PHP 8.3.3, php-pcntl, and php-cgi.
+- Install OpenBSD 7.6, perhaps on a VM.
+- Install PHP 8.3.11, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
 - Create admin and user users, and set their passwords.
@@ -105,14 +105,14 @@ Download the required packages from an OpenBSD mirror and copy them to $PKG\_PAT
 	femail-chroot-1.0p3.tgz
 	gettext-runtime-0.22.5.tgz
 	libiconv-1.17.tgz
-	libsodium-1.0.19.tgz
-	libxml-2.12.5.tgz
+	libsodium-1.0.20.tgz
+	libxml-2.13.3p0.tgz
 	oniguruma-6.9.9.tgz
 	pcre2-10.37p2.tgz
-	php-8.3.3.tgz
-	php-cgi-8.3.3.tgz
-	php-pcntl-8.3.3.tgz
-	xz-5.4.5.tgz
+	php-8.3.11p1.tgz
+	php-cgi-8.3.11p1.tgz
+	php-pcntl-8.3.11p1.tgz
+	xz-5.6.2.tgz
 
 Install PHP, php-pcntl, and php-cgi by running the following commands, which should install their dependencies as well:
 
@@ -133,14 +133,14 @@ Here is the expected output of that command:
 	femail-chroot-1.0p3 simple SMTP client for chrooted web servers
 	gettext-runtime-0.22.5 GNU gettext runtime libraries and programs
 	libiconv-1.17       character set conversion library
-	libsodium-1.0.19    library for network communications and cryptography
-	libxml-2.12.5       XML parsing library
+	libsodium-1.0.20    library for network communications and cryptography
+	libxml-2.13.3p0     XML parsing library
 	oniguruma-6.9.9     regular expressions library
 	pcre2-10.37p2       perl-compatible regular expression library, version 2
-	php-8.3.3           server-side HTML-embedded scripting language
-	php-cgi-8.3.3       php CGI binary
-	php-pcntl-8.3.3     PCNTL extensions for php
-	xz-5.4.5            library and tools for XZ and LZMA compressed files
+	php-8.3.11p1        server-side HTML-embedded scripting language
+	php-cgi-8.3.11p1    php CGI binary
+	php-pcntl-8.3.11p1  PCNTL extensions for php
+	xz-5.6.2            library and tools for XZ and LZMA compressed files
 
 ### Install PFRE
 

@@ -111,7 +111,13 @@ define('ACTIVE_A_STYLE', ' style="color: white;"');
 									<a href="<?php echo filter_input(INPUT_SERVER, 'PHP_SELF') ?>?logout"><?php echo _MENU('Logout') ?> <?php echo $_SESSION['USER'].'@'.filter_input(INPUT_SERVER, 'REMOTE_ADDR') ?></a>
 								</li>
 								<li id="languagemenu">
-									<a href="#"><?php echo _MENU('Language') ?></a>
+									<?php
+									$LanguageMenuTitle= _MENU('Language');
+									if ($_SESSION['Locale'] !== 'en_EN') {
+										$LanguageMenuTitle.= ' (Language)';
+									}
+									?>
+									<a href="#"><?php echo $LanguageMenuTitle ?></a>
 									<ul>
 										<?php
 										foreach ($LOCALES as $Locale => $Conf) {
@@ -121,11 +127,9 @@ define('ACTIVE_A_STYLE', ' style="color: white;"');
 												$LiStyle= ACTIVE_LI_STYLE;
 												$AStyle= ACTIVE_A_STYLE;
 											}
+											$LocaleDisplayName= _($Conf['Name']);
 											if ($_SESSION['Locale'] !== 'en_EN') {
-												$LocaleDisplayName= _($Conf['Name']).' ('.$Conf['Name'].')';
-											}
-											else {
-												$LocaleDisplayName= _($Conf['Name']);
+												$LocaleDisplayName.= ' ('.$Conf['Name'].')';
 											}
 											?>
 											<li<?php echo $LiStyle ?>>
