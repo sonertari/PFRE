@@ -1,4 +1,4 @@
-# PFRE [![Build Status](https://travis-ci.com/sonertari/PFRE.svg?branch=master)](https://app.travis-ci.com/github/sonertari/PFRE)
+# PFRE
 
 PFRE is a packet filter rule editor for OpenBSD/pf. PFRE is expected to be used by beginners and system administrators alike.
 
