@@ -1,4 +1,4 @@
-# Copyright (C) 2016-2024 Soner Tari, The PFRE project
+# Copyright (C) 2016-2025 Soner Tari, The PFRE project
 # This file is distributed under the same license as PFRE.
 # Soner Tari <sonertari@gmail.com>
 #
