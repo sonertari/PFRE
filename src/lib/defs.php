@@ -45,10 +45,8 @@ $LOG_PRIOS= array(
 
 /// Superuser
 $ADMIN= array('admin');
-/// Unprivileged user who can modify any configuration
-$USER= array('user');
 /// All valid users
-$ALL_USERS= array_merge($ADMIN, $USER);
+$ALL_USERS= $ADMIN;
 
 /**
  * Locale definitions used by both View and Controller.

@@ -194,7 +194,7 @@ class confsetupCest
 
 		$I->click('#ApplyPassword');
 
-		$I->see('pfre currently supports only admin and user usernames');
+		$I->see('pfre currently supports only admin username');
 		$I->seeInCurrentUrl('pf/conf.setup.php');
 	}
 

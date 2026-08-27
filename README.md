@@ -41,8 +41,8 @@ PFRE takes security seriously:
 - The Model is similar to the server of a privilege separation design. It defines and supports only a set of commands which can be executed by the View.
 - As the sole gatekeeper for the Model, PFRE controller, ctlr.php is the only executable enabled in the doas configuration.
 - The View executes all controller commands over an SSH connection.
-- The login shells of admin and user users are set to sh.php. Also, they don't have a home folder. So the admin and user users can log in to the system and pass arguments to sh.php, but cannot drop to a command line shell.
-- The login shell sh.php of admin and user users validates all commands and their arguments given to it, and then runs them using ctlr.php.
+- The login shell of admin user is set to sh.php. Also, it does not have a home folder. So the admin user can log in to the system and pass arguments to sh.php, but cannot drop to a command line shell.
+- The login shell sh.php of admin user validates all commands and their arguments given to it, and then runs them using ctlr.php.
 - No argument passed to sh.php or ctlr.php is ever expanded before being executed.
 - Passwords are never visible plain text anywhere, not even in the doas logs.
 - The View never reaches to the filesystem, nor runs any system executable (perhaps only /bin/sleep and /bin/date).
@@ -62,8 +62,8 @@ Here are the basic steps to obtain a working PFRE installation:
 - Install PHP 8.5.5, php-pcntl, and php-cgi.
 - Copy the files in PFRE src folder to /var/www/htdocs/pfre/.
 - Configure httpd.conf for PFRE.
-- Create admin and user users, and set their passwords.
-- Enable ctlr.php in doas for admin and user users, and make sure ctlr.php is executable.
+- Create the admin user and set its password.
+- Enable ctlr.php in doas for the admin user, and make sure ctlr.php is executable.
 - Point your web browser to the web server and log in.
 
 The following sections provide the details.
@@ -203,15 +203,13 @@ Finally, you should copy server.crt and server.key files to the default location
 	# cp server.key /etc/ssl/private/
 	# cp server.crt /etc/ssl/
 
-Run useradd(8) to create admin and user users (you can omit the -c, -d, and -s options, as we will set them with the chpass command next):
+Run useradd(8) to create the admin user (you can omit the -c, -d, and -s options, as we will set them with the chpass command next):
 
 	# useradd -c "PFRE admin" -d /var/empty -s /var/www/htdocs/pfre/Controller/sh.php admin
-	# useradd -c "PFRE user" -d /var/empty -s /var/www/htdocs/pfre/Controller/sh.php user
 
-Then set their passswords to soner123 by running the following commands (actually, to the sha1 hash of soner123, because passwords are double encrypted on PFRE):
+Then set its passsword to soner123 by running the following command (actually, to the sha1 hash of soner123, because passwords are double encrypted on PFRE):
 
 	# /usr/bin/chpass -a "admin:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):$(id -u admin):$(id -g admin)::0:0:PFRE admin:/var/empty:/var/www/htdocs/pfre/Controller/sh.php"
-	# /usr/bin/chpass -a "user:$(/usr/bin/encrypt `/bin/echo -n soner123 | sha1 -`):$(id -u user):$(id -g user)::0:0:PFRE user:/var/empty:/var/www/htdocs/pfre/Controller/sh.php"
 
 However, you are advised to pick a better password than soner123.
 
@@ -265,7 +263,6 @@ And add the following lines to it:
 
 	permit nopass www as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass admin as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
-	permit nopass user as root cmd /var/www/htdocs/pfre/Controller/ctlr.php
 	permit nopass keepenv root as root
 
 #### Configure system
